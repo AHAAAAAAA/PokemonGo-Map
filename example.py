@@ -37,7 +37,7 @@ latorg, longorg = 0, 0
 app = Flask(__name__, template_folder="templates")
 default_location = None
 default_radius = 10
-default_step = 0.001
+default_step = 0.002
 directions = {'N':0, 'NE':45, 'E':90, 'SE':135, 'S':180, 'SW':225, 'W':270, 'NW':315}
 access_token = None
 api_endpoint = None
@@ -122,9 +122,7 @@ def api_req(api_endpoint, access_token, *mehs, **kw):
             print("Response:")
             print(p_ret)
             print("\n\n")
-
-        print("Sleeping for 1 seconds to get around rate-limit.")
-        time.sleep(1)
+        time.sleep(2.1)
         return p_ret
     except Exception, e:
         if DEBUG:
@@ -167,6 +165,8 @@ def login_ptc(username, password):
     print('[!] login for: {}'.format(username))
     head = {'User-Agent': 'niantic'}
     r = SESSION.get(LOGIN_URL, headers=head)
+    if r is None:
+        return render_template('nope.html', fullmap=fullmap)
     jdata = json.loads(r.content)
     data = {
         'lt': jdata['lt'],
@@ -206,9 +206,7 @@ def heartbeat(api_endpoint, access_token, response):
     m = pokemon_pb2.RequestEnvelop.MessageSingleString()
     m.bytes = "05daf51635c82611d1aac95c0b051d3ec088a930"
     m5.message = m.SerializeToString()
-
     walk = sorted(getNeighbors())
-
     m1 = pokemon_pb2.RequestEnvelop.Requests()
     m1.type = 106
     m = pokemon_pb2.RequestEnvelop.MessageQuad()
@@ -226,28 +224,14 @@ def heartbeat(api_endpoint, access_token, response):
         m4,
         pokemon_pb2.RequestEnvelop.Requests(),
         m5)
+    try:
+        payload = response.payload[0]
+    except requests.exceptions.RequestException:
+        return render_template('nope.html', fullmap=fullmap)  
     payload = response.payload[0]
     heartbeat = pokemon_pb2.ResponseEnvelop.HeartbeatPayload()
     heartbeat.ParseFromString(payload)
     return heartbeat
-def calculateLocation(latlong, distance, direction):
-    R = 6378.1 #Radius of the Earth
-    brng = math.radians(directions[direction]) #Bearing is 90 degrees converted to radians.
-    d = distance/1000 #Distance in km
-    #lat2  52.20444 - the lat result I'm hoping for
-    #lon2  0.36056 - the long result I'm hoping for.
-    lat1 = math.radians(latlong[0]) #Current lat point converted to radians
-    lon1 = math.radians(latlong[1]) #Current long point converted to radians
-
-    lat2 = math.asin( math.sin(lat1)*math.cos(d/R) +
-         math.cos(lat1)*math.sin(d/R)*math.cos(brng))
-
-    lon2 = lon1 + math.atan2(math.sin(brng)*math.sin(d/R)*math.cos(lat1),
-                 math.cos(d/R)-math.sin(lat1)*math.sin(lat2))
-    lat2 = math.degrees(lat2)
-    lon2 = math.degrees(lon2)
-    return lat2,lon2
-
 @app.route('/')
 def fullmap():
     main()
@@ -271,10 +255,10 @@ def fullmap():
             "position:absolute;"
             "z-index:200;"
         ),
-        lat=latorg,
-        lng=longorg,
+        lat=40.018097,
+        lng=-105.2729077,
         markers=pokeMarkers,
-        zoom="6"
+        zoom="15"
     )
     return render_template('example_fullmap.html', fullmap=fullmap)
 
@@ -330,6 +314,7 @@ def main():
     steps = 0
     parity = 1
     steplimit = int(args.step_limit)
+
     while steps<steplimit:
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
@@ -358,10 +343,12 @@ def main():
             difflng = diff.lng().degrees
             pokemons.append([poke.pokemon.PokemonId, pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], poke.Latitude, poke.Longitude])
         set_location_coords(latlng.lat().degrees+(parity*(steps*default_step)), latlng.lng().degrees+(parity*(steps*default_step)), 0)
-        steps += 1
+        if parity:
+            steps += 1
         parity *= -1
         latorg, longorg = latlng.lat().degrees, latlng.lng().degrees
-        print "TEST", latlng.lat().degrees+(parity*(steps*default_step)), latlng.lng().degrees+(parity*(steps*default_step)), steps, args.step_limit
+        if parity:
+            print "Completed:",steps,"steps out of", steplimit
 
 if __name__ == "__main__":
     app.run(debug=True)
