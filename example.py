@@ -256,10 +256,10 @@ def fullmap():
         currLat, currLon = pokemon[-2], pokemon[-1]
         pokeMarkers.append(
             {
-                'icon': '//maps.google.com/mapfiles/ms/icons/green-dot.png',
+                'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': str(pokemon[0]) + pokemon[1]
+                'infobox': pokemon[1]
             })
     fullmap = Map(
         identifier="fullmap",
@@ -274,9 +274,8 @@ def fullmap():
         lat=latorg,
         lng=longorg,
         markers=pokeMarkers,
-        zoom="5"
+        zoom="6"
     )
-    print "Coordinates: ", COORDS_LATITUDE, COORDS_LONGITUDE
     return render_template('example_fullmap.html', fullmap=fullmap)
 
 def main():
