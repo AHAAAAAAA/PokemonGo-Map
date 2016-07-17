@@ -313,7 +313,10 @@ def get_heartbeat(api_endpoint, access_token, response):
 def main():
     debug("main")
 
-    pokemonsJSON = json.load(open(os.getcwd() + '/pokemon.json'))
+    full_path = os.path.realpath(__file__)
+    path, filename = os.path.split(full_path)
+    pokemonsJSON = json.load(open(path + '/pokemon.json'))
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username", help="PTC Username", required=True)
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
