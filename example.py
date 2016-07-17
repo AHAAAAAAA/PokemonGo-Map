@@ -50,7 +50,7 @@ api_endpoint = None
 pokemons = []
 gyms = []
 pokestops = []
-numbertoteam = {0: "Gym", 1: "Instinct", 2: "Mystic", 3: "Valor"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
+numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
 
 
 # stuff for in-background search thread
