@@ -41,7 +41,7 @@ api_endpoint = None
 pokemons = []
 gyms = []
 pokestops = []
-numbertoteam = {0: "Gym", 1: "Instinct", 2: "Mystic", 3: "Valor"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
+numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
 
 # you can set key as config
 app.config['GOOGLEMAPS_KEY'] = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
@@ -166,7 +166,7 @@ def get_profile(access_token, api, useauth, *reqq):
     return api_req(api, access_token, req, useauth = useauth)
 def login_ptc(username, password):
     print('[!] login for: {}'.format(username))
-    head = {'User-Agent': 'niantic'}
+    head = {'User-Agent': 'Niantic App'}
     r = SESSION.get(LOGIN_URL, headers=head)
     if r is None:
         return render_template('nope.html', fullmap=fullmap)
