@@ -39,17 +39,14 @@ default_step = 0.001
 access_token = None
 api_endpoint = None
 pokemons = []
+gyms = []
+pokestops = []
+numbertoteam = {1: "Instinct", 2: "Mystic", 3: "Valor"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
 
 # you can set key as config
 app.config['GOOGLEMAPS_KEY'] = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
 # you can also pass key here
 GoogleMaps(app, key="AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4")
-
-def time_left(ms):
-    s = ms / 1000
-    m, s = divmod(s, 60)
-    h, m = divmod(m, 60)
-    return h, m, s
 
 def encode(cellid):
     output = []
@@ -249,6 +246,22 @@ def fullmap():
                 'lng': currLon,
                 'infobox': pokemon[1]
             })
+    for gym in gyms:
+        pokeMarkers.append(
+            {
+                'icon': 'static/forts/'+numbertoteam[gym[0]]+'.png',
+                'lat': gym[1],
+                'lng': gym[2],
+                'infobox': "Gym owned by team " + numbertoteam[gym[0]]
+            })
+    for stop in pokestops:
+        pokeMarkers.append(
+            {
+                'icon': 'static/forts/Pstop.png',
+                'lat': stop[0],
+                'lng': stop[1],
+                'infobox': "Pokestop"
+            })
     fullmap = Map(
         identifier="fullmap",
         style=(
@@ -339,6 +352,13 @@ def main():
                         if (hash not in seen):
                             visible.append(wild)
                             seen.add(hash)
+                    if cell.Fort:
+                        for Fort in cell.Fort:
+                            if Fort.Enabled == True:
+                                if Fort.GymPoints:
+                                    gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
+                                elif Fort.FortType:
+                                    pokestops.append([Fort.Latitude, Fort.Longitude])
             except AttributeError:
                 break
         for poke in visible:
@@ -347,10 +367,7 @@ def main():
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            time_to_hidden = poke.TimeTillHiddenMs
-            left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
-            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
+            pokemons.append([poke.pokemon.PokemonId, pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], poke.Latitude, poke.Longitude])
         offset = (steps*default_step)
         if pos is 1:
             set_location_coords(latlng.lat().degrees+offset, latlng.lng().degrees-offset, 0)
