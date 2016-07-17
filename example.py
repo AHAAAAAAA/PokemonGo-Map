@@ -125,7 +125,7 @@ def api_req(api_endpoint, access_token, *mehs, **kw):
             print("Response:")
             print(p_ret)
             print("\n\n")
-        time.sleep(0.51)
+        time.sleep(1)
         return p_ret
     except Exception, e:
         if DEBUG:
