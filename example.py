@@ -11,8 +11,6 @@ import json
 import time
 import argparse
 import threading
-import atexit
-import sys
 
 import werkzeug.serving
 
@@ -58,20 +56,6 @@ numbertoteam = {0: "Gym", 1: "Instinct", 2: "Mystic", 3: "Valor"} # At least I'm
 
 # stuff for in-background search thread
 search_thread = None
-exit_requested = False  # main thread sets to True when Flask is trying to quit, background thread checks
-
-
-def check_exit():
-    """
-    Call this function in the body of any slow or infinite loops
-    so that if Flask or the user is trying to exit, we can signal
-    the background thread to exit
-    TODO: doesn't work reliably, exit_requested is set in main thread but not seen by background thread
-    :return: None
-    """
-
-    if exit_requested:
-        sys.exit(0)
 
 
 def debug(message):
@@ -125,8 +109,6 @@ def retrying_set_location(location_name):
     :return: None
     """
     while True:
-        check_exit()
-
         try:
             set_location(location_name)
             return
@@ -162,8 +144,6 @@ def get_location_coords():
 
 def retrying_api_req(api_endpoint, access_token, *args, **kwargs):
     while True:
-        check_exit()
-
         try:
             response = api_req(api_endpoint, access_token, *args, **kwargs)
             if response:
@@ -383,8 +363,6 @@ def main():
     while steps < steplimit:
         debug("looping: step {} of {}".format(steps, steplimit))
 
-        check_exit()
-
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
         parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
@@ -453,8 +431,6 @@ def register_background_thread(initial_registration=False):
     debug("register_background_thread called")
     global search_thread
 
-    atexit.register(interrupt)
-
     if initial_registration:
         if not werkzeug.serving.is_running_from_reloader():
             debug("register_background_thread: not running inside Flask so not starting thread")
@@ -464,35 +440,15 @@ def register_background_thread(initial_registration=False):
             return
 
         debug("register_background_thread: initial registration")
-
         search_thread = threading.Thread(target=main)
-        search_thread.daemon = True
-        search_thread.name = "search_thread"
-        search_thread.start()
 
     else:
         debug("register_background_thread: queueing")
-
         search_thread = threading.Timer(30, main)  # delay, in seconds
-        search_thread.daemon = True
-        search_thread.name = "search_thread"
-        search_thread.start()
 
-
-def interrupt():
-    '''
-    Called if user presses ^C or Flask is exiting
-    :return: None
-    '''
-    global search_thread
-    global exit_requested
-
-    debug("interrupt: asking background thread to exit")
-    exit_requested = True
-    try:
-        search_thread.cancel()
-    except AttributeError:
-        pass
+    search_thread.daemon = True
+    search_thread.name = "search_thread"
+    search_thread.start()
 
 
 def create_app():
