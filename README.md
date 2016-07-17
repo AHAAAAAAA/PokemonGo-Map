@@ -7,6 +7,8 @@ Live visualization of all the pokemon in your area, building off [Mila432](https
 
 Currently really rough, shows duplicate pokemon and requires refreshing page a lot (until the PokemonGo servers decide we're worthy). However, it works. Be warned, ugly ugly code ahead.
 
+Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
+
 # Installation
 `pip install -r requirements.txt`
 
