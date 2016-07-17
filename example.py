@@ -1,10 +1,11 @@
-# coding: utf-8
+# encoding: utf-8
 
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 import os
 import re
+import sys
 import struct
 import json
 import time
@@ -57,11 +58,13 @@ numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm
 # stuff for in-background search thread
 search_thread = None
 
+def parse_unicode(bytestring):
+    decoded_string = bytestring.decode(sys.getfilesystemencoding())
+    return decoded_string
 
 def debug(message):
     if DEBUG:
         print('[-] {}'.format(message))
-
 
 def time_left(ms):
     s = ms / 1000
@@ -309,7 +312,6 @@ def get_heartbeat(api_endpoint, access_token, response):
     heartbeat.ParseFromString(payload)
     return heartbeat
 
-
 def main():
     debug("main")
 
@@ -320,7 +322,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username", help="PTC Username", required=True)
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
-    parser.add_argument("-l", "--location", help="Location", required=True)
+    parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.set_defaults(DEBUG=True)
