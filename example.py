@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
 import math
@@ -233,7 +233,7 @@ def heartbeat(api_endpoint, access_token, response):
     heartbeat = pokemon_pb2.ResponseEnvelop.HeartbeatPayload()
     heartbeat.ParseFromString(payload)
     return heartbeat
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def fullmap():
     main()
     pokeMarkers = []
@@ -295,7 +295,18 @@ def main():
         DEBUG = True
         print('[!] DEBUG mode on')
 
-    set_location(args.location)
+    if request.args.get('lat') is not None:
+           global deflat
+           global deflng
+           deflat = float(request.args.get('lat'))
+           deflng = float(request.args.get('lon'))
+           altitude = float('0')
+           default_location = LatLng.from_degrees(deflat, deflng)
+           args.location = default_location
+           set_location_coords(deflat, deflng, altitude)
+           print('[!] New location: {}'.format(default_location))
+    else:
+           set_location(args.location)
 
     access_token = login_ptc(args.username, args.password)
     if access_token is None:
@@ -383,4 +394,4 @@ def main():
         print "Completed:",((steps+(pos*.25)-.25)/steplimit)*100,"%"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
