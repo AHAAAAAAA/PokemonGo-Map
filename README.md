@@ -14,4 +14,5 @@ Currently really rough, shows duplicate pokemon and requires refreshing page a l
 `python example.py -u myUsername -p myPassword -l "Boulder, CO" -st 5`
 
 -st: steps to take
+
 -l: location, anything that Google Maps understands.
