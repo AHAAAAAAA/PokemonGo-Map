@@ -214,7 +214,7 @@ def login_ptc(username, password):
     access_token = re.sub('.*access_token=', '', access_token)
 
     return access_token
-def heartbeat(api_endpoint, access_token, response):
+def heartbeat(service,api_endpoint, access_token, response):
     m4 = pokemon_pb2.RequestEnvelop.Requests()
     m = pokemon_pb2.RequestEnvelop.MessageSingleInt()
     m.f1 = int(time.time() * 1000)
@@ -233,6 +233,7 @@ def heartbeat(api_endpoint, access_token, response):
     m.long = COORDS_LONGITUDE
     m1.message = m.SerializeToString()
     response = get_profile(
+        service,
         access_token,
         api_endpoint,
         response.unknown7,
@@ -341,13 +342,13 @@ def main():
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
         parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
-        h = heartbeat(api_endpoint, access_token, response)
+        h = heartbeat(args.auth_service, api_endpoint, access_token, response)
         hs = [h]
         seen = set([])
         for child in parent.children():
             latlng = LatLng.from_point(Cell(child).get_center())
             set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
-            hs.append(heartbeat(api_endpoint, access_token, response))
+            hs.append(heartbeat(args.auth_service, api_endpoint, access_token, response))
         set_location_coords(original_lat, original_long, 0)
         visible = []
         for hh in hs:
