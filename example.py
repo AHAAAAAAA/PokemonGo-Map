@@ -3,11 +3,12 @@
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
-import requests
+import os
 import re
 import struct
 import json
 import time
+import requests
 import argparse
 import threading
 
@@ -312,7 +313,7 @@ def get_heartbeat(api_endpoint, access_token, response):
 def main():
     debug("main")
 
-    pokemonsJSON = json.load(open('pokemon.json'))
+    pokemonsJSON = json.load(open(os.getcwd() + '/pokemon.json'))
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username", help="PTC Username", required=True)
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
@@ -321,6 +322,7 @@ def main():
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
+
     default_location = args.location
     if args.debug:
         global DEBUG
@@ -458,11 +460,9 @@ def register_background_thread(initial_registration=False):
 
 def create_app():
     app = Flask(__name__, template_folder="templates")
-    app.config['GOOGLEMAPS_KEY'] = GOOGLEMAPS_KEY
 
     GoogleMaps(app, key=GOOGLEMAPS_KEY)
     return app
-
 
 app = create_app()
 
