@@ -45,6 +45,12 @@ app.config['GOOGLEMAPS_KEY'] = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
 # you can also pass key here
 GoogleMaps(app, key="AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4")
 
+def time_left(ms):
+    s = ms / 1000
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    return h, m, s
+
 def encode(cellid):
     output = []
     encoder._VarintEncoder()(output.append, cellid)
@@ -341,7 +347,10 @@ def main():
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            pokemons.append([poke.pokemon.PokemonId, pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], poke.Latitude, poke.Longitude])
+            time_to_hidden = poke.TimeTillHiddenMs
+            left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
+            label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
         offset = (steps*default_step)
         if pos is 1:
             set_location_coords(latlng.lat().degrees+offset, latlng.lng().degrees-offset, 0)
