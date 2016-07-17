@@ -37,7 +37,7 @@ latorg, longorg = 0, 0
 app = Flask(__name__, template_folder="templates")
 default_location = None
 default_radius = 10
-default_step = 0.002
+default_step = 0.001
 directions = {'N':0, 'NE':45, 'E':90, 'SE':135, 'S':180, 'SW':225, 'W':270, 'NW':315}
 access_token = None
 api_endpoint = None
@@ -122,7 +122,7 @@ def api_req(api_endpoint, access_token, *mehs, **kw):
             print("Response:")
             print(p_ret)
             print("\n\n")
-        time.sleep(2.1)
+        time.sleep(0.51)
         return p_ret
     except Exception, e:
         if DEBUG:
@@ -224,10 +224,8 @@ def heartbeat(api_endpoint, access_token, response):
         m4,
         pokemon_pb2.RequestEnvelop.Requests(),
         m5)
-    try:
-        payload = response.payload[0]
-    except requests.exceptions.RequestException:
-        return render_template('nope.html', fullmap=fullmap)  
+    if response is None:
+        return
     payload = response.payload[0]
     heartbeat = pokemon_pb2.ResponseEnvelop.HeartbeatPayload()
     heartbeat.ParseFromString(payload)
@@ -312,9 +310,8 @@ def main():
         print('[-] Ooops...')
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     steps = 0
-    parity = 1
     steplimit = int(args.step_limit)
-
+    pos = 1
     while steps<steplimit:
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
@@ -329,12 +326,15 @@ def main():
         set_location_coords(original_lat, original_long, 0)
         visible = []
         for hh in hs:
-            for cell in hh.cells:
-                for wild in cell.WildPokemon:
-                    hash = wild.SpawnPointId + ':' + str(wild.pokemon.PokemonId)
-                    if (hash not in seen):
-                        visible.append(wild)
-                        seen.add(hash)
+            try:
+                for cell in hh.cells:
+                    for wild in cell.WildPokemon:
+                        hash = wild.SpawnPointId + ':' + str(wild.pokemon.PokemonId)
+                        if (hash not in seen):
+                            visible.append(wild)
+                            seen.add(hash)
+            except AttributeError:
+                break
         for poke in visible:
             other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
             diff = other - origin
@@ -342,13 +342,20 @@ def main():
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
             pokemons.append([poke.pokemon.PokemonId, pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], poke.Latitude, poke.Longitude])
-        set_location_coords(latlng.lat().degrees+(parity*(steps*default_step)), latlng.lng().degrees+(parity*(steps*default_step)), 0)
-        if parity:
-            steps += 1
-        parity *= -1
+        offset = (steps*default_step)
+        if pos is 1:
+            set_location_coords(latlng.lat().degrees+offset, latlng.lng().degrees-offset, 0)
+        elif pos is 2:
+            set_location_coords(latlng.lat().degrees+offset, latlng.lng().degrees+offset, 0)
+        elif pos is 3:
+            set_location_coords(latlng.lat().degrees-offset, latlng.lng().degrees-offset, 0)
+        elif pos is 4:
+            set_location_coords(latlng.lat().degrees-offset, latlng.lng().degrees+offset, 0)
+            pos = 0
+            steps+=1
+        pos += 1
         latorg, longorg = latlng.lat().degrees, latlng.lng().degrees
-        if parity:
-            print "Completed:",steps,"steps out of", steplimit
+        print "Completed:",((steps+(pos*.25)-.25)/steplimit)*100,"%"
 
 if __name__ == "__main__":
     app.run(debug=True)
