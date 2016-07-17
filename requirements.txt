@@ -3,7 +3,6 @@ protobuf==2.6.1
 requests==2.10.0
 flask-googlemaps==0.2.0
 s2sphere==0.2.4
-requests==2.10.0
 flask==0.11.1
 cffi==1.7.0
 cryptography==1.4
