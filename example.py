@@ -2,8 +2,7 @@
 
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map, icons
-import math
+from flask_googlemaps import Map
 import requests
 import re
 import struct
@@ -237,7 +236,13 @@ def login_ptc(username, password):
     r = SESSION.get(LOGIN_URL, headers=head)
     if r is None:
         return render_template('nope.html', fullmap=fullmap)
-    jdata = json.loads(r.content)
+
+    try:
+        jdata = json.loads(r.content)
+    except ValueError as e:
+        debug("login_ptc: could not decode JSON from {}".format(r.content))
+        return None
+
     data = {
         'lt': jdata['lt'],
         'execution': jdata['execution'],
@@ -415,7 +420,7 @@ def main():
             pos = 0
             steps += 1
         pos += 1
-        print "Completed:", ((steps + (pos * .25) - .25) / steplimit) * 100, "%"
+        print("Completed:", ((steps + (pos * .25) - .25) / steplimit) * 100, "%")
 
         register_background_thread()
 
@@ -464,7 +469,6 @@ app = create_app()
 
 @app.route('/')
 def fullmap():
-    main()
     pokeMarkers = []
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
