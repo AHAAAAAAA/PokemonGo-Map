@@ -33,12 +33,9 @@ COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
 FLOAT_LAT = 0
 FLOAT_LONG = 0
-latorg, longorg = 0, 0
 app = Flask(__name__, template_folder="templates")
-default_location = None
-default_radius = 10
+deflat, deflng = 0, 0
 default_step = 0.001
-directions = {'N':0, 'NE':45, 'E':90, 'SE':135, 'S':180, 'SW':225, 'W':270, 'NW':315}
 access_token = None
 api_endpoint = None
 pokemons = []
@@ -75,6 +72,9 @@ def set_location(location_name):
     loc = geolocator.geocode(location_name)
     print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
     print('[!] lat/long/alt: {} {} {}'.format(loc.latitude, loc.longitude, loc.altitude))
+    global deflat
+    global deflng
+    deflat, deflng = loc.latitude, loc.longitude
     set_location_coords(loc.latitude, loc.longitude, loc.altitude) 
 def set_location_coords(lat, long, alt):
     global COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE
@@ -253,8 +253,8 @@ def fullmap():
             "position:absolute;"
             "z-index:200;"
         ),
-        lat=40.018097,
-        lng=-105.2729077,
+        lat=deflat,
+        lng=deflng,
         markers=pokeMarkers,
         zoom="15"
     )
@@ -354,7 +354,6 @@ def main():
             pos = 0
             steps+=1
         pos += 1
-        latorg, longorg = latlng.lat().degrees, latlng.lng().degrees
         print "Completed:",((steps+(pos*.25)-.25)/steplimit)*100,"%"
 
 if __name__ == "__main__":
