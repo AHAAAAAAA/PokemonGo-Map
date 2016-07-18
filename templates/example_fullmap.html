@@ -16,10 +16,10 @@
                         var disappearsAt = new Date(parseInt(time)*1000);
                         if(true){ // difference between disappears-at time and now. Negative if passed
                             var now = new Date();
-                            var difference = Math.abs(disappearsAt - now);
+                            var difference = Math.abs(disappearsAt now);
                             var hours = Math.floor(difference / 36e5);
-                            var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
-                            var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
+                            var minutes = Math.floor((difference (hours * 36e5)) / 6e4);
+                            var seconds = Math.floor((difference (hours * 36e5) (minutes * 6e4)) / 1e3);
                             if(disappearsAt < now){
                                 timestring += "-";
                             }
@@ -52,7 +52,5 @@
     <body>
         <h1>Pokemon GO Map</h1>
         {{ fullmap.html }}
-
     </body>
 </html>
-
