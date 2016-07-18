@@ -325,6 +325,8 @@ def get_heartbeat(api_endpoint, access_token, response):
 
 def main():
     debug("main")
+    global pokemons
+    pokemons = []  # Reset for each threaded run to clean old results
 
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
@@ -345,7 +347,10 @@ def main():
         DEBUG = True
         print('[!] DEBUG mode on')
 
-    retrying_set_location(args.location)
+    # only get location for first run
+    if not (FLOAT_LAT and FLOAT_LONG):
+      print('[+] Getting initial location')
+      retrying_set_location(args.location)
 
     access_token = login_ptc(args.username, args.password)
     if access_token is None:
