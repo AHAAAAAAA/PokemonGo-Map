@@ -705,7 +705,7 @@ app = create_app()
 @app.route('/')
 def fullmap():
     pokeMarkers = [{
-        'icon': icons.dot.red,
+        'icon': icons.dots.red,
         'lat': deflat,
         'lng': deflng,
         'infobox': "Start position"
