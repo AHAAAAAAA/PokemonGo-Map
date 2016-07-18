@@ -1,1 +1,1 @@
-web: python example.py -u m4lysh -p villya -l "Niecala, Poznan" -st 4
+web: python example.py -u $USER -p $PASS -l $LOCATION -st $STEPS
