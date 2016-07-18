@@ -31,7 +31,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 | -P, --port  | Set web server listening port    |
 
 
-#### Once the terminal reads 100 naivagate to http://localhost:5000 in your browser to view the map
+#### Once the terminal reads 100% naivagate to http://localhost:5000 in your browser to view the map
 
 **Note:**
 5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)
