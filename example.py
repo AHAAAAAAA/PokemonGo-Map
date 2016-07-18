@@ -371,14 +371,7 @@ def get_token(service, username, password):
     else:
         return global_token
 
-
-def main():
-    debug("main")
-
-    full_path = os.path.realpath(__file__)
-    path, filename = os.path.split(full_path)
-    pokemonsJSON = json.load(open(path + '/pokemon.json'))
-
+def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-a", "--auth_service", help="Auth Service", default="ptc")
     parser.add_argument("-u", "--username", help="Username", required=True)
@@ -392,8 +385,19 @@ def main():
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.add_argument("-dp", "--display-pokestop", help="Display Pokestop", action='store_true', default=False)
     parser.add_argument("-dg", "--display-gym", help="Display Gym", action='store_true', default=False)
+    parser.add_argument("-H", "--host", help="Set web server listening host", default="127.0.0.1")
+    parser.add_argument("-P", "--port", type=int, help="Set web server listening port", default=5000)
     parser.set_defaults(DEBUG=True)
-    args = parser.parse_args()
+    return parser.parse_args()
+
+def main():
+    debug("main")
+
+    full_path = os.path.realpath(__file__)
+    path, filename = os.path.split(full_path)
+    pokemonsJSON = json.load(open(path + '/pokemon.json'))
+
+    args = get_args()
 
     if args.auth_service not in ['ptc', 'google']:
       print('[!] Invalid Auth service specified')
@@ -618,5 +622,6 @@ def fullmap():
 
 
 if __name__ == "__main__":
+    args = get_args()
     register_background_thread(initial_registration=True)
-    app.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True, host=args.host, port=args.port)
