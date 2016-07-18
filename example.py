@@ -735,7 +735,7 @@ def fullmap():
 
 def get_pokemarkers():
     pokeMarkers = [{
-        'icon': icons.dots.red,
+        'icon': "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
         'lat': deflat,
         'lng': deflng,
         'infobox': "Start position"
