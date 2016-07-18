@@ -8,6 +8,8 @@
 
 @import "tools/tools.mixins";
 
+@import "components-vendor/skel";
+
 @import "generic/generic.base";
 @import "generic/generic.normalize";
 @import "generic/generic.reset";
@@ -15,7 +17,5 @@
 @import "elements/elements.forms";
 
 //@import "objects/objects.";
-
-@import "components-vendor/skel";
 
 @import "components/components.page";
