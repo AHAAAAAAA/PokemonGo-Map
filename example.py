@@ -296,21 +296,17 @@ def main():
         print('[!] DEBUG mode on')
 
     if request.args.get('lat') is not None:
-        global deflat
-        global deflng
-        deflat = float(request.args.get('lat'))
-        deflng = float(request.args.get('lon'))
-        altitude = float('0')
-        default_location = LatLng.from_degrees(deflat, deflng)
-        args.location = default_location
-        set_location_coords(deflat, deflng, altitude)
+           global deflat
+           global deflng
+           deflat = float(request.args.get('lat'))
+           deflng = float(request.args.get('lon'))
+           altitude = float('0')
+           default_location = LatLng.from_degrees(deflat, deflng)
+           args.location = default_location
+           set_location_coords(deflat, deflng, altitude)
+           print('[!] New location: {}'.format(default_location))
     else:
-        set_location(args.location)
-
-    if request.args.get('u') is not None:
-        args.username = request.args.get('u')
-    if request.args.get('p') is not None:
-        args.password = request.args.get('p')
+           set_location(args.location)
 
     access_token = login_ptc(args.username, args.password)
     if access_token is None:
