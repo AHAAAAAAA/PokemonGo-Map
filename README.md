@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/1760334/16904125/5621e800-4c4d-11e6-9906-55cfd778fd27.png">
+<img src="https://cloud.githubusercontent.com/assets/1760334/16904125/5621e800-4c4d-11e6-9906-55cfd778fd27.png">
 </p>
 
 # PokemonGo Map
@@ -15,13 +15,24 @@ Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
 # Usage
 `python example.py -u myUsername -p myPassword -l "Boulder, CO" -st 5`
 
--st: steps to take
-
--l: location, anything that Google Maps understands.
+| Flag | Description                             | 
+|------|-----------------------------------------| 
+| -u   | Username                                | 
+| -p   | Password                                | 
+| -l   | Any location Google Maps can understand | 
+| -st  | Steps to take                           | 
+| -i, --ignore | Comma-separated list of Pokémon to ignore |
 
 # FAQ
 
-* Do I need Python 2.7? Yes! Can I use Python 3.x? No!
+`Exception, e <-`
+`Invalid syntax.`
+* You are using python 3, download python 2.7 instead.
+
+`pip or python is not recognized as an internal or external command`
+
+* replace pip with C:\Python27\Scripts\pip
+* replace python with C:\Python27\python
 
 * Can I sign in with Google? Not yet, we're working on it, until then get a Trainer Club account
 

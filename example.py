@@ -26,6 +26,7 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
+from transform import *
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -43,6 +44,8 @@ SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
 
+global_token = None
+access_token = None
 DEBUG = True
 VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
 COORDS_LATITUDE = 0
@@ -52,7 +55,6 @@ FLOAT_LAT = 0
 FLOAT_LONG = 0
 deflat, deflng = 0, 0
 default_step = 0.001
-access_token = None
 api_endpoint = None
 pokemons = []
 gyms = []
@@ -326,6 +328,24 @@ def get_heartbeat(service, api_endpoint, access_token, response):
     heartbeat.ParseFromString(payload)
     return heartbeat
 
+
+def get_token(service, username, password):
+    """
+    Get token if it's not None
+    :return:
+    :rtype:
+    """
+    global global_token
+    if global_token is None:
+        if service == 'ptc':
+            global_token = login_ptc(username, password)
+        else:
+            global_token = login_google(username, password)
+        return global_token
+    else:
+        return global_token
+
+
 def main():
     debug("main")
 
@@ -339,15 +359,16 @@ def main():
     parser.add_argument("-p", "--password", help="Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
+    parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
+    parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
-
-    default_location = args.location
 
     if args.auth_service not in ['ptc', 'google']:
       print('[!] Invalid Auth service specified')
       return
+
     if args.debug:
         global DEBUG
         DEBUG = True
@@ -355,10 +376,7 @@ def main():
 
     retrying_set_location(args.location)
 
-    if args.auth_service == 'ptc':
-        access_token = login_ptc(args.username, args.password)
-    else:
-        access_token = login_google(args.username, args.password)
+    access_token = get_token(args.auth_service, args.username, args.password)
     if access_token is None:
         print('[-] Wrong username/password')
         return
@@ -383,7 +401,7 @@ def main():
     print('[+] Username: {}'.format(profile.profile.username))
 
     creation_time = datetime.fromtimestamp(int(profile.profile.creation_time) / 1000)
-    print('[+] You are playing Pokemon Go since: {}'.format(
+    print('[+] You started playing Pokemon Go on: {}'.format(
         creation_time.strftime('%Y-%m-%d %H:%M:%S'),
     ))
 
@@ -393,6 +411,11 @@ def main():
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     steps = 0
     steplimit = int(args.step_limit)
+
+    ignore = []
+    if args.ignore:
+        ignore = [i.lower().strip() for i in args.ignore.split(',')]
+
     pos = 1
     x   = 0
     y   = 0
@@ -423,6 +446,8 @@ def main():
                     if cell.Fort:
                         for Fort in cell.Fort:
                             if Fort.Enabled == True:
+                                if args.china:
+                                    Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                                 if Fort.GymPoints:
                                     gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
                                 elif Fort.FortType:
@@ -430,6 +455,9 @@ def main():
             except AttributeError:
                 break
         for poke in visible:
+            pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
+            if args.ignore:
+                if pokename.lower() in ignore: continue
             other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
             diff = other - origin
             # print(diff)
@@ -437,9 +465,16 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            remaining = '%s remaining' % (left)
+            pid = str(poke.pokemon.PokemonId)
+            label = (
+                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
+                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                    )
+            if args.china:
+                poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
-        
+
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
             set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
@@ -449,7 +484,7 @@ def main():
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-        register_background_thread()
+    register_background_thread()
 
 
 def register_background_thread(initial_registration=False):
@@ -497,20 +532,27 @@ def fullmap():
     pokeMarkers = []
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
+        imgnum = str(pokemon[0]);
+        if len(imgnum) <= 2: imgnum = '0' + imgnum
+        if len(imgnum) <= 2: imgnum = '0' + imgnum
         pokeMarkers.append(
             {
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
                 'infobox': pokemon[1]
-            })
+                })
     for gym in gyms:
+        if gym[0] == 0: color = "white"
+        if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
+        if gym[0] == 2: color = "rgba(255, 0, 0, .1)"
+        if gym[0] == 3: color = "rgba(255, 255, 0, .1)"
         pokeMarkers.append(
             {
                 'icon': 'static/forts/'+numbertoteam[gym[0]]+'.png',
                 'lat': gym[1],
                 'lng': gym[2],
-                'infobox': "Gym owned by team " + numbertoteam[gym[0]]
+                'infobox': "<div style='background: "+color+"'>Gym owned by Team " + numbertoteam[gym[0]]
             })
     for stop in pokestops:
         pokeMarkers.append(
@@ -540,4 +582,4 @@ def fullmap():
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
