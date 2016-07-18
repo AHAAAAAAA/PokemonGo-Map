@@ -409,12 +409,8 @@ def args_from_file(arg):
     arg.password = sett[2]
     arg.location = sett[3]
     arg.step_limit = int(sett[4])
-    ignore = sett[5].split(',')
-    while 'None' in ignore: ignore.remove('None')   
-    arg.ignore = ignore
-    only = sett[6].split(',')
-    while 'None' in only: only.remove('None')  
-    arg.only = only
+    arg.ignore = sett[5]
+    arg.only = sett[6]
     arg.debug = sett[7] in ['true', 1, 'True']
     arg.china = sett[8] in ['true', 1, 'True']
     arg.display_pokestop = sett[9] in ['true', 1, 'True']
