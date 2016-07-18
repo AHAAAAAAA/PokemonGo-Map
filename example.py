@@ -165,7 +165,7 @@ def retrying_set_location(location_name):
 def set_location(location_name):
     geolocator = GoogleV3()
     prog = re.compile('^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$')
-    if (prog.match(location_name)):
+    if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
     else:
@@ -770,6 +770,7 @@ def fullmap():
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=FLOAT_LAT,
         lng=FLOAT_LONG,
+        markers=pokeMarkers,
         zoom='15', )
     return render_template('example_fullmap.html', fullmap=fullmap)
 
