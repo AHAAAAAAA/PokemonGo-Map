@@ -355,7 +355,8 @@ def main():
         print('[!] DEBUG mode on')
 
     retrying_set_location(args.location)
-
+    global auto_refresh
+    auto_refresh = int(args.auto_refresh) * 1000
     access_token = get_token(args.username, args.password)
     if access_token is None:
         print('[-] Wrong username/password')
@@ -374,9 +375,6 @@ def main():
         raise Exception("Could not get profile")
 
     print('[+] Login successful')
-
-    global auto_refresh
-    auto_refresh = int(args.auto_refresh) * 1000
 
     payload = profile_response.payload[0]
     profile = pokemon_pb2.ResponseEnvelop.ProfilePayload()
@@ -510,9 +508,30 @@ def create_app():
 app = create_app()
 
 
+@app.route('/getData')
+def getData():
+    """ Gets all the PokeMarkers via REST """
+    return json.dumps(getPokeMarkers())
+
+@app.route('/getConfig')
+def getConfig():
+    """ Gets the settings for the Google Maps via REST"""
+    center = {
+        'lat' : deflat,
+        'lng' : deflng,
+        'zoom' : 15,
+        'identifier' : "fullmap"
+    }
+    return json.dumps(center)
+
 @app.route('/')
 def fullmap():
+    return render_template('example_fullmap.html', fullmap=getMap(), auto_refresh=auto_refresh)
+
+def getPokeMarkers():
+    """ Generates the needed data for the placement of the location markers """
     pokeMarkers = []
+
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
         imgnum = str(pokemon[0]);
@@ -545,8 +564,11 @@ def fullmap():
                 'lng': stop[1],
                 'infobox': "Pokestop"
             })
+
+    return pokeMarkers
+
+def getMap():
     fullmap = Map(
-        identifier="fullmap",
         style=(
             "height:100%;"
             "width:100%;"
@@ -555,13 +577,13 @@ def fullmap():
             "position:absolute;"
             "z-index:200;"
         ),
+        identifier="fullmap",
         lat=deflat,
         lng=deflng,
-        markers=pokeMarkers,
-        zoom="15"
+        zoom="15",
+        markers=getPokeMarkers()
     )
-    return render_template('example_fullmap.html', fullmap=fullmap, auto_refresh=auto_refresh)
-
+    return fullmap
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
