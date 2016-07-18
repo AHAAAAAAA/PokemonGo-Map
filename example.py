@@ -341,7 +341,7 @@ def main():
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     group.add_argument("-o", "--only", help="Only look for these pokemon (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
