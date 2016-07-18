@@ -35,6 +35,8 @@ LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
 PTC_CLIENT_SECRET = 'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
 GOOGLEMAPS_KEY = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
 
+proxyDict = { "http" : "", "https" : "", "ftp" : ""}
+
 SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
@@ -123,7 +125,7 @@ def retrying_set_location(location_name):
 
 
 def set_location(location_name):
-    geolocator = GoogleV3()
+    geolocator = GoogleV3(proxies=proxyDict)
     loc = geolocator.geocode(location_name)
     print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
     print('[!] lat/long/alt: {} {} {}'.format(loc.latitude, loc.longitude, loc.altitude))
@@ -183,7 +185,7 @@ def api_req(api_endpoint, access_token, *args, **kwargs):
 
     protobuf = p_req.SerializeToString()
 
-    r = SESSION.post(api_endpoint, data=protobuf, verify=False)
+    r = SESSION.post(api_endpoint, data=protobuf, verify=False, proxies=proxyDict)
 
     p_ret = pokemon_pb2.ResponseEnvelop()
     p_ret.ParseFromString(r.content)
@@ -239,7 +241,7 @@ def get_profile(access_token, api, useauth, *reqq):
 def login_ptc(username, password):
     print('[!] login for: {}'.format(username))
     head = {'User-Agent': 'Niantic App'}
-    r = SESSION.get(LOGIN_URL, headers=head)
+    r = SESSION.get(LOGIN_URL, headers=head, proxies=proxyDict)
     if r is None:
         return render_template('nope.html', fullmap=fullmap)
 
@@ -256,7 +258,7 @@ def login_ptc(username, password):
         'username': username,
         'password': password,
     }
-    r1 = SESSION.post(LOGIN_URL, data=data, headers=head)
+    r1 = SESSION.post(LOGIN_URL, data=data, headers=head, proxies=proxyDict)
 
     ticket = None
     try:
@@ -273,7 +275,7 @@ def login_ptc(username, password):
         'grant_type': 'refresh_token',
         'code': ticket,
     }
-    r2 = SESSION.post(LOGIN_OAUTH, data=data1)
+    r2 = SESSION.post(LOGIN_OAUTH, data=data1, proxies=proxyDict)
     access_token = re.sub('&expires.*', '', r2.content)
     access_token = re.sub('.*access_token=', '', access_token)
 
@@ -344,8 +346,16 @@ def main():
     parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
+    parser.add_argument("-proxy", "--proxy", help="Proxy Server Address")
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
+	
+    proxyDict ["http"] = args.proxy
+    proxyDict["https"] = args.proxy
+    proxyDict["ftp"] = args.proxy
+	
+    print("[+] Using Proxy: " + args.proxy)
+    print(args.proxy)
 
     if args.debug:
         global DEBUG
@@ -390,9 +400,8 @@ def main():
     steps = 0
     steplimit = int(args.step_limit)
 
-    ignore = []
     if args.ignore:
-        ignore = [i.lower().strip() for i in args.ignore.split(',')]
+        ignore = [i.lower() for i in args.ignore.split(',')]
 
     pos = 1
     x   = 0
@@ -443,12 +452,7 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            remaining = '%s remaining' % (left)
-            pid = str(poke.pokemon.PokemonId)
-            label = (
-                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
-                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
-                    )
+            label = '<b>%s</b> [%s remaining]' % (pokename, left)
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
@@ -518,8 +522,8 @@ def fullmap():
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': pokemon[1]
-                })
+                'infobox': '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon[0])+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon[0])+'</a></small></div><center>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center><img height=\'100\' width=\'100\' src=\'http://assets.pokemon.com/assets/cms2/img/pokedex/full/'+imgnum+'.png\'>'
+            })
     for gym in gyms:
         if gym[0] == 0: color = "white"
         if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
