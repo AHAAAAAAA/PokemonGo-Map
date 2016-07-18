@@ -12,6 +12,7 @@ import time
 import requests
 import argparse
 import threading
+import copy
 
 import werkzeug.serving
 
@@ -52,8 +53,11 @@ deflat, deflng = 0, 0
 default_step = 0.001
 api_endpoint = None
 pokemons = []
+pokemons_queue = []
 gyms = []
+gyms_queue = []
 pokestops = []
+pokestops_queue = []
 numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
 
 
@@ -390,9 +394,12 @@ def main():
     steps = 0
     steplimit = int(args.step_limit)
 
-    ignore = []
     if args.ignore:
-        ignore = [i.lower().strip() for i in args.ignore.split(',')]
+        ignore = [i.lower() for i in args.ignore.split(',')]
+
+    pokemons_queue[:] = []
+    gyms_queue[:] = []
+    pokestops_queue[:] = []
 
     pos = 1
     x   = 0
@@ -427,9 +434,9 @@ def main():
                                 if args.china:
                                     Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                                 if Fort.GymPoints:
-                                    gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
+                                    gyms_queue.append([Fort.Team, Fort.Latitude, Fort.Longitude])
                                 elif Fort.FortType:
-                                    pokestops.append([Fort.Latitude, Fort.Longitude])
+                                    pokestops_queue.append([Fort.Latitude, Fort.Longitude])
             except AttributeError:
                 break
         for poke in visible:
@@ -451,7 +458,7 @@ def main():
                     )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
-            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
+            pokemons_queue.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
 
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
@@ -461,6 +468,10 @@ def main():
         x, y = x+dx, y+dy
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
+
+    pokemons[:] = copy.deepcopy(pokemons_queue)
+    gyms[:] = copy.deepcopy(gyms_queue)
+    pokestops[:] = copy.deepcopy(pokestops_queue)
 
     register_background_thread()
 
