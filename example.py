@@ -420,7 +420,7 @@ def main():
         
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
-            set_location_coords((x * 0.001) + deflat, (y * 0.001 ) + deflng, 0)
+            set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
         if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
             dx, dy = -dy, dx
         x, y = x+dx, y+dy
