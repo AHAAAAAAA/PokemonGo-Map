@@ -117,7 +117,7 @@ def retrying_set_location(location_name):
             return
         except (GeocoderTimedOut, GeocoderServiceError) as e:
             debug("retrying_set_location: geocoder exception ({}), retrying".format(str(e)))
-        time.sleep(1)
+        time.sleep(1.25)
 
 
 def set_location(location_name):
@@ -376,7 +376,7 @@ def main():
     y   = 0
     dx  = 0
     dy  = -1
-    while steps < steplimit:
+    while steps < steplimit**2:
         debug("looping: step {} of {}".format(steps, steplimit**2))
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
