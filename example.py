@@ -390,8 +390,9 @@ def main():
     steps = 0
     steplimit = int(args.step_limit)
 
+    ignore = []
     if args.ignore:
-        ignore = [i.lower() for i in args.ignore.split(',')]
+        ignore = [i.lower().strip() for i in args.ignore.split(',')]
 
     pos = 1
     x   = 0
