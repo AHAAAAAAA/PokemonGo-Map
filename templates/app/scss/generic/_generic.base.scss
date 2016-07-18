@@ -1,0 +1,130 @@
+// =============================================================================
+// BASE STYLES
+// =============================================================================
+// A base style is applied to an element using an element selector,
+// a descendent selector, or a child selector, along with any pseudo-classes.
+// It doesn’t include any class or ID selectors.
+//
+// It is defining the default styling for how that element should look in all
+// occurrences on the page.
+//
+// Base styles include setting heading sizes, default link styles,
+// default font styles, and body backgrounds.
+// -----------------------------------------------------------------------------
+
+
+//apply a natural box layout model to all elements
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+button,
+input,
+select,
+textarea {
+  color: $color-body-copy;
+}
+
+button,
+input,
+select,
+textarea {
+    color: $color-body-copy;
+    // -webkit-appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+html,
+body {
+  width: 100%;
+  overflow: auto;
+  -webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: 62.5%; // Sets up the base 10px font size
+  height: 100%;
+}
+
+body {
+  // height: 100%; // height on body disables correct positioning of select dropdowns. They are positioned absolutely inside the body element.
+	background-color: #000;
+  line-height: 1.6;
+  // line-height: 1.7;
+  color: $color-body-copy;
+  //@include avenir-roman;
+  @include font-size(1.4);
+  // overflow-x: hidden;
+}
+
+img {
+  vertical-align: middle;
+}
+
+ul {
+
+}
+
+li {
+
+}
+
+a {
+	&:link,
+	&:visited {
+
+	}
+	&:hover,
+	&:focus,
+	&:active {
+
+	}
+}
+
+p {
+  margin-top: 0;
+  padding-bottom: 20px;
+  line-height: 1.8;
+  // letter-spacing: $letter-spacing-small;
+
+  a {
+    &:link,
+    &:visited {
+      //color: $blue-bright;
+      text-decoration: none;
+      //border-bottom: 1px solid $blue-bright;
+    }
+    &:hover,
+    &:focus,
+    &:active {
+
+    }
+  }
+}
+
+
+::-webkit-input-placeholder,
+::-moz-placeholder,
+:-ms-input-placeholder {
+  color: $grey-4;
+  text-overflow: ellipsis;
+}
+
+input[placeholder] {
+  text-overflow: ellipsis;
+}
+
+// align checkboxes, radios, text inputs with their label
+input[type="radio"] {
+  vertical-align: text-bottom;
+}
+
+input[type="checkbox"] {
+  vertical-align: bottom;
+  *vertical-align: baseline;
+}
