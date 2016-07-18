@@ -619,4 +619,4 @@ def fullmap():
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
-    app.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True, host="0.0.0.0")
