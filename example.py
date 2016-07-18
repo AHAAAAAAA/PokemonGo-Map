@@ -48,6 +48,7 @@ COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
 FLOAT_LAT = 0
 FLOAT_LONG = 0
+auto_refresh = 0
 deflat, deflng = 0, 0
 default_step = 0.001
 api_endpoint = None
@@ -344,6 +345,7 @@ def main():
     parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
+    parser.add_argument("-ar", "--auto_refresh", help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
@@ -372,6 +374,9 @@ def main():
         raise Exception("Could not get profile")
 
     print('[+] Login successful')
+
+    global auto_refresh
+    auto_refresh = int(args.auto_refresh) * 1000
 
     payload = profile_response.payload[0]
     profile = pokemon_pb2.ResponseEnvelop.ProfilePayload()
@@ -555,7 +560,7 @@ def fullmap():
         markers=pokeMarkers,
         zoom="15"
     )
-    return render_template('example_fullmap.html', fullmap=fullmap)
+    return render_template('example_fullmap.html', fullmap=fullmap, auto_refresh=auto_refresh)
 
 
 if __name__ == "__main__":
