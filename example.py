@@ -433,7 +433,7 @@ def main():
     args = get_args()
      
     if args.settings:
-        args_from_file(args)
+        args = args_from_file(args)
 
     if args.auth_service not in ['ptc', 'google']:
       print('[!] Invalid Auth service specified')
