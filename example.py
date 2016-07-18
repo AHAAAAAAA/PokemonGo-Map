@@ -41,15 +41,15 @@ API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
 LOGIN_URL = \
     'https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize'
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
-
-with open('credentials.json') as file:
-	credentials = json.load(file)
-
-PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
-ANDROID_ID = credentials.get('android_id', None)
-SERVICE = credentials.get('service', None)
-CLIENT_SIG = credentials.get('client_sig', None)
-GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
+APP = 'com.nianticlabs.pokemongo'
+PTC_CLIENT_SECRET = \
+    'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
+ANDROID_ID = '9774d56d682e549c'
+SERVICE = \
+    'audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com'
+APP = 'com.nianticlabs.pokemongo'
+CLIENT_SIG = '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
+GOOGLEMAPS_KEY = 'AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4'
 
 SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
@@ -70,8 +70,8 @@ auto_refresh = 0
 default_step = 0.001
 api_endpoint = None
 pokemons = {}
-gyms = []
-pokestops = []
+gyms = {}
+pokestops = {}
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
     0: 'Gym',
     1: 'Mystic',
@@ -553,6 +553,8 @@ def main():
 
     api_endpoint, access_token, profile_response = login(args)
 
+    clear_stale_pokemons()
+
     steplimit = int(args.step_limit)
 
     ignore = []
@@ -561,8 +563,6 @@ def main():
         ignore = [i.lower().strip() for i in args.ignore.split(',')]
     elif args.only:
         only = [i.lower().strip() for i in args.only.split(',')]
-
-    clear_stale_pokemons()
 
     pos = 1
     x = 0
@@ -635,12 +635,13 @@ def process_step(args, api_endpoint, access_token, profile_response,
                                 (Fort.Latitude, Fort.Longitude) = \
 transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                             if Fort.GymPoints and args.display_gym:
-                                gyms.append([Fort.Team, Fort.Latitude,
-                                             Fort.Longitude])
+                                gyms[Fort.FortId] = [Fort.Team, Fort.Latitude,
+                                                     Fort.Longitude]
+
                             elif Fort.FortType \
                                 and args.display_pokestop:
-                                pokestops.append([Fort.Latitude,
-                                                  Fort.Longitude])
+                                pokestops[Fort.FortId] = [Fort.Latitude,
+                                                          Fort.Longitude]
         except AttributeError:
             break
 
@@ -748,6 +749,8 @@ def config():
 
 @app.route('/')
 def fullmap():
+    clear_stale_pokemons()
+
     return render_template(
         'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
 
@@ -777,9 +780,8 @@ def get_pokemarkers():
 
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
-        disappear_time_formatted = datetime.fromtimestamp(pokemon[
+        pokemon['disappear_time_formatted'] = datetime.fromtimestamp(pokemon[
             'disappear_time']).strftime("%H:%M:%S")
-        pokemon['disappears_at'] = 'disappears at %s' % (disappear_time_formatted)
 
         LABEL_TMPL = u'''
 <div style='position:float; top:0;left:0;'>
@@ -793,19 +795,21 @@ def get_pokemarkers():
     <span> - </span>
     <b>{name}</b>
 </div>
-<center>{disappear_at}</center>
+<center> disappears at {disappear_time_formatted}</center>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
         label = label.replace('\n', '')
 
-        pokeMarkers.append( {
-                'icon': 'static/icons/%d.png' % pokemon["id"],
-                'lat': pokemon["lat"],
-                'lng': pokemon["lng"],
-                'infobox': label
-                })
-    for gym in gyms:
+        pokeMarkers.append({
+            'icon': 'static/icons/%d.png' % pokemon["id"],
+            'lat': pokemon["lat"],
+            'lng': pokemon["lng"],
+            'infobox': label
+        })
+
+    for gym_key in gyms:
+        gym = gyms[gym_key]
         if gym[0] == 0:
             color = 'white'
         if gym[0] == 1:
@@ -821,7 +825,8 @@ def get_pokemarkers():
             'infobox': "<div style='background: " + color +
             "'>Gym owned by Team " + numbertoteam[gym[0]],
         })
-    for stop in pokestops:
+    for stop_key in pokestops:
+        stop = pokestops[stop_key]
         pokeMarkers.append({
             'icon': 'static/forts/Pstop.png',
             'lat': stop[0],
