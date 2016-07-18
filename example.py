@@ -510,9 +510,10 @@ def main():
         steps += 1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-    f = open("stats.txt", "w")
-    for poke in sorted(statsd, key=statsd.get, reverse=True):
-        print >>f, poke + " " + str(statsd[poke])
+    if args.stats:
+        f = open("stats.txt", "w")
+        for poke in sorted(statsd, key=statsd.get, reverse=True):
+            print >>f, poke + " " + str(statsd[poke])
 
     register_background_thread()
 
