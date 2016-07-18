@@ -443,7 +443,7 @@ def main():
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-        register_background_thread()
+    register_background_thread()
 
 
 def register_background_thread(initial_registration=False):
