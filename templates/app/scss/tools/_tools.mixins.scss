@@ -21,8 +21,8 @@
 
 @mixin transform($args) {
   transform:$args;
-  -ms-transform:$args; /* IE 9 */
-  -moz-transform:$args; /* Firefox lt16 */
-  -webkit-transform:$args; /* Safari, Chrome, Opera */
-  -o-transform:$args; /* Opera lt12.1 */
+  -ms-transform:$args;
+  -moz-transform:$args;
+  -webkit-transform:$args;
+  -o-transform:$args;
 }
