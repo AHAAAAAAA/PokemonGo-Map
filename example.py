@@ -319,7 +319,7 @@ def login_ptc(username, password):
     return access_token
 
 
-def get_heartbeat(api_endpoint, access_token, response):
+def get_heartbeat(service, api_endpoint, access_token, response):
     m4 = pokemon_pb2.RequestEnvelop.Requests()
     m = pokemon_pb2.RequestEnvelop.MessageSingleInt()
     m.f1 = int(time.time() * 1000)
