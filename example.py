@@ -481,7 +481,7 @@ def get_args():
     parser.add_argument(
         "-L",
         "--locale",
-        help="Locale for Pokemon names: en (default), fr",
+        help="Locale for Pokemon names: en (default), fr, de",
         default="en")
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
