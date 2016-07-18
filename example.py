@@ -39,6 +39,8 @@ SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
 
+global_token = None
+access_token = None
 DEBUG = True
 VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
 COORDS_LATITUDE = 0
@@ -48,7 +50,6 @@ FLOAT_LAT = 0
 FLOAT_LONG = 0
 deflat, deflng = 0, 0
 default_step = 0.001
-access_token = None
 api_endpoint = None
 pokemons = []
 gyms = []
@@ -313,6 +314,21 @@ def get_heartbeat(api_endpoint, access_token, response):
     heartbeat.ParseFromString(payload)
     return heartbeat
 
+
+def get_token(name, passw):
+    """
+    Get token if it's not None
+    :return:
+    :rtype:
+    """
+    global global_token
+    if global_token is None:
+        global_token = login_ptc(name, passw)
+        return global_token
+    else:
+        return global_token
+
+
 def main():
     debug("main")
 
@@ -338,7 +354,7 @@ def main():
 
     retrying_set_location(args.location)
 
-    access_token = login_ptc(args.username, args.password)
+    access_token = get_token(args.username, args.password)
     if access_token is None:
         print('[-] Wrong username/password')
         return
@@ -419,7 +435,7 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            label = '<b>%s</b> [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
@@ -433,7 +449,7 @@ def main():
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-        register_background_thread()
+    register_background_thread()
 
 
 def register_background_thread(initial_registration=False):
@@ -486,7 +502,7 @@ def fullmap():
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': pokemon[1]
+                'infobox': '<center><i>#'+str(pokemon[0])+'</i><br>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center>'
             })
     for gym in gyms:
         pokeMarkers.append(
