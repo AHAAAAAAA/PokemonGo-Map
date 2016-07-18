@@ -29,18 +29,9 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
+from settings import *
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
-LOGIN_URL = 'https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize'
-LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
-PTC_CLIENT_SECRET = 'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
-ANDROID_ID = '9774d56d682e549c'
-SERVICE= 'audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com'
-APP = 'com.nianticlabs.pokemongo'
-CLIENT_SIG = '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
-GOOGLEMAPS_KEY = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
 
 SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
@@ -502,7 +493,7 @@ def main():
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            
+
             disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
             disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
             disappears_at = 'disappears at %s' % (disappear_time_formatted)
@@ -624,4 +615,6 @@ def fullmap():
 if __name__ == "__main__":
     args = get_args()
     register_background_thread(initial_registration=True)
-    app.run(debug=True, threaded=True, host=args.host, port=args.port)
+    app.run(debug=True, threaded=True,
+            host=args.host if args.host else HOST,
+            port=args.port if args.port else PORT)
