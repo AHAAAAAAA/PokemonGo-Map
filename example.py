@@ -341,6 +341,7 @@ def main():
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
+    parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)", required=True)
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.set_defaults(DEBUG=True)
@@ -388,6 +389,7 @@ def main():
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     steps = 0
     steplimit = int(args.step_limit)
+    ignore = [i.lower() for i in args.ignore.split(',')]
     pos = 1
     x   = 0
     y   = 0
@@ -427,6 +429,8 @@ def main():
             except AttributeError:
                 break
         for poke in visible:
+            pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
+            if pokename.lower() in ignore: continue
             other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
             diff = other - origin
             # print(diff)
@@ -434,7 +438,7 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '<b>%s</b> [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            label = '<b>%s</b> [%s remaining]' % (pokename, left)
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
