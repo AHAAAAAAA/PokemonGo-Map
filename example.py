@@ -382,6 +382,7 @@ def get_token(service, username, password):
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--settings", help="Retrieve settings from file", default=False)
     parser.add_argument("-a", "--auth_service", help="Auth Service", default="ptc")
     parser.add_argument("-u", "--username", help="Username", required=True)
     parser.add_argument("-p", "--password", help="Password", required=True)
@@ -400,6 +401,29 @@ def get_args():
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
+def args_from_file(arg):
+    sett = [line.strip().split('-')[1] for line in open("settings.txt", "r")]
+    sett = [x.strip(' ') for x in sett]
+    arg.auth_service = sett[0]
+    arg.username = sett[1]
+    arg.password = sett[2]
+    arg.location = sett[3]
+    arg.step_limit = int(sett[4])
+    ignore = sett[5].split(',')
+    while 'None' in ignore: ignore.remove('None')   
+    arg.ignore = ignore
+    only = sett[6].split(',')
+    while 'None' in only: only.remove('None')  
+    arg.only = only
+    arg.debug = sett[7] in ['true', 1, 'True']
+    arg.china = sett[8] in ['true', 1, 'True']
+    arg.display_pokestop = sett[9] in ['true', 1, 'True']
+    arg.display_gym = sett[10] in ['true', 1, 'True']
+    arg.host = sett[11]
+    arg.port = int(sett[12]) 
+    arg.locale = sett[13]
+    return arg
+    
 def main():
     debug("main")
 
@@ -407,6 +431,9 @@ def main():
     path, filename = os.path.split(full_path)
 
     args = get_args()
+     
+    if args.settings:
+        args = args_from_file(args)
 
     if args.auth_service not in ['ptc', 'google']:
       print('[!] Invalid Auth service specified')

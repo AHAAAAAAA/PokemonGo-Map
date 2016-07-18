@@ -1,0 +1,14 @@
+Auth_service - ptc
+Username - 123
+Password - 456
+Location - 556
+Steplimit - 10
+Ignore These Pokemon(comma separated) - None
+Only find these pokemon(comma separated) - pudget
+Debug - False
+Coord Transformer for China - 0
+Display Pokestop - false
+Display Gym - 0
+Set web server listening host - 127.0.0.1
+Set web server listening port - 5000
+Locale for Pokemon names - en
