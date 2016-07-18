@@ -18,14 +18,14 @@
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
- }
+}
 
 html,
 button,
 input,
 select,
 textarea {
-    color: $color-body-copy;
+  color: $color-body-copy;
 }
 
 button,
@@ -47,8 +47,8 @@ body {
 }
 
 html {
-    font-size: 62.5%; // Sets up the base 10px font size
-    height: 100%;
+  font-size: 62.5%; // Sets up the base 10px font size
+  height: 100%;
 }
 
 body {
@@ -57,13 +57,13 @@ body {
   line-height: 1.6;
   // line-height: 1.7;
   color: $color-body-copy;
-  @include avenir-roman;
+  //@include avenir-roman;
   @include font-size(1.4);
   // overflow-x: hidden;
 }
 
 img {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 ul {
@@ -87,7 +87,7 @@ a {
 }
 
 p {
- 	margin-top: 0;
+  margin-top: 0;
   padding-bottom: 20px;
   line-height: 1.8;
   // letter-spacing: $letter-spacing-small;
@@ -95,9 +95,9 @@ p {
   a {
     &:link,
     &:visited {
-      color: $blue-bright;
+      //color: $blue-bright;
       text-decoration: none;
-      border-bottom: 1px solid $blue-bright;
+      //border-bottom: 1px solid $blue-bright;
     }
     &:hover,
     &:focus,
@@ -120,5 +120,11 @@ input[placeholder] {
 }
 
 // align checkboxes, radios, text inputs with their label
-input[type="radio"] { vertical-align: text-bottom; }
-input[type="checkbox"] { vertical-align: bottom; *vertical-align: baseline; }
+input[type="radio"] {
+  vertical-align: text-bottom;
+}
+
+input[type="checkbox"] {
+  vertical-align: bottom;
+  *vertical-align: baseline;
+}
