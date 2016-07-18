@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template
+from flask import Flask,jsonify,render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_googlemaps import icons
@@ -648,60 +648,13 @@ def clear_stale_pokemons():
             print "[+] removing stale pokemon %s at %f, %f from list" % (pokemon['name'], pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
 
-def register_background_thread(initial_registration=False):
-    """
-    Start a background thread to search for Pokemon
-    while Flask is still able to serve requests for the map
-    :param initial_registration: True if first registration and thread should start immediately, False if it's being called by the finishing thread to schedule a refresh
-    :return: None
-    """
-
-    debug('register_background_thread called')
-    global search_thread
-
-    if initial_registration:
-        if not werkzeug.serving.is_running_from_reloader():
-            debug(
-                'register_background_thread: not running inside Flask so not starting thread')
-            return
-        if search_thread:
-            debug(
-                'register_background_thread: initial registration requested but thread already running')
-            return
-
-        debug('register_background_thread: initial registration')
-        search_thread = threading.Thread(target=main)
-
-    else:
-        debug('register_background_thread: queueing')
-        search_thread = threading.Timer(30, main)  # delay, in seconds
-
-    search_thread.daemon = True
-    search_thread.name = 'search_thread'
-    search_thread.start()
-
-
-def create_app():
-    app = Flask(__name__, template_folder='templates')
-
-    GoogleMaps(app, key=GOOGLEMAPS_KEY)
-    return app
-
-
-app = create_app()
-
-
-@app.route('/')
-def fullmap():
-    clear_stale_pokemons()
-
+def calculate_markers():
     pokeMarkers = [{
         'icon': icons.dots.red,
         'lat': deflat,
         'lng': deflng,
         'infobox': "Start position"
     }]
-    
     
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
@@ -747,6 +700,67 @@ def fullmap():
             'lng': stop[1],
             'infobox': 'Pokestop',
         })
+    return pokeMarkers
+
+def register_background_thread(initial_registration=False):
+    """
+    Start a background thread to search for Pokemon
+    while Flask is still able to serve requests for the map
+    :param initial_registration: True if first registration and thread should start immediately, False if it's being called by the finishing thread to schedule a refresh
+    :return: None
+    """
+
+    debug('register_background_thread called')
+    global search_thread
+
+    if initial_registration:
+        if not werkzeug.serving.is_running_from_reloader():
+            debug(
+                'register_background_thread: not running inside Flask so not starting thread')
+            return
+        if search_thread:
+            debug(
+                'register_background_thread: initial registration requested but thread already running')
+            return
+
+        debug('register_background_thread: initial registration')
+        search_thread = threading.Thread(target=main)
+
+    else:
+        debug('register_background_thread: queueing')
+        search_thread = threading.Timer(30, main)  # delay, in seconds
+
+    search_thread.daemon = True
+    search_thread.name = 'search_thread'
+    search_thread.start()
+
+
+def create_app():
+    app = Flask(__name__, template_folder='templates')
+
+    GoogleMaps(app, key=GOOGLEMAPS_KEY)
+    return app
+
+
+app = create_app()
+
+###
+# Markers Endpoint
+###
+@app.route('/api/v1/markers')
+def markers():
+    
+    clear_stale_pokemons()
+
+    pokeMarkers = calculate_markers()
+    jsonResult = jsonify( pokeMarkers )
+    return jsonResult
+
+@app.route('/')
+def fullmap():
+    clear_stale_pokemons()
+
+    pokeMarkers = calculate_markers()
     fullmap = Map(
         identifier='fullmap',
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
