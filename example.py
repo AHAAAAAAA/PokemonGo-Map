@@ -25,6 +25,7 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
+from transform import *
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -325,6 +326,7 @@ def main():
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
+    parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
@@ -401,6 +403,8 @@ def main():
                     if cell.Fort:
                         for Fort in cell.Fort:
                             if Fort.Enabled == True:
+                                if args.china:
+                                    Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                                 if Fort.GymPoints:
                                     gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
                                 elif Fort.FortType:
@@ -416,8 +420,10 @@ def main():
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
             label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            if args.china:
+                poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
-        
+
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
             set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
