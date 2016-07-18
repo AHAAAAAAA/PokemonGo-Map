@@ -22,6 +22,7 @@ Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
 | -l   | Any location Google Maps can understand | 
 | -st  | Steps to take                           | 
 | -i, --ignore | Comma-separated list of Pokémon to ignore |
+| -o, --only   | Comma-separated list of Pokemon to search for exclusively |
 | -dp, --display-pokestop | Display pokestop                   |
 | -dg, --display-gym  | Display gym                   |
 

@@ -369,7 +369,9 @@ def main():
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
-    parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
+    group.add_argument("-o", "--only", help="Only look for these pokemon (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.add_argument("-dp", "--display-pokestop", help="Display Pokestop", action='store_true', default=False)
@@ -421,8 +423,11 @@ def main():
     steplimit = int(args.step_limit)
 
     ignore = []
+    only = []
     if args.ignore:
         ignore = [i.lower().strip() for i in args.ignore.split(',')]
+    elif args.only:
+        only = [i.lower().strip() for i in args.only.split(',')]
 
     pos = 1
     x   = 0
@@ -466,6 +471,8 @@ def main():
             pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
             if args.ignore:
                 if pokename.lower() in ignore: continue
+            elif args.only:
+                if pokename.lower() not in only: continue
             other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
             diff = other - origin
             # print(diff)
