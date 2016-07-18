@@ -11,3 +11,4 @@ Display Pokestop - false
 Display Gym - 0
 Set web server listening host - 127.0.0.1
 Set web server listening port - 5000
+Locale for Pokemon names: en
