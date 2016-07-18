@@ -13,6 +13,7 @@ import json
 import time
 import requests
 import argparse
+import getpass
 import threading
 import werkzeug.serving
 
@@ -52,6 +53,7 @@ SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
 
+global_password = None
 global_token = None
 access_token = None
 DEBUG = True
@@ -428,7 +430,7 @@ def get_args():
     parser.add_argument(
         '-a', '--auth_service', help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
-    parser.add_argument('-p', '--password', help='Password', required=True)
+    parser.add_argument('-p', '--password', help='Password', required=False)
     parser.add_argument(
         '-l', '--location', type=parse_unicode, help='Location', required=True)
     parser.add_argument('-st', '--step_limit', help='Steps', required=True)
@@ -481,7 +483,14 @@ def get_args():
 
 
 def login(args):
-    access_token = get_token(args.auth_service, args.username, args.password)
+    global global_password
+    if not global_password:
+      if args.password:
+        global_password = args.password
+      else:
+        global_password = getpass.getpass()
+
+    access_token = get_token(args.auth_service, args.username, global_password)
     if access_token is None:
         raise Exception('[-] Wrong username/password')
 
