@@ -272,6 +272,11 @@ def login_ptc(username, password):
         debug("login_ptc: could not decode JSON from {}".format(r.content))
         return None
 
+    # Maximum password length is 15 (sign in page enforces this limit, API does not)
+    if len(password) > 15:
+        print('[!] Trimming password to 15 characters')
+        password = password[:15]
+
     data = {
         'lt': jdata['lt'],
         'execution': jdata['execution'],
