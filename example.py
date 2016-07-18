@@ -728,10 +728,10 @@ def data():
     """ Gets all the PokeMarkers via REST """
     return json.dumps(get_pokemarkers())
 
+jk/step
 @app.route('/raw_data')
 def raw_data():
     """ Gets raw data for pokemons/gyms/pokestops via REST """
-    return json.dumps(get_pokemarkers())
     return flask.jsonify(pokemons=pokemons, gyms=gyms, pokestops=pokestops)
 
 
@@ -739,8 +739,8 @@ def raw_data():
 def config():
     """ Gets the settings for the Google Maps via REST"""
     center = {
-        'lat': deflat,
-        'lng': deflng,
+        'lat': FLOAT_LAT,
+        'lng': FLOAT_LONG,
         'zoom': 15,
         'identifier': "fullmap"
     }
