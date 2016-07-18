@@ -389,7 +389,10 @@ def main():
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     steps = 0
     steplimit = int(args.step_limit)
-    ignore = [i.lower() for i in args.ignore.split(',')]
+
+    if args.ignore:
+        ignore = [i.lower() for i in args.ignore.split(',')]
+
     pos = 1
     x   = 0
     y   = 0
@@ -430,7 +433,8 @@ def main():
                 break
         for poke in visible:
             pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
-            if pokename.lower() in ignore: continue
+            if args.ignore:
+                if pokename.lower() in ignore: continue
             other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
             diff = other - origin
             # print(diff)
