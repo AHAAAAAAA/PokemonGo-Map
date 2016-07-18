@@ -5,19 +5,68 @@
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <title>Flask Google Maps Full Map Example</title>
             <link rel="stylesheet" href="">
+
+            <script type=text/javascript src="{{ url_for('static', filename='js/jquery-3.1.0.js') }}"></script>
             {{fullmap.js}}
 
-            {% if auto_refresh %}
-            <script type="text/javascript">
-                window.setInterval(function(){
-                  location.reload(true)
-                }, {{ auto_refresh }});
-            </script>
-            {% endif %}
     </head>
     <body>
         <h1>Flask Google Maps Full Map Example</h1>
         {{ fullmap.html }}
+
+        {% if auto_refresh %}
+    <script type="text/javascript">
+        var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
+        var options = {};
+
+        $.get(baseURL + "/getConfig", function(response){
+                        var json_obj = $.parseJSON(response);//parse JSON
+                        options["lat"] = json_obj["lat"];
+                        options["lng"] = json_obj["lng"];
+                        options["zoom"] = json_obj["zoom"];
+                        options["identifier"] = json_obj["identifier"];
+                    });
+
+        window.setInterval(function(){
+            // A new map is created because the original one isn't saved
+            map = new google.maps.Map(
+                document.getElementById(options["identifier"]), {
+                    center: new google.maps.LatLng(options["lat"], options["lng"]),
+                    zoom: options["zoom"],
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    zoomControl: true,
+                    mapTypeControl: true,
+                    scaleControl: true,
+                    streetViewControl: true,
+                    rotateControl: true,
+                    fullscreenControl: true
+            });
+
+            // Requests the data and populates the map
+            $.get(baseURL + "/getData", function(response){
+                var json_obj = $.parseJSON(response);
+
+                for (var index in json_obj) {
+                    var item = json_obj[index];
+                    if (item["infobox"] ) {
+                        new google.maps.Marker({
+                            position: new google.maps.LatLng(item["lat"], item["lng"]),
+                            map: map,
+                            icon: item["icon"],
+                            infobox: item["infobox"]
+                        })
+                    } else {
+                        new google.maps.Marker({
+                            position: new google.maps.LatLng(item["lat"], item["lng"]),
+                            map: map,
+                            icon: item["icon"]
+                        })
+                    }
+                }
+            })
+        }, {{ auto_refresh }});
+    </script>
+        {% endif %}
 
     </body>
 </html>
