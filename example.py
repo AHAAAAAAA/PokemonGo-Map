@@ -38,6 +38,8 @@ SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
 
+global_token = None
+access_token = None
 DEBUG = True
 VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
 COORDS_LATITUDE = 0
@@ -47,7 +49,6 @@ FLOAT_LAT = 0
 FLOAT_LONG = 0
 deflat, deflng = 0, 0
 default_step = 0.001
-access_token = None
 api_endpoint = None
 pokemons = []
 gyms = []
@@ -312,6 +313,21 @@ def get_heartbeat(api_endpoint, access_token, response):
     heartbeat.ParseFromString(payload)
     return heartbeat
 
+
+def get_token(name, passw):
+    """
+    Get token if it's not None
+    :return:
+    :rtype:
+    """
+    global global_token
+    if global_token is None:
+        global_token = login_ptc(name, passw)
+        return global_token
+    else:
+        return global_token
+
+
 def main():
     debug("main")
 
@@ -336,7 +352,7 @@ def main():
 
     retrying_set_location(args.location)
 
-    access_token = login_ptc(args.username, args.password)
+    access_token = get_token(args.username, args.password)
     if access_token is None:
         print('[-] Wrong username/password')
         return
@@ -417,7 +433,7 @@ def main():
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
             label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
-        
+
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
             set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
