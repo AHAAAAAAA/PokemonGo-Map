@@ -590,8 +590,8 @@ def process_step(args, api_endpoint, access_token, profile_response,
                  pokemonsJSON, ignore, only):
     print('[+] Searching pokemons for location {} {}}}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
-    original_lat = FLOAT_LAT
-    original_long = FLOAT_LONG
+    step_lat = FLOAT_LAT
+    step_long = FLOAT_LONG
     parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT,
                                                      FLOAT_LONG)).parent(15)
     h = get_heartbeat(args.auth_service, api_endpoint, access_token,
@@ -605,7 +605,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
         hs.append(
             get_heartbeat(args.auth_service, api_endpoint, access_token,
                           profile_response))
-    set_location_coords(original_lat, original_long, 0)
+    set_location_coords(step_lat, step_long, 0)
     visible = []
 
     for hh in hs:
