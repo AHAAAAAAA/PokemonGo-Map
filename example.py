@@ -723,14 +723,27 @@ def fullmap():
 
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
+        pokemon['disappear_time_formatted'] = datetime.fromtimestamp(
+            pokemon['disappear_time']).strftime("%H:%M:%S")
 
-        disappear_time_formatted = datetime.fromtimestamp(pokemon['disappear_time']).strftime("%H:%M:%S")
+        LABEL_TMPL = u'''
+<div style='position:float; top:0;left:0;'>
+    <small>
+        <a href='http://www.pokemon.com/us/pokedex/{id}'
+           target='_blank'
+           title='View in Pokedex'>
+          #{id}
+        </a>
+    </small>
+    <span> - </span>
+    <b>{name}</b>
+</div>
+<center>disappears at {disappear_time_formatted}</center>
+'''
 
-        label = (
-                '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon['id'])+
-                '\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon['id'])+'</a></small> - <b>'+ pokemon['name'] +
-                '</b></div><center>disappears at '+ disappear_time_formatted +'</center>'
-            )
+        label = LABEL_TMPL.format(**pokemon)
+        #  NOTE: `infobox` field doesn't render multiple line string in frontend
+        label = label.replace('\n', '')
 
         pokeMarkers.append( {
                 'icon': 'static/icons/%d.png' % pokemon["id"],
