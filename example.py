@@ -404,7 +404,6 @@ def main():
 
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
-    pokemonsJSON = json.load(open(path + '/pokemon.json'))
 
     args = get_args()
 
