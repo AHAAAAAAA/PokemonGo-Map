@@ -445,7 +445,7 @@ def main():
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
                                
-            pokemons[str(poke.SpawnPointId) + ":" + str(poke.TimeTillHiddenMs)] = {
+            pokemons[poke.SpawnPointId] = {
                 "lat": poke.Latitude, 
                 "lng": poke.Longitude, 
                 "disappear_time": disappear_timestamp, 
@@ -471,7 +471,7 @@ def clear_stale_pokemons():
     for pokemon_key in pokemons.keys():
         pokemon = pokemons[pokemon_key]
         if current_time > pokemon['disappear_time']:
-            print "removing stale pokemon %s at %f, %f from list" % (pokemon['name'], pokemon['lat'], pokemon['lng'])
+            print "[+] removing stale pokemon %s at %f, %f from list" % (pokemon['name'], pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
     
 
