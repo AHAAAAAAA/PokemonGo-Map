@@ -395,6 +395,7 @@ def get_args():
     parser.add_argument("-dg", "--display-gym", help="Display Gym", action='store_true', default=False)
     parser.add_argument("-H", "--host", help="Set web server listening host", default="127.0.0.1")
     parser.add_argument("-P", "--port", type=int, help="Set web server listening port", default=5000)
+    parser.add_argument("-L", "--locale", help="Locale for Pokemon names: en (default), fr", default="en")
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
@@ -403,13 +404,15 @@ def main():
 
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
-    pokemonsJSON = json.load(open(path + '/pokemon.json'))
 
     args = get_args()
 
     if args.auth_service not in ['ptc', 'google']:
       print('[!] Invalid Auth service specified')
       return
+
+    print('[+] Locale is ' + args.locale)
+    pokemonsJSON = json.load(open(path + '/locales/pokemon.' + args.locale + '.json'))
 
     if args.debug:
         global DEBUG
@@ -500,7 +503,7 @@ def main():
             except AttributeError:
                 break
         for poke in visible:
-            pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
+            pokename = pokemonsJSON[str(poke.pokemon.PokemonId)]
             if args.ignore:
                 if pokename.lower() in ignore: continue
             elif args.only:
@@ -510,14 +513,14 @@ def main():
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            
+
             disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
             disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
             disappears_at = 'disappears at %s' % (disappear_time_formatted)
 
             pid = str(poke.pokemon.PokemonId)
             label = (
-                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
+                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokename+'</b></div>'
                         '<center class=\'label-countdown\' data-disappears-at=\''+ str(disappear_timestamp)+'\'>'+disappears_at+'</center>'
                     )
             if args.china:
