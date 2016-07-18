@@ -17,7 +17,43 @@
     <script type="text/javascript">
         var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
         var options = {};
+        var map = null;
+        var markers = [];
+        // Adds a marker to the map and push to the array.
+        function addMarker(options = {}) {
+            var default_options = {map: map}
+            for(var prop in options){
+                if(options.hasOwnProperty(prop)){
+                    default_options[prop] = options[prop];
+                }
+            }
+            var marker = new google.maps.Marker(default_options);
+            markers.push(marker);
+            return marker;
+        }
 
+        // Sets the map on all markers in the array.
+        function setMapOnAll(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        // Removes the markers from the map, but keeps them in the array.
+        function clearMarkers() {
+            setMapOnAll(null);
+        }
+
+        // Shows any markers currently in the array.
+        function showMarkers() {
+            setMapOnAll(map);
+        }
+
+        // Deletes all markers in the array by removing references to them.
+        function deleteMarkers() {
+            clearMarkers();
+            markers = [];
+        }
         $.get(baseURL + "/config", function(response){
                         var json_obj = $.parseJSON(response);//parse JSON
                         options["lat"] = json_obj["lat"];
@@ -28,38 +64,42 @@
 
         window.setInterval(function(){
             // A new map is created because the original one isn't saved
-            map = new google.maps.Map(
-                document.getElementById(options["identifier"]), {
-                    center: new google.maps.LatLng(options["lat"], options["lng"]),
-                    zoom: options["zoom"],
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    zoomControl: true,
-                    mapTypeControl: true,
-                    scaleControl: true,
-                    streetViewControl: true,
-                    rotateControl: true,
-                    fullscreenControl: true
-            });
+            if(map == null){
+                map = new google.maps.Map(
+                    document.getElementById(options["identifier"]), {
+                        center: new google.maps.LatLng(options["lat"], options["lng"]),
+                        zoom: options["zoom"],
+                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                        zoomControl: true,
+                        mapTypeControl: true,
+                        scaleControl: true,
+                        streetViewControl: true,
+                        rotateControl: true,
+                        fullscreenControl: true
+                });
+            }
 
             // Requests the data and populates the map
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
-
+                deleteMarkers();
                 for (var index in json_obj) {
                     var item = json_obj[index];
-                    if (item["infobox"] ) {
-                        new google.maps.Marker({
-                            position: new google.maps.LatLng(item["lat"], item["lng"]),
-                            map: map,
-                            icon: item["icon"],
-                            infobox: item["infobox"]
-                        })
-                    } else {
-                        new google.maps.Marker({
+                    var marker = addMarker({
                             position: new google.maps.LatLng(item["lat"], item["lng"]),
                             map: map,
                             icon: item["icon"]
-                        })
+                        });
+
+                    if (item["infobox"]) {
+                        (function(_infobox, _map, _marker){
+                            _marker.infoWindow = new google.maps.InfoWindow({
+                                content: _infobox
+                            });
+                            _marker.addListener('click', function() {
+                                _marker.infoWindow.open(_map, _marker);
+                            });
+                        })(item["infobox"], map, marker);
                     }
                 }
             })
