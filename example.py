@@ -126,9 +126,6 @@ def set_location(location_name):
     loc = geolocator.geocode(location_name)
     print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
     print('[!] lat/long/alt: {} {} {}'.format(loc.latitude, loc.longitude, loc.altitude))
-    global deflat
-    global deflng
-    deflat, deflng = loc.latitude, loc.longitude
     set_location_coords(loc.latitude, loc.longitude, loc.altitude)
 
 
@@ -421,7 +418,7 @@ def main():
         
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
-            set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
+            set_location_coords((x * 0.0025) + original_lat, (y * 0.0025 ) + original_long, 0)
         if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
             dx, dy = -dy, dx
         x, y = x+dx, y+dy
@@ -509,8 +506,8 @@ def fullmap():
             "position:absolute;"
             "z-index:200;"
         ),
-        lat=deflat,
-        lng=deflng,
+        lat=FLOAT_LAT,
+        lng=FLOAT_LONG,
         markers=pokeMarkers,
         zoom="15"
     )
