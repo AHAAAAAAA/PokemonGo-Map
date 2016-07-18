@@ -57,7 +57,7 @@ body {
   line-height: 1.6;
   // line-height: 1.7;
   color: $color-body-copy;
-  //@include avenir-roman;
+  font-family: Droid Sans, Arial;
   @include font-size(1.4);
   // overflow-x: hidden;
 }
