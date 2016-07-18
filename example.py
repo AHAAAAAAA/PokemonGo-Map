@@ -687,7 +687,7 @@ def clear_stale_pokemons():
         pokemon = pokemons[pokemon_key]
         if current_time > pokemon['disappear_time']:
             print "[+] removing stale pokemon %s at %f, %f from list" % (
-                pokemon['name'], pokemon['lat'], pokemon['lng'])
+                pokemon['name'].encode('utf-8'), pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
 
 
