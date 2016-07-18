@@ -535,7 +535,8 @@ def main():
             dx, dy = -dy, dx
         x, y = x+dx, y+dy
         steps += 1
-        print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
+        percentage_complete = int(round(((steps + (pos * .25) - .25) / steplimit**2) * 100))
+        print "Completed: %d%%" % (percentage_complete)
 
     register_background_thread()
 
