@@ -1,13 +1,14 @@
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/1760334/16904125/5621e800-4c4d-11e6-9906-55cfd778fd27.png">
+<img src="https://cloud.githubusercontent.com/assets/7145349/16916971/6bd3343a-4cb4-11e6-86cc-e3bc9399a9b0.png">
 </p>
 
 # PokemonGo Map
-Live visualization of all the pokemon in your area, building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo API, [tejado's additions](https://github.com/tejado/pokemongo-api-demo), [leegao's additions](https://github.com/leegao/pokemongo-api-demo/tree/simulation) and [Flask-GoogleMaps](https://github.com/rochacbruno/Flask-GoogleMaps). Proof of concept that we can load all the pokemon visible nearby given a location.
 
-Currently really rough, shows duplicate pokemon and requires refreshing page a lot (until the PokemonGo servers decide we're worthy). However, it works. Be warned, ugly ugly code ahead.
+[![Build Status](https://travis-ci.org/AHAAAAAAA/PokemonGo-Map.svg?branch=master)](https://travis-ci.org/AHAAAAAAA/PokemonGo-Map)  [![Coverage Status](https://coveralls.io/repos/github/AHAAAAAAA/PokemonGo-Map/badge.svg?branch=master)](https://coveralls.io/github/AHAAAAAAA/PokemonGo-Map?branch=master)
 
-Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
+Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying a Google Maps with markers on it. 
+
+Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo API, [tejado's additions](https://github.com/tejado/pokemongo-api-demo), [leegao's additions](https://github.com/leegao/pokemongo-api-demo/tree/simulation) and [Flask-GoogleMaps](https://github.com/rochacbruno/Flask-GoogleMaps). 
 
 # Installation
 `pip install -r requirements.txt`
@@ -26,6 +27,9 @@ Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
 | -o, --only   | Comma-separated list of Pokemon to search for exclusively |
 | -dp, --display-pokestop | Display pokestop                   |
 | -dg, --display-gym  | Display gym                   |
+
+Note:
+5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)
 
 # FAQ
 
