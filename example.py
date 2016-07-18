@@ -491,20 +491,27 @@ def fullmap():
     pokeMarkers = []
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
+        imgnum = str(pokemon[0]);
+        if len(imgnum) <= 2: imgnum = '0' + imgnum
+        if len(imgnum) <= 2: imgnum = '0' + imgnum
         pokeMarkers.append(
             {
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': '<center><i>#'+str(pokemon[0])+'</i><br>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                'infobox': '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon[0])+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon[0])+'</a></small></div><center>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center><img height=\'100\' width=\'100\' src=\'http://assets.pokemon.com/assets/cms2/img/pokedex/full/'+imgnum+'.png\'>'
             })
     for gym in gyms:
+        if gym[0] == 0: color = "white"
+        if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
+        if gym[0] == 2: color = "rgba(255, 0, 0, .1)"
+        if gym[0] == 3: color = "rgba(255, 255, 0, .1)"
         pokeMarkers.append(
             {
                 'icon': 'static/forts/'+numbertoteam[gym[0]]+'.png',
                 'lat': gym[1],
                 'lng': gym[2],
-                'infobox': "Gym owned by team " + numbertoteam[gym[0]]
+                'infobox': "<div style='background: "+color+"'>Gym owned by Team " + numbertoteam[gym[0]]
             })
     for stop in pokestops:
         pokeMarkers.append(
