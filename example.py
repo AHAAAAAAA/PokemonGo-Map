@@ -122,7 +122,7 @@ def retrying_set_location(location_name):
             return
         except (GeocoderTimedOut, GeocoderServiceError) as e:
             debug("retrying_set_location: geocoder exception ({}), retrying".format(str(e)))
-        time.sleep(1)
+        time.sleep(1.25)
 
 
 def set_location(location_name):
@@ -371,7 +371,7 @@ def main():
     print('[+] Received API endpoint: {}'.format(api_endpoint))
 
     profile_response = get_profile(args.auth_service, access_token, api_endpoint, None)
-    if profile_response is None:
+    if profile_response is None or not profile_response.payload:
         print('[-] Ooops...')
         raise Exception("Could not get profile")
 
@@ -394,9 +394,12 @@ def main():
     steps = 0
     steplimit = int(args.step_limit)
     pos = 1
-    while steps < steplimit:
-        debug("looping: step {} of {}".format(steps, steplimit))
-
+    x   = 0
+    y   = 0
+    dx  = 0
+    dy  = -1
+    while steps < steplimit**2:
+        debug("looping: step {} of {}".format(steps, steplimit**2))
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
         parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
@@ -436,20 +439,15 @@ def main():
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
             label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
-
-        offset = (steps*default_step)
-        if pos is 1:
-            set_location_coords(latlng.lat().degrees + offset, latlng.lng().degrees - offset, 0)
-        elif pos is 2:
-            set_location_coords(latlng.lat().degrees + offset, latlng.lng().degrees + offset, 0)
-        elif pos is 3:
-            set_location_coords(latlng.lat().degrees - offset, latlng.lng().degrees - offset, 0)
-        elif pos is 4:
-            set_location_coords(latlng.lat().degrees - offset, latlng.lng().degrees + offset, 0)
-            pos = 0
-            steps += 1
-        pos += 1
-        print("Completed:", ((steps + (pos * .25) - .25) / steplimit) * 100, "%")
+        
+        #Scan location math
+        if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
+            set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
+        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
+            dx, dy = -dy, dx
+        x, y = x+dx, y+dy
+        steps +=1
+        print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
         register_background_thread()
 
