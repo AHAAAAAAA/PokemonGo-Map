@@ -130,14 +130,22 @@ def retrying_set_location(location_name):
 
 
 def set_location(location_name):
-    geolocator = GoogleV3()
-    loc = geolocator.geocode(location_name)
-    print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
-    print('[!] lat/long/alt: {} {} {}'.format(loc.latitude, loc.longitude, loc.altitude))
     global deflat
     global deflng
-    deflat, deflng = loc.latitude, loc.longitude
-    set_location_coords(loc.latitude, loc.longitude, loc.altitude)
+    geolocator = GoogleV3()
+    prog = re.compile('^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$')
+    if (prog.match(location_name)):
+        deflat, deflng = [float(x) for x in location_name.split(",")]
+        alt = 0
+    else:
+        loc = geolocator.geocode(location_name)
+        deflat = loc.latitude
+        deflng = loc.longitude
+        alt = loc.altitude
+        print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
+
+    print('[!] lat/long/alt: {} {} {}'.format(deflat, deflng, alt))
+    set_location_coords(deflat, deflng, alt)
 
 
 def set_location_coords(lat, long, alt):
