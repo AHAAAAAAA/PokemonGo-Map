@@ -413,7 +413,7 @@ def main():
       return
 
     print('[+] Locale is ' + args.locale)
-    pokemonsJSON = json.load(open(path + '/pokemon.' + args.locale + '.json'))
+    pokemonsJSON = json.load(open(path + '/locales/pokemon.' + args.locale + '.json'))
 
     if args.debug:
         global DEBUG
