@@ -436,7 +436,7 @@ def main():
             remaining = '%s remaining' % (left)
             pid = str(poke.pokemon.PokemonId)
             label = (
-                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pid)+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pid)+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
+                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
                         '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
                     )
             if args.china:
