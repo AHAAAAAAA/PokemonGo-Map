@@ -52,6 +52,7 @@ FLOAT_LONG = 0
 deflat, deflng = 0, 0
 default_step = 0.001
 api_endpoint = None
+first_loop = True
 pokemons = []
 pokemons_queue = []
 gyms = []
@@ -335,6 +336,7 @@ def get_token(name, passw):
 
 def main():
     debug("main")
+    global first_loop
 
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
@@ -460,6 +462,11 @@ def main():
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons_queue.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
 
+            if first_loop:
+                pokemons[:] = copy.deepcopy(pokemons_queue)
+                gyms[:] = copy.deepcopy(gyms_queue)
+                pokestops[:] = copy.deepcopy(pokestops_queue)
+
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
             set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
@@ -469,6 +476,8 @@ def main():
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
+    if first_loop:
+        first_loop = False
     pokemons[:] = copy.deepcopy(pokemons_queue)
     gyms[:] = copy.deepcopy(gyms_queue)
     pokestops[:] = copy.deepcopy(pokestops_queue)
