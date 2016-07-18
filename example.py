@@ -60,12 +60,13 @@ COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
 FLOAT_LAT = 0
 FLOAT_LONG = 0
+auto_refresh = 0
 (deflat, deflng) = (0, 0)
 default_step = 0.001
 api_endpoint = None
 pokemons = {}
-gyms = {}
-pokestops = {}
+gyms = []
+pokestops = []
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
     0: 'Gym',
     1: 'Mystic',
@@ -443,6 +444,10 @@ def get_args():
         help='Coord Transformer for China',
         action='store_true')
     parser.add_argument(
+        "-ar",
+        "--auto_refresh",
+        help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
+    parser.add_argument(
         '-dp',
         '--display-pokestop',
         help='Display Pokestop',
@@ -531,9 +536,12 @@ def main():
         print '[!] DEBUG mode on'
 
     retrying_set_location(args.location)
+
+    if args.auto_refresh:
+        global auto_refresh
+        auto_refresh = int(args.auto_refresh) * 1000
+
     api_endpoint, access_token, profile_response = login(args)
-    
-    clear_stale_pokemons()
 
     steplimit = int(args.step_limit)
 
@@ -543,6 +551,8 @@ def main():
         ignore = [i.lower().strip() for i in args.ignore.split(',')]
     elif args.only:
         only = [i.lower().strip() for i in args.only.split(',')]
+
+    clear_stale_pokemons()
 
     pos = 1
     x = 0
@@ -606,13 +616,12 @@ def process_step(args, api_endpoint, access_token, profile_response,
                                 (Fort.Latitude, Fort.Longitude) = \
 transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                             if Fort.GymPoints and args.display_gym:
-                            
-                                gyms[Fort.FortId] = [Fort.Team, Fort.Latitude,
-                                             Fort.Longitude]
+                                gyms.append([Fort.Team, Fort.Latitude,
+                                             Fort.Longitude])
                             elif Fort.FortType \
                                 and args.display_pokestop:
-                                pokestops[Fort.FortId] = [Fort.Latitude,
-                                                  Fort.Longitude]
+                                pokestops.append([Fort.Latitude,
+                                                  Fort.Longitude])
         except AttributeError:
             break
 
@@ -624,29 +633,34 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
         elif args.only:
             if pokename.lower() not in only:
                 continue
-                
-        disappear_timestamp = time.time() + poke.TimeTillHiddenMs / 1000
-        
-        if args.china: 
-            poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
 
-                
-        pokemons[poke.SpawnPointId] = {
-            "lat": poke.Latitude, 
-            "lng": poke.Longitude, 
-            "disappear_time": disappear_timestamp, 
-            "id": poke.pokemon.PokemonId, 
-            "name": pokename
-        }
+    disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
+        / 1000
+
+    if args.china:
+        (poke.Latitude, poke.Longitude) = \
+            transform_from_wgs_to_gcj(Location(poke.Latitude,
+                poke.Longitude))
+
+    pokemons[poke.SpawnPointId] = {
+        "lat": poke.Latitude,
+        "lng": poke.Longitude,
+        "disappear_time": disappear_timestamp,
+        "id": poke.pokemon.PokemonId,
+        "name": pokename
+    }
+
 
 def clear_stale_pokemons():
     current_time = time.time()
-    
+
     for pokemon_key in pokemons.keys():
         pokemon = pokemons[pokemon_key]
         if current_time > pokemon['disappear_time']:
-            print "[+] removing stale pokemon %s at %f, %f from list" % (pokemon['name'], pokemon['lat'], pokemon['lng'])
+            print "[+] removing stale pokemon %s at %f, %f from list" % (
+                pokemon['name'], pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
+
 
 def register_background_thread(initial_registration=False):
     """
@@ -691,39 +705,58 @@ def create_app():
 app = create_app()
 
 
+@app.route('/data')
+def data():
+    """ Gets all the PokeMarkers via REST """
+    return json.dumps(get_pokemarkers())
+
+
+@app.route('/config')
+def config():
+    """ Gets the settings for the Google Maps via REST"""
+    center = {
+        'lat': deflat,
+        'lng': deflng,
+        'zoom': 15,
+        'identifier': "fullmap"
+    }
+    return json.dumps(center)
+
+
 @app.route('/')
 def fullmap():
-    clear_stale_pokemons()
+    return render_template(
+        'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
 
+
+def get_pokemarkers():
     pokeMarkers = [{
         'icon': icons.dots.red,
         'lat': deflat,
         'lng': deflng,
         'infobox': "Start position"
     }]
-    
-    
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
-        
-        disappear_time_formatted = datetime.fromtimestamp(pokemon['disappear_time']).strftime("%H:%M:%S")
-        
-        label = ( 
-                '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon['id'])+
-                '\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon['id'])+'</a></small> - <b>'+ pokemon['name'] +
-                '</b></div><center>disappears at '+ disappear_time_formatted +'</center>' 
-            )
-                        
-        pokeMarkers.append( {
-                'icon': 'static/icons/%d.png' % pokemon["id"],
-                'lat': pokemon["lat"],
-                'lng': pokemon["lng"],
-                'infobox': label
-                })
-                
-    for gym_key in gyms:
-        gym = gyms[gym_key]
-        
+
+        disappear_time_formatted = datetime.fromtimestamp(pokemon[
+            'disappear_time']).strftime("%H:%M:%S")
+        disappears_at = 'disappears at %s' % (disappear_time_formatted)
+
+        label = (
+            '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'
+            + str(pokemon['id']) +
+            '\' target=\'_blank\' title=\'View in Pokedex\'>#' +
+            str(pokemon['id']) + '</a></small> - <b>' + pokemon['name'] +
+            '</b></div><center>' + disappears_at + '</center>')
+
+        pokeMarkers.append({
+            'icon': 'static/icons/%d.png' % pokemon["id"],
+            'lat': pokemon["lat"],
+            'lng': pokemon["lng"],
+            'infobox': label
+        })
+    for gym in gyms:
         if gym[0] == 0:
             color = 'white'
         if gym[0] == 1:
@@ -739,22 +772,25 @@ def fullmap():
             'infobox': "<div style='background: " + color +
             "'>Gym owned by Team " + numbertoteam[gym[0]],
         })
-    for stop_key in pokestops:
-        stop = pokestops[stop_key]
+    for stop in pokestops:
         pokeMarkers.append({
             'icon': 'static/forts/Pstop.png',
             'lat': stop[0],
             'lng': stop[1],
             'infobox': 'Pokestop',
         })
+    return pokeMarkers
+
+
+def get_map():
     fullmap = Map(
-        identifier='fullmap',
+        identifier="fullmap",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=deflat,
         lng=deflng,
-        markers=pokeMarkers,
+        markers=get_pokemarkers(),
         zoom='15', )
-    return render_template('example_fullmap.html', fullmap=fullmap)
+    return fullmap
 
 
 if __name__ == '__main__':
