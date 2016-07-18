@@ -344,7 +344,6 @@ def main():
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
-    default_location = args.location
     if args.debug:
         global DEBUG
         DEBUG = True
@@ -377,7 +376,7 @@ def main():
     print('[+] Username: {}'.format(profile.profile.username))
 
     creation_time = datetime.fromtimestamp(int(profile.profile.creation_time) / 1000)
-    print('[+] You are playing Pokemon Go since: {}'.format(
+    print('[+] You started playing Pokemon Go on: {}'.format(
         creation_time.strftime('%Y-%m-%d %H:%M:%S'),
     ))
 
