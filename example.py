@@ -431,7 +431,7 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '%s [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            label = '<b>%s</b> [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
 
         #Scan location math
@@ -496,7 +496,7 @@ def fullmap():
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': pokemon[1]
+                'infobox': '<center><i>#'+str(pokemon[0])+'</i><br>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center>'
             })
     for gym in gyms:
         pokeMarkers.append(
