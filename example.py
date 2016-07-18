@@ -63,7 +63,7 @@ FLOAT_LONG = 0
 (deflat, deflng) = (0, 0)
 default_step = 0.001
 api_endpoint = None
-pokemons = []
+pokemons = {}
 gyms = []
 pokestops = []
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
@@ -542,6 +542,8 @@ def main():
     elif args.only:
         only = [i.lower().strip() for i in args.only.split(',')]
 
+    clear_stale_pokemons()
+
     pos = 1
     x = 0
     y = 0
@@ -622,41 +624,32 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             if pokename.lower() not in only:
                 continue
 
-        other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
-        diff = other - origin
-
-        difflat = diff.lat().degrees
-        difflng = diff.lng().degrees
-
-        pokemons.append(
-            format_pokemon(poke, pokemonsJSON, args, ignore, only, pokename))
-
-
-def format_pokemon(poke, pokemonsJSON, args, ignore, only, pokename):
     disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
         / 1000
-    disappear_time_formatted = \
-        datetime.fromtimestamp(disappear_timestamp).strftime('%H:%M:%S'
-            )
-    disappears_at = 'disappears at %s' \
-        % disappear_time_formatted
 
-    pid = str(poke.pokemon.PokemonId)
-    label = \
-        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/' \
-        + pid \
-        + '\' target=\'_blank\' title=\'View in Pokedex\'>#' \
-        + pid + '</a></small> - <b>' \
-        + pokename \
-        + "</b></div><center class='label-countdown' data-disappears-at='" \
-        + str(disappear_timestamp) + '\'>' + disappears_at \
-        + '</center>'
     if args.china:
         (poke.Latitude, poke.Longitude) = \
             transform_from_wgs_to_gcj(Location(poke.Latitude,
                 poke.Longitude))
 
-    return [poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude]
+    pokemons[poke.SpawnPointId] = {
+        "lat": poke.Latitude,
+        "lng": poke.Longitude,
+        "disappear_time": disappear_timestamp,
+        "id": poke.pokemon.PokemonId,
+        "name": pokename
+    }
+
+
+def clear_stale_pokemons():
+    current_time = time.time()
+
+    for pokemon_key in pokemons.keys():
+        pokemon = pokemons[pokemon_key]
+        if current_time > pokemon['disappear_time']:
+            print "[+] removing stale pokemon %s at %f, %f from list" % (
+                pokemon['name'], pokemon['lat'], pokemon['lng'])
+            del pokemons[pokemon_key]
 
 
 def register_background_thread(initial_registration=False):
@@ -710,18 +703,25 @@ def fullmap():
         'lng': deflng,
         'infobox': "Start position"
     }]
-    for pokemon in pokemons:
-        (currLat, currLon) = (pokemon[-2], pokemon[-1])
-        imgnum = str(pokemon[0])
-        if len(imgnum) <= 2:
-            imgnum = '0' + imgnum
-        if len(imgnum) <= 2:
-            imgnum = '0' + imgnum
+    for pokemon_key in pokemons:
+        pokemon = pokemons[pokemon_key]
+
+        disappear_time_formatted = datetime.fromtimestamp(pokemon[
+            'disappear_time']).strftime("%H:%M:%S")
+        disappears_at = 'disappears at %s' % (disappear_time_formatted)
+
+        label = (
+            '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'
+            + str(pokemon['id']) +
+            '\' target=\'_blank\' title=\'View in Pokedex\'>#' +
+            str(pokemon['id']) + '</a></small> - <b>' + pokemon['name'] +
+            '</b></div><center>' + disappears_at + '</center>')
+
         pokeMarkers.append({
-            'icon': 'static/icons/' + str(pokemon[0]) + '.png',
-            'lat': currLat,
-            'lng': currLon,
-            'infobox': pokemon[1],
+            'icon': 'static/icons/%d.png' % pokemon["id"],
+            'lat': pokemon["lat"],
+            'lng': pokemon["lng"],
+            'infobox': label
         })
     for gym in gyms:
         if gym[0] == 0:
