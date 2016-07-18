@@ -507,16 +507,24 @@ def fullmap():
                 'infobox': '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon[0])+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon[0])+'</a></small></div><center>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center><img height=\'100\' width=\'100\' src=\'http://assets.pokemon.com/assets/cms2/img/pokedex/full/'+imgnum+'.png\'>'
             })
     for gym in gyms:
-        if gym[0] == 0: color = "white"
-        if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
-        if gym[0] == 2: color = "rgba(255, 0, 0, .1)"
-        if gym[0] == 3: color = "rgba(255, 255, 0, .1)"
+        if gym[0] == 0:
+            color = "white"
+            icon = ""
+        if gym[0] == 1:
+            color = "rgba(0, 0, 256, .1)"
+            icon = "https://jackaloupe.files.wordpress.com/2016/07/team-mystic-cutout.png"
+        if gym[0] == 2:
+            color = "rgba(255, 0, 0, .1)"
+            icon = "https://jackaloupe.files.wordpress.com/2016/07/team-valor-cutout.png"
+        if gym[0] == 3:
+            color = "rgba(255, 255, 0, .1)"
+            icon = "https://jackaloupe.files.wordpress.com/2016/07/team-instinct-cutout.png"
         pokeMarkers.append(
             {
                 'icon': 'static/forts/'+numbertoteam[gym[0]]+'.png',
                 'lat': gym[1],
                 'lng': gym[2],
-                'infobox': "<div style='background: "+color+"'>Gym owned by Team " + numbertoteam[gym[0]]
+                'infobox': "<div style='background: "+color+"'><center><small>Gym owned by:</small><br><b>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'></center>"
             })
     for stop in pokestops:
         pokeMarkers.append(
