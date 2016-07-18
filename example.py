@@ -372,6 +372,7 @@ def main():
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     group.add_argument("-o", "--only", help="Only look for these pokemon (comma separated)")
+    parser.add_argument("-s", "--stats", help="Create a stats.txt file with statistics about the last search")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.add_argument("-dp", "--display-pokestop", help="Display Pokestop", action='store_true', default=False)
@@ -429,6 +430,9 @@ def main():
     elif args.only:
         only = [i.lower().strip() for i in args.only.split(',')]
 
+    if args.stats:
+        statsd = {}
+
     pos = 1
     x   = 0
     y   = 0
@@ -473,12 +477,17 @@ def main():
                 if pokename.lower() in ignore: continue
             elif args.only:
                 if pokename.lower() not in only: continue
+            if args.stats:
+                if pokename not in statsd:
+                    statsd[pokename] = 1
+                else:
+                    statsd[pokename] += 1
             other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
             diff = other - origin
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            
+
             disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
             disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
             disappears_at = 'disappears at %s' % (disappear_time_formatted)
@@ -500,6 +509,10 @@ def main():
         x, y = x+dx, y+dy
         steps += 1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
+
+    f = open("stats.txt", "w")
+    for poke in sorted(statsd, key=statsd.get, reverse=True):
+        print >>f, poke + " " + str(statsd[poke])
 
     register_background_thread()
 
