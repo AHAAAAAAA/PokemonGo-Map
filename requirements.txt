@@ -4,3 +4,15 @@ requests==2.10.0
 flask-googlemaps==0.2.0
 s2sphere==0.2.4
 flask==0.11.1
+cffi==1.7.0
+cryptography==1.4
+enum34==1.1.6
+gpsoauth==0.3.0
+idna==2.1
+ipaddress==1.0.16
+ndg-httpsclient==0.4.1
+pyasn1==0.1.9
+pycparser==2.14
+pycryptodomex==3.4.2
+pyOpenSSL==16.0.0
+six==1.10.0
