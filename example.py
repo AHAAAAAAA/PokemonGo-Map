@@ -654,21 +654,21 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             if pokename.lower() not in only:
                 continue
 
-    disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
-        / 1000
+        disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
+            / 1000
 
-    if args.china:
-        (poke.Latitude, poke.Longitude) = \
-            transform_from_wgs_to_gcj(Location(poke.Latitude,
-                poke.Longitude))
+        if args.china:
+            (poke.Latitude, poke.Longitude) = \
+                transform_from_wgs_to_gcj(Location(poke.Latitude,
+                    poke.Longitude))
 
-    pokemons[poke.SpawnPointId] = {
-        "lat": poke.Latitude,
-        "lng": poke.Longitude,
-        "disappear_time": disappear_timestamp,
-        "id": poke.pokemon.PokemonId,
-        "name": pokename
-    }
+        pokemons[poke.SpawnPointId] = {
+            "lat": poke.Latitude,
+            "lng": poke.Longitude,
+            "disappear_time": disappear_timestamp,
+            "id": poke.pokemon.PokemonId,
+            "name": pokename
+        }
 
 def clear_stale_pokemons():
     current_time = time.time()
