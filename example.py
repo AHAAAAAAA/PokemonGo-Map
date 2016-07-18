@@ -355,7 +355,7 @@ def get_heartbeat(api_endpoint, access_token, response):
     return heartbeat
 
 
-def get_token(service, name, passw):
+def get_token(service, username, password):
     """
     Get token if it's not None
     :return:
