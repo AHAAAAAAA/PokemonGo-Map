@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+import flask
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
@@ -515,6 +516,9 @@ def fullmap():
     )
     return render_template('example_fullmap.html', fullmap=fullmap)
 
+@app.route('/api')
+def api():
+    return flask.jsonify(pokemons=pokemons, gyms=gyms, pokestops=pokestops)
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
