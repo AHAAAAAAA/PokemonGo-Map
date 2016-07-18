@@ -394,7 +394,6 @@ def main(app=None):
     dx  = 0
     dy  = -1
     while steps < steplimit**2:
-        debug("looping: step {} of {}".format(steps, steplimit**2))
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
         parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
@@ -442,7 +441,10 @@ def main(app=None):
             dx, dy = -dy, dx
         x, y = x+dx, y+dy
         steps +=1
-        print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
+        completed_percentage_str = "Completed: {}%".format(
+            ((steps + (pos * .25) - .25) / steplimit**2) * 100
+        )
+        print(completed_percentage_str)
 
     register_background_thread(app=app)
 
