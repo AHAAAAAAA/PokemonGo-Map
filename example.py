@@ -346,8 +346,8 @@ def main():
     parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
-    parser.add_argument("-dp", "--disable_pokestop", help="Disable Pokestop display", action='store_true', default=False)
-    parser.add_argument("-dg", "--disable_gym", help="Disable Gym display", action='store_true', default=False)
+    parser.add_argument("-dp", "--disable-pokestop", help="Disable Pokestop display", action='store_true', default=False)
+    parser.add_argument("-dg", "--disable-gym", help="Disable Gym display", action='store_true', default=False)
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
@@ -430,9 +430,9 @@ def main():
                             if Fort.Enabled == True:
                                 if args.china:
                                     Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
-                                if Fort.GymPoints and args.disable_gym == False:
+                                if Fort.GymPoints and not args.disable_gym:
                                     gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
-                                elif Fort.FortType and args.disable_pokestop == False:
+                                elif Fort.FortType and not args.disable_pokestop:
                                     pokestops.append([Fort.Latitude, Fort.Longitude])
             except AttributeError:
                 break
