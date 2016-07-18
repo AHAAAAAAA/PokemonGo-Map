@@ -18,7 +18,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 
 | Flag | Description                             | 
 |------|-----------------------------------------| 
-| -a   | Auth Service (ptc or google)
+| -a   | Auth Service (ptc or google)            |
 | -u   | Username                                | 
 | -p   | Password                                | 
 | -l   | Any location Google Maps can understand | 

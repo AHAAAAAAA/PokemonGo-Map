@@ -380,7 +380,7 @@ def main():
     pokemonsJSON = json.load(open(path + '/pokemon.json'))
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-a", "--auth_service", help="Auth Service",required=True)
+    parser.add_argument("-a", "--auth_service", help="Auth Service", default="ptc")
     parser.add_argument("-u", "--username", help="Username", required=True)
     parser.add_argument("-p", "--password", help="Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
