@@ -78,6 +78,7 @@ numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and the
     2: 'Valor',
     3: 'Instinct',
 }
+origin_lat, origin_lon = None, None
 
 # stuff for in-background search thread
 
@@ -167,13 +168,14 @@ def retrying_set_location(location_name):
 def set_location(location_name):
     geolocator = GoogleV3()
     prog = re.compile('^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$')
+    global origin_lat
+    global origin_lon
     if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
     else:
         loc = geolocator.geocode(location_name)
-        local_lat = loc.latitude
-        local_lng = loc.longitude
+        origin_lat, origin_lon = local_lat, local_lng = loc.latitude, loc.longitude
         alt = loc.altitude
         print '[!] Your given location: {}'.format(loc.address.encode('utf-8'))
 
@@ -773,8 +775,8 @@ def next_loc():
 def get_pokemarkers():
     pokeMarkers = [{
         'icon': icons.dots.red,
-        'lat': FLOAT_LAT,
-        'lng': FLOAT_LONG,
+        'lat': origin_lat,
+        'lng': origin_lon,
         'infobox': "Start position"
     }]
 
@@ -840,8 +842,8 @@ def get_map():
     fullmap = Map(
         identifier="fullmap",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
-        lat=FLOAT_LAT,
-        lng=FLOAT_LONG,
+        lat=origin_lat,
+        lng=origin_lon,
         markers=get_pokemarkers(),
         zoom='15', )
     return fullmap
