@@ -14,7 +14,16 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 `pip install -r requirements.txt`
 
 # Usage
-`python example.py -a authService -u myUsername -p myPassword -l "Boulder, CO" -st 5`
+example.py [-h] [-a AUTH_SERVICE] -u USERNAME -p PASSWORD -l LOCATION -st STEP_LIMIT [-i IGNORE | -o ONLY] [-d] [-c] [-dp] [-dg] [-H HOST] [-P PORT] [-L LOCALE]
+
+# Example 1 - Normal view
+`python example.py -a PTC -u MyUsername -p MyPassword -l "Boulder, CO" -st 5`
+
+# Example 2 - Remove from view
+`python example.py -a PTC -u MyUsername -p MyPassword -l "Boulder, CO" -st 5 -i Rattata`
+
+# Example 3 - Only specific ones
+`python example.py -a PTC -u MyUsername -p MyPassword -l "Boulder, CO" -st 5 -o Eevee,Pidgey`
 
 | Flag | Description                             | 
 |------|-----------------------------------------| 
@@ -47,3 +56,10 @@ Note:
 * Can I sign in with Google? Not yet, we're working on it, until then get a Trainer Club account
 
 * I'm on Windows, why does nothing work? See if anything in https://www.reddit.com/r/pokemongodev/comments/4t80df/wip_pokemon_go_map_visualization_google_maps_view/d5feu2f helps
+
+* Problems running on a Mac?
+Try using this in Terminal:
+#Sudo -s
+#fill in password
+#pip install -r /Users/%username%/Downloads/PokemonGo-Map-master/requirements.txt
+python ~/Downloads/PokemonGo-Map-master/example.py -u MyUsername -p MyPassword -l "YourLocation" -st 5
