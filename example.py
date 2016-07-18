@@ -526,7 +526,7 @@ def main():
                     )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
-            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
+            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude, disappear_timestamp])
 
         #Scan location math
         if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
@@ -590,17 +590,18 @@ def fullmap():
                     }]
 
     for pokemon in pokemons:
-        currLat, currLon = pokemon[-2], pokemon[-1]
-        imgnum = str(pokemon[0]);
-        if len(imgnum) <= 2: imgnum = '0' + imgnum
-        if len(imgnum) <= 2: imgnum = '0' + imgnum
-        pokeMarkers.append(
-            {
-                'icon': 'static/icons/'+str(pokemon[0])+'.png',
-                'lat': currLat,
-                'lng': currLon,
-                'infobox': pokemon[1]
-                })
+        if pokemon[-1] > time.time():
+            currLat, currLon = pokemon[-3], pokemon[-2]
+            imgnum = str(pokemon[0]);
+            if len(imgnum) <= 2: imgnum = '0' + imgnum
+            if len(imgnum) <= 2: imgnum = '0' + imgnum
+            pokeMarkers.append(
+                {
+                    'icon': 'static/icons/'+str(pokemon[0])+'.png',
+                    'lat': currLat,
+                    'lng': currLon,
+                    'infobox': pokemon[1]
+                    })
     for gym in gyms:
         if gym[0] == 0: color = "white"
         if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
