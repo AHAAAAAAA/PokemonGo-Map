@@ -341,7 +341,7 @@ def main():
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
-    parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)", required=True)
+    parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
     parser.set_defaults(DEBUG=True)
