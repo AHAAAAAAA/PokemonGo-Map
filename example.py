@@ -389,7 +389,9 @@ def main():
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     steps = 0
     steplimit = int(args.step_limit)
-    ignore = [i.lower() for i in args.ignore.split(',')]
+    ignore = []
+    if args.ignore is not None:
+    	ignore = [i.lower() for i in args.ignore.split(',')]
     pos = 1
     x   = 0
     y   = 0
@@ -438,7 +440,12 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '<b>%s</b> [%s remaining]' % (pokename, left)
+            remaining = '%s remaining' % (left)
+            pid = str(poke.pokemon.PokemonId)
+            label = (
+                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
+                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                    )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
@@ -508,8 +515,8 @@ def fullmap():
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon[0])+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon[0])+'</a></small></div><center>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center><img height=\'100\' width=\'100\' src=\'http://assets.pokemon.com/assets/cms2/img/pokedex/full/'+imgnum+'.png\'>'
-            })
+                'infobox': pokemon[1]
+                })
     for gym in gyms:
         if gym[0] == 0: color = "white"
         if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
