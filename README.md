@@ -21,7 +21,14 @@ Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
 
 # FAQ
 
-* Do I need Python 2.7? Yes! Can I use Python 3.x? No!
+`Exception, e <-`
+`Invalid syntax.`
+* You are using python 3, download python 2.7 instead.
+
+`pip or python is not recognized as an internal or external command`
+
+* replace pip with C:\Python27\Scripts\pip
+* replace python with C:\Python27\python
 
 * Can I sign in with Google? Not yet, we're working on it, until then get a Trainer Club account
 
