@@ -56,7 +56,6 @@ gyms = []
 pokestops = []
 numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
 
-
 # stuff for in-background search thread
 search_thread = None
 
@@ -434,7 +433,12 @@ def main():
             difflng = diff.lng().degrees
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            label = '<b>%s</b> [%s remaining]' % (pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'], left)
+            remaining = '%s remaining' % (left)
+            pid = str(poke.pokemon.PokemonId)
+            label = (
+                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pid)+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pid)+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
+                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                    )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
             pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
@@ -504,7 +508,7 @@ def fullmap():
                 'icon': 'static/icons/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
-                'infobox': '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+str(pokemon[0])+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+str(pokemon[0])+'</a></small></div><center>'+pokemon[1].replace('0 hours ','').replace('0 minutes ','')+'</center><img height=\'100\' width=\'100\' src=\'http://assets.pokemon.com/assets/cms2/img/pokedex/full/'+imgnum+'.png\'>'
+                'infobox': pokemon[1]
             })
     for gym in gyms:
         if gym[0] == 0: color = "white"
