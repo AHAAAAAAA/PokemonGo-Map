@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import flask
+from sys import stdout
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
@@ -572,7 +573,7 @@ def main():
     origin_lat = FLOAT_LAT
     origin_lon = FLOAT_LONG
     for step in range(steplimit**2):
-        debug('looping: step {} of {}'.format(step, steplimit**2))
+        stdout.write("\r[{}] Looping: step {} of {}".format(str(datetime.now()), step, steplimit ** 2))
 
         # Scan location math
         if -steplimit / 2 < x <= steplimit / 2 and -steplimit / 2 < y \
@@ -585,8 +586,9 @@ def main():
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
-        print('Completed: ' + str(
-            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
+        stdout.write(' (completed: ' + str(
+            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%' + ")")
+        stdout.flush();
 
     if (NEXT_LAT and NEXT_LONG
         and NEXT_LAT != FLOAT_LAT
@@ -597,9 +599,10 @@ def main():
     register_background_thread()
 
 
+print('[+] Searching pokemons for location {} {}}}'.format(FLOAT_LAT, FLOAT_LONG))
+
 def process_step(args, api_endpoint, access_token, profile_response,
                  pokemonsJSON, ignore, only):
-    print('[+] Searching pokemons for location {} {}}}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     step_lat = FLOAT_LAT
     step_long = FLOAT_LONG
