@@ -13,6 +13,7 @@ import time
 import requests
 import argparse
 import threading
+import functools
 
 import werkzeug.serving
 
@@ -58,6 +59,17 @@ numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm
 
 # stuff for in-background search thread
 search_thread = None
+
+def memoize(obj):
+    cache = obj.cache = {}
+
+    @functools.wraps(obj)
+    def memoizer(*args, **kwargs):
+        key = str(args) + str(kwargs)
+        if key not in cache:
+            cache[key] = obj(*args, **kwargs)
+        return cache[key]
+    return memoizer
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
@@ -202,7 +214,7 @@ def get_api_endpoint(access_token, api=API_URL):
 
     return ('https://%s/rpc' % profile_response.api_url)
 
-
+@memoize
 def get_profile(access_token, api, useauth, *reqq):
     req = pokemon_pb2.RequestEnvelop()
     req1 = req.requests.add()
@@ -232,6 +244,7 @@ def get_profile(access_token, api, useauth, *reqq):
     return retrying_api_req(api, access_token, req, useauth=useauth)
 
 
+@memoize
 def login_ptc(username, password):
     print('[!] login for: {}'.format(username))
     head = {'User-Agent': 'Niantic App'}
