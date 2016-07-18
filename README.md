@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/1760334/16904125/5621e800-4c4d-11e6-9906-55cfd778fd27.png">
+<img src="https://cloud.githubusercontent.com/assets/1760334/16904125/5621e800-4c4d-11e6-9906-55cfd778fd27.png">
 </p>
 
 # PokemonGo Map
@@ -15,9 +15,13 @@ Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
 # Usage
 `python example.py -u myUsername -p myPassword -l "Boulder, CO" -st 5`
 
--st: steps to take
+| Flag | Description                             | 
+|------|-----------------------------------------| 
+| -u   | Username                                | 
+| -p   | Password                                | 
+| -l   | Any location Google Maps can understand | 
+| -st  | Steps to take                           | 
 
--l: location, anything that Google Maps understands.
 
 # FAQ
 
