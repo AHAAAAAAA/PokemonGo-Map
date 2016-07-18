@@ -521,8 +521,12 @@ def main():
 
             pid = str(poke.pokemon.PokemonId)
             label = (
-                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokename+'</b></div>'
-                        '<center class=\'label-countdown\' data-disappears-at=\''+ str(disappear_timestamp)+'\'>'+disappears_at+'</center>'
+                "<div style='position:float; top:0; left:0;'>"
+                "  <small><a href='http://www.pokemon.com/us/pokedex/" + pid + "' target='_blank' title='View in Pokedex'>#" + pid + "</a></small> - "
+                "  <b>" + pokename + "</b> - "
+                "  <small><a href='http://www.google.com/maps/place/" + str(poke.Latitude) + "," + str(poke.Longitude) + "' target='_blank' title='View in Maps'>Maps</a></small>"
+                "</div>"
+                "<center class='label-countdown' data-disappears-at='" + str(disappear_timestamp) + "'>" + disappears_at + "</center>"
                     )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
