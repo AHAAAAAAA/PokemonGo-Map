@@ -429,23 +429,16 @@ def get_args():
     parser.add_argument('-p', '--password', help='Password', required=True)
     parser.add_argument(
         '-l', '--location', type=parse_unicode, help='Location', required=True)
-    parser.add_argument('-st', '--step_limit', help='Steps', required=True)
+    parser.add_argument('-st', '--step-limit', help='Steps', required=True)
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Pokemon to ignore (comma separated)')
+        '-i', '--ignore', help='Comma-separated list of Pokémon names to ignore')
     group.add_argument(
-        '-o', '--only', help='Only look for these pokemon (comma separated)')
-    parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
-    parser.add_argument(
-        '-c',
-        '--china',
-        help='Coord Transformer for China',
-        action='store_true')
+        '-o', '--only', help='Comma-separated list of Pokémon names to search')
     parser.add_argument(
         '-dp',
         '--display-pokestop',
-        help='Display Pokestop',
+        help='Display pokéstop',
         action='store_true',
         default=False)
     parser.add_argument(
@@ -470,6 +463,13 @@ def get_args():
         "--locale",
         help="Locale for Pokemon names: en (default), fr",
         default="en")
+    parser.add_argument(
+        '-c',
+        '--china',
+        help='Coordinates transformer for China',
+        action='store_true')
+    parser.add_argument(
+        '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
