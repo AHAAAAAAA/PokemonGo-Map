@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='pokemon.proto',
   package='',
-  serialized_pb=_b('\n\rpokemon.proto\"\xc5\x06\n\x0eRequestEnvelop\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x0e\n\x06rpc_id\x18\x03 \x01(\x03\x12*\n\x08requests\x18\x04 \x03(\x0b\x32\x18.RequestEnvelop.Requests\x12*\n\x08unknown6\x18\x06 \x01(\x0b\x32\x18.RequestEnvelop.Unknown6\x12\x10\n\x08latitude\x18\x07 \x01(\x06\x12\x11\n\tlongitude\x18\x08 \x01(\x06\x12\x10\n\x08\x61ltitude\x18\t \x01(\x06\x12&\n\x04\x61uth\x18\n \x01(\x0b\x32\x18.RequestEnvelop.AuthInfo\x12\x1f\n\tunknown11\x18\x0b \x01(\x0b\x32\x0c.UnknownAuth\x12\x11\n\tunknown12\x18\x0c \x01(\x03\x1a)\n\x08Requests\x12\x0c\n\x04type\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\x0c\x1a$\n\x13MessageSingleString\x12\r\n\x05\x62ytes\x18\x01 \x02(\x0c\x1a\x1e\n\x10MessageSingleInt\x12\n\n\x02\x66\x31\x18\x01 \x02(\x03\x1a(\n\x0eMessageTwoInts\x12\n\n\x02\x66\x31\x18\x01 \x02(\x03\x12\n\n\x02\x66\x35\x18\x05 \x02(\x03\x1a@\n\x0bMessageQuad\x12\n\n\x02\x66\x31\x18\x01 \x02(\x0c\x12\n\n\x02\x66\x32\x18\x02 \x02(\x0c\x12\x0b\n\x03lat\x18\x03 \x02(\x06\x12\x0c\n\x04long\x18\x04 \x02(\x06\x1a\x16\n\x03Wat\x12\x0f\n\x04lols\x18\x80\x80\x80@ \x03(\x03\x1aI\n\x08Unknown3\x12\x10\n\x08unknown4\x18\x01 \x02(\x0c\x12\x10\n\x08unknown2\x18\x02 \x01(\x0c\x12\x0b\n\x03lat\x18\x03 \x01(\x06\x12\x0c\n\x04long\x18\x04 \x01(\x06\x1ao\n\x08Unknown6\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x33\n\x08unknown2\x18\x02 \x02(\x0b\x32!.RequestEnvelop.Unknown6.Unknown2\x1a\x1c\n\x08Unknown2\x12\x10\n\x08unknown1\x18\x01 \x02(\x0c\x1au\n\x08\x41uthInfo\x12\x10\n\x08provider\x18\x01 \x02(\t\x12+\n\x05token\x18\x02 \x02(\x0b\x32\x1c.RequestEnvelop.AuthInfo.JWT\x1a*\n\x03JWT\x12\x10\n\x08\x63ontents\x18\x01 \x02(\t\x12\x11\n\tunknown13\x18\x02 \x02(\x05\"F\n\x0bUnknownAuth\x12\x11\n\tunknown71\x18\x01 \x01(\x0c\x12\x11\n\tunknown72\x18\x02 \x01(\x03\x12\x11\n\tunknown73\x18\x03 \x01(\x0c\"\xac\x13\n\x0fResponseEnvelop\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x10\n\x08unknown2\x18\x02 \x01(\x03\x12\x0f\n\x07\x61pi_url\x18\x03 \x01(\t\x12+\n\x08unknown6\x18\x06 \x01(\x0b\x32\x19.ResponseEnvelop.Unknown6\x12\x1e\n\x08unknown7\x18\x07 \x01(\x0b\x32\x0c.UnknownAuth\x12\x0f\n\x07payload\x18\x64 \x03(\x0c\x1ap\n\x08Unknown6\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x34\n\x08unknown2\x18\x02 \x02(\x0b\x32\".ResponseEnvelop.Unknown6.Unknown2\x1a\x1c\n\x08Unknown2\x12\x10\n\x08unknown1\x18\x01 \x02(\x0c\x1a\x41\n\x10HeartbeatPayload\x12-\n\x05\x63\x65lls\x18\x01 \x03(\x0b\x32\x1e.ResponseEnvelop.ClientMapCell\x1a\xe9\x03\n\rClientMapCell\x12\x10\n\x08S2CellId\x18\x01 \x02(\x04\x12\x12\n\nAsOfTimeMs\x18\x02 \x02(\x03\x12/\n\x04\x46ort\x18\x03 \x03(\x0b\x32!.ResponseEnvelop.PokemonFortProto\x12:\n\nSpawnPoint\x18\x04 \x03(\x0b\x32&.ResponseEnvelop.ClientSpawnPointProto\x12\x36\n\x0bWildPokemon\x18\x05 \x03(\x0b\x32!.ResponseEnvelop.WildPokemonProto\x12\x17\n\x0fIsTruncatedList\x18\x07 \x01(\x08\x12=\n\x0b\x46ortSummary\x18\x08 \x03(\x0b\x32(.ResponseEnvelop.PokemonSummaryFortProto\x12\x43\n\x13\x44\x65\x63imatedSpawnPoint\x18\t \x03(\x0b\x32&.ResponseEnvelop.ClientSpawnPointProto\x12\x34\n\nMapPokemon\x18\n \x03(\x0b\x32 .ResponseEnvelop.MapPokemonProto\x12:\n\rNearbyPokemon\x18\x0b \x03(\x0b\x32#.ResponseEnvelop.NearbyPokemonProto\x1ah\n\x0bWildPokemon\x12\x10\n\x08UniqueId\x18\x01 \x02(\t\x12\x11\n\tPokemonId\x18\x02 \x02(\t\x12\x34\n\x07pokemon\x18\x0b \x03(\x0b\x32#.ResponseEnvelop.NearbyPokemonProto\x1a\x92\x01\n\x0fMapPokemonProto\x12\x14\n\x0cSpawnpointId\x18\x01 \x02(\t\x12\x13\n\x0b\x45ncounterId\x18\x02 \x02(\x04\x12\x15\n\rPokedexTypeId\x18\x03 \x02(\x05\x12\x18\n\x10\x45xpirationTimeMs\x18\x04 \x02(\x03\x12\x10\n\x08Latitude\x18\x05 \x02(\x01\x12\x11\n\tLongitude\x18\x06 \x02(\x01\x1a\xe7\x02\n\x10PokemonFortProto\x12\x0e\n\x06\x46ortId\x18\x01 \x02(\t\x12\x16\n\x0eLastModifiedMs\x18\x02 \x02(\x03\x12\x10\n\x08Latitude\x18\x03 \x02(\x01\x12\x11\n\tLongitude\x18\x04 \x02(\x01\x12\x0c\n\x04Team\x18\x05 \x02(\x05\x12\x16\n\x0eGuardPokemonId\x18\x06 \x02(\x05\x12\x19\n\x11GuardPokemonLevel\x18\x07 \x02(\x05\x12\x0f\n\x07\x45nabled\x18\x08 \x02(\x08\x12\x10\n\x08\x46ortType\x18\t \x02(\x05\x12\x11\n\tGymPoints\x18\n \x02(\x03\x12\x12\n\nIsInBattle\x18\x0b \x02(\x08\x12\x37\n\rActivePokemon\x18\r \x01(\x0b\x32 .ResponseEnvelop.MapPokemonProto\x12\x1a\n\x12\x43ooldownCompleteMs\x18\x0e \x02(\x03\x12\x0f\n\x07Sponsor\x18\x0f \x02(\x05\x12\x15\n\rRenderingType\x18\x10 \x01(\x05\x1am\n\x17PokemonSummaryFortProto\x12\x15\n\rFortSummaryId\x18\x01 \x02(\t\x12\x16\n\x0eLastModifiedMs\x18\x02 \x02(\x03\x12\x10\n\x08Latitude\x18\x03 \x02(\x01\x12\x11\n\tLongitude\x18\x04 \x02(\x01\x1a<\n\x15\x43lientSpawnPointProto\x12\x10\n\x08Latitude\x18\x02 \x02(\x01\x12\x11\n\tLongitude\x18\x03 \x02(\x01\x1a\xfa\x01\n\x10WildPokemonProto\x12\x13\n\x0b\x45ncounterId\x18\x01 \x01(\x04\x12\x16\n\x0eLastModifiedMs\x18\x02 \x01(\x03\x12\x10\n\x08Latitude\x18\x03 \x01(\x01\x12\x11\n\tLongitude\x18\x04 \x01(\x01\x12\x14\n\x0cSpawnPointId\x18\x05 \x01(\t\x12:\n\x07pokemon\x18\x07 \x01(\x0b\x32).ResponseEnvelop.WildPokemonProto.Pokemon\x12\x18\n\x10TimeTillHiddenMs\x18\x0b \x01(\x05\x1a(\n\x07Pokemon\x12\n\n\x02Id\x18\x01 \x01(\x04\x12\x11\n\tPokemonId\x18\x02 \x01(\x05\x1aX\n\x12NearbyPokemonProto\x12\x15\n\rPokedexNumber\x18\x01 \x01(\x05\x12\x16\n\x0e\x44istanceMeters\x18\x02 \x01(\x02\x12\x13\n\x0b\x45ncounterId\x18\x03 \x01(\x04\x1aM\n\x0eProfilePayload\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12)\n\x07profile\x18\x02 \x01(\x0b\x32\x18.ResponseEnvelop.Profile\x1a\xa8\x03\n\x07Profile\x12\x15\n\rcreation_time\x18\x01 \x02(\x03\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0c\n\x04team\x18\x05 \x01(\x05\x12\x10\n\x08tutorial\x18\x07 \x01(\x0c\x12\x36\n\x06\x61vatar\x18\x08 \x01(\x0b\x32&.ResponseEnvelop.Profile.AvatarDetails\x12\x14\n\x0cpoke_storage\x18\t \x01(\x05\x12\x14\n\x0citem_storage\x18\n \x01(\x05\x12\x11\n\tunknown11\x18\x0b \x01(\t\x12\x11\n\tunknown12\x18\x0c \x01(\t\x12\x11\n\tunknown13\x18\r \x01(\t\x12\x33\n\x08\x63urrency\x18\x0e \x03(\x0b\x32!.ResponseEnvelop.Profile.Currency\x1aX\n\rAvatarDetails\x12\x10\n\x08unknown2\x18\x02 \x01(\x05\x12\x10\n\x08unknown3\x18\x03 \x01(\x05\x12\x10\n\x08unknown9\x18\t \x01(\x05\x12\x11\n\tunknown10\x18\n \x01(\x05\x1a(\n\x08\x43urrency\x12\x0c\n\x04type\x18\x01 \x02(\t\x12\x0e\n\x06\x61mount\x18\x02 \x01(\x05')
+  serialized_pb=_b('\n\rpokemon.proto\"\xc5\x06\n\x0eRequestEnvelop\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x0e\n\x06rpc_id\x18\x03 \x01(\x03\x12*\n\x08requests\x18\x04 \x03(\x0b\x32\x18.RequestEnvelop.Requests\x12*\n\x08unknown6\x18\x06 \x01(\x0b\x32\x18.RequestEnvelop.Unknown6\x12\x10\n\x08latitude\x18\x07 \x01(\x06\x12\x11\n\tlongitude\x18\x08 \x01(\x06\x12\x10\n\x08\x61ltitude\x18\t \x01(\x06\x12&\n\x04\x61uth\x18\n \x01(\x0b\x32\x18.RequestEnvelop.AuthInfo\x12\x1f\n\tunknown11\x18\x0b \x01(\x0b\x32\x0c.UnknownAuth\x12\x11\n\tunknown12\x18\x0c \x01(\x03\x1a)\n\x08Requests\x12\x0c\n\x04type\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\x0c\x1a$\n\x13MessageSingleString\x12\r\n\x05\x62ytes\x18\x01 \x02(\x0c\x1a\x1e\n\x10MessageSingleInt\x12\n\n\x02\x66\x31\x18\x01 \x02(\x03\x1a(\n\x0eMessageTwoInts\x12\n\n\x02\x66\x31\x18\x01 \x02(\x03\x12\n\n\x02\x66\x35\x18\x05 \x02(\x03\x1a@\n\x0bMessageQuad\x12\n\n\x02\x66\x31\x18\x01 \x02(\x0c\x12\n\n\x02\x66\x32\x18\x02 \x02(\x0c\x12\x0b\n\x03lat\x18\x03 \x02(\x06\x12\x0c\n\x04long\x18\x04 \x02(\x06\x1a\x16\n\x03Wat\x12\x0f\n\x04lols\x18\x80\x80\x80@ \x03(\x03\x1aI\n\x08Unknown3\x12\x10\n\x08unknown4\x18\x01 \x02(\x0c\x12\x10\n\x08unknown2\x18\x02 \x01(\x0c\x12\x0b\n\x03lat\x18\x03 \x01(\x06\x12\x0c\n\x04long\x18\x04 \x01(\x06\x1ao\n\x08Unknown6\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x33\n\x08unknown2\x18\x02 \x02(\x0b\x32!.RequestEnvelop.Unknown6.Unknown2\x1a\x1c\n\x08Unknown2\x12\x10\n\x08unknown1\x18\x01 \x02(\x0c\x1au\n\x08\x41uthInfo\x12\x10\n\x08provider\x18\x01 \x02(\t\x12+\n\x05token\x18\x02 \x02(\x0b\x32\x1c.RequestEnvelop.AuthInfo.JWT\x1a*\n\x03JWT\x12\x10\n\x08\x63ontents\x18\x01 \x02(\t\x12\x11\n\tunknown13\x18\x02 \x02(\x05\"F\n\x0bUnknownAuth\x12\x11\n\tunknown71\x18\x01 \x01(\x0c\x12\x11\n\tunknown72\x18\x02 \x01(\x03\x12\x11\n\tunknown73\x18\x03 \x01(\x0c\"\xae\x14\n\x0fResponseEnvelop\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x10\n\x08unknown2\x18\x02 \x01(\x03\x12\x0f\n\x07\x61pi_url\x18\x03 \x01(\t\x12+\n\x08unknown6\x18\x06 \x01(\x0b\x32\x19.ResponseEnvelop.Unknown6\x12\x1e\n\x08unknown7\x18\x07 \x01(\x0b\x32\x0c.UnknownAuth\x12\x0f\n\x07payload\x18\x64 \x03(\x0c\x1ap\n\x08Unknown6\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12\x34\n\x08unknown2\x18\x02 \x02(\x0b\x32\".ResponseEnvelop.Unknown6.Unknown2\x1a\x1c\n\x08Unknown2\x12\x10\n\x08unknown1\x18\x01 \x02(\x0c\x1a\x41\n\x10HeartbeatPayload\x12-\n\x05\x63\x65lls\x18\x01 \x03(\x0b\x32\x1e.ResponseEnvelop.ClientMapCell\x1a\xe9\x03\n\rClientMapCell\x12\x10\n\x08S2CellId\x18\x01 \x02(\x04\x12\x12\n\nAsOfTimeMs\x18\x02 \x02(\x03\x12/\n\x04\x46ort\x18\x03 \x03(\x0b\x32!.ResponseEnvelop.PokemonFortProto\x12:\n\nSpawnPoint\x18\x04 \x03(\x0b\x32&.ResponseEnvelop.ClientSpawnPointProto\x12\x36\n\x0bWildPokemon\x18\x05 \x03(\x0b\x32!.ResponseEnvelop.WildPokemonProto\x12\x17\n\x0fIsTruncatedList\x18\x07 \x01(\x08\x12=\n\x0b\x46ortSummary\x18\x08 \x03(\x0b\x32(.ResponseEnvelop.PokemonSummaryFortProto\x12\x43\n\x13\x44\x65\x63imatedSpawnPoint\x18\t \x03(\x0b\x32&.ResponseEnvelop.ClientSpawnPointProto\x12\x34\n\nMapPokemon\x18\n \x03(\x0b\x32 .ResponseEnvelop.MapPokemonProto\x12:\n\rNearbyPokemon\x18\x0b \x03(\x0b\x32#.ResponseEnvelop.NearbyPokemonProto\x1ah\n\x0bWildPokemon\x12\x10\n\x08UniqueId\x18\x01 \x02(\t\x12\x11\n\tPokemonId\x18\x02 \x02(\t\x12\x34\n\x07pokemon\x18\x0b \x03(\x0b\x32#.ResponseEnvelop.NearbyPokemonProto\x1a\x92\x01\n\x0fMapPokemonProto\x12\x14\n\x0cSpawnpointId\x18\x01 \x02(\t\x12\x13\n\x0b\x45ncounterId\x18\x02 \x02(\x04\x12\x15\n\rPokedexTypeId\x18\x03 \x02(\x05\x12\x18\n\x10\x45xpirationTimeMs\x18\x04 \x02(\x03\x12\x10\n\x08Latitude\x18\x05 \x02(\x01\x12\x11\n\tLongitude\x18\x06 \x02(\x01\x1a\xe7\x02\n\x10PokemonFortProto\x12\x0e\n\x06\x46ortId\x18\x01 \x02(\t\x12\x16\n\x0eLastModifiedMs\x18\x02 \x02(\x03\x12\x10\n\x08Latitude\x18\x03 \x02(\x01\x12\x11\n\tLongitude\x18\x04 \x02(\x01\x12\x0c\n\x04Team\x18\x05 \x02(\x05\x12\x16\n\x0eGuardPokemonId\x18\x06 \x02(\x05\x12\x19\n\x11GuardPokemonLevel\x18\x07 \x02(\x05\x12\x0f\n\x07\x45nabled\x18\x08 \x02(\x08\x12\x10\n\x08\x46ortType\x18\t \x02(\x05\x12\x11\n\tGymPoints\x18\n \x02(\x03\x12\x12\n\nIsInBattle\x18\x0b \x02(\x08\x12\x37\n\rActivePokemon\x18\r \x01(\x0b\x32 .ResponseEnvelop.MapPokemonProto\x12\x1a\n\x12\x43ooldownCompleteMs\x18\x0e \x02(\x03\x12\x0f\n\x07Sponsor\x18\x0f \x02(\x05\x12\x15\n\rRenderingType\x18\x10 \x01(\x05\x1am\n\x17PokemonSummaryFortProto\x12\x15\n\rFortSummaryId\x18\x01 \x02(\t\x12\x16\n\x0eLastModifiedMs\x18\x02 \x02(\x03\x12\x10\n\x08Latitude\x18\x03 \x02(\x01\x12\x11\n\tLongitude\x18\x04 \x02(\x01\x1a<\n\x15\x43lientSpawnPointProto\x12\x10\n\x08Latitude\x18\x02 \x02(\x01\x12\x11\n\tLongitude\x18\x03 \x02(\x01\x1a\xfa\x01\n\x10WildPokemonProto\x12\x13\n\x0b\x45ncounterId\x18\x01 \x01(\x04\x12\x16\n\x0eLastModifiedMs\x18\x02 \x01(\x03\x12\x10\n\x08Latitude\x18\x03 \x01(\x01\x12\x11\n\tLongitude\x18\x04 \x01(\x01\x12\x14\n\x0cSpawnPointId\x18\x05 \x01(\t\x12:\n\x07pokemon\x18\x07 \x01(\x0b\x32).ResponseEnvelop.WildPokemonProto.Pokemon\x12\x18\n\x10TimeTillHiddenMs\x18\x0b \x01(\x05\x1a(\n\x07Pokemon\x12\n\n\x02Id\x18\x01 \x01(\x04\x12\x11\n\tPokemonId\x18\x02 \x01(\x05\x1aX\n\x12NearbyPokemonProto\x12\x15\n\rPokedexNumber\x18\x01 \x01(\x05\x12\x16\n\x0e\x44istanceMeters\x18\x02 \x01(\x02\x12\x13\n\x0b\x45ncounterId\x18\x03 \x01(\x04\x1aM\n\x0eProfilePayload\x12\x10\n\x08unknown1\x18\x01 \x02(\x05\x12)\n\x07profile\x18\x02 \x01(\x0b\x32\x18.ResponseEnvelop.Profile\x1a\xaa\x04\n\x07Profile\x12\x15\n\rcreation_time\x18\x01 \x02(\x03\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x0c\n\x04team\x18\x05 \x01(\x05\x12\x10\n\x08tutorial\x18\x07 \x01(\x0c\x12\x36\n\x06\x61vatar\x18\x08 \x01(\x0b\x32&.ResponseEnvelop.Profile.AvatarDetails\x12\x14\n\x0cpoke_storage\x18\t \x01(\x05\x12\x14\n\x0citem_storage\x18\n \x01(\x05\x12\x38\n\x0b\x64\x61ily_bonus\x18\x0b \x01(\x0b\x32#.ResponseEnvelop.Profile.DailyBonus\x12\x11\n\tunknown12\x18\x0c \x01(\x0c\x12\x11\n\tunknown13\x18\r \x01(\x0c\x12\x33\n\x08\x63urrency\x18\x0e \x03(\x0b\x32!.ResponseEnvelop.Profile.Currency\x1aX\n\rAvatarDetails\x12\x10\n\x08unknown2\x18\x02 \x01(\x05\x12\x10\n\x08unknown3\x18\x03 \x01(\x05\x12\x10\n\x08unknown9\x18\t \x01(\x05\x12\x11\n\tunknown10\x18\n \x01(\x05\x1aY\n\nDailyBonus\x12\x1e\n\x16NextCollectTimestampMs\x18\x01 \x01(\x03\x12+\n#NextDefenderBonusCollectTimestampMs\x18\x02 \x01(\x03\x1a(\n\x08\x43urrency\x12\x0c\n\x04type\x18\x01 \x02(\t\x12\x0e\n\x06\x61mount\x18\x02 \x01(\x05')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -825,14 +825,14 @@ _RESPONSEENVELOP_MAPPOKEMONPROTO = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='Latitude', full_name='ResponseEnvelop.MapPokemonProto.Latitude', index=4,
       number=5, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='Longitude', full_name='ResponseEnvelop.MapPokemonProto.Longitude', index=5,
       number=6, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -875,14 +875,14 @@ _RESPONSEENVELOP_POKEMONFORTPROTO = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='Latitude', full_name='ResponseEnvelop.PokemonFortProto.Latitude', index=2,
       number=3, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='Longitude', full_name='ResponseEnvelop.PokemonFortProto.Longitude', index=3,
       number=4, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -1002,14 +1002,14 @@ _RESPONSEENVELOP_POKEMONSUMMARYFORTPROTO = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='Latitude', full_name='ResponseEnvelop.PokemonSummaryFortProto.Latitude', index=2,
       number=3, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='Longitude', full_name='ResponseEnvelop.PokemonSummaryFortProto.Longitude', index=3,
       number=4, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -1038,14 +1038,14 @@ _RESPONSEENVELOP_CLIENTSPAWNPOINTPROTO = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='Latitude', full_name='ResponseEnvelop.ClientSpawnPointProto.Latitude', index=0,
       number=2, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='Longitude', full_name='ResponseEnvelop.ClientSpawnPointProto.Longitude', index=1,
       number=3, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -1124,14 +1124,14 @@ _RESPONSEENVELOP_WILDPOKEMONPROTO = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='Latitude', full_name='ResponseEnvelop.WildPokemonProto.Latitude', index=2,
       number=3, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='Longitude', full_name='ResponseEnvelop.WildPokemonProto.Longitude', index=3,
       number=4, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -1188,7 +1188,7 @@ _RESPONSEENVELOP_NEARBYPOKEMONPROTO = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='DistanceMeters', full_name='ResponseEnvelop.NearbyPokemonProto.DistanceMeters', index=1,
       number=2, type=2, cpp_type=6, label=1,
-      has_default_value=False, default_value=float(0),
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -1296,8 +1296,44 @@ _RESPONSEENVELOP_PROFILE_AVATARDETAILS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3276,
-  serialized_end=3364,
+  serialized_start=3315,
+  serialized_end=3403,
+)
+
+_RESPONSEENVELOP_PROFILE_DAILYBONUS = _descriptor.Descriptor(
+  name='DailyBonus',
+  full_name='ResponseEnvelop.Profile.DailyBonus',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='NextCollectTimestampMs', full_name='ResponseEnvelop.Profile.DailyBonus.NextCollectTimestampMs', index=0,
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='NextDefenderBonusCollectTimestampMs', full_name='ResponseEnvelop.Profile.DailyBonus.NextDefenderBonusCollectTimestampMs', index=1,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3405,
+  serialized_end=3494,
 )
 
 _RESPONSEENVELOP_PROFILE_CURRENCY = _descriptor.Descriptor(
@@ -1332,8 +1368,8 @@ _RESPONSEENVELOP_PROFILE_CURRENCY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3366,
-  serialized_end=3406,
+  serialized_start=3496,
+  serialized_end=3536,
 )
 
 _RESPONSEENVELOP_PROFILE = _descriptor.Descriptor(
@@ -1393,23 +1429,23 @@ _RESPONSEENVELOP_PROFILE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='unknown11', full_name='ResponseEnvelop.Profile.unknown11', index=7,
-      number=11, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='daily_bonus', full_name='ResponseEnvelop.Profile.daily_bonus', index=7,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='unknown12', full_name='ResponseEnvelop.Profile.unknown12', index=8,
-      number=12, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=12, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='unknown13', full_name='ResponseEnvelop.Profile.unknown13', index=9,
-      number=13, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=13, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -1423,7 +1459,7 @@ _RESPONSEENVELOP_PROFILE = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_RESPONSEENVELOP_PROFILE_AVATARDETAILS, _RESPONSEENVELOP_PROFILE_CURRENCY, ],
+  nested_types=[_RESPONSEENVELOP_PROFILE_AVATARDETAILS, _RESPONSEENVELOP_PROFILE_DAILYBONUS, _RESPONSEENVELOP_PROFILE_CURRENCY, ],
   enum_types=[
   ],
   options=None,
@@ -1432,7 +1468,7 @@ _RESPONSEENVELOP_PROFILE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=2982,
-  serialized_end=3406,
+  serialized_end=3536,
 )
 
 _RESPONSEENVELOP = _descriptor.Descriptor(
@@ -1496,7 +1532,7 @@ _RESPONSEENVELOP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=930,
-  serialized_end=3406,
+  serialized_end=3536,
 )
 
 _REQUESTENVELOP_REQUESTS.containing_type = _REQUESTENVELOP
@@ -1543,8 +1579,10 @@ _RESPONSEENVELOP_NEARBYPOKEMONPROTO.containing_type = _RESPONSEENVELOP
 _RESPONSEENVELOP_PROFILEPAYLOAD.fields_by_name['profile'].message_type = _RESPONSEENVELOP_PROFILE
 _RESPONSEENVELOP_PROFILEPAYLOAD.containing_type = _RESPONSEENVELOP
 _RESPONSEENVELOP_PROFILE_AVATARDETAILS.containing_type = _RESPONSEENVELOP_PROFILE
+_RESPONSEENVELOP_PROFILE_DAILYBONUS.containing_type = _RESPONSEENVELOP_PROFILE
 _RESPONSEENVELOP_PROFILE_CURRENCY.containing_type = _RESPONSEENVELOP_PROFILE
 _RESPONSEENVELOP_PROFILE.fields_by_name['avatar'].message_type = _RESPONSEENVELOP_PROFILE_AVATARDETAILS
+_RESPONSEENVELOP_PROFILE.fields_by_name['daily_bonus'].message_type = _RESPONSEENVELOP_PROFILE_DAILYBONUS
 _RESPONSEENVELOP_PROFILE.fields_by_name['currency'].message_type = _RESPONSEENVELOP_PROFILE_CURRENCY
 _RESPONSEENVELOP_PROFILE.containing_type = _RESPONSEENVELOP
 _RESPONSEENVELOP.fields_by_name['unknown6'].message_type = _RESPONSEENVELOP_UNKNOWN6
@@ -1757,6 +1795,13 @@ ResponseEnvelop = _reflection.GeneratedProtocolMessageType('ResponseEnvelop', (_
       ))
     ,
 
+    DailyBonus = _reflection.GeneratedProtocolMessageType('DailyBonus', (_message.Message,), dict(
+      DESCRIPTOR = _RESPONSEENVELOP_PROFILE_DAILYBONUS,
+      __module__ = 'pokemon_pb2'
+      # @@protoc_insertion_point(class_scope:ResponseEnvelop.Profile.DailyBonus)
+      ))
+    ,
+
     Currency = _reflection.GeneratedProtocolMessageType('Currency', (_message.Message,), dict(
       DESCRIPTOR = _RESPONSEENVELOP_PROFILE_CURRENCY,
       __module__ = 'pokemon_pb2'
@@ -1788,6 +1833,7 @@ _sym_db.RegisterMessage(ResponseEnvelop.NearbyPokemonProto)
 _sym_db.RegisterMessage(ResponseEnvelop.ProfilePayload)
 _sym_db.RegisterMessage(ResponseEnvelop.Profile)
 _sym_db.RegisterMessage(ResponseEnvelop.Profile.AvatarDetails)
+_sym_db.RegisterMessage(ResponseEnvelop.Profile.DailyBonus)
 _sym_db.RegisterMessage(ResponseEnvelop.Profile.Currency)
 
 
