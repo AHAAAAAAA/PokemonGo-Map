@@ -7,11 +7,12 @@
             <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
             <link rel="stylesheet" href="">
             <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-            <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
             <script>
                 var setLabelTime = function(){
-                    $('.label-countdown').each(function(e){
-                        var time = $(this).data('disappears-at');
+                    var pokeLabels = document.getElementsByClassName('label-countdown');
+                    for (var i = 0; i < pokeLabels.length; i++) {
+                        var label = pokeLabels[i];
+                        var time = label.getAttribute('data-disappears-at');
                         var timestring = "";
                         var disappearsAt = new Date(parseInt(time)*1000);
                         if(true){ // difference between disappears-at time and now. Negative if passed
@@ -41,11 +42,11 @@
                             }
                             timestring += hours + ":" + minutes + ":" + seconds;
                         }
-                        $(this).text(timestring)
-                    });
+                        label.innerHTML = timestring;
+                    }
                 };
 
-                    setInterval(setLabelTime, 1000);
+                setInterval(setLabelTime, 1000);
             </script>
             {{fullmap.js}}
     </head>
