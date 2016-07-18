@@ -599,4 +599,4 @@ def fullmap():
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=os.environ['PORT'], debug=True, threaded=True)
