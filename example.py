@@ -42,10 +42,10 @@ credentials = json.load(open(path + '/credentials.json'))
 PTC_CLIENT_SECRET = credentials['ptc_client_secret']
 GOOGLEMAPS_KEY = credentials['gmaps']
 
-ANDROID_ID = '9774d56d682e549c'
-SERVICE= 'audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com'
+ANDROID_ID = credentials['android_id']
+SERVICE= credentials['service']
 APP = 'com.nianticlabs.pokemongo'
-CLIENT_SIG = '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
+CLIENT_SIG = credentials['client_sig']
 
 
 SESSION = requests.session()
