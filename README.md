@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/1760334/16904125/5621e800-4c4d-11e6-9906-55cfd778fd27.png">
+<img src="(https://cloud.githubusercontent.com/assets/7145349/16914466/ea8d97ce-4ca6-11e6-871e-e9b3e6e92313.png">
 </p>
 
 # PokemonGo Map
