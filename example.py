@@ -311,8 +311,6 @@ def main():
         args.username = request.args.get('u')
     if request.args.get('p') is not None:
         args.password = request.args.get('p')
-    if request.args.get('s') is not None:
-        args.step_limit = request.args.get('s')
 
     access_token = login_ptc(args.username, args.password)
     if access_token is None:
