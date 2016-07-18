@@ -445,9 +445,9 @@ def get_args():
         help='Coord Transformer for China',
         action='store_true')
     parser.add_argument(
-        "-ar",
-        "--auto_refresh",
-        help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
+        '-ar',
+        '--auto_refresh',
+        help='Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds')
     parser.add_argument(
         '-dp',
         '--display-pokestop',
@@ -472,10 +472,10 @@ def get_args():
         help='Set web server listening port',
         default=5000)
     parser.add_argument(
-        "-L",
-        "--locale",
-        help="Locale for Pokemon names: en (default), fr",
-        default="en")
+        '-L',
+        '--locale',
+        help='Locale for Pokemon names: en (default), fr',
+        default='en')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
