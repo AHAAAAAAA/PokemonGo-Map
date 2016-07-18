@@ -201,11 +201,32 @@ def api_req(api_endpoint, access_token, *args, **kwargs):
 
 def get_api_endpoint(access_token, api=API_URL):
     profile_response = None
-    while not profile_response or not profile_response.api_url:
-        debug("get_api_endpoint: calling get_profile")
-        profile_response = get_profile(access_token, api, None)
+    while not profile_response:
+        profile_response = retrying_get_profile(access_token, api, None)
+        if not hasattr(profile_response, 'api_url'):
+            debug("retrying_get_profile: get_profile returned no api_url, retrying")
+            profile_response = None
+            continue
+        if not len(profile_response.api_url):
+            debug("get_api_endpoint: retrying_get_profile returned no-len api_url, retrying")
+            profile_response = None
 
     return ('https://%s/rpc' % profile_response.api_url)
+
+
+def retrying_get_profile(access_token, api, useauth, *reqq):
+    profile_response = None
+    while not profile_response:
+        profile_response = get_profile(access_token, api, useauth, *reqq)
+        if not hasattr(profile_response, 'payload'):
+            debug("retrying_get_profile: get_profile returned no payload, retrying")
+            profile_response = None
+            continue
+        if not profile_response.payload:
+            debug("retrying_get_profile: get_profile returned no-len payload, retrying")
+            profile_response = None
+
+    return profile_response
 
 
 def get_profile(access_token, api, useauth, *reqq):
@@ -249,6 +270,11 @@ def login_ptc(username, password):
     except ValueError as e:
         debug("login_ptc: could not decode JSON from {}".format(r.content))
         return None
+
+    # Maximum password length is 15 (sign in page enforces this limit, API does not)
+    if len(password) > 15:
+        print('[!] Trimming password to 15 characters')
+        password = password[:15]
 
     data = {
         'lt': jdata['lt'],
@@ -367,7 +393,7 @@ def main():
         return
     print('[+] Received API endpoint: {}'.format(api_endpoint))
 
-    profile_response = get_profile(access_token, api_endpoint, None)
+    profile_response = retrying_get_profile(access_token, api_endpoint, None)
     if profile_response is None or not profile_response.payload:
         print('[-] Ooops...')
         raise Exception("Could not get profile")
@@ -441,7 +467,7 @@ def main():
                 if pokename.lower() in ignore: continue
             
             disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
-            
+
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
                                
@@ -460,7 +486,7 @@ def main():
         if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
             dx, dy = -dy, dx
         x, y = x+dx, y+dy
-        steps +=1
+        steps += 1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
     register_background_thread()
