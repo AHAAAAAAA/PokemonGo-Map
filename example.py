@@ -426,56 +426,57 @@ def get_token(service, username, password):
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-a', '--auth_service', help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username', required=True)
-    parser.add_argument('-p', '--password', help='Password', required=True)
+        '-a', '--auth_service', help='Auth Service', default=os.environ.get('AUTH_SERVICE', 'ptc'))
+    parser.add_argument('-u', '--username', help='Username', required=True, default=os.environ.get('USERNAME', None))
+    parser.add_argument('-p', '--password', help='Password', required=True, default=os.environ.get('PASSWORD', None))
     parser.add_argument(
-        '-l', '--location', type=parse_unicode, help='Location', required=True)
-    parser.add_argument('-st', '--step_limit', help='Steps', required=True)
+        '-l', '--location', type=parse_unicode, help='Location', required=True, default=os.environ.get('LOCATION', None))
+    parser.add_argument('-st', '--step_limit', help='Steps', required=True, default=os.environ.get('STEP_LIMIT', None))
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Pokemon to ignore (comma separated)')
+        '-i', '--ignore', help='Pokemon to ignore (comma separated)', default=os.environ.get('IGNORE', None))
     group.add_argument(
-        '-o', '--only', help='Only look for these pokemon (comma separated)')
+        '-o', '--only', help='Only look for these pokemon (comma separated)', default=os.environ.get('ONLY', None))
     parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
+        '-d', '--debug', help='Debug Mode', action='store_true', default=os.environ.get('DEBUG', True))
     parser.add_argument(
         '-c',
         '--china',
         help='Coord Transformer for China',
-        action='store_true')
+        action='store_true', default=os.environ.get('CHINA', None))
     parser.add_argument(
         '-ar',
         '--auto_refresh',
-        help='Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds')
+        help='Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds',
+        default=os.environ.get('AUTO_REFRESH', None))
     parser.add_argument(
         '-dp',
         '--display-pokestop',
         help='Display Pokestop',
         action='store_true',
-        default=False)
+        default=os.environ.get('DISPLAY_POKESTOP', False))
     parser.add_argument(
         '-dg',
         '--display-gym',
         help='Display Gym',
         action='store_true',
-        default=False)
+        default=os.environ.get('DISPLAY_GYM', False))
     parser.add_argument(
         '-H',
         '--host',
         help='Set web server listening host',
-        default='127.0.0.1')
+        default=os.environ.get('HOST', '127.0.0.1'))
     parser.add_argument(
         '-P',
         '--port',
         type=int,
         help='Set web server listening port',
-        default=5000)
+        default=os.environ.get('PORT', 5000))
     parser.add_argument(
         '-L',
         '--locale',
         help='Locale for Pokemon names: en (default), fr',
-        default='en')
+        default=os.environ.get('LOCALE', 'en'))
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
