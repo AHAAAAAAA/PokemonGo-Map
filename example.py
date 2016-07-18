@@ -1,8 +1,5 @@
 # encoding: utf-8
 
-from flask import Flask, render_template
-from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
 import os
 import re
 import sys
@@ -13,10 +10,6 @@ import requests
 import argparse
 import threading
 
-import werkzeug.serving
-
-import pokemon_pb2
-
 from google.protobuf.internal import encoder
 from s2sphere import *
 from datetime import datetime
@@ -25,6 +18,16 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
+
+from flask import Flask, render_template
+from flask_googlemaps import GoogleMaps
+from flask_googlemaps import Map
+import werkzeug.serving
+
+import pokemon_pb2
+
+from flaskrun import flask_argparse
+
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -51,6 +54,7 @@ deflat, deflng = 0, 0
 default_step = 0.001
 api_endpoint = None
 pokemons = []
+completed_percentage_str = None
 gyms = []
 pokestops = []
 numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
@@ -242,6 +246,10 @@ def login_ptc(username, password):
     if r is None:
         return render_template('nope.html', fullmap=fullmap)
 
+    if "There was an error trying to complete your request" in r.content:
+        debug("login_ptc: could not log in, CAS is Unavailable")
+        return None
+
     try:
         jdata = json.loads(r.content)
     except ValueError as e:
@@ -328,22 +336,15 @@ def get_token(name, passw):
         return global_token
 
 
-def main():
+def main(app=None):
+    global completed_percentage_str
+
+    assert app, "Need a reference to the Flask app"
+    args = app.args
+
     debug("main")
 
-    full_path = os.path.realpath(__file__)
-    path, filename = os.path.split(full_path)
-    pokemonsJSON = json.load(open(path + '/pokemon.json'))
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--username", help="PTC Username", required=True)
-    parser.add_argument("-p", "--password", help="PTC Password", required=True)
-    parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
-    parser.add_argument("-st", "--step_limit", help="Steps", required=True)
-    parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
-    parser.set_defaults(DEBUG=True)
-    args = parser.parse_args()
-
+    pokemonsJSON = json.load(open('pokemon.json'))
     default_location = args.location
     if args.debug:
         global DEBUG
@@ -443,16 +444,18 @@ def main():
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-    register_background_thread()
+    register_background_thread(app=app)
 
 
-def register_background_thread(initial_registration=False):
+def register_background_thread(initial_registration=False, app=None):
     """
     Start a background thread to search for Pokemon
     while Flask is still able to serve requests for the map
     :param initial_registration: True if first registration and thread should start immediately, False if it's being called by the finishing thread to schedule a refresh
     :return: None
     """
+
+    assert app, "Need a reference to the Flask app"
 
     debug("register_background_thread called")
     global search_thread
@@ -466,11 +469,11 @@ def register_background_thread(initial_registration=False):
             return
 
         debug("register_background_thread: initial registration")
-        search_thread = threading.Thread(target=main)
+        search_thread = threading.Thread(target=main, kwargs={"app": app})
 
     else:
         debug("register_background_thread: queueing")
-        search_thread = threading.Timer(30, main)  # delay, in seconds
+        search_thread = threading.Timer(30, main, kwargs={"app": app})  # delay, in seconds
 
     search_thread.daemon = True
     search_thread.name = "search_thread"
@@ -478,8 +481,9 @@ def register_background_thread(initial_registration=False):
 
 
 def create_app():
+    debug("create_app starts")
     app = Flask(__name__, template_folder="templates")
-
+    app.config['GOOGLEMAPS_KEY'] = GOOGLEMAPS_KEY
     GoogleMaps(app, key=GOOGLEMAPS_KEY)
     return app
 
@@ -488,6 +492,8 @@ app = create_app()
 
 @app.route('/')
 def fullmap():
+    global completed_percentage_str
+
     pokeMarkers = []
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
@@ -529,9 +535,18 @@ def fullmap():
         markers=pokeMarkers,
         zoom="15"
     )
-    return render_template('example_fullmap.html', fullmap=fullmap)
+    return render_template('example_fullmap.html',
+                           fullmap=fullmap,
+                           completed_percentage_str=completed_percentage_str)
 
 
 if __name__ == "__main__":
-    register_background_thread(initial_registration=True)
-    app.run(debug=True)
+    flask_argparse(app)
+
+    register_background_thread(initial_registration=True, app=app)
+
+    app.run(
+        debug=app.args.debug,
+        host=app.args.host,
+        port=int(app.args.port)
+    )
