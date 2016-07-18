@@ -47,7 +47,8 @@ COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
 FLOAT_LAT = 0
 FLOAT_LONG = 0
-deflat, deflng = 0, 0
+NEXT_LAT = 0
+NEXT_LONG = 0
 default_step = 0.001
 access_token = None
 api_endpoint = None
@@ -384,6 +385,7 @@ def main():
     for curr in profile.profile.currency:
         print('[+] {}: {}'.format(curr.type, curr.amount))
 
+    print('[+] Searching pokemons for location {} {}}}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     steps = 0
     steplimit = int(args.step_limit)
@@ -443,7 +445,13 @@ def main():
         steps +=1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-        register_background_thread()
+    if (NEXT_LAT and NEXT_LONG
+        and NEXT_LAT != FLOAT_LAT
+        and NEXT_LONG != FLOAT_LONG):
+        print('Update to next location %f, %f' % (NEXT_LAT, NEXT_LONG))
+        set_location_coords(NEXT_LAT, NEXT_LONG, 0)
+
+    register_background_thread()
 
 
 def register_background_thread(initial_registration=False):
