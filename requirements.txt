@@ -4,3 +4,4 @@ requests==2.10.0
 flask-googlemaps==0.2.0
 s2sphere==0.2.4
 flask==0.11.1
+gpsoauth==0.3.0
