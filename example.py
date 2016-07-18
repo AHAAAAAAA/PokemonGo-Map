@@ -785,9 +785,9 @@ def next_loc():
 def get_pokemarkers():
     pokeMarkers = [{
         'icon': icons.dots.red,
-        'lat': FLOAT_LAT,
-        'lng': FLOAT_LONG,
-        'infobox': "Search Position"
+        'lat': origin_lat,
+        'lng': origin_lon,
+        'infobox': "Start position"
     }]
 
     for pokemon_key in pokemons:
