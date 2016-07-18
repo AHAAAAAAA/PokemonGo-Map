@@ -349,7 +349,7 @@ def main():
     print('[+] Received API endpoint: {}'.format(api_endpoint))
 
     profile_response = get_profile(access_token, api_endpoint, None)
-    if profile_response is None:
+    if profile_response is None or not profile_response.payload:
         print('[-] Ooops...')
         raise Exception("Could not get profile")
 
