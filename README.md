@@ -14,10 +14,11 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 `pip install -r requirements.txt`
 
 # Usage
-`python example.py -u myUsername -p myPassword -l "Boulder, CO" -st 5`
+`python example.py -a authService -u myUsername -p myPassword -l "Boulder, CO" -st 5`
 
 | Flag | Description                             | 
 |------|-----------------------------------------| 
+| -a   | Auth Service (ptc or google)            |
 | -u   | Username                                | 
 | -p   | Password                                | 
 | -l   | Any location Google Maps can understand | 

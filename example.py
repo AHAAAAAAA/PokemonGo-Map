@@ -23,6 +23,7 @@ from google.protobuf.internal import encoder
 from s2sphere import *
 from datetime import datetime
 from geopy.geocoders import GoogleV3
+from gpsoauth import perform_master_login, perform_oauth
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
@@ -35,6 +36,10 @@ API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
 LOGIN_URL = 'https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize'
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
 PTC_CLIENT_SECRET = 'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
+ANDROID_ID = '9774d56d682e549c'
+SERVICE= 'audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com'
+APP = 'com.nianticlabs.pokemongo'
+CLIENT_SIG = '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
 GOOGLEMAPS_KEY = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
 
 SESSION = requests.session()
@@ -149,10 +154,10 @@ def get_location_coords():
     return (COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE)
 
 
-def retrying_api_req(api_endpoint, access_token, *args, **kwargs):
+def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
     while True:
         try:
-            response = api_req(api_endpoint, access_token, *args, **kwargs)
+            response = api_req(service, api_endpoint, access_token, *args, **kwargs)
             if response:
                 return response
             debug("retrying_api_req: api_req returned None, retrying")
@@ -161,7 +166,7 @@ def retrying_api_req(api_endpoint, access_token, *args, **kwargs):
         time.sleep(1)
 
 
-def api_req(api_endpoint, access_token, *args, **kwargs):
+def api_req(service, api_endpoint, access_token, *args, **kwargs):
     p_req = pokemon_pb2.RequestEnvelop()
     p_req.rpc_id = 1469378659230941192
 
@@ -172,7 +177,7 @@ def api_req(api_endpoint, access_token, *args, **kwargs):
     p_req.unknown12 = 989
 
     if 'useauth' not in kwargs or not kwargs['useauth']:
-        p_req.auth.provider = 'ptc'
+        p_req.auth.provider = service
         p_req.auth.token.contents = access_token
         p_req.auth.token.unknown13 = 14
     else:
@@ -200,10 +205,10 @@ def api_req(api_endpoint, access_token, *args, **kwargs):
     return p_ret
 
 
-def get_api_endpoint(access_token, api=API_URL):
+def get_api_endpoint(service, access_token, api=API_URL):
     profile_response = None
     while not profile_response:
-        profile_response = retrying_get_profile(access_token, api, None)
+        profile_response = retrying_get_profile(service, access_token, api, None)
         if not hasattr(profile_response, 'api_url'):
             debug("retrying_get_profile: get_profile returned no api_url, retrying")
             profile_response = None
@@ -215,10 +220,10 @@ def get_api_endpoint(access_token, api=API_URL):
     return ('https://%s/rpc' % profile_response.api_url)
 
 
-def retrying_get_profile(access_token, api, useauth, *reqq):
+def retrying_get_profile(service, access_token, api, useauth, *reqq):
     profile_response = None
     while not profile_response:
-        profile_response = get_profile(access_token, api, useauth, *reqq)
+        profile_response = get_profile(service, access_token, api, useauth, *reqq)
         if not hasattr(profile_response, 'payload'):
             debug("retrying_get_profile: get_profile returned no payload, retrying")
             profile_response = None
@@ -230,7 +235,7 @@ def retrying_get_profile(access_token, api, useauth, *reqq):
     return profile_response
 
 
-def get_profile(access_token, api, useauth, *reqq):
+def get_profile(service, access_token, api, useauth, *reqq):
     req = pokemon_pb2.RequestEnvelop()
     req1 = req.requests.add()
     req1.type = 2
@@ -256,11 +261,17 @@ def get_profile(access_token, api, useauth, *reqq):
     req5.type = 5
     if len(reqq) >= 5:
         req5.MergeFrom(reqq[4])
-    return retrying_api_req(api, access_token, req, useauth=useauth)
+    return retrying_api_req(service, api, access_token, req, useauth=useauth)
 
+def login_google(username, password):
+    print('[!] Google login for: {}'.format(username))
+    r1 = perform_master_login(username, password, ANDROID_ID)
+    r2 = perform_oauth(username, r1.get('Token', ''), ANDROID_ID, SERVICE, APP,
+        CLIENT_SIG)
+    return r2.get('Auth')
 
 def login_ptc(username, password):
-    print('[!] login for: {}'.format(username))
+    print('[!] PTC login for: {}'.format(username))
     head = {'User-Agent': 'Niantic App'}
     r = SESSION.get(LOGIN_URL, headers=head)
     if r is None:
@@ -308,7 +319,7 @@ def login_ptc(username, password):
     return access_token
 
 
-def get_heartbeat(api_endpoint, access_token, response):
+def get_heartbeat(service, api_endpoint, access_token, response):
     m4 = pokemon_pb2.RequestEnvelop.Requests()
     m = pokemon_pb2.RequestEnvelop.MessageSingleInt()
     m.f1 = int(time.time() * 1000)
@@ -327,6 +338,7 @@ def get_heartbeat(api_endpoint, access_token, response):
     m.long = COORDS_LONGITUDE
     m1.message = m.SerializeToString()
     response = get_profile(
+        service,
         access_token,
         api_endpoint,
         response.unknown7,
@@ -343,7 +355,7 @@ def get_heartbeat(api_endpoint, access_token, response):
     return heartbeat
 
 
-def get_token(name, passw):
+def get_token(service, username, password):
     """
     Get token if it's not None
     :return:
@@ -351,7 +363,10 @@ def get_token(name, passw):
     """
     global global_token
     if global_token is None:
-        global_token = login_ptc(name, passw)
+        if service == 'ptc':
+            global_token = login_ptc(username, password)
+        else:
+            global_token = login_google(username, password)
         return global_token
     else:
         return global_token
@@ -365,8 +380,9 @@ def main():
     pokemonsJSON = json.load(open(path + '/pokemon.json'))
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--username", help="PTC Username", required=True)
-    parser.add_argument("-p", "--password", help="PTC Password", required=True)
+    parser.add_argument("-a", "--auth_service", help="Auth Service", default="ptc")
+    parser.add_argument("-u", "--username", help="Username", required=True)
+    parser.add_argument("-p", "--password", help="Password", required=True)
     parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
     parser.add_argument("-st", "--step_limit", help="Steps", required=True)
     group = parser.add_mutually_exclusive_group(required=False)
@@ -379,6 +395,10 @@ def main():
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
+    if args.auth_service not in ['ptc', 'google']:
+      print('[!] Invalid Auth service specified')
+      return
+
     if args.debug:
         global DEBUG
         DEBUG = True
@@ -386,19 +406,19 @@ def main():
 
     retrying_set_location(args.location)
 
-    access_token = get_token(args.username, args.password)
+    access_token = get_token(args.auth_service, args.username, args.password)
     if access_token is None:
         print('[-] Wrong username/password')
         return
     print('[+] RPC Session Token: {} ...'.format(access_token[:25]))
 
-    api_endpoint = get_api_endpoint(access_token)
+    api_endpoint = get_api_endpoint(args.auth_service, access_token)
     if api_endpoint is None:
         print('[-] RPC server offline')
         return
     print('[+] Received API endpoint: {}'.format(api_endpoint))
 
-    profile_response = retrying_get_profile(access_token, api_endpoint, None)
+    profile_response = retrying_get_profile(args.auth_service, access_token, api_endpoint, None)
     if profile_response is None or not profile_response.payload:
         print('[-] Ooops...')
         raise Exception("Could not get profile")
@@ -439,13 +459,13 @@ def main():
         original_lat = FLOAT_LAT
         original_long = FLOAT_LONG
         parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
-        h = get_heartbeat(api_endpoint, access_token, profile_response)
+        h = get_heartbeat(args.auth_service, api_endpoint, access_token, profile_response)
         hs = [h]
         seen = set([])
         for child in parent.children():
             latlng = LatLng.from_point(Cell(child).get_center())
             set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
-            hs.append(get_heartbeat(api_endpoint, access_token, profile_response))
+            hs.append(get_heartbeat(args.auth_service, api_endpoint, access_token, profile_response))
         set_location_coords(original_lat, original_long, 0)
         visible = []
         for hh in hs:
