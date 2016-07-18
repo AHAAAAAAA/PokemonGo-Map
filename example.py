@@ -728,7 +728,6 @@ def data():
     """ Gets all the PokeMarkers via REST """
     return json.dumps(get_pokemarkers())
 
-jk/step
 @app.route('/raw_data')
 def raw_data():
     """ Gets raw data for pokemons/gyms/pokestops via REST """
