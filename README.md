@@ -47,3 +47,10 @@ Note:
 * Can I sign in with Google? Not yet, we're working on it, until then get a Trainer Club account
 
 * I'm on Windows, why does nothing work? See if anything in https://www.reddit.com/r/pokemongodev/comments/4t80df/wip_pokemon_go_map_visualization_google_maps_view/d5feu2f helps
+
+* Can I deploy this somewhere to use on my phone? Yes!
+Heroku. Signup, link it to either a local copy of the code or a github fork
+Confirm your Procfile is live in the 'resources' tab
+$PORT is a heroku variable
+
+* Procfile example: 'web: python example.py -u USERNAME -p PASSWORD -l "Boulder, CO" -st 20 -i "pidgey, rattata, drowsey, weedle, zubat, spearow, caterpie" --port $PORT --host 0.0.0.0''
