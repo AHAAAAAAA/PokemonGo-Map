@@ -34,8 +34,15 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
 LOGIN_URL = 'https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize'
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
-PTC_CLIENT_SECRET = 'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
-GOOGLEMAPS_KEY = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
+#PTC_CLIENT_SECRET = 'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
+#GOOGLEMAPS_KEY = "AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
+full_path = os.path.realpath(__file__)
+path, filename = os.path.split(full_path)
+credentials = json.load(open(path + '/credentials.json'))
+PTC_CLIENT_SECRET = credentials['ptc_client_secret']
+print('PTC: '+PTC_CLIENT_SECRET)
+GOOGLEMAPS_KEY = credentials['gmaps']
+print('GMAPS: '+GOOGLEMAPS_KEY)
 
 SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
@@ -360,9 +367,12 @@ def get_token(name, passw):
 def main():
     debug("main")
 
+
+
     full_path = os.path.realpath(__file__)
     path, filename = os.path.split(full_path)
     pokemonsJSON = json.load(open(path + '/pokemon.json'))
+
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username", help="PTC Username", required=True)
