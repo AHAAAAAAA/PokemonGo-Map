@@ -15,14 +15,15 @@ Team icons from [israelvicars](https://github.com/israelvicars/pkmn-go-emoji).
 # Usage
 `python example.py -u myUsername -p myPassword -l "Boulder, CO" -st 5`
 
-| Flag | Description                             | 
-|------|-----------------------------------------| 
-| -u   | Username                                | 
-| -p   | Password                                | 
-| -l   | Any location Google Maps can understand | 
-| -st  | Steps to take                           | 
+| Flag | Description                             |
+|------|-----------------------------------------|
+| -u   | Username                                |
+| -p   | Password                                |
+| -l   | Any location Google Maps can understand |
+| -st  | Steps to take                           |
 | -i, --ignore | Comma-separated list of Pokémon to ignore |
 | -o, --only   | Comma-separated list of Pokemon to search for exclusively |
+| -s, --stats | Save statistics about last search in stats.txt |
 | -dp, --display-pokestop | Display pokestop                   |
 | -dg, --display-gym  | Display gym                   |
 
