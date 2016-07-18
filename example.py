@@ -12,10 +12,12 @@ import time
 import requests
 import argparse
 import threading
-
 import werkzeug.serving
 
 import pokemon_pb2
+
+from datetime import datetime
+import time
 
 from google.protobuf.internal import encoder
 from s2sphere import *
@@ -441,13 +443,15 @@ def main():
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            time_to_hidden = poke.TimeTillHiddenMs
-            left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            remaining = '%s remaining' % (left)
+            
+            disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
+            disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
+            disappears_at = 'disappears at %s' % (disappear_time_formatted)
+            
             pid = str(poke.pokemon.PokemonId)
             label = (
                         '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
-                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                        '<center>'+disappears_at+'</center>'
                     )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
