@@ -16,9 +16,6 @@ import werkzeug.serving
 
 import pokemon_pb2
 
-from datetime import datetime
-import time
-
 from google.protobuf.internal import encoder
 from s2sphere import *
 from datetime import datetime
@@ -56,19 +53,22 @@ api_endpoint = None
 pokemons = []
 gyms = []
 pokestops = []
-numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor", 3: "Instinct"} # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
-
+numbertoteam = {0: "Gym", 1: "Mystic", 2: "Valor",
+                3: "Instinct"}  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
 
 # stuff for in-background search thread
 search_thread = None
+
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
 
+
 def debug(message):
     if DEBUG:
         print('[-] {}'.format(message))
+
 
 def time_left(ms):
     s = ms / 1000
@@ -357,13 +357,7 @@ def get_token(name, passw):
         return global_token
 
 
-def main():
-    debug("main")
-
-    full_path = os.path.realpath(__file__)
-    path, filename = os.path.split(full_path)
-    pokemonsJSON = json.load(open(path + '/pokemon.json'))
-
+def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username", help="PTC Username", required=True)
     parser.add_argument("-p", "--password", help="PTC Password", required=True)
@@ -380,25 +374,25 @@ def main():
     if args.debug:
         global DEBUG
         DEBUG = True
-        print('[!] DEBUG mode on')
+        debug('DEBUG mode on')
+    return args
 
-    retrying_set_location(args.location)
 
+def login(args):
     access_token = get_token(args.username, args.password)
     if access_token is None:
-        print('[-] Wrong username/password')
-        return
+        raise Exception('[-] Wrong username/password')
+
     print('[+] RPC Session Token: {} ...'.format(access_token[:25]))
 
     api_endpoint = get_api_endpoint(access_token)
     if api_endpoint is None:
-        print('[-] RPC server offline')
-        return
+        raise Exception('[-] RPC server offline')
+
     print('[+] Received API endpoint: {}'.format(api_endpoint))
 
     profile_response = retrying_get_profile(access_token, api_endpoint, None)
     if profile_response is None or not profile_response.payload:
-        print('[-] Ooops...')
         raise Exception("Could not get profile")
 
     print('[+] Login successful')
@@ -416,8 +410,20 @@ def main():
     for curr in profile.profile.currency:
         print('[+] {}: {}'.format(curr.type, curr.amount))
 
-    origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
-    steps = 0
+    return api_endpoint, access_token, profile_response
+
+
+def main():
+    full_path = os.path.realpath(__file__)
+    path, filename = os.path.split(full_path)
+    pokemonsJSON = json.load(open(path + '/pokemon.json'))
+
+    args = parse_args()
+
+    retrying_set_location(args.location)
+
+    api_endpoint, access_token, profile_response = login(args)
+
     steplimit = int(args.step_limit)
 
     ignore = []
@@ -425,76 +431,83 @@ def main():
         ignore = [i.lower().strip() for i in args.ignore.split(',')]
 
     pos = 1
-    x   = 0
-    y   = 0
-    dx  = 0
-    dy  = -1
-    while steps < steplimit**2:
-        debug("looping: step {} of {}".format(steps, steplimit**2))
-        original_lat = FLOAT_LAT
-        original_long = FLOAT_LONG
-        parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
-        h = get_heartbeat(api_endpoint, access_token, profile_response)
-        hs = [h]
-        seen = set([])
-        for child in parent.children():
-            latlng = LatLng.from_point(Cell(child).get_center())
-            set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
-            hs.append(get_heartbeat(api_endpoint, access_token, profile_response))
-        set_location_coords(original_lat, original_long, 0)
-        visible = []
-        for hh in hs:
-            try:
-                for cell in hh.cells:
-                    for wild in cell.WildPokemon:
-                        hash = wild.SpawnPointId + ':' + str(wild.pokemon.PokemonId)
-                        if (hash not in seen):
-                            visible.append(wild)
-                            seen.add(hash)
-                    if cell.Fort:
-                        for Fort in cell.Fort:
-                            if Fort.Enabled == True:
-                                if args.china:
-                                    Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
-                                if Fort.GymPoints and args.display_gym:
-                                    gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
-                                elif Fort.FortType and args.display_pokestop:
-                                    pokestops.append([Fort.Latitude, Fort.Longitude])
-            except AttributeError:
-                break
-        for poke in visible:
-            pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
-            if args.ignore:
-                if pokename.lower() in ignore: continue
-            other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
-            diff = other - origin
-            # print(diff)
-            difflat = diff.lat().degrees
-            difflng = diff.lng().degrees
-            
-            disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
-            disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
-            disappears_at = 'disappears at %s' % (disappear_time_formatted)
+    x = 0
+    y = 0
+    dx = 0
+    dy = -1
+    for step in range(steplimit ** 2):
+        debug("looping: step {} of {}".format(step, steplimit ** 2))
 
-            pid = str(poke.pokemon.PokemonId)
-            label = (
-                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
-                        '<center>'+disappears_at+'</center>'
-                    )
-            if args.china:
-                poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
-            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
-
-        #Scan location math
-        if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
-            set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
-        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
+        if (-steplimit / 2 < x <= steplimit / 2) and (-steplimit / 2 < y <= steplimit / 2):
+            set_location_coords((x * 0.0025) + deflat, (y * 0.0025) + deflng, 0)
+        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
             dx, dy = -dy, dx
-        x, y = x+dx, y+dy
-        steps += 1
-        print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
+        x, y = x + dx, y + dy
+
+        process_step(args, api_endpoint, access_token, profile_response, pokemonsJSON, ignore)
+
+        print("Completed {}%".format(((step + (pos * .25) - .25) / steplimit ** 2) * 100))
 
     register_background_thread()
+
+
+def process_step(args, api_endpoint, access_token, profile_response, pokemonsJSON, ignore):
+    original_lat = FLOAT_LAT
+    original_long = FLOAT_LONG
+    parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
+    h = get_heartbeat(api_endpoint, access_token, profile_response)
+    hs = [h]
+    seen = set([])
+    for child in parent.children():
+        latlng = LatLng.from_point(Cell(child).get_center())
+        set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
+        hs.append(get_heartbeat(api_endpoint, access_token, profile_response))
+    set_location_coords(original_lat, original_long, 0)
+    visible = []
+    for hh in hs:
+        try:
+            for cell in hh.cells:
+                for wild in cell.WildPokemon:
+                    hash = wild.SpawnPointId + ':' + str(wild.pokemon.PokemonId)
+                    if (hash not in seen):
+                        visible.append(wild)
+                        seen.add(hash)
+                if cell.Fort:
+                    for Fort in cell.Fort:
+                        if Fort.Enabled == True:
+                            if args.china:
+                                Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(
+                                    Location(Fort.Latitude, Fort.Longitude))
+                            if Fort.GymPoints and args.display_gym:
+                                gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
+                            elif Fort.FortType and args.display_pokestop:
+                                pokestops.append([Fort.Latitude, Fort.Longitude])
+        except AttributeError:
+            break
+
+    for poke in visible:
+        pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
+
+        if args.ignore and pokename.lower() in ignore:
+            continue
+
+        pokemons.append(format_pokemon(poke, pokemonsJSON, args, ignore))
+
+
+def format_pokemon(poke, pokemonsJSON, args, ignore):
+    disappear_timestamp = time.time() + poke.TimeTillHiddenMs / 1000
+    disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
+    disappears_at = 'disappears at %s' % (disappear_time_formatted)
+
+    pid = str(poke.pokemon.PokemonId)
+    label = (
+        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/' + pid + '\' target=\'_blank\' title=\'View in Pokedex\'>#' + pid + '</a></small> - <b>' +
+        pokemonsJSON[poke.pokemon.PokemonId - 1]['Name'] + '</b></div>'
+                                                           '<center>' + disappears_at + '</center>'
+    )
+    if args.china:
+        poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
+    return [poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude]
 
 
 def register_background_thread(initial_registration=False):
@@ -534,6 +547,7 @@ def create_app():
     GoogleMaps(app, key=GOOGLEMAPS_KEY)
     return app
 
+
 app = create_app()
 
 
@@ -542,27 +556,27 @@ def fullmap():
     pokeMarkers = []
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
-        imgnum = str(pokemon[0]);
+        imgnum = str(pokemon[0])
         if len(imgnum) <= 2: imgnum = '0' + imgnum
         if len(imgnum) <= 2: imgnum = '0' + imgnum
         pokeMarkers.append(
             {
-                'icon': 'static/icons/'+str(pokemon[0])+'.png',
+                'icon': 'static/icons/' + str(pokemon[0]) + '.png',
                 'lat': currLat,
                 'lng': currLon,
                 'infobox': pokemon[1]
-                })
+            })
     for gym in gyms:
-        if gym[0] == 0: color = "white"
+        color = "white"
         if gym[0] == 1: color = "rgba(0, 0, 256, .1)"
         if gym[0] == 2: color = "rgba(255, 0, 0, .1)"
         if gym[0] == 3: color = "rgba(255, 255, 0, .1)"
         pokeMarkers.append(
             {
-                'icon': 'static/forts/'+numbertoteam[gym[0]]+'.png',
+                'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
                 'lat': gym[1],
                 'lng': gym[2],
-                'infobox': "<div style='background: "+color+"'>Gym owned by Team " + numbertoteam[gym[0]]
+                'infobox': "<div style='background: " + color + "'>Gym owned by Team " + numbertoteam[gym[0]]
             })
     for stop in pokestops:
         pokeMarkers.append(
