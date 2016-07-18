@@ -7,15 +7,43 @@ message RequestEnvelop {
   optional fixed64 longitude = 8;
   optional fixed64 altitude = 9;
   optional AuthInfo auth = 10;
+  optional UnknownAuth unknown11 = 11;
   optional int64 unknown12 = 12;
 
   message Requests {
     required int32 type = 1;
-    optional Unknown3 message = 2;
+    optional bytes message = 2;
+  }
+
+  message MessageSingleString {
+    required bytes bytes = 1;
+  }
+
+  message MessageSingleInt {
+    required int64 f1 = 1;
+  }
+
+  message MessageTwoInts {
+    required int64 f1 = 1;
+    required int64 f5 = 5;
+  }
+
+  message MessageQuad {
+    required bytes f1 = 1;
+    required bytes f2 = 2;
+    required fixed64 lat = 3;
+    required fixed64 long = 4;
+  }
+
+  message Wat {
+    repeated int64 lols = 134217728;
   }
 
   message Unknown3 {
-    required string unknown4 = 1;
+    required bytes unknown4 = 1;
+    optional bytes unknown2 = 2;
+    optional fixed64 lat = 3;
+    optional fixed64 long = 4;
   }
 
   message Unknown6 {
@@ -38,13 +66,20 @@ message RequestEnvelop {
   }
 }
 
+
+message UnknownAuth {
+  optional bytes unknown71 = 1;
+  optional int64 unknown72 = 2;
+  optional bytes unknown73 = 3;
+}
+
 message ResponseEnvelop {
   required int32 unknown1 = 1;
   optional int64 unknown2 = 2;
   optional string api_url = 3;
   optional Unknown6 unknown6 = 6;
-  optional Unknown7 unknown7 = 7;
-  repeated Payload payload = 100;
+  optional UnknownAuth unknown7 = 7;
+  repeated bytes payload = 100;
 
   message Unknown6 {
     required int32 unknown1 = 1;
@@ -56,13 +91,101 @@ message ResponseEnvelop {
 
   }
 
-  message Unknown7 {
-    optional bytes unknown71 = 1;
-    optional int64 unknown72 = 2;
-    optional bytes unknown73 = 3;
+  message HeartbeatPayload {
+    repeated ClientMapCell cells = 1;
   }
 
-  message Payload {
+  message ClientMapCell {
+    required uint64 S2CellId = 1;
+    required int64 AsOfTimeMs = 2;
+    repeated PokemonFortProto Fort = 3;
+    repeated ClientSpawnPointProto SpawnPoint = 4;
+    repeated WildPokemonProto WildPokemon = 5;
+    //unknown DeletedObject = 6;
+    optional bool IsTruncatedList = 7;
+    repeated PokemonSummaryFortProto FortSummary = 8;
+    repeated ClientSpawnPointProto DecimatedSpawnPoint = 9;
+    repeated MapPokemonProto MapPokemon = 10;
+    repeated NearbyPokemonProto NearbyPokemon = 11;
+  }
+
+
+  message WildPokemon {
+    required string UniqueId = 1;
+    required string PokemonId = 2;
+    // int64 three = 3;
+    // float four = 4;
+    // int32 five = 5;
+    // unknown six = 6;
+    repeated NearbyPokemonProto pokemon = 11;
+  }
+
+
+  message MapPokemonProto {
+    required string SpawnpointId = 1;
+    required uint64 EncounterId = 2;
+    required int32 PokedexTypeId = 3;
+    required int64 ExpirationTimeMs = 4;
+    required double Latitude = 5;
+    required double Longitude = 6;
+  }
+
+  message PokemonFortProto {
+    required string FortId = 1;
+    required int64 LastModifiedMs = 2;
+    required double Latitude = 3;
+    required double Longitude = 4;
+    required int32 Team = 5;
+    required int32 GuardPokemonId = 6;
+    required int32 GuardPokemonLevel = 7;
+    required bool Enabled = 8;
+    // ENUM.Holoholo.Rpc.FortType FortType = 9;
+    required int32 FortType = 9;
+    required int64 GymPoints = 10;
+    required bool IsInBattle = 11;
+    //unknown ActiveFortModifier = 12;
+    optional MapPokemonProto ActivePokemon = 13;
+    required int64 CooldownCompleteMs = 14;
+    // ENUM.Holoholo.Rpc.Sponsor.Types.FortSponsor.Sponsor Sponsor = 15;
+    required int32 Sponsor = 15;
+    // ENUM.Holoholo.Rpc.RenderingType.Types.FortRenderingType.RenderingType RenderingType = 16;
+    optional int32 RenderingType = 16;
+  }
+
+  message PokemonSummaryFortProto {
+    required string FortSummaryId = 1;
+    required int64 LastModifiedMs = 2;
+    required double Latitude = 3;
+    required double Longitude = 4;
+  }
+
+  message ClientSpawnPointProto {
+    required double Latitude = 2;
+    required double Longitude = 3;
+  }
+
+  message WildPokemonProto {
+    optional uint64 EncounterId = 1;
+    optional int64 LastModifiedMs = 2;
+    optional double Latitude = 3;
+    optional double Longitude = 4;
+    optional string SpawnPointId = 5;
+    optional Pokemon pokemon = 7;
+    optional int32 TimeTillHiddenMs = 11;
+
+    message Pokemon {
+    	optional uint64 Id = 1;
+    	optional int32 PokemonId = 2;
+    }
+  }
+
+  message NearbyPokemonProto {
+    optional int32 PokedexNumber = 1;
+    optional float DistanceMeters = 2;
+    optional uint64 EncounterId = 3;
+  }
+
+  message ProfilePayload {
     required int32 unknown1 = 1;
     optional Profile profile = 2;
   }

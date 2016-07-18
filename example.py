@@ -12,10 +12,12 @@ import time
 import requests
 import argparse
 import threading
-
 import werkzeug.serving
 
 import pokemon_pb2
+
+from datetime import datetime
+import time
 
 from google.protobuf.internal import encoder
 from s2sphere import *
@@ -200,11 +202,32 @@ def api_req(api_endpoint, access_token, *args, **kwargs):
 
 def get_api_endpoint(access_token, api=API_URL):
     profile_response = None
-    while not profile_response or not profile_response.api_url:
-        debug("get_api_endpoint: calling get_profile")
-        profile_response = get_profile(access_token, api, None)
+    while not profile_response:
+        profile_response = retrying_get_profile(access_token, api, None)
+        if not hasattr(profile_response, 'api_url'):
+            debug("retrying_get_profile: get_profile returned no api_url, retrying")
+            profile_response = None
+            continue
+        if not len(profile_response.api_url):
+            debug("get_api_endpoint: retrying_get_profile returned no-len api_url, retrying")
+            profile_response = None
 
     return ('https://%s/rpc' % profile_response.api_url)
+
+
+def retrying_get_profile(access_token, api, useauth, *reqq):
+    profile_response = None
+    while not profile_response:
+        profile_response = get_profile(access_token, api, useauth, *reqq)
+        if not hasattr(profile_response, 'payload'):
+            debug("retrying_get_profile: get_profile returned no payload, retrying")
+            profile_response = None
+            continue
+        if not profile_response.payload:
+            debug("retrying_get_profile: get_profile returned no-len payload, retrying")
+            profile_response = None
+
+    return profile_response
 
 
 def get_profile(access_token, api, useauth, *reqq):
@@ -248,6 +271,11 @@ def login_ptc(username, password):
     except ValueError as e:
         debug("login_ptc: could not decode JSON from {}".format(r.content))
         return None
+
+    # Maximum password length is 15 (sign in page enforces this limit, API does not)
+    if len(password) > 15:
+        print('[!] Trimming password to 15 characters')
+        password = password[:15]
 
     data = {
         'lt': jdata['lt'],
@@ -346,6 +374,8 @@ def main():
     group.add_argument("-o", "--only", help="Only look for these pokemon (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
+    parser.add_argument("-dp", "--display-pokestop", help="Display Pokestop", action='store_true', default=False)
+    parser.add_argument("-dg", "--display-gym", help="Display Gym", action='store_true', default=False)
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
@@ -368,7 +398,7 @@ def main():
         return
     print('[+] Received API endpoint: {}'.format(api_endpoint))
 
-    profile_response = get_profile(access_token, api_endpoint, None)
+    profile_response = retrying_get_profile(access_token, api_endpoint, None)
     if profile_response is None or not profile_response.payload:
         print('[-] Ooops...')
         raise Exception("Could not get profile")
@@ -431,9 +461,9 @@ def main():
                             if Fort.Enabled == True:
                                 if args.china:
                                     Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
-                                if Fort.GymPoints:
+                                if Fort.GymPoints and args.display_gym:
                                     gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
-                                elif Fort.FortType:
+                                elif Fort.FortType and args.display_pokestop:
                                     pokestops.append([Fort.Latitude, Fort.Longitude])
             except AttributeError:
                 break
@@ -448,13 +478,15 @@ def main():
             # print(diff)
             difflat = diff.lat().degrees
             difflng = diff.lng().degrees
-            time_to_hidden = poke.TimeTillHiddenMs
-            left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            remaining = '%s remaining' % (left)
+            
+            disappear_timestamp = time.time() + poke.TimeTillHiddenMs/1000
+            disappear_time_formatted = datetime.fromtimestamp(disappear_timestamp).strftime("%H:%M:%S")
+            disappears_at = 'disappears at %s' % (disappear_time_formatted)
+
             pid = str(poke.pokemon.PokemonId)
             label = (
                         '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
-                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                        '<center>'+disappears_at+'</center>'
                     )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
@@ -466,7 +498,7 @@ def main():
         if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
             dx, dy = -dy, dx
         x, y = x+dx, y+dy
-        steps +=1
+        steps += 1
         print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
     register_background_thread()
