@@ -1,0 +1,79 @@
+///////////////////////////////////
+// Default Form Styles
+///////////////////////////////////
+
+form {
+
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+label a {
+  &:link,
+  &:visited {
+    text-decoration: none;
+  }
+  &:hover,
+  &:focus,
+  &:active {
+
+  }
+}
+
+fieldset {
+  border: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+input,
+textarea {
+  border: 1px solid $grey-1;
+  background-color: $grey-1;
+  padding: 10px;
+  width: 100%;
+  @include transition(border-color 0.15s ease-out);
+  &:focus {
+    outline: 0;
+  }
+}
+
+textarea {
+  min-height: 125px;
+  resize: vertical;
+}
+
+input[type=checkbox]{
+  background: #fff;
+  border: 1px solid $grey-4;
+  height: 20px;
+  width: 20px;
+}
+
+legend {
+  @include font-size(1.4);
+  color: $grey-4;
+  display: inline-block;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+select {
+
+}
+
+option {
+
+}
+
+button {
+
+}
+
+optgroup {
+
+}
