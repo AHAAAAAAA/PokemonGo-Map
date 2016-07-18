@@ -36,16 +36,16 @@ API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
 LOGIN_URL = 'https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize'
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
 
-full_path = os.path.realpath(__file__)
-path, filename = os.path.split(full_path)
-credentials = json.load(open(path + '/credentials.json'))
-PTC_CLIENT_SECRET = credentials['ptc_client_secret']
-GOOGLEMAPS_KEY = credentials['gmaps']
+with open('credentials.json') as file:
+    credentials = json.load(file)
 
-ANDROID_ID = credentials['android_id']
-SERVICE= credentials['service']
+PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
+GOOGLEMAPS_KEY = credentials.get('gmaps', None)
+
+ANDROID_ID = credentials.get('android_id', None)
+SERVICE= credentials.get('service', None)
 APP = 'com.nianticlabs.pokemongo'
-CLIENT_SIG = credentials['client_sig']
+CLIENT_SIG = credentials.get('client_sig', None)
 
 
 SESSION = requests.session()
