@@ -543,6 +543,21 @@ def fullmap():
 def api():
     return flask.jsonify(pokemons=pokemons, gyms=gyms, pokestops=pokestops)
 
+@app.route('/next_loc')
+def next_loc():
+    global NEXT_LAT, NEXT_LONG
+
+    lat = flask.request.args.get('lat', '')
+    lon = flask.request.args.get('lon', '')
+    if not (lat and lon):
+        print('[-] Invalid next location: %s,%s' % (lat, lon))
+    else:
+        print('[+] Saved next location as %s,%s' % (lat, lon))
+        NEXT_LAT = float(lat)
+        NEXT_LONG = float(lon)
+        return 'ok'
+
+
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
     app.run(debug=True)
