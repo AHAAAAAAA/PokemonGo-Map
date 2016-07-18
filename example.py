@@ -3,6 +3,7 @@
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
+from flask_googlemaps import icons
 import os
 import re
 import sys
@@ -578,7 +579,13 @@ app = create_app()
 
 @app.route('/')
 def fullmap():
-    pokeMarkers = []
+    pokeMarkers = [{
+                        'icon' : icons.dots.red,
+                        'lat' : deflat,
+                        'lng' : deflng,
+                        'infobox':  "Start position"
+                    }]
+
     for pokemon in pokemons:
         currLat, currLon = pokemon[-2], pokemon[-1]
         imgnum = str(pokemon[0]);
