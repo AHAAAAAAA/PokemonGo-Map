@@ -176,6 +176,7 @@ def set_location(location_name):
     if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
+        origin_lat, origin_lon = local_lat, local_lng
     else:
         loc = geolocator.geocode(location_name)
         origin_lat, origin_lon = local_lat, local_lng = loc.latitude, loc.longitude
@@ -583,28 +584,34 @@ def main():
     dy = -1
     origin_lat = FLOAT_LAT
     origin_lon = FLOAT_LONG
-    for step in range(steplimit**2):
-        debug('looping: step {} of {}'.format(step, steplimit**2))
-
+    steplimit2 = steplimit**2
+    for step in range(steplimit2):
+        #starting at 0 index
+        debug('looping: step {} of {}'.format((step+1), steplimit**2))
+        #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
         # Scan location math
-        if -steplimit / 2 < x <= steplimit / 2 and -steplimit / 2 < y \
-            <= steplimit / 2:
+        if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
             set_location_coords(x * 0.0025 + origin_lat, y * 0.0025 + origin_lon, 0)
         if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
             (dx, dy) = (-dy, dx)
+
         (x, y) = (x + dx, y + dy)
 
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
         print('Completed: ' + str(
-            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
+            ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
-    if (NEXT_LAT and NEXT_LONG
-        and NEXT_LAT != FLOAT_LAT
-        and NEXT_LONG != FLOAT_LONG):
+    global NEXT_LAT, NEXT_LONG
+    if (NEXT_LAT and NEXT_LONG and
+            (NEXT_LAT != FLOAT_LAT or NEXT_LONG != FLOAT_LONG)):
         print('Update to next location %f, %f' % (NEXT_LAT, NEXT_LONG))
         set_location_coords(NEXT_LAT, NEXT_LONG, 0)
+        NEXT_LAT = 0
+        NEXT_LONG = 0
+    else:
+        set_location_coords(origin_lat, origin_lon, 0)
 
     register_background_thread()
 
@@ -764,7 +771,7 @@ def fullmap():
     clear_stale_pokemons()
 
     return render_template(
-        'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh)
 
 
 @app.route('/next_loc')
@@ -787,7 +794,10 @@ def get_pokemarkers():
         'icon': icons.dots.red,
         'lat': origin_lat,
         'lng': origin_lon,
-        'infobox': "Start position"
+        'infobox': "Start position",
+        'type': 'custom',
+        'key': 'start-position',
+        'disappear_time': -1
     }]
 
     for pokemon_key in pokemons:
@@ -814,6 +824,9 @@ def get_pokemarkers():
         label = label.replace('\n', '')
 
         pokeMarkers.append({
+            'type': 'pokemon',
+            'key': pokemon_key,
+            'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
             'lng': pokemon["lng"],
@@ -832,6 +845,9 @@ def get_pokemarkers():
             color = 'rgba(255, 255, 0, .1)'
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
+            'type': 'gym',
+            'key': gym_key,
+            'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
             'infobox': "<div style='background: " + color +
@@ -840,6 +856,9 @@ def get_pokemarkers():
     for stop_key in pokestops:
         stop = pokestops[stop_key]
         pokeMarkers.append({
+            'type': 'stop',
+            'key': stop_key,
+            'disappear_time': -1,
             'icon': 'static/forts/Pstop.png',
             'lat': stop[0],
             'lng': stop[1],
@@ -850,7 +869,7 @@ def get_pokemarkers():
 
 def get_map():
     fullmap = Map(
-        identifier="fullmap",
+        identifier="fullmap2",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=origin_lat,
         lng=origin_lon,
