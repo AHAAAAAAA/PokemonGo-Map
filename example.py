@@ -36,7 +36,7 @@ from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
 
-from models import Pokemon, db
+from models import Pokemon, Gym, Pokestop, db
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -648,14 +648,23 @@ def process_step(args, api_endpoint, access_token, profile_response,
                             if args.china:
                                 (Fort.Latitude, Fort.Longitude) = \
 transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
-                            if Fort.GymPoints and args.display_gym:
-                                gyms[Fort.FortId] = [Fort.Team, Fort.Latitude,
-                                                     Fort.Longitude]
+                            if Fort.GymPoints:
+                                Gym.create_or_get(
+                                    gym_id=Fort.FortId,
+                                    team_id=Fort.Team,
+                                    team_name=numbertoteam[Fort.Team],
+                                    lat=Fort.Latitude,
+                                    lon=Fort.Longitude
+                                )
+                                gyms[Fort.FortId] = [Fort.Team, Fort.Latitude, Fort.Longitude]
 
-                            elif Fort.FortType \
-                                and args.display_pokestop:
-                                pokestops[Fort.FortId] = [Fort.Latitude,
-                                                          Fort.Longitude]
+                            elif Fort.FortType :
+                                Pokestop.create_or_get(
+                                    pokestop_id=Fort.FortId,
+                                    lat=Fort.Latitude,
+                                    lon=Fort.Longitude
+                                )
+                                pokestops[Fort.FortId] = [Fort.Latitude, Fort.Longitude]
         except AttributeError:
             break
 
@@ -822,31 +831,33 @@ def get_pokemarkers():
             'infobox': label
         })
 
-    for gym_key in gyms:
-        gym = gyms[gym_key]
-        if gym[0] == 0:
-            color = 'white'
-        if gym[0] == 1:
-            color = 'rgba(0, 0, 256, .1)'
-        if gym[0] == 2:
-            color = 'rgba(255, 0, 0, .1)'
-        if gym[0] == 3:
-            color = 'rgba(255, 255, 0, .1)'
-        pokeMarkers.append({
-            'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
-            'lat': gym[1],
-            'lng': gym[2],
-            'infobox': "<div style='background: " + color +
-            "'>Gym owned by Team " + numbertoteam[gym[0]],
-        })
-    for stop_key in pokestops:
-        stop = pokestops[stop_key]
-        pokeMarkers.append({
-            'icon': 'static/forts/Pstop.png',
-            'lat': stop[0],
-            'lng': stop[1],
-            'infobox': 'Pokestop',
-        })
+    if args.display_gym:
+        for gym in Gym.select():
+            if gym.team_id == 0:
+                color = 'white'
+            if gym.team_id == 1:
+                color = 'rgba(0, 0, 256, .1)'
+            if gym.team_id == 2:
+                color = 'rgba(255, 0, 0, .1)'
+            if gym.team_id == 3:
+                color = 'rgba(255, 255, 0, .1)'
+
+            pokeMarkers.append({
+                'icon': 'static/forts/' + gym.team_name + '.png',
+                'lat': gym.lat,
+                'lng': gym.lon,
+                'infobox': "<div style='background: " + color +
+                "'>Gym owned by Team " + gym.team_name,
+            })
+
+    if args.display_pokestop:
+        for pokestop in Pokestop.select():
+            pokeMarkers.append({
+                'icon': 'static/forts/Pstop.png',
+                'lat': pokestop.lat,
+                'lng': pokestop.lon,
+                'infobox': 'Pokestop',
+            })
     return pokeMarkers
 
 
@@ -866,4 +877,6 @@ if __name__ == '__main__':
     register_background_thread(initial_registration=True)
     db.connect()
     Pokemon.create_table(fail_silently=True)
+    Pokestop.create_table(fail_silently=True)
+    Gym.create_table(fail_silently=True)
     app.run(debug=True, threaded=True, host=args.host, port=args.port)
