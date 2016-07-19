@@ -577,6 +577,11 @@ def main():
     if not (FLOAT_LAT and FLOAT_LONG):
       print('[+] Getting initial location')
       retrying_set_location(args.location)
+    else: # set given location
+        global origin_lat
+        global origin_lon
+        origin_lat = FLOAT_LAT
+        origin_lon = FLOAT_LONG
 
     if args.auto_refresh:
         global auto_refresh
