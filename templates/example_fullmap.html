@@ -156,7 +156,7 @@
                             (function(_marker){setTimeout(_marker.setMap(null), 500)})(markerCache[key].marker);
                             needs_replacing = true;
                         }
-                        if((markerCache[key].item.lat != item["lat"] && markerCache[key].item.lng != item['lng'])){
+                        if((markerCache[key].item.lat != item["lat"] || markerCache[key].item.lng != item['lng'])){
 
                             console.log("Warning: object with identical key has different coordinates please report bug", key);
                             needs_replacing = true;
