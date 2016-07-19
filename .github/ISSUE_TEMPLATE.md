@@ -1,5 +1,5 @@
-GitHub issues are for bug reporting.  
-For general support, and feature request, join [our discord server](https://discord.gg/kwAcr7e).
+GitHub issues are for bug reporting and feature requests.  
+For general support, join [our discord server](https://discordapp.com/invite/qbpVH6b).
 To make bug reports easy to find and organized, we close issues that are deemed
 out of scope for GitHub Issues and point people to Discord.
 
