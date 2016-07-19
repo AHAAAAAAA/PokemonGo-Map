@@ -427,18 +427,25 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-a', '--auth_service', help='Auth Service', default=os.environ.get('AUTH_SERVICE', 'ptc'))
-    parser.add_argument('-u', '--username', help='Username', required=True, default=os.environ.get('USERNAME', None))
-    parser.add_argument('-p', '--password', help='Password', required=True, default=os.environ.get('PASSWORD', None))
+    parser.add_argument('-u', '--username', help='Username',
+        action = FindValueInEnvironmentAction, varName = 'USERNAME', required=True)
+    parser.add_argument('-p', '--password', help='Password',
+        action = FindValueInEnvironmentAction, varName = 'PASSWORD', required=True)
     parser.add_argument(
-        '-l', '--location', type=parse_unicode, help='Location', required=True, default=os.environ.get('LOCATION', None))
-    parser.add_argument('-st', '--step_limit', help='Steps', required=True, default=os.environ.get('STEP_LIMIT', None))
+        '-l', '--location', type=parse_unicode, help='Location',
+        action = FindValueInEnvironmentAction, varName = 'LOCATION', required=True)
+    parser.add_argument('-st', '--step_limit', help='Steps',
+        action = FindValueInEnvironmentAction, varName = 'STEP_LIMIT', required=True)
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Pokemon to ignore (comma separated)', default=os.environ.get('IGNORE', None))
+        '-i', '--ignore', help='Pokemon to ignore (comma separated)',
+        default=os.environ.get('IGNORE', None))
     group.add_argument(
-        '-o', '--only', help='Only look for these pokemon (comma separated)', default=os.environ.get('ONLY', None))
+        '-o', '--only', help='Only look for these pokemon (comma separated)',
+        default=os.environ.get('ONLY', None))
     parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true', default=os.environ.get('DEBUG', True))
+        '-d', '--debug', help='Debug Mode', action='store_true',
+        default=os.environ.get('DEBUG', True))
     parser.add_argument(
         '-c',
         '--china',
