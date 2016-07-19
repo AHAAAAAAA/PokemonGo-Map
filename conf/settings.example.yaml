@@ -5,8 +5,8 @@ location: 'Boulder, CO' # Any location Google Maps can understand
 step_limit: 5 # Steps to take
 display_pokestop: False # True or False
 display_gym: False # True or False
-ignore: None # [ 13, 16 ] # Pokenon to ignore
-only: None # [ 150, 151 ] # The only pokemon that should be displayed
+ignore: None # [ 'weedle', 'pidgey' ] # Pokenon to ignore
+only: None # [ 'mew', 'mewtwo' ] # The only pokemon that should be displayed
 locale: 'en' # The language to use
 auto_refresh: None # integer value in seconds example: 30
 china: False  # True or False
