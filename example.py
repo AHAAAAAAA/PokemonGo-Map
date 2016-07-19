@@ -671,14 +671,17 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
 
                             elif Fort.FortType \
                                 and args.display_pokestop:
+                                expire_timestamp = 0
                                 expire_time = 0
                                 if Fort.LureInfo.LureExpiresTimestampMs:
+                                    expire_timestamp = Fort.LureInfo.LureExpiresTimestampMs / 1000.0
                                     expire_time = datetime\
-                                        .fromtimestamp(Fort.LureInfo.LureExpiresTimestampMs / 1000.0)\
+                                        .fromtimestamp(expire_timestamp)\
                                         .strftime("%H:%M:%S")
-                                if (expire_time != 0 or not args.onlylure):
-                                    pokestops[Fort.FortId] = [Fort.Latitude,
-                                                              Fort.Longitude, expire_time]
+                                pokestops[Fort.FortId] = [Fort.Latitude,
+                                                          Fort.Longitude,
+                                                          expire_time,
+                                                          expire_timestamp]
         except AttributeError:
             break
 
@@ -717,7 +720,13 @@ def clear_stale_pokemons():
             print "[+] removing stale pokemon %s at %f, %f from list" % (
                 pokemon['name'].encode('utf-8'), pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
-
+    
+    for stop_key in pokestops.keys():
+        stop = pokestops[stop_key]
+        if stop[2] > 0 and current_time > stop[2]:
+            print "[+] changing stale lured pokestop to regular pokestop"
+            stop[2] = 0
+            stop[3] = 0
 
 def register_background_thread(initial_registration=False):
     """
@@ -809,6 +818,9 @@ def next_loc():
 
 
 def get_pokemarkers():
+
+    args = get_args()
+
     pokeMarkers = [{
         'icon': icons.dots.red,
         'lat': origin_lat,
@@ -868,19 +880,21 @@ def get_pokemarkers():
             'lng': gym[2],
             'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'><br>Prestige: " + str(gym[3]) + "</center>"
         })
+        
+    LABEL_TMPL = u'''<div><b>Lured Pokestop</b><br>Expires at {2} <span class='label-countdown' disappears-at='{3}'></span></div>'''
     for stop_key in pokestops:
         stop = pokestops[stop_key]
         if stop[2] > 0:
             pokeMarkers.append({
                 'type': 'lured_stop',
                 'key': stop_key,
-                'disappear_time': -1,
+                'disappear_time': stop[3],
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
-                'infobox': 'Lured Pokestop, expires at ' + stop[2],
+                'infobox': LABEL_TMPL.format(*stop),
             })
-        else:
+        elif not args.onlylure:
             pokeMarkers.append({
                 'type': 'stop',
                 'key': stop_key,
