@@ -30,12 +30,13 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 | `-st`                           | Steps to take                                             | ✓        | 
 | `-ar` `--auto_refresh` `seconds`| Enables auto page reload. Value in seconds                |          | 
 | `-i` `--ignore`                 | Comma-separated list of Pokémon to ignore                 |          | 
-| `-o` `--only`                   | Comma-separated list of Pokemon to search for exclusively |          | 
-| `-dp` `--display-pokestop`      | Display pokestop                                          |          | 
+| `-o` `--only`                   | Comma-separated list of Pokémon to search for exclusively |          | 
+| `-dp` `--display-pokestop`      | Display pokéstop                                          |          | 
 | `-dg` `--display-gym`           | Display gym                                               |          | 
 | `-H` `--host`                   | Set web server listening host                             |          | 
 | `-P` `--port`                   | Set web server listening port                             |          |
-|`-L` `--locale`                  | Locale for Pokemon names: default en, check locale folder for more options |          |
+|`-L` `--locale`                  | Locale for Pokémon names: default en, check locale folder for more options |          |
+|`-pm` `--ampm_clock`             | Toggle AM/PM clock for Pokémon expiry times.              |          |
 
 
 _Note:
