@@ -36,6 +36,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 | `-H` `--host`                   | Set web server listening host                             |          | 
 | `-P` `--port`                   | Set web server listening port                             |          |
 |`-L` `--locale`                  | Locale for Pokemon names: en (default), fr, de            |          |
+|`-pm` `--ampm_clock`             | Toggles the am/pm clock for pokemon expiry times          |          |
 
 _Note:
 5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)_
