@@ -671,14 +671,17 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
 
                             elif Fort.FortType \
                                 and args.display_pokestop:
+                                expire_timestamp = 0
                                 expire_time = 0
                                 if Fort.LureInfo.LureExpiresTimestampMs:
+                                    expire_timestamp = Fort.LureInfo.LureExpiresTimestampMs / 1000.0
                                     expire_time = datetime\
-                                        .fromtimestamp(Fort.LureInfo.LureExpiresTimestampMs / 1000.0)\
+                                        .fromtimestamp(expire_timestamp)\
                                         .strftime("%H:%M:%S")
-                                if (expire_time != 0 or not args.onlylure):
-                                    pokestops[Fort.FortId] = [Fort.Latitude,
-                                                              Fort.Longitude, expire_time]
+                                pokestops[Fort.FortId] = [Fort.Latitude,
+                                                          Fort.Longitude,
+                                                          expire_time,
+                                                          expire_timestamp]
         except AttributeError:
             break
 
@@ -809,6 +812,9 @@ def next_loc():
 
 
 def get_pokemarkers():
+
+    args = get_args()
+
     pokeMarkers = [{
         'icon': icons.dots.red,
         'lat': origin_lat,
@@ -874,13 +880,12 @@ def get_pokemarkers():
             pokeMarkers.append({
                 'type': 'lured_stop',
                 'key': stop_key,
-                'disappear_time': -1,
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
                 'infobox': 'Lured Pokestop, expires at ' + stop[2],
             })
-        else:
+        elif not args.onlylure:
             pokeMarkers.append({
                 'type': 'stop',
                 'key': stop_key,
