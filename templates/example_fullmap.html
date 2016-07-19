@@ -65,10 +65,10 @@
                         options["lng"] = json_obj["lng"];
                         options["zoom"] = json_obj["zoom"];
                         options["identifier"] = json_obj["identifier"];
+                        createMap();
                     });
-
-        window.setInterval(function(){
-            // A new map is created because the original one isn't saved
+        
+        function createMap(){
             if(map == null){
                 map = new google.maps.Map(
                     document.getElementById(options["identifier"]), {
@@ -83,7 +83,10 @@
                         fullscreenControl: true
                 });
             }
-
+        }
+        function updateMap(){
+            // A new map is created because the original one isn't saved
+            createMap();
             // Requests the data and populates the map
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
@@ -113,7 +116,8 @@
                     }
                 }
             })
-        }, {{ auto_refresh }});
+        }
+        window.setInterval(updateMap, {{ auto_refresh }});
     </script>
   {% endif %}
 </html>
