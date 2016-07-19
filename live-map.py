@@ -9,7 +9,6 @@ CONFIG_URL = 'http://localhost:5000/config'
 DATA_URL = 'http://localhost:5000/raw_data'
 
 config = json.loads(urllib2.urlopen(CONFIG_URL).read())
-config.update(json.loads(open('credentials.json').read()))
 
 html = '''
 <!DOCTYPE html>
@@ -110,7 +109,7 @@ html = '''
 			reload();
 		}
 	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=%(gmaps_key)s&callback=initMap" async defer></script>
+	<script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
   </body>
 </html>
 '''
@@ -118,10 +117,16 @@ html = '''
 class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def do_GET(self):
 		if self.path == '/':
+			self.send_response(200)
+			self.send_header("Content-type", "text/html")
+			self.end_headers()
 			self.wfile.write(html % config)
 			self.wfile.close()
 
 		if self.path == '/rawdata':
+			self.send_response(200)
+			self.send_header("Content-type", "application/json")
+			self.end_headers()
 			self.wfile.write(urllib2.urlopen(DATA_URL).read())
 			self.wfile.close()
 
