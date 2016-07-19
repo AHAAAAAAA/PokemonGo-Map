@@ -1,0 +1,16 @@
+Steps to produce:
+  * {{Step 1}}
+
+Expected result:
+  * {{result 1}}
+  
+Actual result:
+  * {{actual result 1}}
+
+Additional:
+  * Machine info - OS, etc
+  * Python version
+  * pip -V
+
+Attachments : # Optional
+  * {{any link}}

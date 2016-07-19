@@ -14,6 +14,12 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 
 # Requirements
 * Python 2.7.x
+ 
+# Before opening new issue
+* Search for your problem in [Issues](https://github.com/AHAAAAAAA/PokemonGo-Map/issues)
+* Cant find answear ? good. Open new issue and follow the template format.
+* Otherwise issues will be closed.
+
 
 # Installation
 `pip install -r requirements.txt`
