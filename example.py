@@ -76,6 +76,7 @@ numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and the
     3: 'Instinct',
 }
 origin_lat, origin_lon = None, None
+is_ampm_clock = False
 
 # stuff for in-background search thread
 
@@ -433,7 +434,7 @@ def get_token(service, username, password):
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-a', '--auth_service', help='Auth Service', default=os.environ.get('AUTH_SERVICE', 'ptc'))
+        '-a', '--auth_service', type=str.lower, help='Auth Service', default=os.environ.get('AUTH_SERVICE', 'ptc'))
     parser.add_argument('-u', '--username', help='Username',
         action = FindValueInEnvironmentAction, varName = 'USERNAME', required=True)
     parser.add_argument('-p', '--password', help='Password',
@@ -484,13 +485,24 @@ def get_args():
         help='Locale for Pokemon names: default en, check locale folder for more options',
         default=os.environ.get('LOCALE', 'en'))
     parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true',
-        default=os.environ.get('DEBUG', True))
+        "-ol",
+        "--onlylure",
+        help='Display only lured pokéstop',
+        action='store_true')
     parser.add_argument(
         '-c',
         '--china',
-        help='Coord Transformer for China',
+        help='Coordinates transformer for China',
         action='store_true', default=os.environ.get('CHINA', None))
+    parser.add_argument(
+    	"-pm",
+    	"--ampm_clock",
+    	help="Toggles the AM/PM clock for Pokemon timers",
+    	action='store_true',
+    	default=os.environ.get('AMPM_CLOCK', False))
+    parser.add_argument(
+        '-d', '--debug', help='Debug Mode', action='store_true',
+        default=os.environ.get('DEBUG', True))
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
@@ -565,6 +577,10 @@ def main():
     if args.auto_refresh:
         global auto_refresh
         auto_refresh = int(args.auto_refresh) * 1000
+
+    if args.ampm_clock:
+    	global is_ampm_clock
+    	is_ampm_clock = True
 
     api_endpoint, access_token, profile_response = login(args)
 
@@ -661,8 +677,14 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
 
                             elif Fort.FortType \
                                 and args.display_pokestop:
-                                pokestops[Fort.FortId] = [Fort.Latitude,
-                                                          Fort.Longitude]
+                                expire_time = 0
+                                if Fort.LureInfo.LureExpiresTimestampMs:
+                                    expire_time = datetime\
+                                        .fromtimestamp(Fort.LureInfo.LureExpiresTimestampMs / 1000.0)\
+                                        .strftime("%H:%M:%S")
+                                if (expire_time != 0 or not args.onlylure):
+                                    pokestops[Fort.FortId] = [Fort.Latitude,
+                                                              Fort.Longitude, expire_time]
         except AttributeError:
             break
 
@@ -804,8 +826,12 @@ def get_pokemarkers():
 
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
-        pokemon['disappear_time_formatted'] = datetime.fromtimestamp(pokemon[
-            'disappear_time']).strftime("%H:%M:%S")
+        datestr = datetime.fromtimestamp(pokemon[
+            'disappear_time'])
+        dateoutput = datestr.strftime("%H:%M:%S")
+        if is_ampm_clock:
+        	dateoutput = datestr.strftime("%I:%M%p").lstrip('0')
+        pokemon['disappear_time_formatted'] = dateoutput
 
         LABEL_TMPL = u'''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
@@ -849,15 +875,25 @@ def get_pokemarkers():
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
-        pokeMarkers.append({
-            'type': 'stop',
-            'key': stop_key,
-            'disappear_time': -1,
-            'icon': 'static/forts/Pstop.png',
-            'lat': stop[0],
-            'lng': stop[1],
-            'infobox': 'Pokestop',
-        })
+        if stop[2] > 0:
+            pokeMarkers.append({
+                'type': 'lured_stop',
+                'key': stop_key,
+                'icon': 'static/forts/PstopLured.png',
+                'lat': stop[0],
+                'lng': stop[1],
+                'infobox': 'Lured Pokestop, expires at' + stop[2],
+            })
+        else:
+            pokeMarkers.append({
+                'type': 'stop',
+                'key': stop_key,
+                'disappear_time': -1,
+                'icon': 'static/forts/Pstop.png',
+                'lat': stop[0],
+                'lng': stop[1],
+                'infobox': 'Pokestop',
+            })
     return pokeMarkers
 
 
