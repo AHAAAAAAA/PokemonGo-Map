@@ -596,8 +596,6 @@ def main():
     y = 0
     dx = 0
     dy = -1
-    origin_lat = FLOAT_LAT
-    origin_lon = FLOAT_LONG
     steplimit2 = steplimit**2
     for step in range(steplimit2):
         #starting at 0 index
