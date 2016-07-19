@@ -827,13 +827,15 @@ def get_pokemarkers():
     for gym_key in gyms:
         gym = gyms[gym_key]
         if gym[0] == 0:
-            color = 'white'
+            color = "rgba(0,0,0,.4)"
         if gym[0] == 1:
-            color = 'rgba(0, 0, 256, .1)'
+            color = "rgba(0, 0, 256, .4)"
         if gym[0] == 2:
-            color = 'rgba(255, 0, 0, .1)'
+            color = "rgba(255, 0, 0, .4)"
         if gym[0] == 3:
-            color = 'rgba(255, 255, 0, .1)'
+            color = "rgba(255, 255, 0, .4)"
+
+        icon = 'static/forts/'+numbertoteam[gym[0]]+'_large.png'
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
             'type': 'gym',
@@ -841,8 +843,7 @@ def get_pokemarkers():
             'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
-            'infobox': "<div style='background: " + color +
-            "'>Gym owned by Team " + numbertoteam[gym[0]],
+            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'></center>"
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
