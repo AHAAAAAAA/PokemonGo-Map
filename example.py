@@ -64,6 +64,7 @@ FLOAT_LONG = 0
 NEXT_LAT = 0
 NEXT_LONG = 0
 auto_refresh = 0
+default_zoom = 0
 default_step = 0.001
 api_endpoint = None
 pokemons = {}
@@ -498,6 +499,12 @@ def get_args():
     	action='store_true',
     	default=False)
     parser.add_argument(
+        '-z',
+        '--zoom',
+        help='The default map zoom level on open.  (Default %(default)s)',
+        default=15,
+        type=int)
+    parser.add_argument(
         '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
@@ -577,6 +584,9 @@ def main():
     if args.ampm_clock:
     	global is_ampm_clock
     	is_ampm_clock = True
+
+    global default_zoom
+    default_zoom = args.zoom
 
     api_endpoint, access_token, profile_response = login(args)
 
@@ -779,7 +789,7 @@ def config():
     center = {
         'lat': FLOAT_LAT,
         'lng': FLOAT_LONG,
-        'zoom': 15,
+        'zoom': default_zoom,
         'identifier': "fullmap"
     }
     return json.dumps(center)
