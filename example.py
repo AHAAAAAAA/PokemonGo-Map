@@ -639,7 +639,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
     h = get_heartbeat(args.auth_service, api_endpoint, access_token,
                       profile_response)
     hs = [h]
-    seen = set([])
+    seen = {}
 
     for child in parent.children():
         latlng = LatLng.from_point(Cell(child).get_center())
@@ -654,11 +654,10 @@ def process_step(args, api_endpoint, access_token, profile_response,
         try:
             for cell in hh.cells:
                 for wild in cell.WildPokemon:
-                    hash = wild.SpawnPointId + ':' \
-                        + str(wild.pokemon.PokemonId)
-                    if hash not in seen:
+                    hash = wild.SpawnPointId;
+                    if hash not in seen.keys() or (seen[hash].TimeTillHiddenMs < wild.TimeTillHiddenMs):
                         visible.append(wild)
-                        seen.add(hash)
+                        seen[hash] = wild.TimeTillHiddenMs
                 if cell.Fort:
                     for Fort in cell.Fort:
                         if Fort.Enabled == True:
