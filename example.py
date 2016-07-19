@@ -11,20 +11,13 @@ import re
 import sys
 import struct
 import json
-import time
 import requests
 import argparse
 import getpass
 import threading
-import functools
-
 import werkzeug.serving
-
 import pokemon_pb2
-
-from datetime import datetime
 import time
-
 from google.protobuf.internal import encoder
 from s2sphere import *
 from datetime import datetime
@@ -177,6 +170,7 @@ def set_location(location_name):
     if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
+        origin_lat, origin_lon = local_lat, local_lng
     else:
         loc = geolocator.geocode(location_name)
         origin_lat, origin_lon = local_lat, local_lng = loc.latitude, loc.longitude
@@ -455,7 +449,7 @@ def get_args():
     parser.add_argument(
         '-c',
         '--china',
-        help='Coord Transformer for China',
+        help='Coordinate transformer for China locations',
         action='store_true')
     parser.add_argument(
         "-ar",
@@ -487,7 +481,7 @@ def get_args():
     parser.add_argument(
         "-L",
         "--locale",
-        help="Locale for Pokemon names: en (default), fr, de",
+        help="Locale for Pokemon names: default en, check locale folder for more options",
         default="en")
     parser.add_argument(
     	"-pm",
@@ -626,7 +620,7 @@ def main():
 
 def process_step(args, api_endpoint, access_token, profile_response,
                  pokemonsJSON, ignore, only):
-    print('[+] Searching pokemons for location {} {}}}'.format(FLOAT_LAT, FLOAT_LONG))
+    print('[+] Searching pokemons for location {} {}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     step_lat = FLOAT_LAT
     step_long = FLOAT_LONG
@@ -779,7 +773,7 @@ def fullmap():
     clear_stale_pokemons()
 
     return render_template(
-        'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh)
 
 
 @app.route('/next_loc')
@@ -802,7 +796,10 @@ def get_pokemarkers():
         'icon': icons.dots.red,
         'lat': origin_lat,
         'lng': origin_lon,
-        'infobox': "Start position"
+        'infobox': "Start position",
+        'type': 'custom',
+        'key': 'start-position',
+        'disappear_time': -1
     }]
 
     for pokemon_key in pokemons:
@@ -833,6 +830,9 @@ def get_pokemarkers():
         label = label.replace('\n', '')
 
         pokeMarkers.append({
+            'type': 'pokemon',
+            'key': pokemon_key,
+            'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
             'lng': pokemon["lng"],
@@ -851,6 +851,9 @@ def get_pokemarkers():
             color = 'rgba(255, 255, 0, .1)'
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
+            'type': 'gym',
+            'key': gym_key,
+            'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
             'infobox': "<div style='background: " + color +
@@ -859,6 +862,9 @@ def get_pokemarkers():
     for stop_key in pokestops:
         stop = pokestops[stop_key]
         pokeMarkers.append({
+            'type': 'stop',
+            'key': stop_key,
+            'disappear_time': -1,
             'icon': 'static/forts/Pstop.png',
             'lat': stop[0],
             'lng': stop[1],
@@ -869,7 +875,7 @@ def get_pokemarkers():
 
 def get_map():
     fullmap = Map(
-        identifier="fullmap",
+        identifier="fullmap2",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=origin_lat,
         lng=origin_lon,
