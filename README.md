@@ -43,6 +43,16 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 _Note:
 5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)_
 
+## Working examples
+### ignore Pokémon
+`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -i Pidgey,Weedle,Zubat`
+
+### make server externally visible
+#### IPv4
+`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H 0.0.0.0 -L 5000`
+#### IPv6
+`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H :: -L 5000`
+
 ## Common Errors
 > _`Exception, e <- Invalid syntax.`_
 
