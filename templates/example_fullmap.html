@@ -144,9 +144,17 @@
                     var item = json_obj[index];
                     var key = item["type"]+item["key"];
                     if(Object.keys(markerCache).indexOf(key) >= 0){
-                        if(markerCache[key].lat != item["lat"] && markerCache[key].lng != item['lng']){
-                            console.log("Warning: object with identical key has different coordinates please report bug");
-                        } else {
+                        var needs_replacing = false;
+                        if(item["type"] == "gym" && item["icon"] != markerCache[key].item.icon){
+                            (function(_marker){setTimeout(_marker.setMap(null), 500)})(markerCache[key].marker);
+                            needs_replacing = true;
+                        }
+                        if((markerCache[key].item.lat != item["lat"] && markerCache[key].item.lng != item['lng'])){
+
+                            console.log("Warning: object with identical key has different coordinates please report bug", key);
+                            needs_replacing = true;
+                        }
+                        if(!needs_replacing){
                             continue;
                         }
                     }
@@ -155,9 +163,18 @@
                             map: map,
                             icon: item["icon"],
                         });
-                    markerCache[key] = item;
-                    var disappearsAt = new Date(parseInt(item["disappear_time"] * 1000)) - now;
-                    var timeout = setTimeout(function(){}, Math.ceil(disappearsAt))
+                    markerCache[key] = {item: item, marker: marker};
+                    var disappearsAt;
+
+                    if(item["disappear_time"] != null){
+                        if(parseInt(item["disappear_time"]) < 0){
+                            disappearsAt = -1;
+                        } else {
+                            disappearsAt = new Date(parseInt(item["disappear_time"] * 1000)) - now;
+                        }
+                    } else {
+                        disappearsAt = {{ auto_refresh }} + 500;
+                    }
 
                     if (item["infobox"]) {
                         (function(_infobox, _map, _marker){
@@ -176,8 +193,12 @@
                     }
 
                     (function(_marker, _disappearsAt){
-                        var timeout = setTimeout(function(){_marker.setMap(null);}, Math.ceil(_disappearsAt))
-                        _marker.timeout = timeout;
+                        if(_disappearsAt < 0){
+
+                        } else {
+                            var timeout = setTimeout(function(){_marker.setMap(null);}, Math.ceil(_disappearsAt))
+                            _marker.timeout = timeout;
+                        }
                         _marker.key = key;
                     })(marker, disappearsAt);
                 }

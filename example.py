@@ -789,7 +789,8 @@ def get_pokemarkers():
         'lng': origin_lon,
         'infobox': "Start position",
         'type': 'custom',
-        'key': 'start-position'
+        'key': 'start-position',
+        'disappear_time': -1
     }]
 
     for pokemon_key in pokemons:
@@ -839,6 +840,7 @@ def get_pokemarkers():
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
             'type': 'gym',
             'key': gym_key,
+            'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
             'infobox': "<div style='background: " + color +
@@ -848,7 +850,8 @@ def get_pokemarkers():
         stop = pokestops[stop_key]
         pokeMarkers.append({
             'type': 'stop',
-            'key': gym_key,
+            'key': stop_key,
+            'disappear_time': -1,
             'icon': 'static/forts/Pstop.png',
             'lat': stop[0],
             'lng': stop[1],
