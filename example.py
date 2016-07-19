@@ -777,8 +777,8 @@ def raw_data():
 def config():
     """ Gets the settings for the Google Maps via REST"""
     center = {
-        'lat': FLOAT_LAT,
-        'lng': FLOAT_LONG,
+        'lat': origin_lat,
+        'lng': origin_lon,
         'zoom': 15,
         'identifier': "fullmap"
     }
