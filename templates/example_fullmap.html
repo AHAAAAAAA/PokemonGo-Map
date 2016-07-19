@@ -28,16 +28,16 @@
             var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
             
             if(disappearsAt < now){
-                timestring = "expired";
+                timestring = "(expired)";
             } 
             else {
-                timestring = "";
+                timestring = "(";
                 if(hours > 0)
                     timestring = hours + "h";
                 
                 timestring += ("0" + minutes).slice(-2) + "m";
                 timestring += ("0" + seconds).slice(-2) + "s";
-                timestring = "disappears in " + timestring;
+                timestring += ")";
             }
 
             $(element).text(timestring)

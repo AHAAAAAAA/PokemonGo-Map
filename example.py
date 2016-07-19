@@ -807,8 +807,7 @@ def get_pokemarkers():
     <span> - </span>
     <b>{name}</b>
 </div>
-<div>disappears at {disappear_time_formatted}</div>
-<div class='label-countdown' disappears-at='{disappear_time}'></div>
+<div>disappears at {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
