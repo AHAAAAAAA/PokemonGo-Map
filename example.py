@@ -334,7 +334,7 @@ def login_ptc(username, password):
     head = {'User-Agent': 'Niantic App'}
     r = SESSION.get(LOGIN_URL, headers=head)
     if r is None:
-        return render_template('nope.html', fullmap=fullmap)
+        return render_template('nope.html')
 
     try:
         jdata = json.loads(r.content)
@@ -729,7 +729,7 @@ def register_background_thread(initial_registration=False):
 def create_app():
     app = Flask(__name__, template_folder='templates')
 
-    GoogleMaps(app, key=GOOGLEMAPS_KEY)
+    # GoogleMaps(app, key=GOOGLEMAPS_KEY)
     return app
 
 
@@ -764,7 +764,7 @@ def fullmap():
     clear_stale_pokemons()
 
     return render_template(
-        'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, auto_refresh=auto_refresh)
 
 
 @app.route('/next_loc')
@@ -787,7 +787,9 @@ def get_pokemarkers():
         'icon': icons.dots.red,
         'lat': origin_lat,
         'lng': origin_lon,
-        'infobox': "Start position"
+        'infobox': "Start position",
+        'type': 'custom',
+        'key': 'start-position'
     }]
 
     for pokemon_key in pokemons:
@@ -814,6 +816,9 @@ def get_pokemarkers():
         label = label.replace('\n', '')
 
         pokeMarkers.append({
+            'type': 'pokemon',
+            'key': pokemon_key,
+            'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
             'lng': pokemon["lng"],
@@ -832,6 +837,8 @@ def get_pokemarkers():
             color = 'rgba(255, 255, 0, .1)'
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
+            'type': 'gym',
+            'key': gym_key,
             'lat': gym[1],
             'lng': gym[2],
             'infobox': "<div style='background: " + color +
@@ -840,6 +847,8 @@ def get_pokemarkers():
     for stop_key in pokestops:
         stop = pokestops[stop_key]
         pokeMarkers.append({
+            'type': 'stop',
+            'key': gym_key,
             'icon': 'static/forts/Pstop.png',
             'lat': stop[0],
             'lng': stop[1],
