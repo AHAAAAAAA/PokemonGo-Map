@@ -873,6 +873,7 @@ def get_pokemarkers():
             pokeMarkers.append({
                 'type': 'lured_stop',
                 'key': stop_key,
+                'disappear_time': -1,
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
