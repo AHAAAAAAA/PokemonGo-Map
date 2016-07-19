@@ -49,9 +49,9 @@ _Note:
 
 ### make server externally visible
 #### IPv4
-`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H 0.0.0.0 -L 5000`
+`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H 0.0.0.0 -P 5000`
 #### IPv6
-`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H :: -L 5000`
+`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H :: -P 5000`
 
 ## Common Errors
 > _`Exception, e <- Invalid syntax.`_
