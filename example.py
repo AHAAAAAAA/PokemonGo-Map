@@ -11,21 +11,15 @@ import re
 import sys
 import struct
 import json
-import time
 import requests
 import argparse
 import getpass
 import threading
-import functools
-
 import werkzeug.serving
-
 import pokemon_pb2
-
-from datetime import datetime
 import time
-
 from google.protobuf.internal import encoder
+from google.protobuf.message import DecodeError
 from s2sphere import *
 from datetime import datetime
 from geopy.geocoders import GoogleV3
@@ -209,7 +203,7 @@ def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
             if response:
                 return response
             debug('retrying_api_req: api_req returned None, retrying')
-        except (InvalidURL, ConnectionError), e:
+        except (InvalidURL, ConnectionError, DecodeError), e:
             debug('retrying_api_req: request error ({}), retrying'.format(
                 str(e)))
         time.sleep(1)
@@ -589,22 +583,24 @@ def main():
     dy = -1
     origin_lat = FLOAT_LAT
     origin_lon = FLOAT_LONG
-    for step in range(steplimit**2):
-        debug('looping: step {} of {}'.format(step, steplimit**2))
-
+    steplimit2 = steplimit**2
+    for step in range(steplimit2):
+        #starting at 0 index
+        debug('looping: step {} of {}'.format((step+1), steplimit**2))
+        #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
         # Scan location math
-        if -steplimit / 2 < x <= steplimit / 2 and -steplimit / 2 < y \
-            <= steplimit / 2:
+        if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
             set_location_coords(x * 0.0025 + origin_lat, y * 0.0025 + origin_lon, 0)
         if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
             (dx, dy) = (-dy, dx)
+
         (x, y) = (x + dx, y + dy)
 
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
         print('Completed: ' + str(
-            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
+            ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
     global NEXT_LAT, NEXT_LONG
     if (NEXT_LAT and NEXT_LONG and
@@ -621,7 +617,7 @@ def main():
 
 def process_step(args, api_endpoint, access_token, profile_response,
                  pokemonsJSON, ignore, only):
-    print('[+] Searching pokemons for location {} {}}}'.format(FLOAT_LAT, FLOAT_LONG))
+    print('[+] Searching pokemons for location {} {}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     step_lat = FLOAT_LAT
     step_long = FLOAT_LONG
@@ -780,7 +776,7 @@ def fullmap():
     clear_stale_pokemons()
 
     return render_template(
-        'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh)
 
 
 @app.route('/next_loc')
@@ -803,7 +799,10 @@ def get_pokemarkers():
         'icon': icons.dots.red,
         'lat': origin_lat,
         'lng': origin_lon,
-        'infobox': "Start position"
+        'infobox': "Start position",
+        'type': 'custom',
+        'key': 'start-position',
+        'disappear_time': -1
     }]
 
     for pokemon_key in pokemons:
@@ -812,24 +811,18 @@ def get_pokemarkers():
             'disappear_time']).strftime("%H:%M:%S")
 
         LABEL_TMPL = u'''
-<div style='position:float; top:0;left:0;'>
-    <small>
-        <a href='http://www.pokemon.com/us/pokedex/{id}'
-           target='_blank'
-           title='View in Pokedex'>
-          #{id}
-        </a>
-    </small>
-    <span> - </span>
-    <b>{name}</b>
-</div>
-<div>disappears at {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
+<div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
+<div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
+<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
         label = label.replace('\n', '')
 
         pokeMarkers.append({
+            'type': 'pokemon',
+            'key': pokemon_key,
+            'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
             'lng': pokemon["lng"],
@@ -839,24 +832,30 @@ def get_pokemarkers():
     for gym_key in gyms:
         gym = gyms[gym_key]
         if gym[0] == 0:
-            color = 'white'
+            color = "rgba(0,0,0,.4)"
         if gym[0] == 1:
-            color = 'rgba(0, 0, 256, .1)'
+            color = "rgba(0, 0, 256, .4)"
         if gym[0] == 2:
-            color = 'rgba(255, 0, 0, .1)'
+            color = "rgba(255, 0, 0, .4)"
         if gym[0] == 3:
-            color = 'rgba(255, 255, 0, .1)'
+            color = "rgba(255, 255, 0, .4)"
+
+        icon = 'static/forts/'+numbertoteam[gym[0]]+'_large.png'
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
+            'type': 'gym',
+            'key': gym_key,
+            'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
-            'infobox': "<div style='background: " + color +
-            "'>Gym owned by Team " + numbertoteam[gym[0]],
+            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'></center>"
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
         if stop[2] > 0:
             pokeMarkers.append({
+                'type': 'lured_stop',
+                'key': stop_key,
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
@@ -864,6 +863,9 @@ def get_pokemarkers():
             })
         else:
             pokeMarkers.append({
+                'type': 'stop',
+                'key': stop_key,
+                'disappear_time': -1,
                 'icon': 'static/forts/Pstop.png',
                 'lat': stop[0],
                 'lng': stop[1],
@@ -874,7 +876,7 @@ def get_pokemarkers():
 
 def get_map():
     fullmap = Map(
-        identifier="fullmap",
+        identifier="fullmap2",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=origin_lat,
         lng=origin_lon,
