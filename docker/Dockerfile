@@ -1,8 +1,10 @@
 # Basic a docker image for PokemonGo-Map
 # Usage:
 #   docker build -t pokemongo-map .
-#   docker run -d --name pokemongo-map pokemongo-map -a ptc -u UserName -p Password -l "Seattle, WA" -st 5
+#   docker run -d -P --name pokemongo-map pokemongo-map -a ptc -u UserName -p Password -l "Seattle, WA" -st 5
 FROM gliderlabs/alpine:3.3
+
+MAINTAINER Ahmed Osman (/u/Ashex)
 
 RUN apk add --update openssl ca-certificates
 RUN apk add \
