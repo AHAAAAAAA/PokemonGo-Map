@@ -71,7 +71,10 @@
                                 position: new google.maps.LatLng(marker.lat,marker.lng),
                                 title: marker.infobox
                             })
+                            // remove this marker from them map and clean it up
+                            // @see https://developers.google.com/maps/documentation/javascript/markers#remove
                             gm.setMap(null)
+                            gm=null; 
                         })
                     })    
                 }
