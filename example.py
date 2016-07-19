@@ -38,7 +38,7 @@ LOGIN_URL = \
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
 APP = 'com.nianticlabs.pokemongo'
 
-with open('credentials.json') as file:
+with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'credentials.json')) as file:
 	credentials = json.load(file)
 
 PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
