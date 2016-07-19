@@ -596,8 +596,6 @@ def main():
     y = 0
     dx = 0
     dy = -1
-    origin_lat = FLOAT_LAT
-    origin_lon = FLOAT_LONG
     steplimit2 = steplimit**2
     for step in range(steplimit2):
         #starting at 0 index
@@ -853,11 +851,11 @@ def get_pokemarkers():
         if gym[0] == 0:
             color = "rgba(0,0,0,.4)"
         if gym[0] == 1:
-            color = "rgba(0, 0, 256, .4)"
+            color = "rgba(74, 138, 202, .6)"
         if gym[0] == 2:
-            color = "rgba(255, 0, 0, .4)"
+            color = "rgba(240, 68, 58, .6)"
         if gym[0] == 3:
-            color = "rgba(255, 255, 0, .4)"
+            color = "rgba(254, 217, 40, .6)"
 
         icon = 'static/forts/'+numbertoteam[gym[0]]+'_large.png'
         pokeMarkers.append({
