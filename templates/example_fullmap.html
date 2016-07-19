@@ -45,6 +45,25 @@
                     });
                 };
                 var updateMarkers = function() {
+                    console.log("update markers...")
+                    $.get( "/api/v1/markers", function( data ) {
+                        data.forEach( (marker,index) => {
+                            var gm = new google.maps.Marker({
+                                icon: marker.icon,
+                                position: new google.maps.LatLng(marker.lat,marker.lng)
+                            })
+                            var infowindow = new google.maps.InfoWindow({
+                                content: marker.infobox
+                            });
+                            gm.addListener('click', function() {
+                                infowindow.open(window.gmap, gm);
+                            });
+                            gm.setMap(window.gmap)
+                        })
+                    })    
+                }
+                var cleanupMarkers = function() {
+                    console.log("cleaning up markers...")
                     $.get( "/api/v1/markers", function( data ) {
                         data.forEach( (marker,index) => {
                             var gm = new google.maps.Marker({
@@ -52,13 +71,16 @@
                                 position: new google.maps.LatLng(marker.lat,marker.lng),
                                 title: marker.infobox
                             })
-                            gm.setMap(window.gmap)
+                            gm.setMap(null)
                         })
                     })    
                 }
                 setInterval(() => {
                     setLabelTime()
                     updateMarkers()
+                }, 1000 *3)
+                setInterval(() => {
+                    cleanupMarkers()
                 }, 1000 *5)
             
             </script>
