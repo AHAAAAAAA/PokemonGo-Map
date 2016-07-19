@@ -43,6 +43,13 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 _Note:
 5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)_
 
+# Heroku
+Host your own Rocket.Chat server for **FREE** with [One-Click Deploy](https://heroku.com/deploy)
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/AHAAAAAAA/PokemonGo-Map/tree/master)
+
+All options can be set as env vars with all caps. For example: LOCALE, DISPLAY_POKESTOP, USERNAME, etc. They take the same values as the flags above.
+
 ## Common Errors
 > _`Exception, e <- Invalid syntax.`_
 
