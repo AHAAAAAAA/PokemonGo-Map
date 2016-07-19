@@ -36,6 +36,8 @@ from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
 
+from models import Pokemon, db
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
@@ -72,7 +74,6 @@ NEXT_LONG = 0
 auto_refresh = 0
 default_step = 0.001
 api_endpoint = None
-pokemons = {}
 gyms = {}
 pokestops = {}
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
@@ -176,6 +177,7 @@ def set_location(location_name):
     if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
+        origin_lat, origin_lon = local_lat, local_lng
     else:
         loc = geolocator.geocode(location_name)
         origin_lat, origin_lon = local_lat, local_lng = loc.latitude, loc.longitude
@@ -674,23 +676,21 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                 transform_from_wgs_to_gcj(Location(poke.Latitude,
                     poke.Longitude))
 
-        pokemons[poke.SpawnPointId] = {
-            "lat": poke.Latitude,
-            "lng": poke.Longitude,
-            "disappear_time": disappear_timestamp,
-            "id": poke.pokemon.PokemonId,
-            "name": pokename
-        }
+        new_poke, created = Pokemon.create_or_get( \
+            spawnpoint_id=poke.SpawnPointId,  \
+            lat=poke.Latitude,   \
+            lon=poke.Longitude, \
+            pokedex_num=poke.pokemon.PokemonId, \
+            name=pokename,   \
+            disappear_time=disappear_timestamp  \
+        )
 
 def clear_stale_pokemons():
-    current_time = time.time()
 
-    for pokemon_key in pokemons.keys():
-        pokemon = pokemons[pokemon_key]
-        if current_time > pokemon['disappear_time']:
-            print "[+] removing stale pokemon %s at %f, %f from list" % (
-                pokemon['name'].encode('utf-8'), pokemon['lat'], pokemon['lng'])
-            del pokemons[pokemon_key]
+    current_time = float(time.time())
+    query = Pokemon.delete().where(Pokemon.disappear_time < current_time)
+    query.execute()
+
 
 
 def register_background_thread(initial_registration=False):
@@ -790,18 +790,20 @@ def get_pokemarkers():
         'infobox': "Start position"
     }]
 
-    for pokemon_key in pokemons:
-        pokemon = pokemons[pokemon_key]
-        pokemon['disappear_time_formatted'] = datetime.fromtimestamp(pokemon[
-            'disappear_time']).strftime("%H:%M:%S")
+    for pokemon in Pokemon.select():
+        label_mapping = {}
+        label_mapping['disappear_time_formatted'] = datetime.fromtimestamp(pokemon.disappear_time).strftime("%H:%M:%S")
+        label_mapping['pokedex_num'] = pokemon.pokedex_num
+        label_mapping['disappear_time'] = pokemon.disappear_time
+        label_mapping['name'] = pokemon.name
 
         LABEL_TMPL = u'''
 <div style='position:float; top:0;left:0;'>
     <small>
-        <a href='http://www.pokemon.com/us/pokedex/{id}'
+        <a href='http://www.pokemon.com/us/pokedex/{pokedex_num}'
            target='_blank'
            title='View in Pokedex'>
-          #{id}
+          #{pokedex_num}
         </a>
     </small>
     <span> - </span>
@@ -809,14 +811,14 @@ def get_pokemarkers():
 </div>
 <div>disappears at {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
 '''
-        label = LABEL_TMPL.format(**pokemon)
+        label = LABEL_TMPL.format(**label_mapping)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
         label = label.replace('\n', '')
 
         pokeMarkers.append({
-            'icon': 'static/icons/%d.png' % pokemon["id"],
-            'lat': pokemon["lat"],
-            'lng': pokemon["lng"],
+            'icon': 'static/icons/%d.png' % pokemon.pokedex_num,
+            'lat': pokemon.lat,
+            'lng': pokemon.lon,
             'infobox': label
         })
 
@@ -862,4 +864,6 @@ def get_map():
 if __name__ == '__main__':
     args = get_args()
     register_background_thread(initial_registration=True)
+    db.connect()
+    Pokemon.create_table(fail_silently=True)
     app.run(debug=True, threaded=True, host=args.host, port=args.port)
