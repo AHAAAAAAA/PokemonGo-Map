@@ -456,7 +456,7 @@ def get_args():
     parser.add_argument(
         '-dp',
         '--display-pokestop',
-        help='Display pokéstop',
+        help='Display Pok&eacute;stop',
         action='store_true',
         default=False)
     parser.add_argument(
