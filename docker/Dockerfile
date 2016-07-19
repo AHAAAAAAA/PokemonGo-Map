@@ -12,6 +12,7 @@ RUN apk add \
     build-base \
     unzip \
     wget \
+    git \
   && rm -rf /var/cache/apk/*
 
 RUN pip install geopy protobuf requests flask-googlemaps s2sphere flask gpsoauth coveralls werkzeug
