@@ -19,6 +19,7 @@ import werkzeug.serving
 import pokemon_pb2
 import time
 from google.protobuf.internal import encoder
+from google.protobuf.message import DecodeError
 from s2sphere import *
 from datetime import datetime
 from geopy.geocoders import GoogleV3
@@ -203,7 +204,7 @@ def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
             if response:
                 return response
             debug('retrying_api_req: api_req returned None, retrying')
-        except (InvalidURL, ConnectionError), e:
+        except (InvalidURL, ConnectionError, DecodeError), e:
             debug('retrying_api_req: request error ({}), retrying'.format(
                 str(e)))
         time.sleep(1)
@@ -438,27 +439,21 @@ def get_args():
     parser.add_argument('-p', '--password', help='Password', required=False)
     parser.add_argument(
         '-l', '--location', type=parse_unicode, help='Location', required=True)
-    parser.add_argument('-st', '--step_limit', help='Steps', required=True)
+    parser.add_argument('-st', '--step-limit', help='Steps', required=True)
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Pokemon to ignore (comma separated)')
+        '-i', '--ignore', help='Comma-separated list of Pokémon names to ignore')
     group.add_argument(
-        '-o', '--only', help='Only look for these pokemon (comma separated)')
-    parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
-    parser.add_argument(
-        '-c',
-        '--china',
-        help='Coordinate transformer for China locations',
-        action='store_true')
+        '-o', '--only', help='Comma-separated list of Pokémon names to search')
     parser.add_argument(
         "-ar",
         "--auto_refresh",
-        help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
+        help="Enables an autorefresh that behaves the same as a page reload. " +
+             "Needs an integer value for the amount of seconds")
     parser.add_argument(
         '-dp',
         '--display-pokestop',
-        help='Display Pokestop',
+        help='Display pokéstop',
         action='store_true',
         default=False)
     parser.add_argument(
@@ -484,11 +479,12 @@ def get_args():
         help="Locale for Pokemon names: default en, check locale folder for more options",
         default="en")
     parser.add_argument(
-    	"-pm",
-    	"--ampm_clock",
-    	help="Toggles the AM/PM clock for Pokemon timers",
-    	action='store_true',
-    	default=False)
+        '-c',
+        '--china',
+        help='Coordinates transformer for China',
+        action='store_true')
+    parser.add_argument(
+        '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
@@ -588,22 +584,24 @@ def main():
     dy = -1
     origin_lat = FLOAT_LAT
     origin_lon = FLOAT_LONG
-    for step in range(steplimit**2):
-        debug('looping: step {} of {}'.format(step, steplimit**2))
-
+    steplimit2 = steplimit**2
+    for step in range(steplimit2):
+        #starting at 0 index
+        debug('looping: step {} of {}'.format((step+1), steplimit**2))
+        #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
         # Scan location math
-        if -steplimit / 2 < x <= steplimit / 2 and -steplimit / 2 < y \
-            <= steplimit / 2:
+        if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
             set_location_coords(x * 0.0025 + origin_lat, y * 0.0025 + origin_lon, 0)
         if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
             (dx, dy) = (-dy, dx)
+
         (x, y) = (x + dx, y + dy)
 
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
         print('Completed: ' + str(
-            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
+            ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
     global NEXT_LAT, NEXT_LONG
     if (NEXT_LAT and NEXT_LONG and
@@ -812,18 +810,9 @@ def get_pokemarkers():
         pokemon['disappear_time_formatted'] = dateoutput
 
         LABEL_TMPL = u'''
-<div style='position:float; top:0;left:0;'>
-    <small>
-        <a href='http://www.pokemon.com/us/pokedex/{id}'
-           target='_blank'
-           title='View in Pokedex'>
-          #{id}
-        </a>
-    </small>
-    <span> - </span>
-    <b>{name}</b>
-</div>
-<div>disappears at {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
+<div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
+<div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
+<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
@@ -842,13 +831,15 @@ def get_pokemarkers():
     for gym_key in gyms:
         gym = gyms[gym_key]
         if gym[0] == 0:
-            color = 'white'
+            color = "rgba(0,0,0,.4)"
         if gym[0] == 1:
-            color = 'rgba(0, 0, 256, .1)'
+            color = "rgba(0, 0, 256, .4)"
         if gym[0] == 2:
-            color = 'rgba(255, 0, 0, .1)'
+            color = "rgba(255, 0, 0, .4)"
         if gym[0] == 3:
-            color = 'rgba(255, 255, 0, .1)'
+            color = "rgba(255, 255, 0, .4)"
+
+        icon = 'static/forts/'+numbertoteam[gym[0]]+'_large.png'
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
             'type': 'gym',
@@ -856,8 +847,7 @@ def get_pokemarkers():
             'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
-            'infobox': "<div style='background: " + color +
-            "'>Gym owned by Team " + numbertoteam[gym[0]],
+            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'></center>"
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
