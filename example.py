@@ -442,7 +442,7 @@ def get_args():
     parser.add_argument('-u', '--username', help='Username',
         action = FindValueInEnvironmentAction, varName = 'USERNAME', required=True)
     parser.add_argument('-p', '--password', help='Password',
-        required=Falsedefault=os.environ.get('PASSWORD', None))
+        required=False, default=os.environ.get('PASSWORD', None))
     parser.add_argument(
         '-l', '--location', type=parse_unicode, help='Location',
         action = FindValueInEnvironmentAction, varName = 'LOCATION', required=True)
