@@ -45,22 +45,6 @@ def transform_long(x, y):
     lon += (150.0 * sin(x / 12.0 * pi) + 300.0 * sin(x / 30.0 * pi)) * 2.0 / 3.0
     return lon
 
-class FindValueInEnvironmentAction(argparse.Action):
-    def __init__(self, varName, **kwargs):
-        assert kwargs.get("required")
-
-        valueFromEnv = os.environ.get(varName)
-        requiredValue = True
-
-        if valueFromEnv:
-            kwargs["required"] = False
-            kwargs["default"] = valueFromEnv
-
-        argparse.Action.__init__(self, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string):
-        setattr(namespace, self.dest, values)
-
 
 class Location:
     def __init__(self, latitude, longitude):

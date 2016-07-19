@@ -809,6 +809,23 @@ def get_map():
     return fullmap
 
 
+class FindValueInEnvironmentAction(argparse.Action):
+    def __init__(self, varName, **kwargs):
+        assert kwargs.get("required")
+
+        valueFromEnv = os.environ.get(varName)
+        requiredValue = True
+
+        if valueFromEnv:
+            kwargs["required"] = False
+            kwargs["default"] = valueFromEnv
+
+        argparse.Action.__init__(self, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string):
+        setattr(namespace, self.dest, values)
+
+
 if __name__ == '__main__':
     args = get_args()
     register_background_thread(initial_registration=True)
