@@ -14,6 +14,7 @@ import json
 import time
 import requests
 import argparse
+import getpass
 import threading
 import functools
 
@@ -39,22 +40,24 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
 LOGIN_URL = \
-    'https://sso.pokemon.com/sso/login?service=https%3A%2F%2Fsso.pokemon.com%2Fsso%2Foauth2.0%2FcallbackAuthorize'
+    'https://sso.pokemon.com/sso/login?service=https://sso.pokemon.com/sso/oauth2.0/callbackAuthorize'
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
 APP = 'com.nianticlabs.pokemongo'
-PTC_CLIENT_SECRET = \
-    'w8ScCUXJQc6kXKw8FiOhd8Fixzht18Dq3PEVkUCP5ZPxtgyWsbTvWHFLm2wNY0JR'
-ANDROID_ID = '9774d56d682e549c'
-SERVICE = \
-    'audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com'
-APP = 'com.nianticlabs.pokemongo'
-CLIENT_SIG = '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
-GOOGLEMAPS_KEY = 'AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4'
+
+with open('credentials.json') as file:
+	credentials = json.load(file)
+
+PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
+ANDROID_ID = credentials.get('android_id', None)
+SERVICE = credentials.get('service', None)
+CLIENT_SIG = credentials.get('client_sig', None)
+GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
 
 SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
 
+global_password = None
 global_token = None
 access_token = None
 DEBUG = True
@@ -78,6 +81,7 @@ numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and the
     2: 'Valor',
     3: 'Instinct',
 }
+origin_lat, origin_lon = None, None
 
 # stuff for in-background search thread
 
@@ -167,13 +171,14 @@ def retrying_set_location(location_name):
 def set_location(location_name):
     geolocator = GoogleV3()
     prog = re.compile('^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$')
+    global origin_lat
+    global origin_lon
     if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
     else:
         loc = geolocator.geocode(location_name)
-        local_lat = loc.latitude
-        local_lng = loc.longitude
+        origin_lat, origin_lon = local_lat, local_lng = loc.latitude, loc.longitude
         alt = loc.altitude
         print '[!] Your given location: {}'.format(loc.address.encode('utf-8'))
 
@@ -435,7 +440,7 @@ def get_args():
     parser.add_argument(
         '-a', '--auth_service', help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
-    parser.add_argument('-p', '--password', help='Password', required=True)
+    parser.add_argument('-p', '--password', help='Password', required=False)
     parser.add_argument(
         '-l', '--location', type=parse_unicode, help='Location', required=True)
     parser.add_argument('-st', '--step_limit', help='Steps', required=True)
@@ -481,14 +486,21 @@ def get_args():
     parser.add_argument(
         "-L",
         "--locale",
-        help="Locale for Pokemon names: en (default), fr",
+        help="Locale for Pokemon names: en (default), fr, de",
         default="en")
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
 @memoize
 def login(args):
-    access_token = get_token(args.auth_service, args.username, args.password)
+    global global_password
+    if not global_password:
+      if args.password:
+        global_password = args.password
+      else:
+        global_password = getpass.getpass()
+
+    access_token = get_token(args.auth_service, args.username, global_password)
     if access_token is None:
         raise Exception('[-] Wrong username/password')
 
@@ -654,21 +666,21 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             if pokename.lower() not in only:
                 continue
 
-    disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
-        / 1000
+        disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
+            / 1000
 
-    if args.china:
-        (poke.Latitude, poke.Longitude) = \
-            transform_from_wgs_to_gcj(Location(poke.Latitude,
-                poke.Longitude))
+        if args.china:
+            (poke.Latitude, poke.Longitude) = \
+                transform_from_wgs_to_gcj(Location(poke.Latitude,
+                    poke.Longitude))
 
-    pokemons[poke.SpawnPointId] = {
-        "lat": poke.Latitude,
-        "lng": poke.Longitude,
-        "disappear_time": disappear_timestamp,
-        "id": poke.pokemon.PokemonId,
-        "name": pokename
-    }
+        pokemons[poke.SpawnPointId] = {
+            "lat": poke.Latitude,
+            "lng": poke.Longitude,
+            "disappear_time": disappear_timestamp,
+            "id": poke.pokemon.PokemonId,
+            "name": pokename
+        }
 
 def clear_stale_pokemons():
     current_time = time.time()
@@ -677,7 +689,7 @@ def clear_stale_pokemons():
         pokemon = pokemons[pokemon_key]
         if current_time > pokemon['disappear_time']:
             print "[+] removing stale pokemon %s at %f, %f from list" % (
-                pokemon['name'], pokemon['lat'], pokemon['lng'])
+                pokemon['name'].encode('utf-8'), pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
 
 
@@ -773,8 +785,8 @@ def next_loc():
 def get_pokemarkers():
     pokeMarkers = [{
         'icon': icons.dots.red,
-        'lat': FLOAT_LAT,
-        'lng': FLOAT_LONG,
+        'lat': origin_lat,
+        'lng': origin_lon,
         'infobox': "Start position"
     }]
 
@@ -840,8 +852,8 @@ def get_map():
     fullmap = Map(
         identifier="fullmap",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
-        lat=FLOAT_LAT,
-        lng=FLOAT_LONG,
+        lat=origin_lat,
+        lng=origin_lon,
         markers=get_pokemarkers(),
         zoom='15', )
     return fullmap
