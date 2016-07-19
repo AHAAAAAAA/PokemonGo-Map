@@ -21,21 +21,22 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 # Usage
 `python example.py -a authService -u myUsername -p myPassword -l "Boulder, CO" -st 5`
 
-| Flag                            | Description                                               | Required | 
-|---------------------------------|-----------------------------------------------------------|----------| 
-| `-a`                            | Auth Service (ptc or google)                              |          | 
-| `-u`                            | Username                                                  | ✓        | 
-| `-p`                            | Password                                                  | ✓        | 
-| `-l`                            | Any location Google Maps can understand                   | ✓        | 
-| `-st`                           | Steps to take                                             | ✓        | 
-| `-ar` `--auto_refresh` `seconds`| Enables auto page reload. Value in seconds                |          | 
-| `-i` `--ignore`                 | Comma-separated list of Pokémon to ignore                 |          | 
-| `-o` `--only`                   | Comma-separated list of Pokemon to search for exclusively |          | 
-| `-dp` `--display-pokestop`      | Display pokestop                                          |          | 
-| `-dg` `--display-gym`           | Display gym                                               |          | 
-| `-H` `--host`                   | Set web server listening host                             |          | 
+| Flag                            | Description                                               | Required |
+|---------------------------------|-----------------------------------------------------------|----------|
+| `-a`                            | Auth Service (ptc or google)                              |          |
+| `-u`                            | Username                                                  | ✓        |
+| `-p`                            | Password                                                  | ✓        |
+| `-l`                            | Any location Google Maps can understand                   | ✓        |
+| `-st`                           | Steps to take                                             | ✓        |
+| `-ar` `--auto_refresh` `seconds`| Enables auto page reload. Value in seconds                |          |
+| `-i` `--ignore`                 | Comma-separated list of Pokémon to ignore                 |          |
+| `-o` `--only`                   | Comma-separated list of Pokemon to search for exclusively |          |
+| `-dp` `--display-pokestop`      | Display pokestop                                          |          |
+| `-dg` `--display-gym`           | Display gym                                               |          |
+| `-H` `--host`                   | Set web server listening host                             |          |
 | `-P` `--port`                   | Set web server listening port                             |          |
 |`-L` `--locale`                  | Locale for Pokemon names: en (default), fr, de            |          |
+| `-K` `--google-maps-api-key`    | A Google Maps API key, obtainable at goo.gl/sM7D6w.       |          |
 
 _Note:
 5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)_

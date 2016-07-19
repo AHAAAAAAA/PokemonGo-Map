@@ -51,8 +51,6 @@ PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
 ANDROID_ID = credentials.get('android_id', None)
 SERVICE = credentials.get('service', None)
 CLIENT_SIG = credentials.get('client_sig', None)
-GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
-
 SESSION = requests.session()
 SESSION.headers.update({'User-Agent': 'Niantic App'})
 SESSION.verify = False
@@ -488,8 +486,16 @@ def get_args():
         "--locale",
         help="Locale for Pokemon names: en (default), fr, de",
         default="en")
+    parser.add_argument(
+    '-K',
+    '--google-maps-api-key',
+    help='A Google Maps API key, obtainable at https://console.developers.google.com/apis/api/maps_backend/overview.',
+    default="AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4"
+    )
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
+
+GOOGLEMAPS_KEY = get_args().google_maps_api_key
 
 @memoize
 def login(args):
