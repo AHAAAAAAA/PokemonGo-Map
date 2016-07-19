@@ -76,6 +76,7 @@ numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and the
     3: 'Instinct',
 }
 origin_lat, origin_lon = None, None
+is_ampm_clock = False
 
 # stuff for in-background search thread
 
@@ -488,6 +489,12 @@ def get_args():
         help='Coordinates transformer for China',
         action='store_true')
     parser.add_argument(
+    	"-pm",
+    	"--ampm_clock",
+    	help="Toggles the AM/PM clock for Pokemon timers",
+    	action='store_true',
+    	default=False)
+    parser.add_argument(
         '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
@@ -563,6 +570,10 @@ def main():
     if args.auto_refresh:
         global auto_refresh
         auto_refresh = int(args.auto_refresh) * 1000
+
+    if args.ampm_clock:
+    	global is_ampm_clock
+    	is_ampm_clock = True
 
     api_endpoint, access_token, profile_response = login(args)
 
@@ -808,8 +819,12 @@ def get_pokemarkers():
 
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
-        pokemon['disappear_time_formatted'] = datetime.fromtimestamp(pokemon[
-            'disappear_time']).strftime("%H:%M:%S")
+        datestr = datetime.fromtimestamp(pokemon[
+            'disappear_time'])
+        dateoutput = datestr.strftime("%H:%M:%S")
+        if is_ampm_clock:
+        	dateoutput = datestr.strftime("%I:%M%p").lstrip('0')
+        pokemon['disappear_time_formatted'] = dateoutput
 
         LABEL_TMPL = u'''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
