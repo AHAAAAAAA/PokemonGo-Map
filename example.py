@@ -560,6 +560,14 @@ def main():
     pokemonsJSON = json.load(
         open(path + '/locales/pokemon.' + args.locale + '.json'))
 
+    global localJSON
+    if (os.path.isfile(path + '/locales/local.' + args.locale + '.json')):
+        localJSON = json.load(
+            open(path + '/locales/local.' + args.locale + '.json'))
+    else:
+        localJSON = json.load(
+            open(path + '/locales/local.en.json'))
+
     if args.debug:
         global DEBUG
         DEBUG = True
@@ -812,7 +820,7 @@ def get_pokemarkers():
         'icon': icons.dots.red,
         'lat': origin_lat,
         'lng': origin_lon,
-        'infobox': "Start position",
+        'infobox': localJSON['startPosition'],
         'type': 'custom',
         'key': 'start-position',
         'disappear_time': -1
@@ -829,8 +837,8 @@ def get_pokemarkers():
 
         LABEL_TMPL = u'''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
-<div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
-<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
+<div>''' + localJSON['disappears'] + u'''{disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
+<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>''' + localJSON['directions'] + u'''</a></div>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
@@ -865,7 +873,10 @@ def get_pokemarkers():
             'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
-            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'><br>Prestige: " + str(gym[3]) + "</center>"
+            'infobox': "<div><center><small>" + localJSON[
+                'gymOwned'] + "</small><br><b style='color:" + color + "'>Team " + numbertoteam[
+                           gym[0]] + "</b><br><img id='" + numbertoteam[
+                           gym[0]] + "' height='100px' src='" + icon + "'><br>Prestige: " + str(gym[3]) + "</center>"
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
@@ -876,7 +887,7 @@ def get_pokemarkers():
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
-                'infobox': 'Lured Pokestop, expires at ' + stop[2],
+                'infobox': localJSON['lureExpires'] + stop[2],
             })
         else:
             pokeMarkers.append({
@@ -886,7 +897,7 @@ def get_pokemarkers():
                 'icon': 'static/forts/Pstop.png',
                 'lat': stop[0],
                 'lng': stop[1],
-                'infobox': 'Pokestop',
+                'infobox': localJSON['pokestop'],
             })
     return pokeMarkers
 
