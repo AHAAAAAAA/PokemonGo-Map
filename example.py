@@ -578,22 +578,24 @@ def main():
     dy = -1
     origin_lat = FLOAT_LAT
     origin_lon = FLOAT_LONG
-    for step in range(steplimit**2):
-        debug('looping: step {} of {}'.format(step, steplimit**2))
-
+    steplimit2 = steplimit**2
+    for step in range(steplimit2):
+        #starting at 0 index
+        debug('looping: step {} of {}'.format((step+1), steplimit**2))
+        #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
         # Scan location math
-        if -steplimit / 2 < x <= steplimit / 2 and -steplimit / 2 < y \
-            <= steplimit / 2:
+        if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
             set_location_coords(x * 0.0025 + origin_lat, y * 0.0025 + origin_lon, 0)
         if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
             (dx, dy) = (-dy, dx)
+
         (x, y) = (x + dx, y + dy)
 
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
         print('Completed: ' + str(
-            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
+            ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
     global NEXT_LAT, NEXT_LONG
     if (NEXT_LAT and NEXT_LONG and
