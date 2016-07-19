@@ -30,6 +30,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 | `-st` `--step-limit`       | Steps to take                                   | ✓        |
 | `-i` `--ignore`            | Comma-separated list of Pokémon names to ignore |          |
 | `-o` `--only`              | Comma-separated list of Pokémon names to search |          |
+| `-on` `--onlyN`            | Comma-separated list of Pokémon ids to search   |          |
 | `-ar` `--auto-refresh`     | Number of seconds on which to autorefresh       |          |
 | `-dp` `--display-pokestop` | Display pokéstops                               |          |
 | `-dg` `--display-gym`      | Display gyms                                    |          |

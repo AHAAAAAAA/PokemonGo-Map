@@ -448,6 +448,8 @@ def get_args():
         '-i', '--ignore', help='Comma-separated list of Pokémon names to ignore')
     group.add_argument(
         '-o', '--only', help='Comma-separated list of Pokémon names to search')
+    group.add_argument(
+        '-on', '--onlyN', help='Comma-separated list of Pokémon id to search')
     parser.add_argument(
         "-ar",
         "--auto_refresh",
@@ -586,10 +588,13 @@ def main():
 
     ignore = []
     only = []
+    onlyN = []
     if args.ignore:
         ignore = [i.lower().strip() for i in args.ignore.split(',')]
     elif args.only:
         only = [i.lower().strip() for i in args.only.split(',')]
+    elif args.onlyN:
+        onlyN = [i.lower().strip() for i in args.onlyN.split(',')]
 
     pos = 1
     x = 0
@@ -610,7 +615,7 @@ def main():
         (x, y) = (x + dx, y + dy)
 
         process_step(args, api_endpoint, access_token, profile_response,
-                     pokemonsJSON, ignore, only)
+                     pokemonsJSON, ignore, only, onlyN)
 
         print('Completed: ' + str(
             ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
@@ -629,7 +634,7 @@ def main():
 
 
 def process_step(args, api_endpoint, access_token, profile_response,
-                 pokemonsJSON, ignore, only):
+                 pokemonsJSON, ignore, only, onlyN):
     print('[+] Searching for Pokemon at location {} {}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     step_lat = FLOAT_LAT
@@ -683,12 +688,16 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             break
 
     for poke in visible:
-        pokename = pokemonsJSON[str(poke.pokemon.PokemonId)]
+        pokeID = str(poke.pokemon.PokemonId)
+        pokename = pokemonsJSON[pokeID]
         if args.ignore:
             if pokename.lower() in ignore:
                 continue
         elif args.only:
             if pokename.lower() not in only:
+                continue
+        elif args.onlyN:
+            if pokeID not in onlyN:
                 continue
 
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
