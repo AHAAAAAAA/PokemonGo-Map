@@ -30,6 +30,9 @@ from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
 
+from models import Pokemon, Gym, Pokestop, db
+from playhouse.shortcuts import model_to_dict
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
@@ -66,9 +69,6 @@ NEXT_LONG = 0
 auto_refresh = 0
 default_step = 0.001
 api_endpoint = None
-pokemons = {}
-gyms = {}
-pokestops = {}
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
     0: 'Gym',
     1: 'Mystic',
@@ -648,14 +648,21 @@ def process_step(args, api_endpoint, access_token, profile_response,
                             if args.china:
                                 (Fort.Latitude, Fort.Longitude) = \
 transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
-                            if Fort.GymPoints and args.display_gym:
-                                gyms[Fort.FortId] = [Fort.Team, Fort.Latitude,
-                                                     Fort.Longitude]
+                            if Fort.GymPoints:
+                                Gym.create_or_get(
+                                    gym_id=Fort.FortId,
+                                    team_id=Fort.Team,
+                                    team_name=numbertoteam[Fort.Team],
+                                    lat=Fort.Latitude,
+                                    lon=Fort.Longitude
+                                )
 
-                            elif Fort.FortType \
-                                and args.display_pokestop:
-                                pokestops[Fort.FortId] = [Fort.Latitude,
-                                                          Fort.Longitude]
+                            elif Fort.FortType :
+                                Pokestop.create_or_get(
+                                    pokestop_id=Fort.FortId,
+                                    lat=Fort.Latitude,
+                                    lon=Fort.Longitude
+                                )
         except AttributeError:
             break
 
@@ -676,23 +683,21 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                 transform_from_wgs_to_gcj(Location(poke.Latitude,
                     poke.Longitude))
 
-        pokemons[poke.SpawnPointId] = {
-            "lat": poke.Latitude,
-            "lng": poke.Longitude,
-            "disappear_time": disappear_timestamp,
-            "id": poke.pokemon.PokemonId,
-            "name": pokename
-        }
+        Pokemon.create_or_get(
+            spawnpoint_id=poke.SpawnPointId,
+            lat=poke.Latitude,
+            lon=poke.Longitude,
+            pokedex_num=poke.pokemon.PokemonId,
+            name=pokename,
+            disappear_time=disappear_timestamp
+        )
 
 def clear_stale_pokemons():
-    current_time = time.time()
 
-    for pokemon_key in pokemons.keys():
-        pokemon = pokemons[pokemon_key]
-        if current_time > pokemon['disappear_time']:
-            print "[+] removing stale pokemon %s at %f, %f from list" % (
-                pokemon['name'].encode('utf-8'), pokemon['lat'], pokemon['lng'])
-            del pokemons[pokemon_key]
+    current_time = float(time.time())
+    query = Pokemon.delete().where(Pokemon.disappear_time < current_time)
+    query.execute()
+
 
 
 def register_background_thread(initial_registration=False):
@@ -746,7 +751,18 @@ def data():
 @app.route('/raw_data')
 def raw_data():
     """ Gets raw data for pokemons/gyms/pokestops via REST """
-    return flask.jsonify(pokemons=pokemons, gyms=gyms, pokestops=pokestops)
+    pokemons, gyms, pokestops = [], [], []
+    for pokemon in Pokemon.select():
+        pokemons.append(model_to_dict(pokemon))
+    for gym in Gym.select():
+        gyms.append(model_to_dict(gym))
+    for pokestop in Pokestop.select():
+        pokestops.append(model_to_dict(pokestop))
+    return flask.jsonify(
+        pokemons=pokemons,
+        gyms=gyms,
+        pokestops=pokestops
+    )
 
 
 @app.route('/config')
@@ -795,62 +811,69 @@ def get_pokemarkers():
         'disappear_time': -1
     }]
 
-    for pokemon_key in pokemons:
-        pokemon = pokemons[pokemon_key]
-        pokemon['disappear_time_formatted'] = datetime.fromtimestamp(pokemon[
-            'disappear_time']).strftime("%H:%M:%S")
+    for pokemon in Pokemon.select():
+        label_mapping = {}
+        label_mapping['disappear_time_formatted'] = datetime.fromtimestamp(pokemon.disappear_time).strftime("%H:%M:%S")
+        label_mapping['id'] = pokemon.pokedex_num
+        label_mapping['disappear_time'] = pokemon.disappear_time
+        label_mapping['name'] = pokemon.name
+        label_mapping['lat'] = pokemon.lat
+        label_mapping['lon'] = pokemon.lon
 
         LABEL_TMPL = u'''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
 <div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
-<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
+<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lon}' target='_blank' title='View in Maps'>Get Directions</a></div>
 '''
-        label = LABEL_TMPL.format(**pokemon)
+        label = LABEL_TMPL.format(**label_mapping)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
         label = label.replace('\n', '')
 
         pokeMarkers.append({
             'type': 'pokemon',
-            'key': pokemon_key,
-            'disappear_time': pokemon['disappear_time'],
-            'icon': 'static/icons/%d.png' % pokemon["id"],
-            'lat': pokemon["lat"],
-            'lng': pokemon["lng"],
+            'icon': 'static/icons/%d.png' % pokemon.pokedex_num,
+            'lat': pokemon.lat,
+            'lng': pokemon.lon,
+            'key': pokemon.spawnpoint_id,
+            'disappear_time': pokemon.disappear_time,
             'infobox': label
         })
 
-    for gym_key in gyms:
-        gym = gyms[gym_key]
-        if gym[0] == 0:
-            color = "rgba(0,0,0,.4)"
-        if gym[0] == 1:
-            color = "rgba(0, 0, 256, .4)"
-        if gym[0] == 2:
-            color = "rgba(255, 0, 0, .4)"
-        if gym[0] == 3:
-            color = "rgba(255, 255, 0, .4)"
+    if args.display_gym:
+        for gym in Gym.select():
+            if gym.team_id == 0:
+                color = "rgba(0,0,0,.4)"
+            if gym.team_id == 1:
+                color = "rgba(0, 0, 256, .4)"
+            if gym.team_id == 2:
+                color = "rgba(255, 0, 0, .4)"
+            if gym.team_id == 3:
+                color = "rgba(255, 255, 0, .4)"
 
-        icon = 'static/forts/'+numbertoteam[gym[0]]+'_large.png'
+        icon = 'static/forts/'+gym.team_name+'_large.png'
         pokeMarkers.append({
-            'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
+            'icon': 'static/forts/' + gym.team_name + '.png',
             'type': 'gym',
-            'key': gym_key,
+            'key': gym.gym_id,
             'disappear_time': -1,
-            'lat': gym[1],
-            'lng': gym[2],
-            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'></center>"
+            'lat': gym.lat,
+            'lng': gym.lon,
+            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " +
+                       gym.team_name + "</b><br><img id='" + gym.team_name + "' height='100px' src='" + icon + "'></center>"
+
         })
-    for stop_key in pokestops:
-        stop = pokestops[stop_key]
-        pokeMarkers.append({
-            'type': 'stop',
-            'key': stop_key,
-            'disappear_time': -1,
-            'icon': 'static/forts/Pstop.png',
-            'lat': stop[0],
-            'lng': stop[1],
-            'infobox': 'Pokestop',
-        })
+
+    if args.display_pokestop:
+        for pokestop in Pokestop.select():
+            pokeMarkers.append({
+                'type': 'stop',
+                'key': pokestop.pokestop_id,
+                'disappear_time': -1,
+                'icon': 'static/forts/Pstop.png',
+                'infobox': 'Pokestop',
+                'lng': pokestop.lon,
+                'lat': pokestop.lat,
+            })
     return pokeMarkers
 
 
@@ -868,4 +891,8 @@ def get_map():
 if __name__ == '__main__':
     args = get_args()
     register_background_thread(initial_registration=True)
+    db.connect()
+    Pokemon.create_table(fail_silently=True)
+    Pokestop.create_table(fail_silently=True)
+    Gym.create_table(fail_silently=True)
     app.run(debug=True, threaded=True, host=args.host, port=args.port)
