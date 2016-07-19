@@ -1,5 +1,5 @@
 # **Example.py Rebase underway, please look in [rewrite branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/py-rewrite) for more info** 
-##** Please refrain from submitting pull requests at this time!##
+##** Please refrain from submitting pull requests at this time!**
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
