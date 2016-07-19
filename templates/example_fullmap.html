@@ -164,6 +164,9 @@
                             continue;
                         }
                     }
+                    if(markerCache[key] != null && markerCache[key].marker != null){
+                        markerCache[key].marker.setMap(null);
+                    }
                     var marker = addMarker({
                             position: new google.maps.LatLng(item["lat"], item["lng"]),
                             map: map,
