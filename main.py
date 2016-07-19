@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import flask
+import notifier
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
@@ -434,6 +435,36 @@ def get_token(service, username, password):
         return global_token
 
 
+def get_args_from_json():
+    # load default args
+    default_args = {
+        "DEBUG": True,
+        "ampm_clock": False,
+        "auth_service": "ptc",
+        "auto_refresh": None,
+        "china": False,
+        "debug": False,
+        "display_gym": False,
+        "display_pokestop": False,
+        "host": "127.0.0.1",
+        "ignore": None,
+        "locale": "en",
+        "only": None,
+        "onlylure": False,
+        "port": 5000,
+        "step_limit": 4
+    }
+    # load config file
+    with open('config.json') as data_file:
+        data = json.load(data_file)
+        for key in data:
+            default_args[key] = str(data[key])
+        # create namespace obj
+        namespace = argparse.Namespace()
+        for key in default_args:
+            vars(namespace)[key] = default_args[key]
+        return namespace
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -550,7 +581,10 @@ def main():
     full_path = os.path.realpath(__file__)
     (path, filename) = os.path.split(full_path)
 
-    args = get_args()
+    try:
+        args = get_args()
+    except:
+        args = get_args_from_json()
 
     if args.auth_service not in ['ptc', 'google']:
         print '[!] Invalid Auth service specified'
@@ -700,13 +734,18 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                 transform_from_wgs_to_gcj(Location(poke.Latitude,
                     poke.Longitude))
 
-        pokemons[poke.SpawnPointId] = {
+
+        pokemon_obj = {
             "lat": poke.Latitude,
             "lng": poke.Longitude,
             "disappear_time": disappear_timestamp,
             "id": poke.pokemon.PokemonId,
             "name": pokename
         }
+
+        pokemons[poke.SpawnPointId] = pokemon_obj
+
+        notifier.pokemon_found(pokemon_obj)
 
 def clear_stale_pokemons():
     current_time = time.time()
@@ -900,11 +939,14 @@ def get_map():
         lat=origin_lat,
         lng=origin_lon,
         markers=get_pokemarkers(),
-        zoom='15', )
+        zoom='25', )
     return fullmap
 
 
 if __name__ == '__main__':
-    args = get_args()
+    try:
+        args = get_args()
+    except:
+        args = get_args_from_json()
     register_background_thread(initial_registration=True)
     app.run(debug=True, threaded=True, host=args.host, port=args.port)
