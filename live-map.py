@@ -9,6 +9,7 @@ CONFIG_URL = 'http://localhost:5000/config'
 DATA_URL = 'http://localhost:5000/raw_data'
 
 config = json.loads(urllib2.urlopen(CONFIG_URL).read())
+config.update(json.loads(open('credentials.json').read()))
 
 html = '''
 <!DOCTYPE html>
@@ -109,7 +110,7 @@ html = '''
 			reload();
 		}
 	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=%(gmaps_key)r&callback=initMap" async defer></script>
   </body>
 </html>
 '''
