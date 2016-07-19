@@ -793,7 +793,7 @@ def get_pokemarkers():
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
         pokemon['disappear_time_formatted'] = datetime.fromtimestamp(pokemon[
-            'disappear_time']).strftime("%H:%M:%S")
+            'disappear_time']).strftime("%I:%M%p").lstrip('0')
 
         LABEL_TMPL = u'''
 <div style='position:float; top:0;left:0;'>
