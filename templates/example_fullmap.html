@@ -7,12 +7,13 @@
     </head>
     <body>
         <h1>Flask Google Maps Full Map Example</h1>
-        {{ fullmap.html }}
+        <div id="fullmap" style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;'></div>
 
     </body>
 <!-- Webdesign 101: scripts at the end make the page load faster -->
-{{fullmap.js}}
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ key }}">
+    </script>
   {% if auto_refresh %}
     <script type="text/javascript">
         var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
@@ -65,11 +66,12 @@
                         options["lng"] = json_obj["lng"];
                         options["zoom"] = json_obj["zoom"];
                         options["identifier"] = json_obj["identifier"];
-                        createMap();
+                        updateMap();
                     });
-        
+
         function createMap(){
-            if(map == null){
+            if(map == null && google != null && google.maps != null){
+                if(options.identifier != null);
                 map = new google.maps.Map(
                     document.getElementById(options["identifier"]), {
                         center: new google.maps.LatLng(options["lat"], options["lng"]),

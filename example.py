@@ -334,7 +334,7 @@ def login_ptc(username, password):
     head = {'User-Agent': 'Niantic App'}
     r = SESSION.get(LOGIN_URL, headers=head)
     if r is None:
-        return render_template('nope.html', fullmap=fullmap)
+        return render_template('nope.html')
 
     try:
         jdata = json.loads(r.content)
@@ -764,7 +764,7 @@ def fullmap():
     clear_stale_pokemons()
 
     return render_template(
-        'example_fullmap.html', fullmap=get_map(), auto_refresh=auto_refresh)
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, auto_refresh=auto_refresh)
 
 
 @app.route('/next_loc')
