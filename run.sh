@@ -27,4 +27,15 @@ elif [ \( "$auth" != "PTC" \) -a \( "$auth" != "google" \) ];then
     exit 1
 fi
 
-python2 example.py -a "$auth" -u "$user" -p "$passwd" -l "$loc" -st "$steps" -ar "$refresh" -H "$host" -P "$port" "$locale" "$ignore" "$opts"
+# Check python is accesible via PATH env variable
+if [ $(which python) -eq "" ];then
+    echo "Ensure python is installed and accesible via PATH variable"
+    exit 1
+fi
+
+# Check python major version
+if [ $(python -c 'import sys; print(sys.version_info[0])') != "2" ];then
+    echo "Ensure Python 2 is installed"
+    exit 1
+fi
+python example.py -a "$auth" -u "$user" -p "$passwd" -l "$loc" -st "$steps" -ar "$refresh" -H "$host" -P "$port" "$locale" "$ignore" "$opts"
