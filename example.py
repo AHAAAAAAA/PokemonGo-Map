@@ -445,9 +445,9 @@ def get_args():
     parser.add_argument('-st', '--step-limit', help='Steps', required=True)
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Comma-separated list of Pokémon names to ignore')
+        '-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore')
     group.add_argument(
-        '-o', '--only', help='Comma-separated list of Pokémon names to search')
+        '-o', '--only', help='Comma-separated list of Pokémon names or IDs to search')
     parser.add_argument(
         "-ar",
         "--auto_refresh",
@@ -683,12 +683,13 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             break
 
     for poke in visible:
-        pokename = pokemonsJSON[str(poke.pokemon.PokemonId)]
+        pokeid = str(poke.pokemon.PokemonId)
+        pokename = pokemonsJSON[pokeid]
         if args.ignore:
-            if pokename.lower() in ignore:
+            if pokename.lower() in ignore or pokeid in ignore:
                 continue
         elif args.only:
-            if pokename.lower() not in only:
+            if pokename.lower() not in only and pokeid not in only:
                 continue
 
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
