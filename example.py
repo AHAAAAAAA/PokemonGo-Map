@@ -19,6 +19,7 @@ import werkzeug.serving
 import pokemon_pb2
 import time
 from google.protobuf.internal import encoder
+from google.protobuf.message import DecodeError
 from s2sphere import *
 from datetime import datetime
 from geopy.geocoders import GoogleV3
@@ -202,7 +203,7 @@ def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
             if response:
                 return response
             debug('retrying_api_req: api_req returned None, retrying')
-        except (InvalidURL, ConnectionError), e:
+        except (InvalidURL, ConnectionError, DecodeError), e:
             debug('retrying_api_req: request error ({}), retrying'.format(
                 str(e)))
         time.sleep(1)
