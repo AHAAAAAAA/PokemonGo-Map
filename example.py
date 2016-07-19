@@ -454,7 +454,7 @@ def get_args():
     parser.add_argument(
         '-c',
         '--china',
-        help='Coord Transformer for China',
+        help='Coordinate transformer for China locations',
         action='store_true')
     parser.add_argument(
         "-ar",
@@ -486,7 +486,7 @@ def get_args():
     parser.add_argument(
         "-L",
         "--locale",
-        help="Locale for Pokemon names: en (default), fr, de",
+        help="Locale for Pokemon names: default en, check locale folder for more options",
         default="en")
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
