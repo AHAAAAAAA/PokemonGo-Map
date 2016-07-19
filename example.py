@@ -454,6 +454,12 @@ def get_args():
         help="Enables an autorefresh that behaves the same as a page reload. " +
              "Needs an integer value for the amount of seconds")
     parser.add_argument(
+        '-dc',
+        '--display-in-console',
+        help='Display Found Pokemon in Console',
+        action='store_true',
+        default=False)
+    parser.add_argument(
         '-dp',
         '--display-pokestop',
         help='Display pokéstop',
@@ -692,8 +698,14 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             if pokename.lower() not in only and pokeid not in only:
                 continue
 
-        disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
+        curTime = time.time()
+        disappear_timestamp = curTime + poke.TimeTillHiddenMs \
             / 1000
+
+        if args.display_in_console:
+            ls = disappear_timestamp-curTime
+            m, s = divmod(ls, 60)
+            print "======================================\n Name: %s\n Coord: (%f,%f)\n ID: %s \n Reamining Time: %02dm%02ds\n======================================" % (pokename.encode('utf-8'),poke.Latitude,poke.Longitude,pokeid,m,s)
 
         if args.china:
             (poke.Latitude, poke.Longitude) = \

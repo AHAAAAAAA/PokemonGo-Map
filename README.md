@@ -31,6 +31,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 | `-i` `--ignore`            | Comma-separated list of Pokémon names or IDs to ignore |          |
 | `-o` `--only`              | Comma-separated list of Pokémon names or IDs to search |          |
 | `-ar` `--auto-refresh`     | Number of seconds on which to autorefresh              |          |
+| `-dc` `--display-in-console`| Display found Pokémon name, coordinates, ID, and remaining time |          |
 | `-dp` `--display-pokestop` | Display pokéstops                                      |          |
 | `-dg` `--display-gym`      | Display gyms                                           |          |
 | `-H` `--host`              | Set web server listening host                          |          |
