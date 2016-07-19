@@ -630,7 +630,7 @@ def main():
 
 def process_step(args, api_endpoint, access_token, profile_response,
                  pokemonsJSON, ignore, only):
-    print('[+] Searching pokemons for location {} {}'.format(FLOAT_LAT, FLOAT_LONG))
+    print('[+] Searching for Pokémon at location {} {}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     step_lat = FLOAT_LAT
     step_long = FLOAT_LONG
