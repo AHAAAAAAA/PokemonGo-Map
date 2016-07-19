@@ -1,0 +1,28 @@
+///////////////////////////////////
+// Mixins
+///////////////////////////////////
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin font-size($sizeValue: 1.6) {
+  font-size: ($sizeValue * 10) + px;
+  font-size: $sizeValue + rem;
+}
+
+@mixin transition($args) {
+  transition: $args;
+}
+
+@mixin transform($args) {
+  transform:$args;
+  -ms-transform:$args;
+  -moz-transform:$args;
+  -webkit-transform:$args;
+  -o-transform:$args;
+}
