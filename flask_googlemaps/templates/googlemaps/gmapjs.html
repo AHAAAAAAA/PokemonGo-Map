@@ -1,0 +1,148 @@
+
+{%  if not is_googlemaps_loaded()  %}
+    {% if GOOGLEMAPS_KEY %}
+        <script src="//maps.googleapis.com/maps/api/js?key={{GOOGLEMAPS_KEY}}" type="text/javascript"></script>
+    {%  else %}
+        <script src="//maps.googleapis.com/maps/api/js" type="text/javascript"></script>
+    {%  endif %}
+    {{ set_googlemaps_loaded() }}
+{% endif %}
+
+{% if gmap.cluster %}
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-marker-clusterer/1.0.0/markerclusterer_compiled.js" type="text/javascript"></script>
+{%  endif %}
+
+
+<style type="text/css">
+      #{{gmap.identifier}} { {{gmap.style}} }
+</style>
+
+<script type="text/javascript">
+    var {{gmap.varname}};
+    var {{gmap.varname}}_markers = [];
+    function initialize_{{gmap.varname}}() {
+        {{gmap.varname}} = new google.maps.Map(
+        document.getElementById('{{gmap.identifier}}'), {
+            center: new google.maps.LatLng({{gmap.center.0}}, {{gmap.center.1}}),
+            zoom: {{gmap.zoom}},
+            mapTypeId: google.maps.MapTypeId.{{gmap.maptype}},
+            zoomControl: {% if gmap.zoom_control %}true{% else %}false{% endif %},
+            mapTypeControl: {% if gmap.maptype_control %}true{% else %}false{% endif %},
+            scaleControl: {% if gmap.scale_control %}true{% else %}false{% endif %},
+            streetViewControl: {% if gmap.streetview_control %}true{% else %}false{% endif %},
+            rotateControl: {% if gmap.rotate_control %}true{% else %}false{% endif %},
+            fullscreenControl: {% if gmap.fullscreen_control %}true{% else %}false{% endif %}
+        });
+
+        // add gmap markers
+        var raw_markers = {{gmap.markers|safe}};
+        for(i=0; i<{{gmap.markers|length}};i++) {
+            {{gmap.varname}}_markers[i] = new google.maps.Marker({
+                position: new google.maps.LatLng(raw_markers[i].lat, raw_markers[i].lng),
+                map: {{gmap.varname}},
+                icon: raw_markers[i].icon,
+                title: raw_markers[i].title ? raw_markers[i].title : null
+            });
+
+           if(raw_markers[i].infobox)
+           {
+                google.maps.event.addListener(
+                        {{gmap.varname}}_markers[i],
+                        'click',
+                        getInfoCallback({{gmap.varname}}, raw_markers[i].infobox)
+                );
+           }
+        }
+
+    // add rectangles
+    {% for rect in gmap.rectangles %}
+        var gRectangle = new google.maps.Rectangle({
+            strokeColor: '{{ rect.stroke_color }}',
+            strokeOpacity: '{{ rect.stroke_opacity }}',
+            strokeWeight: '{{ rect.stroke_weight }}',
+            fillColor: '{{ rect.fill_color }}',
+            fillOpacity: '{{ rect.fill_opacity }}',
+            bounds: {
+                north: {{ rect.bounds.north }},
+                east: {{ rect.bounds.east }},
+                south: {{ rect.bounds.south }},
+                west: {{ rect.bounds.west }}},
+        });
+        gRectangle.setMap({{gmap.varname}});
+
+    {% endfor %}
+
+
+    // add circles
+    {% for circle in gmap.circles %}
+        var gCircle = new google.maps.Circle({
+            strokeColor: '{{ circle.stroke_color }}',
+            strokeOpacity: '{{ circle.stroke_opacity }}',
+            strokeWeight: '{{ circle.stroke_weight }}',
+            fillColor: '{{ circle.fill_color }}',
+            fillOpacity: '{{ circle.fill_opacity }}',
+            center: {
+                lat: {{ circle.center.lat }},
+                lng: {{ circle.center.lng }},
+            },
+            radius: {{ circle.radius  }}
+        });
+        gCircle.setMap({{gmap.varname}});
+    
+    {% endfor %}
+    
+    // add polylines
+    {% for line in gmap.polylines %}
+        var coordinates = [ {% for point in line.path %}
+                            {lat: {{point.lat}} , lng: {{point.lng}} },
+                            {% endfor %}
+        ];
+
+        
+        var gPolyline = new google.maps.Polyline({
+            strokeColor: '{{ line.stroke_color }}',
+            strokeOpacity: '{{ line.stroke_opacity }}',
+            strokeWeight: '{{ line.stroke_weight }}',
+            path: coordinates,
+            geodesic: true
+        });
+        gPolyline.setMap({{gmap.varname}});
+
+    {% endfor %}
+
+    // add polygons
+    {% for line in gmap.polygons %}
+        var coordinates = [ {% for point in line.path %}
+                            {lat: {{point.lat}} , lng: {{point.lng}} },
+                            {% endfor %}
+        ];
+
+
+        var gPolygon = new google.maps.Polygon({
+            strokeColor: '{{ line.stroke_color }}',
+            strokeOpacity: '{{ line.stroke_opacity }}',
+            strokeWeight: '{{ line.stroke_weight }}',
+            fillOpacity: '{{ line.fill_opacity }}',
+            fillColor: '{{ line.fill_color }}',
+            path: coordinates,
+            geodesic: true
+        });
+        gPolygon.setMap({{gmap.varname}});
+
+    {% endfor %}
+
+    {% if gmap.cluster %}
+	    var markerCluster = new MarkerClusterer({{gmap.varname}}, {{gmap.varname}}_markers, {'imagePath': "{{gmap.cluster_imagepath}}", 'gridSize': {{gmap.cluster_gridsize}}});
+    {% endif %}
+}
+
+    function getInfoCallback(map, content) {
+        var infowindow = new google.maps.InfoWindow({content: content});
+        return function() {
+                infowindow.setContent(content);
+                infowindow.open(map, this);
+            };
+    }
+    google.maps.event.addDomListener(window, 'load', initialize_{{gmap.varname}});
+
+</script>

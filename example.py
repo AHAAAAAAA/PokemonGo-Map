@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
+if not ('packages.zip' in sys.path):
+    sys.path.insert(0, 'packages.zip')
+
 import flask
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
@@ -23,7 +27,10 @@ from google.protobuf.message import DecodeError
 from s2sphere import *
 from datetime import datetime
 from geopy.geocoders import GoogleV3
-from gpsoauth import perform_master_login, perform_oauth
+try:
+    from gpsoauth import perform_master_login, perform_oauth
+except:
+    pass
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError

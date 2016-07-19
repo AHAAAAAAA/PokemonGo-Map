@@ -1,2 +1,5 @@
 *.pyc
 .idea
+.DS_Store
+ve
+packages.zip
