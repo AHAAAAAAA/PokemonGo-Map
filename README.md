@@ -35,7 +35,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 | `-dg` `--display-gym`           | Display gym                                               |          | 
 | `-H` `--host`                   | Set web server listening host                             |          | 
 | `-P` `--port`                   | Set web server listening port                             |          |
-|`-L` `--locale`                  | Locale for Pokemon names: en (default), fr, de            |          |
+|`-L` `--locale`                  | Locale for Pokemon names: default en, check locale folder for more options |          |
 
 _Note:
 5 steps is approximately a 1.2km radius. More than 10 is redundant (you usually can't walk that far before despawn anyway)_
