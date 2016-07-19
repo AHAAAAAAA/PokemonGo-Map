@@ -334,7 +334,7 @@ def login_ptc(username, password):
     head = {'User-Agent': 'Niantic App'}
     r = SESSION.get(LOGIN_URL, headers=head)
     if r is None:
-        return render_template('nope.html')
+        return render_template('nope.html', fullmap=fullmap)
 
     try:
         jdata = json.loads(r.content)
@@ -729,7 +729,7 @@ def register_background_thread(initial_registration=False):
 def create_app():
     app = Flask(__name__, template_folder='templates')
 
-    # GoogleMaps(app, key=GOOGLEMAPS_KEY)
+    GoogleMaps(app, key=GOOGLEMAPS_KEY)
     return app
 
 
@@ -764,7 +764,7 @@ def fullmap():
     clear_stale_pokemons()
 
     return render_template(
-        'example_fullmap.html', key=GOOGLEMAPS_KEY, auto_refresh=auto_refresh)
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh)
 
 
 @app.route('/next_loc')
@@ -862,7 +862,7 @@ def get_pokemarkers():
 
 def get_map():
     fullmap = Map(
-        identifier="fullmap",
+        identifier="fullmap2",
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=origin_lat,
         lng=origin_lon,

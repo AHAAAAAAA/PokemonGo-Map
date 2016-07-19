@@ -7,12 +7,17 @@
     </head>
     <body>
         <h1>Flask Google Maps Full Map Example</h1>
-        <div id="fullmap" style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;'></div>
+        <div id="fullmap" style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;'>
+            {{ fullmap.html }}
+
+        </div>
+        
 
     </body>
+{{ fullmap.js }}
 <!-- Webdesign 101: scripts at the end make the page load faster -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ key }}"></script>
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ key }}"></script> -->
 
   <script type="text/javascript">
     var setLabelTime = function(){
@@ -117,19 +122,20 @@
 
         function createMap(){
             if(map == null && google != null && google.maps != null){
-                if(options.identifier != null);
-                map = new google.maps.Map(
-                    document.getElementById(options["identifier"]), {
-                        center: new google.maps.LatLng(options["lat"], options["lng"]),
-                        zoom: options["zoom"],
-                        mapTypeId: google.maps.MapTypeId.ROADMAP,
-                        zoomControl: true,
-                        mapTypeControl: true,
-                        scaleControl: true,
-                        streetViewControl: true,
-                        rotateControl: true,
-                        fullscreenControl: true
-                });
+                if(options.identifier != null){
+                    map = new google.maps.Map(
+                        document.getElementById(options["identifier"]), {
+                            center: new google.maps.LatLng(options["lat"], options["lng"]),
+                            zoom: options["zoom"],
+                            mapTypeId: google.maps.MapTypeId.ROADMAP,
+                            zoomControl: true,
+                            mapTypeControl: true,
+                            scaleControl: true,
+                            streetViewControl: true,
+                            rotateControl: true,
+                            fullscreenControl: true
+                    });
+                }
             }
         }
         function updateMap(){
