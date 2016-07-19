@@ -547,6 +547,10 @@ def login(args):
     return api_endpoint, access_token, profile_response
 
 def main():
+    global FLOAT_LAT
+    global FLOAT_LONG
+    global origin_lat
+    global origin_lon
     full_path = os.path.realpath(__file__)
     (path, filename) = os.path.split(full_path)
 
