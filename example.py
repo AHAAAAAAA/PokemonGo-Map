@@ -201,12 +201,14 @@ def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
         try:
             response = api_req(service, api_endpoint, access_token, *args,
                                **kwargs)
-            if response:
-                return response
-            debug('retrying_api_req: api_req returned None, retrying')
+            if not response:
+                raise ConnectionError("api_req returned None")
+            return response
+
         except (InvalidURL, ConnectionError, DecodeError), e:
             debug('retrying_api_req: request error ({}), retrying'.format(
                 str(e)))
+        print "servers appear down; please try again later"
         time.sleep(1)
 
 
@@ -257,32 +259,34 @@ def get_api_endpoint(service, access_token, api=API_URL):
     while not profile_response:
         profile_response = retrying_get_profile(service, access_token, api,
                                                 None)
-        if not hasattr(profile_response, 'api_url'):
-            debug(
-                'retrying_get_profile: get_profile returned no api_url, retrying')
-            profile_response = None
-            continue
-        if not len(profile_response.api_url):
-            debug(
-                'get_api_endpoint: retrying_get_profile returned no-len api_url, retrying')
-            profile_response = None
+        assert profile_response is not None
 
     return 'https://%s/rpc' % profile_response.api_url
 
 def retrying_get_profile(service, access_token, api, useauth, *reqq):
     profile_response = None
     while not profile_response:
-        profile_response = get_profile(service, access_token, api, useauth,
-                                       *reqq)
-        if not hasattr(profile_response, 'payload'):
-            debug(
-                'retrying_get_profile: get_profile returned no payload, retrying')
+        try:
+            profile_response = get_profile(service, access_token, api, useauth,
+                                           *reqq)
+            if not hasattr(profile_response, 'payload'):
+                raise ConnectionError("get_profile returned no payload")
+
+            if not profile_response.payload:
+                raise ConnectionError("get_profile returned no-len payload")
+
+            if not hasattr(profile_response, 'api_url'):
+                raise ConnectionError("get_profile returned no api_url")
+
+            if not len(profile_response.api_url):
+                raise ConnectionError("get_profile returned no-len api_url")
+
+        except ConnectionError as e:
+            debug('retrying_get_profile: request error ({}), retrying'.format(
+                str(e)))
+            print "servers appear down; please try again later"
             profile_response = None
             continue
-        if not profile_response.payload:
-            debug(
-                'retrying_get_profile: get_profile returned no-len payload, retrying')
-            profile_response = None
 
     return profile_response
 
