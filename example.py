@@ -67,6 +67,9 @@ COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
 FLOAT_LAT = 0
 FLOAT_LONG = 0
+ORIGIN_LAT = 0
+ORIGIN_LONG = 0
+IS_ORGIN_SET = False
 NEXT_LAT = 0
 NEXT_LONG = 0
 auto_refresh = 0
@@ -189,16 +192,29 @@ def set_location(location_name):
 def set_location_coords(lat, long, alt):
     global COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE
     global FLOAT_LAT, FLOAT_LONG
+    global ORIGIN_LAT, ORIGIN_LONG, IS_ORIGIN_SET
     FLOAT_LAT = lat
     FLOAT_LONG = long
     COORDS_LATITUDE = f2i(lat)  # 0x4042bd7c00000000 # f2i(lat)
     COORDS_LONGITUDE = f2i(long)  # 0xc05e8aae40000000 #f2i(long)
     COORDS_ALTITUDE = f2i(alt)
 
+    #if origin is not set, or we have no flag, then lets store it
+    if (not (ORIGIN_LAT and ORIGIN_LONG) or IS_ORGIN_SET):
+        ORIGIN_LAT=FLOAT_LAT
+        ORIGIN_LONG=FLOAT_LONG
+        IS_ORIGIN_SET=True
+
 
 def get_location_coords():
     return (COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE)
 
+def reset_origin():
+    debug('reseting the origin')
+    global FLOAT_LAT, FLOAT_LONG
+    global ORIGIN_LAT, ORIGIN_LONG, IS_ORIGIN_SET
+    FLOAT_LAT=ORIGIN_LAT
+    FLOAT_LONG=ORIGIN_LONG
 
 def retrying_api_req(service, api_endpoint, access_token, *args, **kwargs):
     while True:
@@ -576,6 +592,9 @@ def main():
     elif args.only:
         only = [i.lower().strip() for i in args.only.split(',')]
 
+    #reset the origin before doing any more scans
+    reset_origin()
+
     pos = 1
     x = 0
     y = 0
@@ -584,7 +603,8 @@ def main():
     origin_lat = FLOAT_LAT
     origin_lon = FLOAT_LONG
     for step in range(steplimit**2):
-        debug('looping: step {} of {}'.format(step, steplimit**2))
+        #fixed the debug step display - since we are looping with 0 base index
+        debug('looping: step {} of {}'.format(step+1, steplimit**2))
 
         # Scan location math
         if -steplimit / 2 < x <= steplimit / 2 and -steplimit / 2 < y \
@@ -597,8 +617,9 @@ def main():
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
+        #fixed the debug completion display
         print('Completed: ' + str(
-            (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
+            ((step+1) + pos * .25 - .25) / (steplimit**2) * 100) + '%')
 
     if (NEXT_LAT and NEXT_LONG
         and NEXT_LAT != FLOAT_LAT
