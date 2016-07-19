@@ -34,8 +34,13 @@
 
         // Sets the map on all markers in the array.
         function setMapOnAll(map) {
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].setMap(map);
+            for (var i = markers.length-1; i >= 0 ; i--) {
+                if(!markers[i].persist){
+                    markers[i].setMap(map);
+                    if(map == null){
+                        markers.slice(i, 1);
+                    }
+                }
             }
         }
 
@@ -52,8 +57,8 @@
         // Deletes all markers in the array by removing references to them.
         function deleteMarkers() {
             clearMarkers();
-            markers = [];
         }
+
         $.get(baseURL + "/config", function(response){
                         var json_obj = $.parseJSON(response);//parse JSON
                         options["lat"] = json_obj["lat"];
@@ -98,6 +103,11 @@
                             });
                             _marker.addListener('click', function() {
                                 _marker.infoWindow.open(_map, _marker);
+                                _marker["persist"] = true;
+                            });
+
+                            google.maps.event.addListener(_marker.infoWindow,'closeclick',function(){
+                               _marker["persist"] = null;
                             });
                         })(item["infobox"], map, marker);
                     }
