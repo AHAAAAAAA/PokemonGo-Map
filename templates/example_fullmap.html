@@ -44,8 +44,23 @@
                         $(this).text(timestring)
                     });
                 };
-
-                    setInterval(setLabelTime, 1000);
+                var updateMarkers = function() {
+                    $.get( "/api/v1/markers", function( data ) {
+                        data.forEach( (marker,index) => {
+                            var gm = new google.maps.Marker({
+                                icon: marker.icon,
+                                position: new google.maps.LatLng(marker.lat,marker.lng),
+                                title: marker.infobox
+                            })
+                            gm.setMap(window.gmap)
+                        })
+                    })    
+                }
+                setInterval(() => {
+                    setLabelTime()
+                    updateMarkers()
+                }, 1000 *5)
+            
             </script>
             {{fullmap.js}}
     </head>

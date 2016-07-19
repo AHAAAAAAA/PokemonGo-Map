@@ -762,6 +762,7 @@ def fullmap():
 
     pokeMarkers = calculate_markers()
     fullmap = Map(
+        varname='map',
         identifier='fullmap',
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=deflat,
