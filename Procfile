@@ -1,2 +1,1 @@
-web: python example.py -P $PORT
-» 18 Jul 2016 18:01:07.235 128 <190>1 2016-07-19T01:01:06.961526+00:00 app web.1 - - Traceback (most recent call last): File "/app/.heroku/python/lib/python2.7/threading.py", line 801, in __bootstrap_inner self.run() File "/app/.heroku/python/lib/python2.7/threading.py", line 754, in run self.__target(*self.__args, **self.__kwargs) File "example.py", line 574, in main api_endpoint, access_token, profile_response = login(args) File "example.py", line 97, in memoizer cache[key] = obj(*args, **kwargs) File "example.py", line 513, in login raise Exception('[-] Wrong username/password') Exception: [-] Wrong username/password
+web: python example.py -H 0.0.0.0 -P $PORT
