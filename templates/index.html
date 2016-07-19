@@ -4,7 +4,9 @@
 		<title>Boilerplate</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="app/css/style8.css" />
 		<link rel="stylesheet" href="app/css/main.css" />
+		<script src="app/js/modernizr.custom.js"></script>
 	</head>
 	<body id="top">
 
@@ -27,6 +29,7 @@
 		<!-- Banner -->
 		<section id="banner">
 			<img src="app/images/ph.png" alt="" style="width: 100%;" />
+			<p><button id="trigger-overlay" type="button">Open Overlay</button></p>
 		</section>
 
 		<!-- Main -->
@@ -651,9 +654,20 @@ print 'It took ' + i + ' iterations to sort the deck.';
 				</div>
 			</footer>
 
+			<div class="overlay overlay-contentscale">
+				<button type="button" class="overlay-close">Close</button>
+				<nav>
+					<ul>
+						<li><a href="#">Login Details Here</a></li>
+					</ul>
+				</nav>
+			</div>
+
 		<!-- Scripts -->
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
 			<script src="app/js/app.js"></script>
+			<script src="app/js/classie.js"></script>
+			<script src="app/js/demo7.js"></script>
 
 	</body>
 </html>
