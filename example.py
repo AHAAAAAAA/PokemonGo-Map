@@ -37,6 +37,7 @@ from requests.models import InvalidURL
 from transform import *
 
 from models import Pokemon, Gym, Pokestop, db
+from playhouse.shortcuts import model_to_dict
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -74,8 +75,6 @@ NEXT_LONG = 0
 auto_refresh = 0
 default_step = 0.001
 api_endpoint = None
-gyms = {}
-pokestops = {}
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
     0: 'Gym',
     1: 'Mystic',
@@ -656,7 +655,6 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                                     lat=Fort.Latitude,
                                     lon=Fort.Longitude
                                 )
-                                gyms[Fort.FortId] = [Fort.Team, Fort.Latitude, Fort.Longitude]
 
                             elif Fort.FortType :
                                 Pokestop.create_or_get(
@@ -664,7 +662,6 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                                     lat=Fort.Latitude,
                                     lon=Fort.Longitude
                                 )
-                                pokestops[Fort.FortId] = [Fort.Latitude, Fort.Longitude]
         except AttributeError:
             break
 
@@ -753,7 +750,18 @@ def data():
 @app.route('/raw_data')
 def raw_data():
     """ Gets raw data for pokemons/gyms/pokestops via REST """
-    return flask.jsonify(pokemons=pokemons, gyms=gyms, pokestops=pokestops)
+    pokemons, gyms, pokestops = [], [], []
+    for pokemon in Pokemon.select():
+        pokemons.append(model_to_dict(pokemon))
+    for gym in Gym.select():
+        gyms.append(model_to_dict(gym))
+    for pokestop in Pokestop.select():
+        pokestops.append(model_to_dict(pokestop))
+    return flask.jsonify(
+        pokemons=pokemons,
+        gyms=gyms,
+        pokestops=pokestops
+    )
 
 
 @app.route('/config')
