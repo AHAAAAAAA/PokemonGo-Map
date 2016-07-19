@@ -62,7 +62,7 @@
         var currentLocation;
 
         // Adds a marker to the map and push to the array.
-        function addMarker(options = {}) {
+        function addMarker(options) {
             var default_options = {map: map}
             for(var prop in options){
                 if(options.hasOwnProperty(prop)){
@@ -75,7 +75,7 @@
         }
 
         // Sets the map on all markers in the array.
-        function setMapOnAll(map, length = null) {
+        function setMapOnAll(map, length) {
             var lastIndex = markers.length -1;
             if(length != null){
                 lastIndex = length;
