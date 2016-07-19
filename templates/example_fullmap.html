@@ -3,8 +3,32 @@
     <head>
             <meta charset="utf-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-mobile-web-app-status-bar-style" content="black">
+            <meta name="apple-mobile-web-app-title" content="PokeMap">
+
             <title>Flask Google Maps Full Map Example</title>
+
+            <!-- Fav- & Apple-Touch-Icons -->
+            <!-- Favicon -->
+            <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
+            <!-- non-retina iPhone pre iOS 7 -->
+            <link rel="apple-touch-icon" href="static/114x114.png" sizes="57x57">
+            <!-- non-retina iPad pre iOS 7 -->
+            <link rel="apple-touch-icon" href="static/144x144.png" sizes="72x72">
+            <!-- non-retina iPad iOS 7 -->
+            <link rel="apple-touch-icon" href="static/152x152.png" sizes="76x76">
+            <!-- retina iPhone pre iOS 7 -->
+            <link rel="apple-touch-icon" href="static/114x114.png" sizes="114x114">
+            <!-- retina iPhone iOS 7 -->
+            <link rel="apple-touch-icon" href="static/120x120.png" sizes="120x120">
+            <!-- retina iPad pre iOS 7 -->
+            <link rel="apple-touch-icon" href="static/144x144.png" sizes="144x144">
+            <!-- retina iPad iOS 7 -->
+            <link rel="apple-touch-icon" href="static/152x152.png" sizes="152x152">
+            <!-- retina iPhone 6 iOS 7 -->
+            <link rel="apple-touch-icon" href="static/180x180.png" sizes="180x180">
     </head>
     <body>
         <h1>Flask Google Maps Full Map Example</h1>
@@ -12,7 +36,7 @@
             {{ fullmap.html }}
 
         </div>
-        
+
 
     </body>
 {{ fullmap.js }}
@@ -25,20 +49,20 @@
         $('.label-countdown').each(function (index, element) {
             var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at"))*1000);
             var now = new Date();
-            
+
             var difference = Math.abs(disappearsAt - now);
             var hours = Math.floor(difference / 36e5);
             var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
             var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
-            
+
             if(disappearsAt < now){
                 timestring = "(expired)";
-            } 
+            }
             else {
                 timestring = "(";
                 if(hours > 0)
                     timestring = hours + "h";
-                
+
                 timestring += ("0" + minutes).slice(-2) + "m";
                 timestring += ("0" + seconds).slice(-2) + "s";
                 timestring += ")";
@@ -50,7 +74,7 @@
 
     window.setInterval(setLabelTime, 1000);
 
-  
+
   </script>
   {% if auto_refresh %}
     <script type="text/javascript">
@@ -146,7 +170,7 @@
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
                 var now = new Date();
-                
+
                 for (var index in json_obj) {
                     var item = json_obj[index];
                     var key = item["type"]+item["key"];
@@ -164,7 +188,7 @@
                         if (markerCache[key].item.type != item["type"] || (item["infobox"] != null && markerCache[key].item["infobox"] != null && item["infobox"] != markerCache[key].item["infobox"])) {
                             (function(_marker){setTimeout(_marker.setMap(null), 500)})(markerCache[key].marker);
                             needs_replacing = true;
-						}
+                        }
                         if(!needs_replacing){
                             continue;
                         }
