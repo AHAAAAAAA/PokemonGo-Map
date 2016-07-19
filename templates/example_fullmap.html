@@ -156,7 +156,7 @@
                             (function(_marker){setTimeout(_marker.setMap(null), 500)})(markerCache[key].marker);
                             needs_replacing = true;
                         }
-                        if((markerCache[key].item.lat != item["lat"] && markerCache[key].item.lng != item['lng'])){
+                        if((markerCache[key].item.lat != item["lat"] || markerCache[key].item.lng != item['lng'])){
 
                             console.log("Warning: object with identical key has different coordinates please report bug", key);
                             needs_replacing = true;
@@ -172,12 +172,6 @@
                     if(markerCache[key] != null && markerCache[key].marker != null){
                         markerCache[key].marker.setMap(null);
                     }
-                    var marker = addMarker({
-                            position: new google.maps.LatLng(item["lat"], item["lng"]),
-                            map: map,
-                            icon: item["icon"],
-                        });
-                    markerCache[key] = {item: item, marker: marker};
                     var disappearsAt;
 
                     if(item["disappear_time"] != null){
@@ -185,10 +179,19 @@
                             disappearsAt = -1;
                         } else {
                             disappearsAt = new Date(parseInt(item["disappear_time"] * 1000)) - now;
+                            if(disappearsAt < 0){
+                                continue;
+                            }
                         }
                     } else {
                         disappearsAt = {{ auto_refresh }} + 500;
                     }
+                    var marker = addMarker({
+                            position: new google.maps.LatLng(item["lat"], item["lng"]),
+                            map: map,
+                            icon: item["icon"],
+                        });
+                    markerCache[key] = {item: item, marker: marker};
 
                     if (item["infobox"]) {
                         (function(_infobox, _map, _marker){
