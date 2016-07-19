@@ -118,10 +118,16 @@ html = '''
 class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 	def do_GET(self):
 		if self.path == '/':
+			self.send_response(200)
+			self.send_header("Content-type", "text/html")
+			self.end_headers()
 			self.wfile.write(html % config)
 			self.wfile.close()
 
 		if self.path == '/rawdata':
+			self.send_response(200)
+			self.send_header("Content-type", "application/json")
+			self.end_headers()
 			self.wfile.write(urllib2.urlopen(DATA_URL).read())
 			self.wfile.close()
 
