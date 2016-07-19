@@ -52,6 +52,7 @@
         var options = {};
         var map = null;
         var markers = [];
+        var markerCache = {};
         // Adds a marker to the map and push to the array.
         function addMarker(options = {}) {
             var default_options = {map: map}
@@ -66,11 +67,24 @@
         }
 
         // Sets the map on all markers in the array.
-        function setMapOnAll(map) {
-            for (var i = markers.length-1; i >= 0 ; i--) {
+        function setMapOnAll(map, length = null) {
+            var lastIndex = markers.length -1;
+            if(length != null){
+                lastIndex = length;
+            }
+            for (var i = lastIndex; i >= 0 ; i--) {
                 if(!markers[i].persist){
                     markers[i].setMap(map);
                     if(map == null){
+                        if(markers[i].timeout != null){
+                            clearTimeout(markers[i].timeout);
+                        }
+                        if(markers[i].key != null){
+                            var cacheIndex = Object.keys(markerCache).indexOf(markers[i].key);
+                            if(cacheIndex >= 0){
+                                delete markerCache[markers[i].key];
+                            }
+                        }
                         markers.slice(i, 1);
                     }
                 }
@@ -88,8 +102,8 @@
         }
 
         // Deletes all markers in the array by removing references to them.
-        function deleteMarkers() {
-            clearMarkers();
+        function deleteMarkers(length) {
+            setMapOnAll(null, length);
         }
 
         $.get(baseURL + "/config", function(response){
@@ -124,14 +138,26 @@
             // Requests the data and populates the map
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
-                deleteMarkers();
+                var now = new Date();
+                
                 for (var index in json_obj) {
                     var item = json_obj[index];
+                    var key = item["type"]+item["key"];
+                    if(Object.keys(markerCache).indexOf(key) >= 0){
+                        if(markerCache[key].lat != item["lat"] && markerCache[key].lng != item['lng']){
+                            console.log("Warning: object with identical key has different coordinates please report bug");
+                        } else {
+                            continue;
+                        }
+                    }
                     var marker = addMarker({
                             position: new google.maps.LatLng(item["lat"], item["lng"]),
                             map: map,
-                            icon: item["icon"]
+                            icon: item["icon"],
                         });
+                    markerCache[key] = item;
+                    var disappearsAt = new Date(parseInt(item["disappear_time"] * 1000)) - now;
+                    var timeout = setTimeout(function(){}, Math.ceil(disappearsAt))
 
                     if (item["infobox"]) {
                         (function(_infobox, _map, _marker){
@@ -148,7 +174,14 @@
                             });
                         })(item["infobox"], map, marker);
                     }
+
+                    (function(_marker, _disappearsAt){
+                        var timeout = setTimeout(function(){_marker.setMap(null);}, Math.ceil(_disappearsAt))
+                        _marker.timeout = timeout;
+                        _marker.key = key;
+                    })(marker, disappearsAt);
                 }
+                // deleteMarkers(markers.Length - json_obj.length);
             })
         }
         window.setInterval(updateMap, {{ auto_refresh }});
