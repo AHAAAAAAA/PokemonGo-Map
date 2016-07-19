@@ -878,7 +878,7 @@ def get_pokemarkers():
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
-                'infobox': 'Lured Pokestop, expires at' + stop[2],
+                'infobox': 'Lured Pokestop, expires at ' + stop[2],
             })
         else:
             pokeMarkers.append({
