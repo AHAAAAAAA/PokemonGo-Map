@@ -176,6 +176,7 @@ def set_location(location_name):
     if prog.match(location_name):
         local_lat, local_lng = [float(x) for x in location_name.split(",")]
         alt = 0
+        origin_lat, origin_lon = local_lat, local_lng
     else:
         loc = geolocator.geocode(location_name)
         origin_lat, origin_lon = local_lat, local_lng = loc.latitude, loc.longitude
