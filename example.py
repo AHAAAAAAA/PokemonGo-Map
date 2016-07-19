@@ -821,6 +821,7 @@ def get_pokemarkers():
 
     for pokemon_key in pokemons:
         pokemon = pokemons[pokemon_key]
+        pokemon['name'] = pokemon['name'].replace(u'\N{MALE SIGN}','(M)').replace(u'\N{FEMALE SIGN}','(F)')
         datestr = datetime.fromtimestamp(pokemon[
             'disappear_time'])
         dateoutput = datestr.strftime("%H:%M:%S")
@@ -828,7 +829,7 @@ def get_pokemarkers():
         	dateoutput = datestr.strftime("%I:%M%p").lstrip('0')
         pokemon['disappear_time_formatted'] = dateoutput
 
-        LABEL_TMPL = u'''
+        LABEL_TMPL = '''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
 <div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
 <div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
@@ -839,7 +840,7 @@ def get_pokemarkers():
 
         pokeMarkers.append({
             'type': 'pokemon',
-            'key': pokemon_key,
+            'key': str(pokemon_key),
             'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
