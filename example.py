@@ -12,6 +12,7 @@ import time
 import requests
 import argparse
 import threading
+import time
 
 import werkzeug.serving
 
@@ -344,6 +345,7 @@ def main():
     parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
     parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
     parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
+    parser.add_argument("-P", "--port", help="Port number", type=parse_unicode)
     parser.set_defaults(DEBUG=True)
     args = parser.parse_args()
 
@@ -387,82 +389,84 @@ def main():
         print('[+] {}: {}'.format(curr.type, curr.amount))
 
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
-    steps = 0
     steplimit = int(args.step_limit)
 
     ignore = []
     if args.ignore:
         ignore = [i.lower().strip() for i in args.ignore.split(',')]
 
-    pos = 1
-    x   = 0
-    y   = 0
-    dx  = 0
-    dy  = -1
-    while steps < steplimit**2:
-        debug("looping: step {} of {}".format(steps, steplimit**2))
-        original_lat = FLOAT_LAT
-        original_long = FLOAT_LONG
-        parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
-        h = get_heartbeat(api_endpoint, access_token, profile_response)
-        hs = [h]
-        seen = set([])
-        for child in parent.children():
-            latlng = LatLng.from_point(Cell(child).get_center())
-            set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
-            hs.append(get_heartbeat(api_endpoint, access_token, profile_response))
-        set_location_coords(original_lat, original_long, 0)
-        visible = []
-        for hh in hs:
-            try:
-                for cell in hh.cells:
-                    for wild in cell.WildPokemon:
-                        hash = wild.SpawnPointId + ':' + str(wild.pokemon.PokemonId)
-                        if (hash not in seen):
-                            visible.append(wild)
-                            seen.add(hash)
-                    if cell.Fort:
-                        for Fort in cell.Fort:
-                            if Fort.Enabled == True:
-                                if args.china:
-                                    Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
-                                if Fort.GymPoints:
-                                    gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
-                                elif Fort.FortType:
-                                    pokestops.append([Fort.Latitude, Fort.Longitude])
-            except AttributeError:
-                break
-        for poke in visible:
-            pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
-            if args.ignore:
-                if pokename.lower() in ignore: continue
-            other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
-            diff = other - origin
-            # print(diff)
-            difflat = diff.lat().degrees
-            difflng = diff.lng().degrees
-            time_to_hidden = poke.TimeTillHiddenMs
-            left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
-            remaining = '%s remaining' % (left)
-            pid = str(poke.pokemon.PokemonId)
-            label = (
-                        '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
-                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
-                    )
-            if args.china:
-                poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
-            pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
+    while True:
+        steps = 0
+        pos = 1
+        x   = 0
+        y   = 0
+        dx  = 0
+        dy  = -1
+        while steps < steplimit**2:
+            debug("looping: step {} of {}".format(steps, steplimit**2))
+            original_lat = FLOAT_LAT
+            original_long = FLOAT_LONG
+            parent = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)).parent(15)
+            h = get_heartbeat(api_endpoint, access_token, profile_response)
+            hs = [h]
+            seen = set([])
+            for child in parent.children():
+                latlng = LatLng.from_point(Cell(child).get_center())
+                set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
+                hs.append(get_heartbeat(api_endpoint, access_token, profile_response))
+            set_location_coords(original_lat, original_long, 0)
+            visible = []
+            for hh in hs:
+                try:
+                    for cell in hh.cells:
+                        for wild in cell.WildPokemon:
+                            hash = wild.SpawnPointId + ':' + str(wild.pokemon.PokemonId)
+                            if (hash not in seen):
+                                visible.append(wild)
+                                seen.add(hash)
+                        if cell.Fort:
+                            for Fort in cell.Fort:
+                                if Fort.Enabled == True:
+                                    if args.china:
+                                        Fort.Latitude, Fort.Longitude = transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
+                                    if Fort.GymPoints:
+                                        gyms.append([Fort.Team, Fort.Latitude, Fort.Longitude])
+                                    elif Fort.FortType:
+                                        pokestops.append([Fort.Latitude, Fort.Longitude])
+                except AttributeError:
+                    break
+            for poke in visible:
+                pokename = pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']
+                if args.ignore:
+                    if pokename.lower() in ignore: continue
+                other = LatLng.from_degrees(poke.Latitude, poke.Longitude)
+                diff = other - origin
+                # print(diff)
+                difflat = diff.lat().degrees
+                difflng = diff.lng().degrees
+                time_to_hidden = poke.TimeTillHiddenMs
+                left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
+                remaining = '%s remaining' % (left)
+                pid = str(poke.pokemon.PokemonId)
+                label = (
+                            '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
+                            '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                        )
+                if args.china:
+                    poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
+                pokemons.append([poke.pokemon.PokemonId, label, poke.Latitude, poke.Longitude])
+    
+            #Scan location math
+            if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
+                set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
+            if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
+                dx, dy = -dy, dx
+            x, y = x+dx, y+dy
+            steps +=1
+            print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
 
-        #Scan location math
-        if (-steplimit/2 < x <= steplimit/2) and (-steplimit/2 < y <= steplimit/2):
-            set_location_coords((x * 0.0025) + deflat, (y * 0.0025 ) + deflng, 0)
-        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1-y):
-            dx, dy = -dy, dx
-        x, y = x+dx, y+dy
-        steps +=1
-        print("Completed:", ((steps + (pos * .25) - .25) / steplimit**2) * 100, "%")
-
-    register_background_thread()
+    time.sleep(30) 
+    #register_background_thread()
 
 
 def register_background_thread(initial_registration=False):
@@ -477,9 +481,9 @@ def register_background_thread(initial_registration=False):
     global search_thread
 
     if initial_registration:
-        if not werkzeug.serving.is_running_from_reloader():
-            debug("register_background_thread: not running inside Flask so not starting thread")
-            return
+        #if not werkzeug.serving.is_running_from_reloader():
+        #    debug("register_background_thread: not running inside Flask so not starting thread")
+        #    return
         if search_thread:
             debug("register_background_thread: initial registration requested but thread already running")
             return
@@ -560,4 +564,22 @@ def fullmap():
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
-    app.run(debug=True, threaded=True)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--username", help="PTC Username", required=True)
+    parser.add_argument("-p", "--password", help="PTC Password", required=True)
+    parser.add_argument("-l", "--location", type=parse_unicode, help="Location", required=True)
+    parser.add_argument("-st", "--step_limit", help="Steps", required=True)
+    parser.add_argument("-i", "--ignore", help="Pokemon to ignore (comma separated)")
+    parser.add_argument("-d", "--debug", help="Debug Mode", action='store_true')
+    parser.add_argument("-c", "--china", help="Coord Transformer for China", action='store_true')
+    parser.add_argument("-P", "--port", help="Port number", type=parse_unicode)
+    parser.set_defaults(DEBUG=True)
+    args = parser.parse_args()
+
+
+    if args.port:
+        port = int(args.port)
+    else:
+        port = 5000
+    app.run(host="0.0.0.0", port=port, debug=True, threaded=True)
