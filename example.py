@@ -600,11 +600,15 @@ def main():
         print('Completed: ' + str(
             (step + pos * .25 - .25) / (steplimit**2) * 100) + '%')
 
-    if (NEXT_LAT and NEXT_LONG
-        and NEXT_LAT != FLOAT_LAT
-        and NEXT_LONG != FLOAT_LONG):
+    global NEXT_LAT, NEXT_LONG
+    if (NEXT_LAT and NEXT_LONG and
+            (NEXT_LAT != FLOAT_LAT or NEXT_LONG != FLOAT_LONG)):
         print('Update to next location %f, %f' % (NEXT_LAT, NEXT_LONG))
         set_location_coords(NEXT_LAT, NEXT_LONG, 0)
+        NEXT_LAT = 0
+        NEXT_LONG = 0
+    else:
+        set_location_coords(origin_lat, origin_lon, 0)
 
     register_background_thread()
 
