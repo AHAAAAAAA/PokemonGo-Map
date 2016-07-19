@@ -705,7 +705,7 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
         if args.display_in_console:
             ls = disappear_timestamp-curTime
             m, s = divmod(ls, 60)
-            print "======================================\n Name: %s\n Coord: (%f,%f)\n ID: %s \n Reamining Time: %02dm%02ds\n======================================" % (
+            print "======================================\n Name: %s\n Coord: (%f,%f)\n ID: %s \n Remaining Time: %02dm%02ds\n======================================" % (
                 pokename.encode('utf-8'),poke.Latitude,poke.Longitude,pokeid,m,s)
 
         if args.china:
