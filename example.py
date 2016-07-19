@@ -406,9 +406,12 @@ def get_heartbeat(service,
                            m4,
                            pokemon_pb2.RequestEnvelop.Requests(),
                            m5, )
-    if response is None:
+
+    try:
+        payload = response.payload[0]
+    except (AttributeError, IndexError):
         return
-    payload = response.payload[0]
+
     heartbeat = pokemon_pb2.ResponseEnvelop.HeartbeatPayload()
     heartbeat.ParseFromString(payload)
     return heartbeat
