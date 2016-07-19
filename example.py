@@ -490,7 +490,7 @@ def get_args():
         '--port',
         type=int,
         help='Set web server listening port',
-        default=os.environ.get('PORT', 5000))
+        default=int(os.environ.get('PORT', 5000)))
     parser.add_argument(
         '-L',
         '--locale',
