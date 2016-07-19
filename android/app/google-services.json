@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "478315545129",
+    "firebase_url": "https://pokemapp-1377.firebaseio.com",
+    "project_id": "pokemapp-1377",
+    "storage_bucket": "pokemapp-1377.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478315545129:android:9aa6cab2bdcbdcbc",
+        "android_client_info": {
+          "package_name": "com.pokemapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478315545129-ms5t8ts4bnucbsvf9ubg11sk6j0dsg7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuTt9LuKhwXnRK4d6SBXIxFSY5t-TFZQ4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
