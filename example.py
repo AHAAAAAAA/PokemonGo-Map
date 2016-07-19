@@ -554,7 +554,7 @@ def fullmap():
         if len(imgnum) <= 2: imgnum = '0' + imgnum
         pokeMarkers.append(
             {
-                'icon': 'static/icons/'+str(pokemon[0])+'.png',
+                'icon': 'static/icons-2x/'+str(pokemon[0])+'.png',
                 'lat': currLat,
                 'lng': currLon,
                 'infobox': pokemon[1]
