@@ -110,7 +110,7 @@ html = '''
 			reload();
 		}
 	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=%(gmaps_key)r&callback=initMap" async defer></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=%(gmaps_key)s&callback=initMap" async defer></script>
   </body>
 </html>
 '''
