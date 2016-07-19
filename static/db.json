@@ -1,0 +1,769 @@
+{
+  "rarity_types": [
+    { "key": "everywhere", "color": "#7fff8e" },
+    { "key": "common", "color": "#f4ff7f" },
+    { "key": "uncommon", "color": "#fee77d" },
+    { "key": "rare", "color": "#ffb382" },
+    { "key": "special", "color": "#82c9ff" },
+    { "key": "epic", "color": "#e16fa2" },
+    { "key": "mythic", "color": "#b05895" },
+    { "key": "unavailable", "color": "#bebebe" }
+  ],
+  "pokemons": [
+    {
+      "id": 1,
+      "name": "Bulbasaur",
+      "rarity": "special"
+    },
+    {
+      "id": 2,
+      "name": "Ivysaur",
+      "rarity": "special"
+    },
+    {
+      "id": 3,
+      "name": "Venusaur",
+      "rarity": "special"
+    },
+    {
+      "id": 4,
+      "name": "Charmander",
+      "rarity": "special"
+    },
+    {
+      "id": 5,
+      "name": "Charmeleon",
+      "rarity": "special"
+    },
+    {
+      "id": 6,
+      "name": "Charizard",
+      "rarity": "special"
+    },
+    {
+      "id": 7,
+      "name": "Squirtle",
+      "rarity": "special"
+    },
+    {
+      "id": 8,
+      "name": "Wartortle",
+      "rarity": "special"
+    },
+    {
+      "id": 9,
+      "name": "Blastoise",
+      "rarity": "special"
+    },
+    {
+      "id": 10,
+      "name": "Caterpie",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 11,
+      "name": "Metapod",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 12,
+      "name": "Butterfree",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 13,
+      "name": "Weedle",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 14,
+      "name": "Kakuna",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 15,
+      "name": "Beedrill",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 16,
+      "name": "Pidgey",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 17,
+      "name": "Pidgeotto",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 18,
+      "name": "Pidgeot",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 19,
+      "name": "Rattata",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 20,
+      "name": "Raticate",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 21,
+      "name": "Spearow",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 22,
+      "name": "Fearow",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 23,
+      "name": "Ekans",
+      "rarity": "common"
+    },
+    {
+      "id": 24,
+      "name": "Arbok",
+      "rarity": "common"
+    },
+    {
+      "id": 25,
+      "name": "Pikachu",
+      "rarity": "special"
+    },
+    {
+      "id": 26,
+      "name": "Raichu",
+      "rarity": "special"
+    },
+    {
+      "id": 27,
+      "name": "Sandshrew",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 28,
+      "name": "Sandslash",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 29,
+      "name": "Nidoran♀",
+      "rarity": "common"
+    },
+    {
+      "id": 30,
+      "name": "Nidorina",
+      "rarity": "common"
+    },
+    {
+      "id": 31,
+      "name": "Nidoqueen",
+      "rarity": "common"
+    },
+    {
+      "id": 32,
+      "name": "Nidoran♂",
+      "rarity": "common"
+    },
+    {
+      "id": 33,
+      "name": "Nidorino",
+      "rarity": "common"
+    },
+    {
+      "id": 34,
+      "name": "Nidoking",
+      "rarity": "common"
+    },
+    {
+      "id": 35,
+      "name": "Clefairy",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 36,
+      "name": "Clefable",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 37,
+      "name": "Vulpix",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 38,
+      "name": "Ninetales",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 39,
+      "name": "Jigglypuff",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 40,
+      "name": "Wigglytuff",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 41,
+      "name": "Zubat",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 42,
+      "name": "Golbat",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 43,
+      "name": "Oddish",
+      "rarity": "common"
+    },
+    {
+      "id": 44,
+      "name": "Gloom",
+      "rarity": "common"
+    },
+    {
+      "id": 45,
+      "name": "Vileplume",
+      "rarity": "common"
+    },
+    {
+      "id": 46,
+      "name": "Paras",
+      "rarity": "common"
+    },
+    {
+      "id": 47,
+      "name": "Parasect",
+      "rarity": "common"
+    },
+    {
+      "id": 48,
+      "name": "Venonat",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 49,
+      "name": "Venomoth",
+      "rarity": "everywhere"
+    },
+    {
+      "id": 50,
+      "name": "Diglett",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 51,
+      "name": "Dugtrio",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 52,
+      "name": "Meowth",
+      "rarity": "common"
+    },
+    {
+      "id": 53,
+      "name": "Persian",
+      "rarity": "common"
+    },
+    {
+      "id": 54,
+      "name": "Psyduck",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 55,
+      "name": "Golduck",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 56,
+      "name": "Mankey",
+      "rarity": "common"
+    },
+    {
+      "id": 57,
+      "name": "Primeape",
+      "rarity": "common"
+    },
+    {
+      "id": 58,
+      "name": "Growlithe",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 59,
+      "name": "Arcanine",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 60,
+      "name": "Poliwag",
+      "rarity": "common"
+    },
+    {
+      "id": 61,
+      "name": "Poliwhirl",
+      "rarity": "common"
+    },
+    {
+      "id": 62,
+      "name": "Poliwrath",
+      "rarity": "common"
+    },
+    {
+      "id": 63,
+      "name": "Abra",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 64,
+      "name": "Kadabra",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 65,
+      "name": "Alakazam",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 66,
+      "name": "Machop",
+      "rarity": "rare"
+    },
+    {
+      "id": 67,
+      "name": "Machoke",
+      "rarity": "rare"
+    },
+    {
+      "id": 68,
+      "name": "Machamp",
+      "rarity": "rare"
+    },
+    {
+      "id": 69,
+      "name": "Bellsprout",
+      "rarity": "common"
+    },
+    {
+      "id": 70,
+      "name": "Weepinbell",
+      "rarity": "common"
+    },
+    {
+      "id": 71,
+      "name": "Victreebel",
+      "rarity": "common"
+    },
+    {
+      "id": 72,
+      "name": "Tentacool",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 73,
+      "name": "Tentacruel",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 74,
+      "name": "Geodude",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 75,
+      "name": "Graveler",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 76,
+      "name": "Golem",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 77,
+      "name": "Ponyta",
+      "rarity": "rare"
+    },
+    {
+      "id": 78,
+      "name": "Rapidash",
+      "rarity": "rare"
+    },
+    {
+      "id": 79,
+      "name": "Slowpoke",
+      "rarity": "common"
+    },
+    {
+      "id": 80,
+      "name": "Slowbro",
+      "rarity": "common"
+    },
+    {
+      "id": 81,
+      "name": "Magnemite",
+      "rarity": "rare"
+    },
+    {
+      "id": 82,
+      "name": "Magneton",
+      "rarity": "rare"
+    },
+    {
+      "id": 83,
+      "name": "Farfetch'd",
+      "rarity": "epic"
+    },
+    {
+      "id": 84,
+      "name": "Doduo",
+      "rarity": "epic"
+    },
+    {
+      "id": 85,
+      "name": "Dodrio",
+      "rarity": "epic"
+    },
+    {
+      "id": 86,
+      "name": "Seel",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 87,
+      "name": "Dewgong",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 88,
+      "name": "Grimer",
+      "rarity": "rare"
+    },
+    {
+      "id": 89,
+      "name": "Muk",
+      "rarity": "rare"
+    },
+    {
+      "id": 90,
+      "name": "Shellder",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 91,
+      "name": "Cloyster",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 92,
+      "name": "Gastly",
+      "rarity": "common"
+    },
+    {
+      "id": 93,
+      "name": "Haunter",
+      "rarity": "common"
+    },
+    {
+      "id": 94,
+      "name": "Gengar",
+      "rarity": "common"
+    },
+    {
+      "id": 95,
+      "name": "Onix",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 96,
+      "name": "Drowzee",
+      "rarity": "common"
+    },
+    {
+      "id": 97,
+      "name": "Hypno",
+      "rarity": "common"
+    },
+    {
+      "id": 98,
+      "name": "Krabby",
+      "rarity": "common"
+    },
+    {
+      "id": 99,
+      "name": "Kingler",
+      "rarity": "common"
+    },
+    {
+      "id": 100,
+      "name": "Voltorb",
+      "rarity": "rare"
+    },
+    {
+      "id": 101,
+      "name": "Electrode",
+      "rarity": "rare"
+    },
+    {
+      "id": 102,
+      "name": "Exeggcute",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 103,
+      "name": "Exeggutor",
+      "rarity": "uncommon"
+    },
+    {
+      "id": 104,
+      "name": "Cubone",
+      "rarity": "rare"
+    },
+    {
+      "id": 105,
+      "name": "Marowak",
+      "rarity": "rare"
+    },
+    {
+      "id": 106,
+      "name": "Hitmonlee",
+      "rarity": "special"
+    },
+    {
+      "id": 107,
+      "name": "Hitmonchan",
+      "rarity": "special"
+    },
+    {
+      "id": 108,
+      "name": "Lickitung",
+      "rarity": "rare"
+    },
+    {
+      "id": 109,
+      "name": "Koffing",
+      "rarity": "rare"
+    },
+    {
+      "id": 110,
+      "name": "Weezing",
+      "rarity": "rare"
+    },
+    {
+      "id": 111,
+      "name": "Rhyhorn",
+      "rarity": "rare"
+    },
+    {
+      "id": 112,
+      "name": "Rhydon",
+      "rarity": "rare"
+    },
+    {
+      "id": 113,
+      "name": "Chansey",
+      "rarity": "mythic"
+    },
+    {
+      "id": 114,
+      "name": "Tangela",
+      "rarity": "rare"
+    },
+    {
+      "id": 115,
+      "name": "Kangaskhan",
+      "rarity": "mythic"
+    },
+    {
+      "id": 116,
+      "name": "Horsea",
+      "rarity": "rare"
+    },
+    {
+      "id": 117,
+      "name": "Seadra",
+      "rarity": "rare"
+    },
+    {
+      "id": 118,
+      "name": "Goldeen",
+      "rarity": "common"
+    },
+    {
+      "id": 119,
+      "name": "Seaking",
+      "rarity": "common"
+    },
+    {
+      "id": 120,
+      "name": "Staryu",
+      "rarity": "rare"
+    },
+    {
+      "id": 121,
+      "name": "Starmie",
+      "rarity": "rare"
+    },
+    {
+      "id": 122,
+      "name": "Mr. Mime",
+      "rarity": "epic"
+    },
+    {
+      "id": 123,
+      "name": "Scyther",
+      "rarity": "rare"
+    },
+    {
+      "id": 124,
+      "name": "Jynx",
+      "rarity": "epic"
+    },
+    {
+      "id": 125,
+      "name": "Electabuzz",
+      "rarity": "epic"
+    },
+    {
+      "id": 126,
+      "name": "Magmar",
+      "rarity": "epic"
+    },
+    {
+      "id": 127,
+      "name": "Pinsir",
+      "rarity": "epic"
+    },
+    {
+      "id": 128,
+      "name": "Tauros",
+      "rarity": "epic"
+    },
+    {
+      "id": 129,
+      "name": "Magikarp",
+      "rarity": "common"
+    },
+    {
+      "id": 130,
+      "name": "Gyarados",
+      "rarity": "common"
+    },
+    {
+      "id": 131,
+      "name": "Lapras",
+      "rarity": "mythic"
+    },
+    {
+      "id": 132,
+      "name": "Ditto",
+      "rarity": "unavailable"
+    },
+    {
+      "id": 133,
+      "name": "Eevee",
+      "rarity": "common"
+    },
+    {
+      "id": 134,
+      "name": "Vaporeon",
+      "rarity": "common"
+    },
+    {
+      "id": 135,
+      "name": "Jolteon",
+      "rarity": "common"
+    },
+    {
+      "id": 136,
+      "name": "Flareon",
+      "rarity": "common"
+    },
+    {
+      "id": 137,
+      "name": "Porygon",
+      "rarity": "epic"
+    },
+    {
+      "id": 138,
+      "name": "Omanyte",
+      "rarity": "special"
+    },
+    {
+      "id": 139,
+      "name": "Omastar",
+      "rarity": "special"
+    },
+    {
+      "id": 140,
+      "name": "Kabuto",
+      "rarity": "special"
+    },
+    {
+      "id": 141,
+      "name": "Kabutops",
+      "rarity": "special"
+    },
+    {
+      "id": 142,
+      "name": "Aerodactyl",
+      "rarity": "special"
+    },
+    {
+      "id": 143,
+      "name": "Snorlax",
+      "rarity": "mythic"
+    },
+    {
+      "id": 144,
+      "name": "Articuno",
+      "rarity": "unavailable"
+    },
+    {
+      "id": 145,
+      "name": "Zapdos",
+      "rarity": "unavailable"
+    },
+    {
+      "id": 146,
+      "name": "Moltres",
+      "rarity": "unavailable"
+    },
+    {
+      "id": 147,
+      "name": "Dratini",
+      "rarity": "epic"
+    },
+    {
+      "id": 148,
+      "name": "Dragonair",
+      "rarity": "epic"
+    },
+    {
+      "id": 149,
+      "name": "Dragonite",
+      "rarity": "epic"
+    },
+    {
+      "id": 150,
+      "name": "Mewtwo",
+      "rarity": "unavailable"
+    },
+    {
+      "id": 151,
+      "name": "Mew",
+      "rarity": "unavailable"
+    }
+  ]
+}
