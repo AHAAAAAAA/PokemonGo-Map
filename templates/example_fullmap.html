@@ -223,44 +223,46 @@
             })
         }
 
-        function updateLocation() {
-          createMap();
+        if (navigator.geolocation) {
+          function updateLocation() {
+            createMap();
 
-          navigator.geolocation.getCurrentPosition(locationSuccess, locationFail);
-          function locationFail() { console.log('localization failed') };
-          function locationSuccess(position) {
+            navigator.geolocation.getCurrentPosition(locationSuccess, locationFail);
+            function locationFail() { console.log('localization failed') };
+            function locationSuccess(position) {
 
-            var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+              var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-            if (currentLocation !== undefined) {
-              currentLocation.setMap(null);
-            }
+              if (currentLocation !== undefined) {
+                currentLocation.setMap(null);
+              }
 
-            var currentPositionIcon = new google.maps.MarkerImage('static/misc/current_location.png', null, null, null, new google.maps.Size(16,16));
+              var currentPositionIcon = new google.maps.MarkerImage('static/misc/current_location.png', null, null, null, new google.maps.Size(16,16));
 
-            currentLocation = addMarker({
-                position: currentLocationLatLng,
-                map: map,
-                icon: currentPositionIcon
-            });
+              currentLocation = addMarker({
+                  position: currentLocationLatLng,
+                  map: map,
+                  icon: currentPositionIcon
+              });
 
-            currentLocation.infoWindow = new google.maps.InfoWindow({
-                content: 'Current location'
-            });
+              currentLocation.infoWindow = new google.maps.InfoWindow({
+                  content: 'Current location'
+              });
 
-            currentLocation.addListener('click', function() {
-                currentLocation.infoWindow.open(map, currentLocation);
-                currentLocation["persist"] = true;
-            });
+              currentLocation.addListener('click', function() {
+                  currentLocation.infoWindow.open(map, currentLocation);
+                  currentLocation["persist"] = true;
+              });
 
-            google.maps.event.addListener(currentLocation.infoWindow,'closeclick',function(){
-               currentLocation["persist"] = null;
-            });
-          };
+              google.maps.event.addListener(currentLocation.infoWindow,'closeclick',function(){
+                 currentLocation["persist"] = null;
+              });
+            };
+          }
+          window.setInterval(updateLocation, {{ auto_refresh }});
         }
 
         window.setInterval(updateMap, {{ auto_refresh }});
-        window.setInterval(updateLocation, {{ auto_refresh }});
     </script>
   {% endif %}
 </html>
