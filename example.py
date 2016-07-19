@@ -683,12 +683,13 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             break
 
     for poke in visible:
-        pokename = pokemonsJSON[str(poke.pokemon.PokemonId)]
+        pokeid = str(poke.pokemon.PokemonId)
+        pokename = pokemonsJSON[pokeid]
         if args.ignore:
-            if pokename.lower() in ignore or str(poke.pokemon.PokemonId) in ignore:
+            if pokename.lower() in ignore or pokeid in ignore:
                 continue
         elif args.only:
-            if pokename.lower() not in only and str(poke.pokemon.PokemonId) not in only:
+            if pokename.lower() not in only and pokeid not in only:
                 continue
 
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
