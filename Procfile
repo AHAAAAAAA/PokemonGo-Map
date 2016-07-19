@@ -1,1 +1,1 @@
-web: python example.py -u -p -l -st
+web: python example.py
