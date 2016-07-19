@@ -445,9 +445,9 @@ def get_args():
     parser.add_argument('-st', '--step-limit', help='Steps', required=True)
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Comma-separated list of Pokémon names or ids to ignore')
+        '-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore')
     group.add_argument(
-        '-o', '--only', help='Comma-separated list of Pokémon names or ids to search')
+        '-o', '--only', help='Comma-separated list of Pokémon names or IDs to search')
     parser.add_argument(
         "-ar",
         "--auto_refresh",
