@@ -53,6 +53,12 @@ _Note:
 #### IPv6
 `python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -H :: -P 5000`
 
+### run docker container
+```shell
+docker build -t pokemongo-map .
+docker run -it --rm pokemongo-map <here go all arguments you want to pass to example.py>
+```
+
 ## Common Errors
 > _`Exception, e <- Invalid syntax.`_
 
