@@ -447,7 +447,8 @@ def get_args():
     parser.add_argument(
         "-ar",
         "--auto_refresh",
-        help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
+        help="Enables an autorefresh that behaves the same as a page reload. " +
+             "Needs an integer value for the amount of seconds")
     parser.add_argument(
         '-dp',
         '--display-pokestop',
