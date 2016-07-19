@@ -45,7 +45,7 @@ _Note:
 
 ## Working examples
 ### ignore Pokémon
-`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -i Pidgey,Weedle,Zubat`
+`python example.py -a PTC -u myUsername -p myPassword -l "Central Park, New York, NY" -st 5 -i Pidgey,Weedle,Rattata,Zubat`
 
 ### make server externally visible
 #### IPv4
