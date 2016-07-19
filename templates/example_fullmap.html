@@ -12,7 +12,42 @@
     </body>
 <!-- Webdesign 101: scripts at the end make the page load faster -->
 {{fullmap.js}}
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+
+  <script type="text/javascript">
+    var setLabelTime = function(){
+        $('.label-countdown').each(function (index, element) {
+            var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at"))*1000);
+            var now = new Date();
+            
+            var difference = Math.abs(disappearsAt - now);
+            var hours = Math.floor(difference / 36e5);
+            var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
+            var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
+            
+            if(disappearsAt < now){
+                timestring = "(expired)";
+            } 
+            else {
+                timestring = "(";
+                if(hours > 0)
+                    timestring = hours + "h";
+                
+                timestring += ("0" + minutes).slice(-2) + "m";
+                timestring += ("0" + seconds).slice(-2) + "s";
+                timestring += ")";
+            }
+
+            $(element).text(timestring)
+        });
+    };
+
+    window.setInterval(setLabelTime, 1000);
+
+  
+  </script>
   {% if auto_refresh %}
     <script type="text/javascript">
         var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
