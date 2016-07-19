@@ -1,0 +1,15 @@
+auth_service: None # Options are None or ptc or google
+username: 'MyUsername' # Your username
+password: 'MySuperStrongPassword' # Your password
+location: 'Boulder, CO' # Any location Google Maps can understand
+step_limit: 5 # Steps to take
+display_pokestop: False # True or False
+display_gym: False # True or False
+ignore: None # [ 13, 16 ] # Pokenon to ignore
+only: None # [ 150, 151 ] # The only pokemon that should be displayed
+locale: 'en' # The language to use
+auto_refresh: None # integer value in seconds example: 30
+china: False  # True or False
+debug: False # Enable debugging True or False
+host: '127.0.0.1' # The host address the web server should bind to
+port: 5000 # The port that the web server should bind to
