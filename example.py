@@ -478,6 +478,11 @@ def get_args():
         help="Locale for Pokemon names: default en, check locale folder for more options",
         default="en")
     parser.add_argument(
+        "-ol",
+        "--onlylure",
+        help='Display only lured pokéstop',
+        action='store_true')
+    parser.add_argument(
         '-c',
         '--china',
         help='Coordinates transformer for China',
@@ -654,8 +659,14 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
 
                             elif Fort.FortType \
                                 and args.display_pokestop:
-                                pokestops[Fort.FortId] = [Fort.Latitude,
-                                                          Fort.Longitude]
+                                expire_time = 0
+                                if Fort.LureInfo.LureExpiresTimestampMs:
+                                    expire_time = datetime\
+                                        .fromtimestamp(Fort.LureInfo.LureExpiresTimestampMs / 1000.0)\
+                                        .strftime("%H:%M:%S")
+                                if (expire_time != 0 or not args.onlylure):
+                                    pokestops[Fort.FortId] = [Fort.Latitude,
+                                                              Fort.Longitude, expire_time]
         except AttributeError:
             break
 
@@ -842,15 +853,25 @@ def get_pokemarkers():
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
-        pokeMarkers.append({
-            'type': 'stop',
-            'key': stop_key,
-            'disappear_time': -1,
-            'icon': 'static/forts/Pstop.png',
-            'lat': stop[0],
-            'lng': stop[1],
-            'infobox': 'Pokestop',
-        })
+        if stop[2] > 0:
+            pokeMarkers.append({
+                'type': 'lured_stop',
+                'key': stop_key,
+                'icon': 'static/forts/PstopLured.png',
+                'lat': stop[0],
+                'lng': stop[1],
+                'infobox': 'Lured Pokestop, expires at' + stop[2],
+            })
+        else:
+            pokeMarkers.append({
+                'type': 'stop',
+                'key': stop_key,
+                'disappear_time': -1,
+                'icon': 'static/forts/Pstop.png',
+                'lat': stop[0],
+                'lng': stop[1],
+                'infobox': 'Pokestop',
+            })
     return pokeMarkers
 
 
