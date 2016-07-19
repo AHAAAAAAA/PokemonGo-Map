@@ -603,7 +603,7 @@ def main():
         #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
         # Scan location math
         if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
-            set_location_coords(x * 0.0025 + origin_lat, y * 0.0025 + origin_lon, 0)
+            set_location_coords(x * 0.0025 + FLOAT_LAT, y * 0.0025 + FLOAT_LONG, 0)
         if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
             (dx, dy) = (-dy, dx)
 
@@ -620,6 +620,9 @@ def main():
             (NEXT_LAT != FLOAT_LAT or NEXT_LONG != FLOAT_LONG)):
         print('Update to next location %f, %f' % (NEXT_LAT, NEXT_LONG))
         set_location_coords(NEXT_LAT, NEXT_LONG, 0)
+        #orgin should be replaced
+        origin_lat = NEXT_LAT
+        origin_lon = NEXT_LONG
         NEXT_LAT = 0
         NEXT_LONG = 0
     else:
