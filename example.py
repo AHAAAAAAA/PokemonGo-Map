@@ -11,6 +11,7 @@ import re
 import sys
 import struct
 import json
+import yaml
 import time
 import requests
 import argparse
@@ -35,6 +36,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
+from dict2object import Dict2Object
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -437,60 +439,67 @@ def get_token(service, username, password):
 
 
 def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-a', '--auth_service', help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username', required=True)
-    parser.add_argument('-p', '--password', help='Password', required=False)
-    parser.add_argument(
-        '-l', '--location', type=parse_unicode, help='Location', required=True)
-    parser.add_argument('-st', '--step_limit', help='Steps', required=True)
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument(
-        '-i', '--ignore', help='Pokemon to ignore (comma separated)')
-    group.add_argument(
-        '-o', '--only', help='Only look for these pokemon (comma separated)')
-    parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
-    parser.add_argument(
-        '-c',
-        '--china',
-        help='Coord Transformer for China',
-        action='store_true')
-    parser.add_argument(
-        "-ar",
-        "--auto_refresh",
-        help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
-    parser.add_argument(
-        '-dp',
-        '--display-pokestop',
-        help='Display Pokestop',
-        action='store_true',
-        default=False)
-    parser.add_argument(
-        '-dg',
-        '--display-gym',
-        help='Display Gym',
-        action='store_true',
-        default=False)
-    parser.add_argument(
-        '-H',
-        '--host',
-        help='Set web server listening host',
-        default='127.0.0.1')
-    parser.add_argument(
-        '-P',
-        '--port',
-        type=int,
-        help='Set web server listening port',
-        default=5000)
-    parser.add_argument(
-        "-L",
-        "--locale",
-        help="Locale for Pokemon names: en (default), fr, de",
-        default="en")
-    parser.set_defaults(DEBUG=True)
-    return parser.parse_args()
+    config_file = os.path.join(os.path.dirname(__file__), 'conf/settings.yaml')
+    if os.path.isfile(config_file):
+        config_data = open(config_file)
+        config = yaml.safe_load(config_data)
+        args = Dict2Object(config)
+        return args
+    else:
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            '-a', '--auth_service', help='Auth Service', default='ptc')
+        parser.add_argument('-u', '--username', help='Username', required=True)
+        parser.add_argument('-p', '--password', help='Password', required=False)
+        parser.add_argument(
+            '-l', '--location', type=parse_unicode, help='Location', required=True)
+        parser.add_argument('-st', '--step_limit', help='Steps', required=True)
+        group = parser.add_mutually_exclusive_group(required=False)
+        group.add_argument(
+            '-i', '--ignore', help='Pokemon to ignore (comma separated)')
+        group.add_argument(
+            '-o', '--only', help='Only look for these pokemon (comma separated)')
+        parser.add_argument(
+            '-d', '--debug', help='Debug Mode', action='store_true')
+        parser.add_argument(
+            '-c',
+            '--china',
+            help='Coord Transformer for China',
+            action='store_true')
+        parser.add_argument(
+            "-ar",
+            "--auto_refresh",
+            help="Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds")
+        parser.add_argument(
+            '-dp',
+            '--display-pokestop',
+            help='Display Pokestop',
+            action='store_true',
+            default=False)
+        parser.add_argument(
+            '-dg',
+            '--display-gym',
+            help='Display Gym',
+            action='store_true',
+            default=False)
+        parser.add_argument(
+            '-H',
+            '--host',
+            help='Set web server listening host',
+            default='127.0.0.1')
+        parser.add_argument(
+            '-P',
+            '--port',
+            type=int,
+            help='Set web server listening port',
+            default=5000)
+        parser.add_argument(
+            "-L",
+            "--locale",
+            help="Locale for Pokemon names: en (default), fr, de",
+            default="en")
+        parser.set_defaults(DEBUG=True)
+        return parser.parse_args()
 
 @memoize
 def login(args):
