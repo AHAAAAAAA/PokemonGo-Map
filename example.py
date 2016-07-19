@@ -764,7 +764,7 @@ app = create_app()
 @app.route('/data')
 def data():
     """ Gets all the PokeMarkers via REST """
-    return json.dumps(get_pokemarkers())
+    return flask.jsonify(get_pokemarkers())
 
 @app.route('/raw_data')
 def raw_data():
@@ -781,7 +781,7 @@ def config():
         'zoom': 15,
         'identifier': "fullmap"
     }
-    return json.dumps(center)
+    return flask.jsonify(center)
 
 
 @app.route('/')
