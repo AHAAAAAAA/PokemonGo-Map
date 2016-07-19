@@ -484,6 +484,12 @@ def get_args():
         help='Coordinates transformer for China',
         action='store_true')
     parser.add_argument(
+    	"-pm",
+    	"--ampm_clock",
+    	help="Toggles the AM/PM clock for Pokemon timers",
+    	action='store_true',
+    	default=False)
+    parser.add_argument(
         '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
