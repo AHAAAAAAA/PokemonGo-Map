@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 
 change_api_keys () 
