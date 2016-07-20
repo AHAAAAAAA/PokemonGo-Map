@@ -22,6 +22,16 @@ module.exports = function(grunt) {
         }
       }
     },
+    uglify: {
+      options: {
+        banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n'
+      },
+      build: {
+        files: {
+          'static/dist/js/app.min.js': 'static/js/app.js'
+        }
+      }
+    },
     watch: {
   		options: {
   			interval: 1000,
@@ -33,7 +43,8 @@ module.exports = function(grunt) {
   		},
   		js: {
   			files: ['**/*.js', '!node_modules/**/*.js'],
-  			options: { livereload: true }
+  			options: { livereload: true },
+        tasks: ['uglify']
   		},
   		css: {
   			files: '**/*.scss',
@@ -42,15 +53,14 @@ module.exports = function(grunt) {
   		}
     },
     cssmin: {
-  	  target: {
-    		files: [{
-    		  expand: true,
-    		  cwd: 'css',
-    		  src: ['main.css', '!*.min.css'],
-    		  dest: 'static/css',
-    		  ext: '.min.css'
-    		}]
-  	  }
+      options: {
+        banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n'
+      },
+      build: {
+        files: {
+          'static/dist/css/app.min.css': 'static/css/main.css'
+        }
+      }
   	},
   });
 
@@ -61,12 +71,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-usemin');
-  grunt.loadNpmTasks('grunt-unused');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html-validation');
 
-  grunt.registerTask('default', ['sass','cssmin','watch']);
+  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'uglify', 'watch']);
 
 };
