@@ -547,6 +547,7 @@ def login(args):
     return api_endpoint, access_token, profile_response
 
 def main():
+
     full_path = os.path.realpath(__file__)
     (path, filename) = os.path.split(full_path)
 
@@ -569,6 +570,11 @@ def main():
     if not (FLOAT_LAT and FLOAT_LONG):
       print('[+] Getting initial location')
       retrying_set_location(args.location)
+    else: # set given location
+        global origin_lat
+        global origin_lon
+        origin_lat = FLOAT_LAT
+        origin_lon = FLOAT_LONG
 
     if args.auto_refresh:
         global auto_refresh
@@ -806,6 +812,33 @@ def next_loc():
         NEXT_LONG = float(lon)
         return 'ok'
 
+@app.route('/location')
+def location():
+    global NEXT_LAT, NEXT_LONG
+
+    location_name = flask.request.args.get('loc', '')
+    if not (location_name):
+        print ('[-] Invalid next location: %s' %location_name)
+        return "Invalid next location"
+    else:    
+        print('[+] Saved next location as %s' %location_name)
+        geolocator = GoogleV3()
+        prog = re.compile('^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$')
+
+        if prog.match(location_name):
+            local_lat, local_lng = [float(x) for x in location_name.split(",")]
+            alt = 0
+            NEXT_LAT, NEXT_LONG = local_lat, local_lng
+        else:
+            try:
+                loc = geolocator.geocode(location_name)
+                NEXT_LAT, NEXT_LONG = local_lat, local_lng = loc.latitude, loc.longitude
+                alt = loc.altitude
+                print '[!] Your given location: {}'.format(loc.address.encode('utf-8'))
+            except Exception:
+                return "please give more detail name with more information like city, postcode"
+        return 'ok'
+    
 
 def get_pokemarkers():
     pokeMarkers = [{
