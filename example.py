@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import flask
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_googlemaps import icons
@@ -77,6 +77,8 @@ numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and the
 }
 origin_lat, origin_lon = None, None
 is_ampm_clock = False
+
+reset_search_loop = False
 
 # stuff for in-background search thread
 
@@ -547,6 +549,8 @@ def login(args):
     return api_endpoint, access_token, profile_response
 
 def main():
+    global reset_search_loop
+
     full_path = os.path.realpath(__file__)
     (path, filename) = os.path.split(full_path)
 
@@ -598,6 +602,12 @@ def main():
     dy = -1
     steplimit2 = steplimit**2
     for step in range(steplimit2):
+        if reset_search_loop:
+            reset_search_loop = False
+            print('Location changed, starting over')
+            register_background_thread(delay=0)
+            return
+
         #starting at 0 index
         debug('looping: step {} of {}'.format((step+1), steplimit**2))
         #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
@@ -656,7 +666,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
                 for wild in cell.WildPokemon:
                     hash = wild.SpawnPointId;
                     if hash not in seen.keys() or (seen[hash].TimeTillHiddenMs <= wild.TimeTillHiddenMs):
-                        visible.append(wild)    
+                        visible.append(wild)
                     seen[hash] = wild.TimeTillHiddenMs
                 if cell.Fort:
                     for Fort in cell.Fort:
@@ -718,7 +728,7 @@ def clear_stale_pokemons():
             del pokemons[pokemon_key]
 
 
-def register_background_thread(initial_registration=False):
+def register_background_thread(initial_registration=False, delay=120):
     """
     Start a background thread to search for Pokemon
     while Flask is still able to serve requests for the map
@@ -741,10 +751,9 @@ def register_background_thread(initial_registration=False):
 
         debug('register_background_thread: initial registration')
         search_thread = threading.Thread(target=main)
-
     else:
         debug('register_background_thread: queueing')
-        search_thread = threading.Timer(30, main)  # delay, in seconds
+        search_thread = threading.Timer(delay, main)
 
     search_thread.daemon = True
     search_thread.name = 'search_thread'
@@ -806,6 +815,12 @@ def next_loc():
         NEXT_LONG = float(lon)
         return 'ok'
 
+@app.route('/search')
+def search():
+    global reset_search_loop
+    set_location(flask.request.args.get('q'))
+    reset_search_loop = True
+    return redirect('/')
 
 def get_pokemarkers():
     pokeMarkers = [{
