@@ -7,6 +7,7 @@ import logging
 import time
 import threading
 import Queue
+import itertools
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -36,20 +37,13 @@ def send_map_request(api, position):
 
 
 def generate_location_steps(initial_location, num_steps):
-    x, y, dx, dy = 0, 0, 0, -1
+    coord_len = num_steps // 2
+    coords = [i for i in range(-coord_len, coord_len + 1)]
 
-    def valid(coord):
-        return -num_steps // 2 < coord <= num_steps // 2
-
-    while valid(x) and valid(y):
+    for x, y in itertools.product(coords, repeat=2):
         yield (x * 0.0025 + initial_location[0],
                y * 0.0025 + initial_location[1],
                0)
-
-        if abs(x) == abs(y) or (x > 0 and x == 1 - y):
-            dx, dy = -dy, dx
-
-        x, y = x + dx, y + dy
 
 
 def login(args, position):
