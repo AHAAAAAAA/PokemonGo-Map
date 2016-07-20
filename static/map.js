@@ -1,12 +1,5 @@
-var map, 
-    marker,
-    lastStamp = 0,
-    requestInterval = 10000;
-
-var markers = [];
-
-pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
-    disappear_date = new Date(disappear_time + (new Date().getTimezoneOffset() * 60000));
+function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
+    disappear_date = new Date(disappear_time)
 
     var pad = function pad(number) {
       return number <= 99 ? ("0" + number).slice(-2) : number;
@@ -29,23 +22,70 @@ pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
         </div>';
 
     return str;
-};
+}
 
-initMap = function() {
+
+var map;
+var currentMarker;
+
+//added for places
+var sInput;
+var searchBox;
+
+function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: center_lat, lng: center_lng},
-        zoom: 16
+        //changed the zoom from 16 to 15
+        zoom: 15,
+        //default to roadmap
+        mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    var marker = new google.maps.Marker({
-        position: {lat: center_lat, lng: center_lng},
-        map: map,
-        animation: google.maps.Animation.DROP
-    });  
-    GetNewPokemons(lastStamp);
-};
 
-GetNewPokemons = function(stamp) {
-    $.getJSON("/pokemons/"+stamp, function(result){
+    setCurrentMarker(center_lat, center_lng, 'initial location');
+
+    sInput = document.getElementById('pac-input');
+    searchBox = new google.maps.places.SearchBox(sInput);
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(sInput);
+
+    // Bias the SearchBox results towards current map's viewport.
+    map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+    });
+
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+            return;
+        }
+
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
+
+            //for now we assume one place, technically this is a for loop
+            //so its possible to set current marker multiple times
+            setCurrentMarker(place.geometry.location.lat(), place.geometry.location.lng(), place.name);
+            
+            //lets make a call to the api to change the lat lon, reset the search
+            setNewLocation(place.geometry.location.lat(), place.geometry.location.lng());
+           
+            if (place.geometry.viewport) {
+                // Only geocodes have viewport.
+                bounds.union(place.geometry.viewport);
+            } else {
+                bounds.extend(place.geometry.location);
+            }
+        });
+
+        //reset the map focus
+        map.fitBounds(bounds);
+        map.setZoom(15);
+    });
+
+    $.getJSON("/pokemons", function(result){
         $.each(result, function(i, item){
 
             var marker = new google.maps.Marker({
@@ -55,7 +95,7 @@ GetNewPokemons = function(stamp) {
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
-                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
             });
 
             google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
@@ -68,10 +108,6 @@ GetNewPokemons = function(stamp) {
                 marker.infoWindow.open(map, marker);
             });
 
-            markers.push({
-                    m: marker,
-                    disapear: item.disappear_time});
-
             marker.addListener('mouseover', function() {
                 marker.infoWindow.open(map, marker);
             });
@@ -83,13 +119,43 @@ GetNewPokemons = function(stamp) {
             });
 
             console.log(item.latitude);
-        });        
-    }).always(function() {setTimeout(function() { GetNewPokemons(lastStamp) }, requestInterval)});
-    var dObj = new Date();
-    lastStamp = dObj.getTime();
-    
-    $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
+        });
     });
-};
+}
+
+/**
+ * set the current marker location
+ * lat = latitude, lng = longitude, title = name of the marker
+ */
+function setCurrentMarker(lat, lng, title){
+    if(currentMarker!=null){
+        //clear the marker
+        currentMarker.setMap(null);
+        currentMarker = null;
+    }
+
+    var newLocation={};
+    newLocation.lat=lat;
+    newLocation.lng=lng;
+
+    currentMarker = new google.maps.Marker({
+        position: newLocation,
+        map: map,
+        title: title,
+        animation: google.maps.Animation.DROP
+    });
+}
+
+/**
+ * calls the server api to change the location
+ */
+function setNewLocation(lat, lng){
+    var newLocation={};
+    newLocation.lat=lat;
+    newLocation.lng=lng;
+
+    $.post("/setLocation", newLocation)
+    .fail(function(data){
+        alert('failed to call setLocation for: ' + newLocation);
+    });
+}

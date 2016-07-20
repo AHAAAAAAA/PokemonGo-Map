@@ -9,6 +9,7 @@ import struct
 import logging
 import requests
 import time
+import threading
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, h2f, get_cellid, encode, get_pos_by_name
@@ -60,7 +61,7 @@ def login(args, position):
     log.info('Login successful.')
 
 
-def search(args):
+def search(args, tStop):
     num_steps = args.step_limit
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
@@ -76,27 +77,31 @@ def search(args):
 
     i = 1
     for step_location in generate_location_steps(position, num_steps):
-        log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
-        log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
+        if not tStop.is_set():
+            log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
+            log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
-        response_dict = send_map_request(api, step_location)
-        while not response_dict:
-            log.info('Map Download failed. Trying again.')
             response_dict = send_map_request(api, step_location)
+            while not response_dict:
+                log.info('Map Download failed. Trying again.')
+                response_dict = send_map_request(api, step_location)
+                time.sleep(REQ_SLEEP)
+
+            try:
+                parse_map(response_dict)
+            except KeyError:
+                log.error('Scan step failed. Response dictionary key error.')
+
+            log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
+            i += 1
             time.sleep(REQ_SLEEP)
-
-        try:
-            parse_map(response_dict)
-        except KeyError:
-            log.error('Scan step failed. Response dictionary key error.')
-
-        log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
-        i += 1
-        time.sleep(REQ_SLEEP)
+        else:
+            log.info('Thread cancelled')
+            return
 
 
-def search_loop(args):
-    while True:
-        search(args)
+def search_loop(args, tStop):
+    while (not tStop.is_set()):
+        search(args, tStop)
         log.info("Scanning complete.")
         time.sleep(1)
