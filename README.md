@@ -19,3 +19,10 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 
 ---
 For instructions, please refer to [the wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki)
+
+# Heroku
+Host your own PokemonGo-Map server for **FREE** with [One-Click Deploy](https://heroku.com/deploy)
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/AHAAAAAAA/PokemonGo-Map/tree/master)
+
+All options can be set as env vars with all caps. For example: LOCALE, DISPLAY_POKESTOP, USERNAME, etc. They take the same values as the command line flags.
