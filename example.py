@@ -656,7 +656,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
                 for wild in cell.WildPokemon:
                     hash = wild.SpawnPointId;
                     if hash not in seen.keys() or (seen[hash].TimeTillHiddenMs <= wild.TimeTillHiddenMs):
-                        visible.append(wild)    
+                        visible.append(wild)
                     seen[hash] = wild.TimeTillHiddenMs
                 if cell.Fort:
                     for Fort in cell.Fort:
@@ -838,12 +838,12 @@ def get_pokemarkers():
 
         pokeMarkers.append({
             'type': 'pokemon',
-            'key': pokemon_key,
+            'key': pokemon_key.encode('ascii', 'xmlcharrefreplace'),
             'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
             'lng': pokemon["lng"],
-            'infobox': label
+            'infobox': label.encode('ascii', 'xmlcharrefreplace')
         })
 
     for gym_key in gyms:
@@ -861,7 +861,7 @@ def get_pokemarkers():
         pokeMarkers.append({
             'icon': 'static/forts/' + numbertoteam[gym[0]] + '.png',
             'type': 'gym',
-            'key': gym_key,
+            'key': gym_key.encode('ascii', 'xmlcharrefreplace'),
             'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
@@ -872,7 +872,7 @@ def get_pokemarkers():
         if stop[2] > 0:
             pokeMarkers.append({
                 'type': 'lured_stop',
-                'key': stop_key,
+                'key': stop_key.encode('ascii', 'xmlcharrefreplace'),
                 'disappear_time': -1,
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
@@ -882,7 +882,7 @@ def get_pokemarkers():
         else:
             pokeMarkers.append({
                 'type': 'stop',
-                'key': stop_key,
+                'key': stop_key.encode('ascii', 'xmlcharrefreplace'),
                 'disappear_time': -1,
                 'icon': 'static/forts/Pstop.png',
                 'lat': stop[0],
