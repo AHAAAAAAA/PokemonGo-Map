@@ -1,5 +1,5 @@
-#Please refrain from submitting pull requests at this time.#
-##Rejecting all the pull requests due to upcoming refactor. ##
+#Support for master branch dropped.#
+##Accepting only pull requests for develop branch. ##
 
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
