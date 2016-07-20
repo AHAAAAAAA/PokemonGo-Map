@@ -9,7 +9,9 @@ from base64 import b64encode
 
 from .utils import get_pokemon_name
 from .sound import play
+from pogom.utils import get_args
 
+args = get_args()
 
 db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
@@ -45,16 +47,7 @@ class Pokemon(BaseModel):
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             pokemon_name = p['pokemon_name'].lower()
             pokemon_id = str(p['pokemon_id'])
-            if cls.IGNORE:
-                if pokemon_name in cls.IGNORE or pokemon_id in cls.IGNORE:
-                    continue
-            if cls.ONLY:
-                if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
-                    continue
-            print("LALALALALA")
-            play()
             pokemons.append(p)
-
         return pokemons
 
 
@@ -90,6 +83,15 @@ def parse_map(map_dict):
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
+            pokemon_name = get_pokemon_name(p['pokemon_data']['pokemon_id'])
+            pokemon_id = str(p['pokemon_data']['pokemon_id'])
+            if args.ignore:
+                if pokemon_name in args.ignore or pokemon_id in args.ignore:
+                    continue
+            if args.only:
+                if pokemon_name not in args.only and pokemon_id not in args.only:
+                    continue
+            play()
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
                 'spawnpoint_id': p['spawnpoint_id'],
