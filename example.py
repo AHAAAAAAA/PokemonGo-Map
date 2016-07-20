@@ -146,16 +146,14 @@ def h2f(hex):
 
 
 def retrying_set_location(location_name):
-    """
-    Continue trying to get co-ords from Google Location until we have them
-    :param location_name: string to pass to Location API
-    :return: None
-    """
+    coords = guess_coords(location_name)
+    return set_location_coords(*coords)
 
+
+def guess_coords(location_name):
     while True:
         try:
-            set_location(location_name)
-            return
+            return set_location(location_name)
         except (GeocoderTimedOut, GeocoderServiceError), e:
             debug(
                 'retrying_set_location: geocoder exception ({}), retrying'.format(
@@ -179,7 +177,7 @@ def set_location(location_name):
         print '[!] Your given location: {}'.format(loc.address.encode('utf-8'))
 
     print('[!] lat/long/alt: {} {} {}'.format(local_lat, local_lng, alt))
-    set_location_coords(local_lat, local_lng, alt)
+    return (local_lat, local_lng, alt)
 
 
 def set_location_coords(lat, long, alt):
@@ -626,10 +624,11 @@ def main():
         set_location_coords(NEXT_LAT, NEXT_LONG, 0)
         NEXT_LAT = 0
         NEXT_LONG = 0
+        register_background_thread(delay=1)
     else:
         set_location_coords(origin_lat, origin_lon, 0)
+        register_background_thread()
 
-    register_background_thread()
 
 
 def process_step(args, api_endpoint, access_token, profile_response,
@@ -723,7 +722,7 @@ def clear_stale_pokemons():
             del pokemons[pokemon_key]
 
 
-def register_background_thread(initial_registration=False):
+def register_background_thread(initial_registration=False, delay=60):
     """
     Start a background thread to search for Pokemon
     while Flask is still able to serve requests for the map
@@ -749,7 +748,7 @@ def register_background_thread(initial_registration=False):
 
     else:
         debug('register_background_thread: queueing')
-        search_thread = threading.Timer(60, main)  # delay, in seconds
+        search_thread = threading.Timer(delay, main)  # delay, in seconds
 
     search_thread.daemon = True
     search_thread.name = 'search_thread'
@@ -801,15 +800,14 @@ def fullmap():
 def next_loc():
     global NEXT_LAT, NEXT_LONG
 
-    lat = flask.request.args.get('lat', '')
-    lon = flask.request.args.get('lon', '')
-    if not (lat and lon):
-        print('[-] Invalid next location: %s,%s' % (lat, lon))
-    else:
-        print('[+] Saved next location as %s,%s' % (lat, lon))
-        NEXT_LAT = float(lat)
-        NEXT_LONG = float(lon)
-        return 'ok'
+    location_name = flask.request.args.get('name', '')
+    if not location_name:
+        return 'no location_name'
+    coords = guess_coords(location_name)
+    NEXT_LAT = float(coords[0])
+    NEXT_LONG = float(coords[1])
+    print('[+] Saved next location as %s,%s' % (NEXT_LAT, NEXT_LONG))
+    return 'ok'
 
 
 @app.route('/gps')
