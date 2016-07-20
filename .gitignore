@@ -3,6 +3,6 @@
 *.db
 *.sass-cache
 credentials.json
-dist/
+static/dist/
 node_modules/
 venv/
