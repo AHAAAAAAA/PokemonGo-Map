@@ -26,7 +26,8 @@ from threading import Thread, Lock
 from queue import Queue, Empty
 
 from pgoapi import PGoApi
-from pgoapi.utilities import f2i, get_cellid
+from pgoapi.utilities import f2i
+from utils import get_cell_ids, get_pos_by_name
 
 from . import config
 from .models import parse_map
@@ -241,10 +242,12 @@ def check_login(args, account, api):
 def map_request(api, position):
     try:
         api.set_position(*position)
+        cell_ids = get_cell_ids(position[0], position[1])
+        timestamps = [0,] * len(cell_ids)
         api.get_map_objects(latitude=f2i(position[0]),
                             longitude=f2i(position[1]),
-                            since_timestamp_ms=TIMESTAMP,
-                            cell_id=get_cellid(position[0], position[1]))
+                            since_timestamp_ms=timestamps,
+                            cell_id=cell_ids)
         return api.call()
     except Exception as e:
         log.warning('Exception while downloading map: %s', e)
