@@ -67,6 +67,5 @@ if __name__ == '__main__':
     try:
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
     except Exception as e:
+        log.exception("Uncaught exception: {}".format(e))
         search_thread.cancel()
-    finally:
-        raise e
