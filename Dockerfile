@@ -7,7 +7,6 @@ RUN apk add --update ca-certificates build-base
 # default port the app runs on
 EXPOSE 5000
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 ENTRYPOINT ["python", "./runserver.py"]
@@ -16,4 +15,3 @@ COPY requirements.txt /usr/src/app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
-
