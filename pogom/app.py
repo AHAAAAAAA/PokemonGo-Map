@@ -26,10 +26,8 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'])
 
-<<<<<<< HEAD
     def pokemons(self, stamp):
         return jsonify(Pokemon.get_active(stamp))
-=======
     def get_raw_data(self):
         return {
             'gyms': [g for g in Gym.select().dicts()],
@@ -42,7 +40,6 @@ class Pogom(Flask):
 
     def pokemons(self):
         return jsonify(self.get_raw_data()['pokemons'])
->>>>>>> refs/remotes/AHAAAAAAA/develop
 
     def pokestops(self):
         return jsonify(self.get_raw_data()['pokestops'])
