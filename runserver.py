@@ -33,6 +33,9 @@ if __name__ == '__main__':
 
     args = get_args()
 
+    if args.display_gyms is not False:
+        config['DISPLAY_GYMS'] = 'true'
+
     if args.debug:
         logging.getLogger("requests").setLevel(logging.DEBUG)
         logging.getLogger("pgoapi").setLevel(logging.DEBUG)
@@ -59,6 +62,7 @@ if __name__ == '__main__':
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
+
     if args.gmaps_key is not None:
         config['GMAPS_KEY'] = args.gmaps_key
     else:
