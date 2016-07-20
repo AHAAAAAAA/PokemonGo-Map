@@ -1,14 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-import re
-import sys
-import json
-import struct
 import logging
-import requests
 import time
+import threading
+import Queue
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, h2f, get_cellid, encode, get_pos_by_name
@@ -32,7 +28,7 @@ def send_map_request(api, position):
                             cell_id=get_cellid(position[0], position[1]))
         return api.call()
     except Exception as e:
-        log.warn("Uncaught exception when downloading map "+ e)
+        log.warn("Uncaught exception when downloading map " + e)
         return False
 
 
@@ -60,43 +56,56 @@ def login(args, position):
     log.info('Login successful.')
 
 
-def search(args):
-    num_steps = args.step_limit
-    position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
+class Search(threading.Thread):
+    def __init__(self, args, queue=Queue.LifoQueue(), *posargs, **kwargs):
+        super().__init__(*posargs, **kwargs)
+        self._stop = threading.Event()
+        self.args = args
+        self.queue = queue
 
-    if api._auth_provider and api._auth_provider._ticket_expire:
-        remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
+    def search(self):
+        num_steps = self.args.step_limit
+        position = (config['ORIGINAL_LATITUDE'],
+                    config['ORIGINAL_LONGITUDE'],
+                    0)
 
-        if remaining_time > 60:
-            log.info("Skipping login process since already logged in for another {:.2f} seconds".format(remaining_time))
+        if api._auth_provider and api._auth_provider._ticket_expire:
+            remaining_time = api._auth_provider._ticket_expire / 1000 - time.time()
+
+            if remaining_time > 60:
+                log.info("Skipping login process since already logged in for another {:.2f} seconds".format(
+                    remaining_time))
+            else:
+                login(self.args, position)
         else:
-            login(args, position)
-    else:
-        login(args, position)
+            login(self.args, position)
 
-    i = 1
-    for step_location in generate_location_steps(position, num_steps):
-        log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
-        log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
+        i = 1
+        for step_location in generate_location_steps(position, num_steps):
+            log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
+            log.debug('Scan location is {:f}, {:f}'.format(
+                step_location[0], step_location[1]))
 
-        response_dict = send_map_request(api, step_location)
-        while not response_dict:
-            log.info('Map Download failed. Trying again.')
+            self.queue.put(step_location)
+
             response_dict = send_map_request(api, step_location)
+            while not response_dict:
+                log.info('Map Download failed. Trying again.')
+                response_dict = send_map_request(api, step_location)
+                time.sleep(REQ_SLEEP)
+
+            try:
+                parse_map(response_dict)
+            except KeyError:
+                log.error('Scan step failed. Response dictionary key error.')
+
+            log.info('Completed {:5.2f}% of scan.'.format(
+                float(i) / num_steps**2 * 100))
+            i += 1
             time.sleep(REQ_SLEEP)
 
-        try:
-            parse_map(response_dict)
-        except KeyError:
-            log.error('Scan step failed. Response dictionary key error.')
-
-        log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
-        i += 1
-        time.sleep(REQ_SLEEP)
-
-
-def search_loop(args):
-    while True:
-        search(args)
-        log.info("Scanning complete.")
-        time.sleep(1)
+    def run(self):
+        while not self._stop.is_set():
+            self.search()
+            log.info("Scanning complete.")
+            time.sleep(1)
