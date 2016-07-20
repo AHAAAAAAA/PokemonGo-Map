@@ -113,7 +113,7 @@
         }
 
         $.get(baseURL + "/config", function(response){
-                        var json_obj = $.parseJSON(response);//parse JSON
+                        var json_obj = response;
                         options["lat"] = json_obj["lat"];
                         options["lng"] = json_obj["lng"];
                         options["zoom"] = json_obj["zoom"];
@@ -144,7 +144,7 @@
             createMap();
             // Requests the data and populates the map
             $.get(baseURL + "/data", function(response){
-                var json_obj = $.parseJSON(response);
+                var json_obj = response;
                 var now = new Date();
                 
                 for (var index in json_obj) {
