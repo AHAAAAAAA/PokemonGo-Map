@@ -57,7 +57,7 @@ class AuthPtc(Auth):
             'execution': jdata['execution'],
             '_eventId': 'submit',
             'username': username,
-            'password': password,
+            'password': password[:15],
         }
         r1 = self._session.post(self.PTC_LOGIN_URL, data=data, headers=head)
 
