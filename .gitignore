@@ -2,6 +2,5 @@
 *.idea
 *.db
 *.sass-cache
-*.min.css
-*.min.js
+dist/
 node_modules/
