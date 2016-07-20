@@ -8,6 +8,7 @@ from datetime import datetime
 from base64 import b64encode
 
 from .utils import get_pokemon_name
+from .sound import play
 
 
 db = SqliteDatabase('pogom.db')
@@ -50,6 +51,8 @@ class Pokemon(BaseModel):
             if cls.ONLY:
                 if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
                     continue
+            print("LALALALALA")
+            play()
             pokemons.append(p)
 
         return pokemons
