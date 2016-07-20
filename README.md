@@ -3,7 +3,7 @@
 
 #[Offical Website] (https://jz6.github.io/PoGoMap/)#
 
-#[Android Port](https://github.com/omkarmoghe/Pokemap)#
+##[Android Port](https://github.com/omkarmoghe/Pokemap)##
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
