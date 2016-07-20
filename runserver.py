@@ -40,5 +40,8 @@ if __name__ == '__main__':
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
-    config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
+    if args.gmaps_key is not None:
+        config['GMAPS_KEY']  = args.gmaps_key
+    else:
+        config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
