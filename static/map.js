@@ -14,7 +14,7 @@ var setLabelTime = function(){
         else {
             timestring = "(";
             if(hours > 0)
-                timestring = hours + "h";
+                timestring += hours + "h";
             
             timestring += ("0" + minutes).slice(-2) + "m";
             timestring += ("0" + seconds).slice(-2) + "s";
