@@ -1,5 +1,5 @@
-# **Example.py rebase underway, please look in [rewrite branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/py-rewrite) for more info.**
-##**Please refrain from submitting pull requests at this time!**
+##Example.py rebase underway, look in [rewrite branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/py-rewrite) for more info.
+##Please refrain from submitting pull requests at this time.
 
 #[Offical Website] (https://jz6.github.io/PoGoMap/#)
 
