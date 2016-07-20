@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 
 from threading import Thread
 
 from pogom import config
 from pogom.app import Pogom
 from pogom.search import search
-from pogom.utils import get_args, insert_mock_data
+from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.models import create_tables
 
 
@@ -17,7 +18,6 @@ def start_locator_thread(args):
     search_thread.daemon = True
     search_thread.name = 'search_thread'
     search_thread.start()
-
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
@@ -30,7 +30,6 @@ if __name__ == '__main__':
     # logging.getLogger("requests").setLevel(logging.DEBUG)
     # logging.getLogger("pgoapi").setLevel(logging.DEBUG)
     # logging.getLogger("rpc_api").setLevel(logging.DEBUG)
-
     args = get_args()
     create_tables()
 
@@ -41,4 +40,5 @@ if __name__ == '__main__':
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
+    config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
