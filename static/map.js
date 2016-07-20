@@ -23,11 +23,17 @@ function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longit
 
 
 var map;
+var marker;
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: center_lat, lng: center_lng},
-    zoom: 16
+    zoom: 15
   });
+  marker = new google.maps.Marker({
+            position: {lat: center_lat, lng: center_lng},
+            map: map,
+            animation: google.maps.Animation.DROP
+        });
 }
 
 $.getJSON("/pokemons", function(result){
