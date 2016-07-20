@@ -1,3 +1,8 @@
+# Basic docker image for PokemonGo-Map
+# Usage:
+#   docker build -t pokemongo-map .
+#   docker run -d -P pokemongo-map --host 0.0.0.0 -a ptc -u YOURUSERNAME -p YOURPASSWORD -l "Seattle, WA" -st 10 --google-maps-key CHECKTHEWIKI
+
 FROM python:2.7-alpine
 
 # ca-certificates is needed because without it, pip fails to install packages due to a certificate failure
