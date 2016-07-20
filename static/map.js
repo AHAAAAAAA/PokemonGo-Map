@@ -58,13 +58,31 @@ GetNewPokemons = function(stamp) {
                 content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
             });
 
+            google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
+                delete marker["persist"];
+                marker.infoWindow.close();
+            });
+
             marker.addListener('click', function() {
+                marker["persist"] = true;
                 marker.infoWindow.open(map, marker);
             });
 
+<<<<<<< HEAD
             markers.push({
                     m: marker,
                     disapear: item.disappear_time});
+=======
+            marker.addListener('mouseover', function() {
+                marker.infoWindow.open(map, marker);
+            });
+
+            marker.addListener('mouseout', function() {
+                if (!marker["persist"]) {
+                    marker.infoWindow.close();
+                }
+            });
+>>>>>>> refs/remotes/AHAAAAAAA/develop
 
             console.log(item.latitude);
         });        

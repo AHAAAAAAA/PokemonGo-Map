@@ -3,7 +3,32 @@
 	<head>
 		<title>Pokémap</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="PokeMap">
+		<meta name="mobile-web-app-capable" content="yes">
+
+		<!-- Fav- & Apple-Touch-Icons -->
+		<!-- Favicon -->
+		<link rel="shortcut icon" href="static/appicons/favicon.ico" type="image/x-icon">
+		<!-- non-retina iPhone pre iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/114x114.png" sizes="57x57">
+		<!-- non-retina iPad pre iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/144x144.png" sizes="72x72">
+		<!-- non-retina iPad iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="76x76">
+		<!-- retina iPhone pre iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/114x114.png" sizes="114x114">
+		<!-- retina iPhone iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/120x120.png" sizes="120x120">
+		<!-- retina iPad pre iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/144x144.png" sizes="144x144">
+		<!-- retina iPad iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="152x152">
+		<!-- retina iPhone 6 iOS 7 -->
+		<link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
+
 		<link rel="stylesheet" href="/static/css/style8.css" />
 		<link rel="stylesheet" href="/static/dist/css/app.min.css" />
 		<script src="/static/js/vendor/modernizr.custom.js"></script>
@@ -41,23 +66,37 @@
 		</nav>
 
     <div id="main">
+			<button id="trigger-overlay">Test</button>
       <div id="map"></div>
     </div>
+
+		<div class="overlay overlay-contentscale">
+			<button type="button" class="overlay-close">Close</button>
+			<nav>
+				<ul>
+					<li><a href="#">Login Details Here</a></li>
+				</ul>
+			</nav>
+		</div>
 
   </body>
 
   <!-- Scripts -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
-  <script src="/static/dist/js/app.min.js"></script>
-  <script src="/static/js/vendor/classie.js"></script>
-  <!-- <script src="/static/js/vendor/demo7.js"></script> -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+  <script type="text/javascript" src="/static/dist/js/app.min.js"></script>
+  <script type="text/javascript" src="/static/js/vendor/classie.js"></script>
+  <script type="text/javascript" src="/static/js/vendor/svg-overlay.js"></script>
 
   <script type="text/javascript">
-      var center_lat = {{lat}};
-      var center_lng = {{lng}};
+    var center_lat = {{lat}};
+    var center_lng = {{lng}};
   </script>
 
+	<script type="text/javascript" src="/static/map.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
+<<<<<<< HEAD
   <script type="text/javascript" src="/static/map.js" type="text/javascript"></script>
+=======
+>>>>>>> refs/remotes/AHAAAAAAA/develop
 </html>
