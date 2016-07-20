@@ -38,7 +38,14 @@ if __name__ == '__main__':
     else:
         insert_mock_data(args.location, 6)
 
-    app = Pogom(__name__)
+    ignore = []
+    only = []
+    if args.ignore:
+        ignore = [i.lower().strip() for i in args.ignore.split(',')]
+    elif args.only:
+        only = [i.lower().strip() for i in args.only.split(',')]
+
+    app = Pogom(__name__, ignore, only)
     config['ROOT_PATH'] = app.root_path
     if args.gmaps_key is not None:
         config['GMAPS_KEY']  = args.gmaps_key
