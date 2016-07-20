@@ -64,13 +64,16 @@ def insert_mock_data():
     locations = [l for l in generate_location_steps((latitude, longitude), num_pokemon)]
     disappear_time = datetime.now() + timedelta(hours=1)
 
+    detect_time = datetime.now()
+
     for i in xrange(num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
                        latitude=locations[i][0],
                        longitude=locations[i][1],
-                       disappear_time=disappear_time)
+                       disappear_time=disappear_time,
+                       detect_time=detect_time)
 
     for i in range(num_pokestop):
 
