@@ -663,7 +663,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
                         if Fort.Enabled == True:
                             if args.china:
                                 (Fort.Latitude, Fort.Longitude) = \
-transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
+                                transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                             if Fort.GymPoints and args.display_gym:
                                 gyms[Fort.FortId] = [Fort.Team, Fort.Latitude,
                                                      Fort.Longitude, Fort.GymPoints]
@@ -865,7 +865,7 @@ def get_pokemarkers():
             'disappear_time': -1,
             'lat': gym[1],
             'lng': gym[2],
-            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'><br>Prestige: " + str(gym[3]) + "</center>"
+            'infobox': "<div><center><small>Gym owned by:</small><br><b style='color:" + color + "'>Team " + numbertoteam[gym[0]] + "</b><br><img id='" + numbertoteam[gym[0]] + "' height='100px' src='"+icon+"'><br>Prestige: " + str(gym[3]) + "</center></div>"
         })
     for stop_key in pokestops:
         stop = pokestops[stop_key]
@@ -877,7 +877,7 @@ def get_pokemarkers():
                 'icon': 'static/forts/PstopLured.png',
                 'lat': stop[0],
                 'lng': stop[1],
-                'infobox': 'Lured Pokestop, expires at ' + stop[2],
+                'infobox': "<div><b>Lured Pokestop</b></div><div>Expires at - " + stop[2] + "</div><div><a href='https://www.google.com/maps/dir/Current+Location/" + str(stop[0]) + "," + str(stop[1]) + "' target='_blank' title='View in Maps'>Get Directions</a></div>"
             })
         else:
             pokeMarkers.append({
@@ -887,7 +887,7 @@ def get_pokemarkers():
                 'icon': 'static/forts/Pstop.png',
                 'lat': stop[0],
                 'lng': stop[1],
-                'infobox': 'Pokestop',
+                'infobox': "<div><b>Pokestop</b></div>"
             })
     return pokeMarkers
 
