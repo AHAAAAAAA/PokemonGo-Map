@@ -2,7 +2,7 @@ from math import sqrt, sin, cos
 
 a = 6378245.0
 ee = 0.00669342162296594323
-pi = 3.14159265358979324
+pi = 3.14159265358973021
 
 
 def transform_from_wgs_to_gcj(wgs_loc):
