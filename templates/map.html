@@ -66,6 +66,7 @@
 		</nav>
 
     <div id="main">
+			<div class="request-timer" style="position: fixed; right: 10px;"><label id="request-timer-sec" style="display: inline-block;">10 sec</label><input style="display: inline-block;" id="request-timer" type="range" min="1" max="60" value="10" step="1" /></div>
 			<button id="trigger-overlay">Test</button>
       <div id="map"></div>
     </div>
@@ -93,6 +94,6 @@
     var center_lng = {{lng}};
   </script>
 
-  <script type="text/javascript" src="/static/map.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
+  <script type="text/javascript" src="/static/map.js" ></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script> 
 </html>

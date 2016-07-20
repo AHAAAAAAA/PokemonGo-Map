@@ -5,6 +5,13 @@ var map,
 
 var markers = [];
 
+$(document).ready(function () {
+    $( "#request-timer").change(function() {
+        requestInterval = $(this).val() * 1000;
+        $( "#request-timer-sec").html($(this).val() + " sec");
+    });
+});
+
 pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time + (new Date().getTimezoneOffset() * 60000));
 
