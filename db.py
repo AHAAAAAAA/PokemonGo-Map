@@ -11,10 +11,7 @@ except ImportError:
 
 
 def get_engine():
-    return create_engine(
-        'sqlite:///db.sqlite',
-        echo=True
-    )
+    return create_engine(DB_ENGINE)
 
 Base = declarative_base()
 
