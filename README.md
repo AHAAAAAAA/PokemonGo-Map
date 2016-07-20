@@ -1,5 +1,5 @@
-#Rejecting all the pull requests due to upcoming refactor. #
-##Please refrain from submitting pull requests at this time.##
+#Please refrain from submitting pull requests at this time.#
+##Rejecting all the pull requests due to upcoming refactor. ##
 
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
