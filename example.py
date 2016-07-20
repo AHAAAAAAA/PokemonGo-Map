@@ -40,7 +40,7 @@ APP = 'com.nianticlabs.pokemongo'
 
 with open('credentials.json') as file:
 	credentials = json.load(file)
-
+mt = False
 PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
 ANDROID_ID = credentials.get('android_id', None)
 SERVICE = credentials.get('service', None)
@@ -471,6 +471,12 @@ def get_args():
         help='Set web server listening host',
         default='127.0.0.1')
     parser.add_argument(
+        '-mt',
+        '--multithreading',
+        help='Enable multithreaded search',
+        action='store_true',
+        default=False)
+    parser.add_argument(
         '-P',
         '--port',
         type=int,
@@ -564,7 +570,10 @@ def main():
         global DEBUG
         DEBUG = True
         print '[!] DEBUG mode on'
-
+    if args.multithreading:
+        mt = True
+    else:
+        mt = False
     # only get location for first run
     if not (FLOAT_LAT and FLOAT_LONG):
       print('[+] Getting initial location')
@@ -597,23 +606,46 @@ def main():
     dx = 0
     dy = -1
     steplimit2 = steplimit**2
-    for step in range(steplimit2):
+    def step(x, y, dx, dy, stepcount):
         #starting at 0 index
-        debug('looping: step {} of {}'.format((step+1), steplimit**2))
+        debug('looping: step {} of {}'.format((stepcount+1), steplimit**2))
         #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
         # Scan location math
         if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
             set_location_coords(x * 0.0025 + origin_lat, y * 0.0025 + origin_lon, 0)
+        process_step(args, api_endpoint, access_token, profile_response,
+                 pokemonsJSON, ignore, only)
+        if(mt == False):
+            print('Completed: ' + str(
+                ((stepcount+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
+    
+    threads = []
+    count = 0
+    for stepcount in range(steplimit2):
         if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
             (dx, dy) = (-dy, dx)
 
         (x, y) = (x + dx, y + dy)
+        if(mt):
+            t = threading.Thread(target=step,args=(x, y, dx, dy, stepcount))
+            threads.append(t)
+            t.start()
+            if(len(threads) > 25):
+                print("Thread cap reached, waiting for responses...")
+                for i in range(25):
+                    threads[i].join()
+                    count = count + 1
+                    print('Completed: ' + str(((count) + pos * .25 - .25) / (steplimit2) * 100) + '%')
+                threads = []    
+                    
+        else:
+            step(x, y, dx, dy, stepcount)
+    if(mt):
+        for stepcount in range(len(threads)):
+            threads[stepcount].join()
+            count = count + 1
+            print('Completed: ' + str(((count) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
-        process_step(args, api_endpoint, access_token, profile_response,
-                     pokemonsJSON, ignore, only)
-
-        print('Completed: ' + str(
-            ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
     global NEXT_LAT, NEXT_LONG
     if (NEXT_LAT and NEXT_LONG and
