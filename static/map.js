@@ -1,3 +1,5 @@
+var gym_types = [ "Uncontested", "Mystic", "Valor", "Instinct" ];
+
 function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
     disappear_date = new Date(disappear_time)
 
@@ -24,6 +26,34 @@ function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longit
     return str;
 }
 
+function gymLabel(item) {
+    var gym_color = [ "0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6" ];
+    var str;
+    if (gym_types[item.team_id] == 0) {
+        str = '\
+            <div><center>\
+            <div>\
+                <b style="color:rgba(' + gym_color[item.team_id] + ')">' + gym_types[item.team_id] + '</b><br>\
+            </div>\
+            </center></div>';
+    } else {
+        str = '\
+            <div><center>\
+            <div>\
+                Gym owned by:\
+            </div>\
+            <div>\
+                <b style="color:rgba(' + gym_color[item.team_id] + ')">Team ' + gym_types[item.team_id] + '</b><br>\
+                <img height="100px" src="/static/forts/' + gym_types[item.team_id] + '_large.png"> \
+            </div>\
+            <div>\
+                Prestige: ' + item.gym_points + '\
+            </div>\
+            </center></div>';
+    }
+
+    return str;
+}
 
 var map;
 var marker;
@@ -56,6 +86,24 @@ function initMap() {
             });
 
             console.log(item.latitude);
+        });
+    });
+
+    $.getJSON("/gyms", function(result){
+        $.each(result, function(i, item){
+            var marker = new google.maps.Marker({
+                position: {lat: item.latitude, lng: item.longitude},
+                map: map,
+                icon: 'static/forts/'+gym_types[item.team_id]+'.png'
+            });
+
+            marker.infoWindow = new google.maps.InfoWindow({
+                content: gymLabel(item)
+            });
+
+            marker.addListener('click', function() {
+                marker.infoWindow.open(map, marker);
+            });
         });
     });
 }
