@@ -1,0 +1,9 @@
+/* Main */
+
+	#main {
+		@include padding(4em, 0);
+
+		@include breakpoint(small) {
+			@include padding(3em, 0);
+		}
+	}

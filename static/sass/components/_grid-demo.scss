@@ -1,0 +1,17 @@
+/* Grid Demo */
+
+	.grid-demo {
+		display: block;
+		margin: 0 0 _size(element-margin) 0;
+
+		span {
+			background: lighten(_palette(accent1, bg), 30);
+			border-radius: _size(border-radius);
+			color: rgba(0,0,0,0.25);
+			display: block;
+			font-weight: _font(weight-bold);
+			height: _size(element-height);
+			line-height: _size(element-height);
+			text-align: center;
+		}
+	}
