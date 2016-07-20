@@ -25,3 +25,6 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 #For instructions, please refer to [the wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki)#
 
 Hello Paul Xu the Internship king ;)
+
+#Installation
+A thorough installation guide and support can be found [here](https://www.reddit.com/r/pokemongodev/comments/4t80df/wip_pokemon_go_map_visualization_google_maps_view/d5feu2f?st=iqtsngmd&sh=1a3e519e)
