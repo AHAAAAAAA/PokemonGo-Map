@@ -469,7 +469,6 @@ def work(worker_no):
 
 def main(worker_no, service, api_endpoint, access_token, profile_response):
     origin_lat, origin_lon = utils.get_start_coords(worker_no)
-    add_to_db = []
 
     args = get_args()
 
@@ -486,7 +485,9 @@ def main(worker_no, service, api_endpoint, access_token, profile_response):
     dx = 0
     dy = -1
     steplimit2 = steplimit**2
+    session = db.Session()
     for step in range(steplimit2):
+        add_to_db = []
         #starting at 0 index
         debug('looping: step {} of {}'.format((step+1), steplimit**2))
         # Scan location math
@@ -508,13 +509,12 @@ def main(worker_no, service, api_endpoint, access_token, profile_response):
             lon=lon,
         )
 
+        for spawn_id in add_to_db:
+            pokemon = pokemons[spawn_id]
+            db.add_sighting(session, pokemon)
+        session.commit()
+        add_to_db = []
         print('Completed: ' + str(((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
-    session = db.Session()
-    for spawn_id in add_to_db:
-        pokemon = pokemons[spawn_id]
-        db.add_sighting(session, pokemon)
-    session.commit()
-    add_to_db = []
 
     set_location_coords(origin_lat, origin_lon, 0)
 
