@@ -13,7 +13,7 @@ locale="-Len"                        # Locale
 ignore="-i Pidgey,Zubat"             # -i to ignore/ -o to only display those pokemons
 opts="-dg"                           # Aditional options: -dg/--display-gym, -dp/--display-pokestop , -ol/--onlylure, -d/--debug, -c/--china
 
-if [ \( "$user" = "" \) -o \( "$passwd" = "" \) -o \( "$auth" = "" \) ];then
+if [ \( -z "$user" \) -o \( -z "$passwd" \) -o \( -z "$auth" \) ];then
     echo "Please open this script and configure it first"
     exit 1
 elif [ "$#" -eq 0 ];then
