@@ -569,6 +569,11 @@ def main():
     if not (FLOAT_LAT and FLOAT_LONG):
       print('[+] Getting initial location')
       retrying_set_location(args.location)
+    else: # set given location
+        global origin_lat
+        global origin_lon
+        origin_lat = FLOAT_LAT
+        origin_lon = FLOAT_LONG
 
     if args.auto_refresh:
         global auto_refresh
@@ -792,7 +797,7 @@ def fullmap():
         'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh)
 
 
-@app.route('/next_loc')
+@app.route('/next_loc', methods = ['POST'])
 def next_loc():
     global NEXT_LAT, NEXT_LONG
 
@@ -804,8 +809,12 @@ def next_loc():
         print('[+] Saved next location as %s,%s' % (lat, lon))
         NEXT_LAT = float(lat)
         NEXT_LONG = float(lon)
-        return 'ok'
 
+        loc = {
+            'lat': lat,
+            'lng': lon
+        }
+        return json.dumps(loc)
 
 def get_pokemarkers():
     pokeMarkers = [{

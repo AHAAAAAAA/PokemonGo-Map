@@ -226,8 +226,6 @@
 
         if (navigator.geolocation) {
           function updateLocation() {
-            createMap();
-
             navigator.geolocation.getCurrentPosition(locationSuccess, locationFail);
             function locationFail() { console.log('localization failed') };
             function locationSuccess(position) {
@@ -236,6 +234,12 @@
 
               if (currentLocation !== undefined) {
                 currentLocation.setMap(null);
+                $.post(baseURL + "/next_loc?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude, function(response){
+                    var json_obj = $.parseJSON(response);//parse JSON
+                        options["lat"] = json_obj["lat"];
+                        options["lng"] = json_obj["lng"];
+                    console.log("New Location set. Lat: " + options["lat"] + ", Long: " + options["lng"]);
+                });
               }
 
               var currentPositionIcon = new google.maps.MarkerImage('static/misc/current_location.png', null, null, null, new google.maps.Size(16,16));
@@ -259,6 +263,7 @@
                  currentLocation["persist"] = null;
               });
             };
+            createMap();
           }
           window.setInterval(updateLocation, {{ auto_refresh }});
         }
