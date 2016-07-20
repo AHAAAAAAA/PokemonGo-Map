@@ -26,32 +26,27 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'])
 
-    def pokemons(self, stamp):
-        return jsonify(Pokemon.get_active(stamp))
-    def get_raw_data(self):
+    def get_raw_data(self, stamp):
         return {
             'gyms': [g for g in Gym.select().dicts()],
             'pokestops': [p for p in Pokestop.select().dicts()],
-            'pokemons': Pokemon.get_active()
+            'pokemons': Pokemon.get_active(stamp)
         }
 
-    def raw_data(self):
-        return jsonify(self.get_raw_data())
+    def raw_data(self, stamp):
+        return jsonify(self.get_raw_data(stamp))
 
-    def pokemons(self):
-        return jsonify(self.get_raw_data()['pokemons'])
+    def pokemons(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['pokemons'])
 
-    def pokestops(self):
-        return jsonify(self.get_raw_data()['pokestops'])
+    def pokestops(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['pokestops'])
 
-    def gyms(self):
-        return jsonify(self.get_raw_data()['gyms'])
-
-
+    def gyms(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['gyms'])
 
 
 class CustomJSONEncoder(JSONEncoder):
-
     def default(self, obj):
         try:
             if isinstance(obj, datetime):
