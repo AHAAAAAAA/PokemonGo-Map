@@ -2,8 +2,12 @@
 function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
     disappear_date = new Date(disappear_time)
     let pad = number => number <= 99 ? ("0"+number).slice(-2) : number;
+    let img_id = id < 100 ? '0' + id : id;
 
     var label = `
+        <div class='pokemon-artwork'>
+            <img src='https://assets.pokemon.com/assets/cms2/img/pokedex/full/${img_id}.png' />
+        </div>
         <div>
             <b>${name}</b>
             <span> - </span>
