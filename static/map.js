@@ -6,7 +6,7 @@ function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longit
 
     var label = `
         <div class='pokemon-artwork'>
-            <img src='https://assets.pokemon.com/assets/cms2/img/pokedex/full/${img_id}.png' />
+            <img src='static/images/pokemons/${img_id}.png' />
         </div>
         <div>
             <b>${name}</b>
