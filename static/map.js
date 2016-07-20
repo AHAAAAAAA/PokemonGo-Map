@@ -10,22 +10,22 @@ function pad(number) {
     return number <= 99 ? ("0" + number).slice(-2) : number;
 };
 
-pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
-    disappear_date = new Date(disappear_time + (new Date().getTimezoneOffset() * 60000));
+pokemonLabel = function(item) {
+    disappear_date = new Date(item.disappear_time + (new Date().getTimezoneOffset() * 60000));
 
     var str = '\
         <div>\
-            <b>' + name + '</b>\
+            <b>' + item.pokemon_name + '</b>\
             <span> - </span>\
             <small>\
-                <a href="http://www.pokemon.com/us/pokedex/' + id + '" target="_blank" title="View in Pokedex">#' + id + '</a>\
+                <a href="http://www.pokemon.com/us/pokedex/' + item.pokemon_id + '" target="_blank" title="View in Pokedex">#' +item.pokemon_id + '</a>\
             </small>\
         </div>\
         <div>\
             Disappears at ' + pad(disappear_date.getHours()) + ':' + pad(disappear_date.getMinutes()) + ':' + pad(disappear_date.getSeconds()) + '\
-            <span class="label-countdown" disappears-at="' + disappear_time + '">(00m00s)</span></div>\
+            <span class="label-countdown" disappears-at="' + item.disappear_time + '">(00m00s)</span></div>\
         <div>\
-            <a href="https://www.google.com/maps/dir/Current+Location/' + latitude + ',' + longitude + '"\
+            <a href="https://www.google.com/maps/dir/Current+Location/' + item.latitude + ',' + item.longitude + '"\
                     target="_blank" title="View in Maps">Get Directions</a>\
         </div>';
 
@@ -63,6 +63,7 @@ gymLabel = function gymLabel(item) {
 
 pokestopLabel = function pokestopLabel(item) {
     var str;
+
     if (!item.lure_expiration) {
         str = '<div><center> \
                    <div><b>Pokéstop</b></div> \
@@ -105,7 +106,7 @@ GetNewPokemons = function(stamp) {
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
-                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+                content: pokemonLabel(item)
             });
 
             google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
@@ -131,8 +132,6 @@ GetNewPokemons = function(stamp) {
                     marker.infoWindow.close();
                 }
             });
-
-            console.log(item.latitude);
         });        
     }).always(function() {
         setTimeout(function() {
