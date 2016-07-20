@@ -8,6 +8,7 @@ import time
 import threading
 import Queue
 import itertools
+import math
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -39,8 +40,15 @@ def send_map_request(api, position):
 def generate_location_steps(initial_location, num_steps):
     coord_len = num_steps // 2
     coords = [i for i in range(-coord_len, coord_len + 1)]
+    coord_pairs = itertools.product(coords, repeat=2)
 
-    for x, y in itertools.product(coords, repeat=2):
+    def distance(pair):
+        x, y = pair
+        return math.sqrt(x**2 + y**2)
+
+    coord_pairs = sorted(coord_pairs, key=distance)
+
+    for x, y in coord_pairs:
         yield (x * 0.0025 + initial_location[0],
                y * 0.0025 + initial_location[1],
                0)
