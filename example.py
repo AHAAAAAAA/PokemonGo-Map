@@ -450,7 +450,7 @@ def get_args():
         '-o', '--only', help='Comma-separated list of Pokémon names or IDs to search')
     parser.add_argument(
         "-ar",
-        "--auto_refresh",
+        "--auto-refresh",
         help="Enables an autorefresh that behaves the same as a page reload. " +
              "Needs an integer value for the amount of seconds")
     parser.add_argument(
