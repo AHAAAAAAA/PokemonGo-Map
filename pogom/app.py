@@ -11,15 +11,13 @@ from .models import Pokemon, Gym, Pokestop
 
 
 class Pogom(Flask):
-    def __init__(self, name, ignore, only):
+    def __init__(self, name):
         super(Pogom, self).__init__(name)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/pokemons", methods=['GET'])(self.pokemons)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
-        self.ignore = ignore
-        self.only = only
 
     def fullmap(self):
         return render_template('map.html',
@@ -28,7 +26,8 @@ class Pogom(Flask):
                                gmaps_key=config['GMAPS_KEY'])
 
     def pokemons(self):
-        return jsonify(Pokemon.get_active(self.ignore, self.only))
+        return jsonify(Pokemon.get_active(ignore=config['IGNORE'],
+                                          only=config['ONLY']))
 
     def pokestops(self):
         return jsonify([p for p in Pokestop.select().dicts()])

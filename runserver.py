@@ -41,20 +41,17 @@ if __name__ == '__main__':
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]
 
+    if args.ignore:
+        config['IGNORE'] = [i.lower().strip() for i in args.ignore.split(',')]
+    elif args.only:
+        config['ONLY'] = [i.lower().strip() for i in args.only.split(',')]
 
     if not args.mock:
         start_locator_thread(args)
     else:
         insert_mock_data(args.location, 6)
 
-    ignore = []
-    only = []
-    if args.ignore:
-        ignore = [i.lower().strip() for i in args.ignore.split(',')]
-    elif args.only:
-        only = [i.lower().strip() for i in args.only.split(',')]
-
-    app = Pogom(__name__, ignore, only)
+    app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
     if args.gmaps_key is not None:
         config['GMAPS_KEY']  = args.gmaps_key
