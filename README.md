@@ -19,3 +19,5 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 
 ---
 For instructions, please refer to [the wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki)
+
+Hello Paul Xu the Internship king ;)
