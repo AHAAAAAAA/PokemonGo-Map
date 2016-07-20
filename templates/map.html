@@ -13,6 +13,12 @@
           height: 100%;
           margin: 0;
           padding: 0;
+          overflow: hidden;
+        }
+        
+        #map {
+        	height: 100vh;
+        	width: 100vw;
         }
     </style>
 	</head>
@@ -52,6 +58,6 @@
       var center_lng = {{lng}};
   </script>
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
   <script type="text/javascript" src="/static/map.js"></script>
 </html>

@@ -6,5 +6,6 @@ config = {
     'LOCALES_DIR': 'locales',
     'ROOT_PATH': None,
     'ORIGINAL_LATITUDE': None,
-    'ORIGINAL_LONGITUDE': None
+    'ORIGINAL_LONGITUDE': None,
+    'GMAPS_KEY' : None
 }
