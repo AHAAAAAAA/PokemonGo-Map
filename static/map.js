@@ -23,7 +23,7 @@ pokemonLabel = function(item) {
         </div>\
         <div>\
             Disappears at ' + pad(disappear_date.getHours()) + ':' + pad(disappear_date.getMinutes()) + ':' + pad(disappear_date.getSeconds()) + '\
-            <span class="label-countdown" disappears-at="' + item.disappear_time + '">(00m00s)</span></div>\
+            <span class="label-countdown" disappears-at="' + item.disappear_time + '"></span></div>\
         <div>\
             <a href="https://www.google.com/maps/dir/Current+Location/' + item.latitude + ',' + item.longitude + '"\
                     target="_blank" title="View in Maps">Get Directions</a>\
@@ -74,7 +74,7 @@ pokestopLabel = function pokestopLabel(item) {
                    <div><b>Pokéstop</b></div> \
                    <div><b>Lure enabled</b></div> \
                    Expires at ' + pad(expire_date.getHours()) + ':' + pad(expire_date.getMinutes()) + ':' + pad(expire_date.getSeconds()) + '\
-                   <span class="label-countdown" disappears-at="' + item.lure_expiration + '">(00m00s)</span></div>\
+                   <span class="label-countdown" disappears-at="' + item.lure_expiration + '"></span></div>\
                </center></div>';
     }
     return str;
@@ -190,3 +190,22 @@ GetNewPokeStops = function(stamp) {
         });
     });
 };
+
+var setLabelTime = function(){
+$('.label-countdown').each(function (index, element) {
+    var now = new Date().getTime();
+    var diff = element.getAttribute("disappears-at") - now;
+
+    if (diff > 0) {
+        var min = Math.floor((diff / 1000) / 60);
+        var sec = Math.floor((diff / 1000) - (min * 60));
+        $(element).text("(" + pad(min) + "m" + pad(sec) + "s" + ")");
+    } else {
+        $(element).text("(Gone!)");
+    }
+
+
+    });
+};
+
+window.setInterval(setLabelTime, 1000);
