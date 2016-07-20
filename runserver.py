@@ -17,6 +17,7 @@ search_thread = None
 
 
 def start_locator_thread(args):
+    global search_thread
     search_thread = Search(args)
     search_thread.daemon = True
     search_thread.name = 'search_thread'
