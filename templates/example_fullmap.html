@@ -5,14 +5,37 @@
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>Flask Google Maps Full Map Example</title>
+            <style>
+            input {
+                border: none;
+                background: transparent;
+                height:50px;
+                width:100%;
+                outline: none;
+                font-size: 44px;
+                position: absolute;
+                top:3px;
+                left:3px;
+            }
+
+            .loading {
+                top:50%;
+                left:50%;
+                position:absolute;
+            }
+            </style>
     </head>
     <body>
-        <h1>Flask Google Maps Full Map Example</h1>
-        <div id="fullmap" style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;'>
+        <form action="/search" method="get">
+            <input type="text" name="q" placeholder="Search by Address">
+        </form>
+        <div id="fullmap" style='height:100%;width:100%;top:58px;left:0;position:absolute;z-index:200;'>
             {{ fullmap.html }}
-
         </div>
-        
+
+        <div class="loading">
+            finding pokemans...
+        </div>
 
     </body>
 {{ fullmap.js }}
@@ -25,20 +48,20 @@
         $('.label-countdown').each(function (index, element) {
             var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at"))*1000);
             var now = new Date();
-            
+
             var difference = Math.abs(disappearsAt - now);
             var hours = Math.floor(difference / 36e5);
             var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
             var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
-            
+
             if(disappearsAt < now){
                 timestring = "(expired)";
-            } 
+            }
             else {
                 timestring = "(";
                 if(hours > 0)
                     timestring = hours + "h";
-                
+
                 timestring += ("0" + minutes).slice(-2) + "m";
                 timestring += ("0" + seconds).slice(-2) + "s";
                 timestring += ")";
@@ -50,7 +73,7 @@
 
     window.setInterval(setLabelTime, 1000);
 
-  
+
   </script>
   {% if auto_refresh %}
     <script type="text/javascript">
@@ -146,7 +169,7 @@
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
                 var now = new Date();
-                
+
                 for (var index in json_obj) {
                     var item = json_obj[index];
                     var key = item["type"]+item["key"];
