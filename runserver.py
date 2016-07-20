@@ -66,7 +66,7 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
     try:
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
-    except:
+    except Exception as e:
         search_thread.cancel()
     finally:
-        raise
+        raise e
