@@ -6,12 +6,12 @@ var map,
 var markers = [];
 var gym_types = [ "Uncontested", "Mystic", "Valor", "Instinct" ];
 
+function pad(number) {
+    return number <= 99 ? ("0" + number).slice(-2) : number;
+};
+
 pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time + (new Date().getTimezoneOffset() * 60000));
-
-    var pad = function pad(number) {
-      return number <= 99 ? ("0" + number).slice(-2) : number;
-    };
 
     var str = '\
         <div>\
@@ -61,6 +61,24 @@ gymLabel = function gymLabel(item) {
     return str;
 };
 
+pokestopLabel = function pokestopLabel(item) {
+    var str;
+    if (!item.lure_expiration) {
+        str = '<div><center> \
+                   <div><b>Pokéstop</b></div> \
+               </center></div>';
+    } else {
+        expire_date = new Date(item.lure_expiration)
+        str = '<div><center> \
+                   <div><b>Pokéstop</b></div> \
+                   <div><b>Lure enabled</b></div> \
+                   Expires at ' + pad(expire_date.getHours()) + ':' + pad(expire_date.getMinutes()) + ':' + pad(expire_date.getSeconds()) + '\
+                   <span class="label-countdown" disappears-at="' + item.lure_expiration + '">(00m00s)</span></div>\
+               </center></div>';
+    }
+    return str;
+}
+
 initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: center_lat, lng: center_lng},
@@ -73,6 +91,7 @@ initMap = function() {
     });  
     GetNewPokemons(lastStamp);
     GetNewGyms(lastStamp);
+    GetNewPokeStops(lastStamp);
 };
 
 GetNewPokemons = function(stamp) {
@@ -119,6 +138,7 @@ GetNewPokemons = function(stamp) {
         setTimeout(function() {
             GetNewPokemons(lastStamp);
             GetNewGyms(lastStamp);
+            GetNewPokeStops(lastStamp);
         }, requestInterval)
     });
 
@@ -142,6 +162,27 @@ GetNewGyms = function(stamp) {
 
             marker.infoWindow = new google.maps.InfoWindow({
                 content: gymLabel(item)
+            });
+
+            marker.addListener('click', function() {
+                marker.infoWindow.open(map, marker);
+            });
+        });
+    });
+};
+
+GetNewPokeStops = function(stamp) {
+    $.getJSON("/pokestops/"+stamp, function(result){
+        $.each(result, function(i, item){
+            var imagename = item.lure_expiration ? "PstopLured" : "Pstop";
+            var marker = new google.maps.Marker({
+                position: {lat: item.latitude, lng: item.longitude},
+                map: map,
+                icon: 'static/forts/'+ imagename +'.png'
+            });
+
+            marker.infoWindow = new google.maps.InfoWindow({
+                content: pokestopLabel(item)
             });
 
             marker.addListener('click', function() {
