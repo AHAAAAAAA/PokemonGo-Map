@@ -15,7 +15,7 @@ class Pogom(Flask):
         super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
-        self.route("/pokemons", methods=['GET'])(self.pokemons)
+        self.route("/pokemons/<stamp>", methods=['GET'])(self.pokemons)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
@@ -26,24 +26,24 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'])
 
-    def get_raw_data(self):
+    def get_raw_data(self, stamp):
         return {
             'gyms': [g for g in Gym.select().dicts()],
             'pokestops': [p for p in Pokestop.select().dicts()],
-            'pokemons': Pokemon.get_active()
+            'pokemons': Pokemon.get_active(stamp)
         }
 
-    def raw_data(self):
-        return jsonify(self.get_raw_data())
+    def raw_data(self, stamp):
+        return jsonify(self.get_raw_data(stamp))
 
-    def pokemons(self):
-        return jsonify(self.get_raw_data()['pokemons'])
+    def pokemons(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['pokemons'])
 
-    def pokestops(self):
-        return jsonify(self.get_raw_data()['pokestops'])
+    def pokestops(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['pokestops'])
 
-    def gyms(self):
-        return jsonify(self.get_raw_data()['gyms'])
+    def gyms(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['gyms'])
 
 
 
