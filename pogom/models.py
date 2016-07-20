@@ -58,12 +58,27 @@ class Pokemon(BaseModel):
 
 
 class Pokestop(BaseModel):
+    LURED_ONLY = False
+
     pokestop_id = CharField(primary_key=True)
     enabled = BooleanField()
     latitude = FloatField()
     longitude = FloatField()
     last_modified = DateTimeField()
     lure_expiration = DateTimeField(null=True)
+
+    @classmethod
+    def get_stops(cls):
+        query = (Pokestop.select().dicts())
+
+        stops = []
+
+        if cls.LURED_ONLY:
+            stops = [stop for stop in query if stop['lure_expiration'] is not None]
+        else:
+            stops = [stop for stop in query]
+
+        return stops
 
 
 class Gym(BaseModel):
