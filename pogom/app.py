@@ -26,8 +26,7 @@ class Pogom(Flask):
                                gmaps_key=config['GMAPS_KEY'])
 
     def pokemons(self):
-        return jsonify(Pokemon.get_active(ignore=config['IGNORE'],
-                                          only=config['ONLY']))
+        return jsonify(Pokemon.get_active())
 
     def pokestops(self):
         return jsonify([p for p in Pokestop.select().dicts()])

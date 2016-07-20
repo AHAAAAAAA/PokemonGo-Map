@@ -10,7 +10,7 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
-from pogom.models import create_tables
+from pogom.models import create_tables, Pokemon
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
@@ -48,9 +48,9 @@ if __name__ == '__main__':
     config['ORIGINAL_LONGITUDE'] = position[1]
 
     if args.ignore:
-        config['IGNORE'] = [i.lower().strip() for i in args.ignore.split(',')]
+        Pokemon.IGNORE = [i.lower().strip() for i in args.ignore.split(',')]
     elif args.only:
-        config['ONLY'] = [i.lower().strip() for i in args.only.split(',')]
+        Pokemon.ONLY = [i.lower().strip() for i in args.only.split(',')]
 
     if not args.mock:
         start_locator_thread(args)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
     if args.gmaps_key is not None:
-        config['GMAPS_KEY']  = args.gmaps_key
+        config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
