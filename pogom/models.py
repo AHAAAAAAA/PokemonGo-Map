@@ -30,7 +30,7 @@ class Pokemon(BaseModel):
     disappear_time = DateTimeField()
 
     @classmethod
-    def get_active(cls):
+    def get_active(cls, ignore, only):
         query = (Pokemon
                  .select()
                  .where(Pokemon.disappear_time > datetime.now())
@@ -39,6 +39,14 @@ class Pokemon(BaseModel):
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemon_name = p['pokemon_name'].lower()
+            pokemon_id = str(p['pokemon_id'])
+            if ignore:
+                if pokemon_name in ignore or pokemon_id in ignore:
+                    continue
+            if only:
+                if pokemon_name not in only and pokemon_id not in only:
+                    continue
             pokemons.append(p)
 
         return pokemons
