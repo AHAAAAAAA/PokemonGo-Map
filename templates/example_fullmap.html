@@ -19,6 +19,10 @@
             }
 
             .loading {
+                height:50px;
+                width:70px;
+                margin-top:-25px;
+                margin-left:-35px;
                 top:50%;
                 left:50%;
                 position:absolute;
@@ -27,15 +31,13 @@
     </head>
     <body>
         <form action="/search" method="get">
-            <input type="text" name="q" placeholder="Search by Address">
+            <input type="text" name="q" placeholder="Search by Address" autocomplete="off">
         </form>
         <div id="fullmap" style='height:100%;width:100%;top:58px;left:0;position:absolute;z-index:200;'>
             {{ fullmap.html }}
         </div>
 
-        <div class="loading">
-            finding pokemans...
-        </div>
+        <img class="loading" src="/static/images/loading.gif">
 
     </body>
 {{ fullmap.js }}
