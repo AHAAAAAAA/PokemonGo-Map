@@ -437,68 +437,76 @@ def get_token(service, username, password):
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-a', '--auth_service', type=str.lower, help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username', required=True)
-    parser.add_argument('-p', '--password', help='Password', required=False)
+        '-a', '--auth_service', type=str.lower, help='Auth Service', default=os.environ.get('AUTH_SERVICE', 'ptc'))
+    parser.add_argument('-u', '--username', help='Username',
+        action = FindValueInEnvironmentAction, varName = 'USERNAME', required=True)
+    parser.add_argument('-p', '--password', help='Password',
+        required=False, default=os.environ.get('PASSWORD', None))
     parser.add_argument(
-        '-l', '--location', type=parse_unicode, help='Location', required=True)
-    parser.add_argument('-st', '--step-limit', help='Steps', required=True)
+        '-l', '--location', type=parse_unicode, help='Location',
+        action = FindValueInEnvironmentAction, varName = 'LOCATION', required=True)
+    parser.add_argument('-st', '--step_limit', help='Steps',
+        action = FindValueInEnvironmentAction, varName = 'STEP_LIMIT', required=True)
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        '-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore')
+        '-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore',
+        default=os.environ.get('IGNORE', None))
     group.add_argument(
-        '-o', '--only', help='Comma-separated list of Pokémon names or IDs to search')
+        '-o', '--only', help='Comma-separated list of Pokémon names or IDs to search',
+        default=os.environ.get('ONLY', None))
     parser.add_argument(
-        "-ar",
-        "--auto_refresh",
-        help="Enables an autorefresh that behaves the same as a page reload. " +
-             "Needs an integer value for the amount of seconds")
+        '-ar',
+        '--auto_refresh',
+        help='Enables an autorefresh that behaves the same as a page reload. Needs an integer value for the amount of seconds',
+        default=os.environ.get('AUTO_REFRESH', None))
     parser.add_argument(
         '-dp',
         '--display-pokestop',
         help='Display pokéstop',
         action='store_true',
-        default=False)
+        default=os.environ.get('DISPLAY_POKESTOP', False))
     parser.add_argument(
         '-dg',
         '--display-gym',
         help='Display Gym',
         action='store_true',
-        default=False)
+        default=os.environ.get('DISPLAY_GYM', False))
     parser.add_argument(
         '-H',
         '--host',
         help='Set web server listening host',
-        default='127.0.0.1')
+        default=os.environ.get('HOST', '127.0.0.1'))
     parser.add_argument(
         '-P',
         '--port',
         type=int,
         help='Set web server listening port',
-        default=5000)
+        default=int(os.environ.get('PORT', 5000)))
     parser.add_argument(
-        "-L",
-        "--locale",
-        help="Locale for Pokemon names: default en, check locale folder for more options",
-        default="en")
+        '-L',
+        '--locale',
+        help='Locale for Pokemon names: default en, check locale folder for more options',
+        default=os.environ.get('LOCALE', 'en'))
     parser.add_argument(
         "-ol",
         "--onlylure",
         help='Display only lured pokéstop',
-        action='store_true')
+        action='store_true',
+        default=os.environ.get('ONLYLURE', None))
     parser.add_argument(
         '-c',
         '--china',
         help='Coordinates transformer for China',
-        action='store_true')
+        action='store_true', default=os.environ.get('CHINA', None))
     parser.add_argument(
     	"-pm",
     	"--ampm_clock",
     	help="Toggles the AM/PM clock for Pokemon timers",
     	action='store_true',
-    	default=False)
+    	default=os.environ.get('AMPM_CLOCK', False))
     parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
+        '-d', '--debug', help='Debug Mode', action='store_true',
+        default=os.environ.get('DEBUG', True))
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
@@ -901,6 +909,23 @@ def get_map():
         markers=get_pokemarkers(),
         zoom='15', )
     return fullmap
+
+
+class FindValueInEnvironmentAction(argparse.Action):
+    def __init__(self, varName, **kwargs):
+        assert kwargs.get("required")
+
+        valueFromEnv = os.environ.get(varName)
+        requiredValue = True
+
+        if valueFromEnv:
+            kwargs["required"] = False
+            kwargs["default"] = valueFromEnv
+
+        argparse.Action.__init__(self, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string):
+        setattr(namespace, self.dest, values)
 
 
 if __name__ == '__main__':
