@@ -131,7 +131,7 @@ def get_pokemarkers():
     pokemons = db.get_sightings(session)
 
     for pokemon in pokemons:
-        name = pokemon_names[pokemon.id]
+        name = pokemon_names[str(pokemon.pokemon_id)]
         datestr = datetime.fromtimestamp(pokemon.expire_timestamp)
         dateoutput = datestr.strftime("%H:%M:%S")
 
@@ -141,8 +141,9 @@ def get_pokemarkers():
 <div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
 '''
         label = LABEL_TMPL.format(
-            id=pokemon.id,
+            id=pokemon.pokemon_id,
             name=name,
+            disappear_time=pokemon.expire_timestamp,
             disappear_time_formatted=dateoutput,
             lat=pokemon.lat,
             lng=pokemon.lon,
@@ -153,9 +154,9 @@ def get_pokemarkers():
         markers.append({
             'type': 'pokemon',
             'name': name,
-            'key': pokemon.id,
+            'key': pokemon.pokemon_id,
             'disappear_time': pokemon.expire_timestamp,
-            'icon': 'static/icons/%d.png' % pokemon.id,
+            'icon': 'static/icons/%d.png' % pokemon.pokemon_id,
             'lat': pokemon.lat,
             'lng': pokemon.lon,
             'infobox': label
