@@ -34,9 +34,11 @@ def pokemon_found(pokemon):
     # notify
     print "[+] Notifier found pokemon:", pokename
     address = Nominatim().reverse(str(pokemon["lat"])+", "+str(pokemon["lng"])).address
-    notification_text = "Pokemon Finder found a " + _str(pokemon["name"]) + "!"
+    # Locate pokemon on GMAPS
+    gMaps = "http://maps.google.com/maps?q=" + str(pokemon["lat"]) + "," + str(pokemon["lng"]) + "," +"24z"
+    notification_text = "Pokemon Finder found " + _str(pokemon["name"]) + "!"
     disappear_time = str(datetime.fromtimestamp(pokemon["disappear_time"]).strftime("%I:%M%p").lstrip('0'))+")"
-    location_text = "Go search at this location: " + address + ". " + _str(pokemon["name"]) + " will be available until " + disappear_time + "."
+    location_text = "Go search at this location: " + address + ". Locate on Google Maps : " + gMaps + ". " + _str(pokemon["name"]) + " will be available until " + disappear_time + "."
     push = pushbullet_client.push_note(notification_text, location_text)
 
 
