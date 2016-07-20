@@ -1,18 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import argparse
+import json
 
+import requests
 import flask
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_googlemaps import icons
-import json
-import requests
-from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-import config
+import config as app_config
 import db
+import utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -25,16 +27,8 @@ with open('locales/pokemon.en.json') as f:
 GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
 
 DEBUG = True
-# VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
-# COORDS_LATITUDE = 0
-# COORDS_LONGITUDE = 0
-# COORDS_ALTITUDE = 0
-# FLOAT_LAT = 0
-# FLOAT_LONG = 0
-# NEXT_LAT = 0
-# NEXT_LONG = 0
-origin_lat = (config.MAP_START[0] + config.MAP_END[0]) / 2.0
-origin_lon = (config.MAP_START[1] + config.MAP_END[1]) / 2.0
+origin_lat = (app_config.MAP_START[0] + app_config.MAP_END[0]) / 2.0
+origin_lon = (app_config.MAP_START[1] + app_config.MAP_END[1]) / 2.0
 auto_refresh = 0
 
 
@@ -127,6 +121,20 @@ def next_loc_gps():
 
 def get_pokemarkers():
     markers = []
+
+    workers = app_config.GRID[0] * app_config.GRID[1]
+    for i in range(workers):
+        coords = utils.get_start_coords(i)
+        markers.append({
+            'icon': icons.dots.red,
+            'lat': coords[0],
+            'lng': coords[1],
+            'infobox': "Worker %d" % i,
+            'type': 'custom',
+            'key': 'start-position-%d' % i,
+            'disappear_time': -1
+        })
+
     session = db.Session()
     pokemons = db.get_sightings(session)
 
