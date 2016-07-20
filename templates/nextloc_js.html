@@ -1,0 +1,29 @@
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+    $(function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                $('h3').text('Location obtained, updating...');
+                var promise = $.get('/next_loc?lat='+pos.coords.latitude+'&lon='+pos.coords.longitude);
+                promise.done(function () {
+                    $('h3').text('Updated, redirecting...');
+                    setTimeout(function () {
+                        window.location.href = '/';
+                    }, 1000);
+                });
+                promise.fail(function () {
+                    $('h3').text('Error when calling /next_loc');
+                });
+            }, function (error) {
+                alert('Error: ' + error);
+            }, {
+                enableHighAccuracy: true
+            });
+        } else {
+            alert('Geolocation not supported');
+        }
+    });
+</script>
+<body>
+    <h3>Waiting for location...</h3>
+</body>

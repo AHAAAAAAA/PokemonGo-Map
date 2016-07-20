@@ -597,7 +597,12 @@ def main():
     dx = 0
     dy = -1
     steplimit2 = steplimit**2
+    global NEXT_LAT, NEXT_LONG
     for step in range(steplimit2):
+        # Check if NEXT_LAT and NEXT_LONG have been set
+        if NEXT_LAT and NEXT_LONG:
+            debug('new coords have been set, breaking out of loop')
+            break
         #starting at 0 index
         debug('looping: step {} of {}'.format((step+1), steplimit**2))
         #debug('steplimit: {} x: {} y: {} pos: {} dx: {} dy {}'.format(steplimit2, x, y, pos, dx, dy))
@@ -615,7 +620,6 @@ def main():
         print('Completed: ' + str(
             ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
-    global NEXT_LAT, NEXT_LONG
     if (NEXT_LAT and NEXT_LONG and
             (NEXT_LAT != FLOAT_LAT or NEXT_LONG != FLOAT_LONG)):
         print('Update to next location %f, %f' % (NEXT_LAT, NEXT_LONG))
@@ -745,7 +749,7 @@ def register_background_thread(initial_registration=False):
 
     else:
         debug('register_background_thread: queueing')
-        search_thread = threading.Timer(30, main)  # delay, in seconds
+        search_thread = threading.Timer(60, main)  # delay, in seconds
 
     search_thread.daemon = True
     search_thread.name = 'search_thread'
@@ -806,6 +810,11 @@ def next_loc():
         NEXT_LAT = float(lat)
         NEXT_LONG = float(lon)
         return 'ok'
+
+
+@app.route('/gps')
+def next_loc_gps():
+    return render_template('nextloc_js.html')
 
 
 def get_pokemarkers():
