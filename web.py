@@ -43,6 +43,25 @@ def debug(message):
         print '[-] {}'.format(message)
 
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-H',
+        '--host',
+        help='Set web server listening host',
+        default='127.0.0.1')
+    parser.add_argument(
+        '-P',
+        '--port',
+        type=int,
+        help='Set web server listening port',
+        default=5000)
+    parser.add_argument(
+        '-d', '--debug', help='Debug Mode', action='store_true')
+    parser.set_defaults(DEBUG=True)
+    return parser.parse_args()
+
+
 def create_app():
     app = Flask(__name__, template_folder='templates')
     GoogleMaps(app, key=GOOGLEMAPS_KEY)
