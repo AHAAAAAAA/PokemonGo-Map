@@ -745,7 +745,7 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
 
         pokemons[poke.SpawnPointId] = pokemon_obj
 
-        notifier.pokemon_found(pokemon_obj)
+        notifier.pokemon_found( pokemon_obj )
 
 def clear_stale_pokemons():
     current_time = time.time()
