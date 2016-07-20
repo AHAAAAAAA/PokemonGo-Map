@@ -1,5 +1,33 @@
+var setLabelTime = function(){
+    $('.label-countdown').each(function (index, element) {
+        var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at")));
+        var now = new Date();
+        
+        var difference = Math.abs(disappearsAt - now);
+        var hours = Math.floor(difference / 36e5);
+        var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
+        var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
+        
+        if(disappearsAt < now){
+            timestring = "(expired)";
+        } 
+        else {
+            timestring = "(";
+            if(hours > 0)
+                timestring = hours + "h";
+            
+            timestring += ("0" + minutes).slice(-2) + "m";
+            timestring += ("0" + seconds).slice(-2) + "s";
+            timestring += ")";
+        }
 
-function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
+        $(element).text(timestring)
+    });
+};
+
+window.setInterval(setLabelTime, 1000);
+
+function pokemonLabel(name, id, disappear_time, latitude, longitude) {
     disappear_date = new Date(disappear_time)
     let pad = number => number <= 99 ? ("0"+number).slice(-2) : number;
 
@@ -13,7 +41,7 @@ function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longit
         </div>
         <div>
             Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
+            <span class='label-countdown' disappears-at='${disappear_time}'></span></div>
         <div>
             <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                     target='_blank' title='View in Maps'>Get Directions</a>
@@ -45,7 +73,7 @@ function initMap() {
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
-                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
+                content: pokemonLabel(item.pokemon_name, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
             });
 
             marker.addListener('click', function() {
