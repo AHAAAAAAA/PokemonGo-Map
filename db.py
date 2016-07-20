@@ -1,3 +1,5 @@
+import time
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -5,8 +7,9 @@ from sqlalchemy import Column, Integer, String
 
 
 try:
-    from db_config import *
-except ImportError:
+    import config
+    DB_ENGINE = config.DB_ENGINE
+except ImportError, AttributeError:
     DB_ENGINE = 'sqlite:///db.sqlite'
 
 
@@ -23,8 +26,8 @@ class Sighting(Base):
     pokemon_id = Column(Integer)
     expire_timestamp = Column(Integer)
     normalized_timestamp = Column(Integer)
-    lat = Column(String)
-    lon = Column(String)
+    lat = Column(String(16))
+    lon = Column(String(16))
 
 
 Session = sessionmaker(bind=get_engine())
@@ -52,3 +55,10 @@ def add_sighting(session, pokemon):
     if existing:
         return
     session.add(obj)
+
+
+def get_sightings(session):
+    return session.query(Sighting) \
+        .filter(Sighting.pokemon_id == obj.pokemon_id) \
+        .filter(Sighting.expire_timestamp > time.time()) \
+        .all()
