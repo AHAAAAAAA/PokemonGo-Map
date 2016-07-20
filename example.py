@@ -848,6 +848,7 @@ def get_pokemarkers():
 
         pokeMarkers.append({
             'type': 'pokemon',
+            'name': pokemon['name'],
             'key': pokemon_key,
             'disappear_time': pokemon['disappear_time'],
             'icon': 'static/icons/%d.png' % pokemon["id"],

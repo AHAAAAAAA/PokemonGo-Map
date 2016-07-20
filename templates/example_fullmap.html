@@ -139,6 +139,12 @@
                 }
             }
         }
+
+        var firstRefresh = true;
+        if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function () {});
+        }
+
         function updateMap(){
             // A new map is created because the original one isn't saved
             createMap();
@@ -146,6 +152,7 @@
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
                 var now = new Date();
+                var notifyList = [];
                 
                 for (var index in json_obj) {
                     var item = json_obj[index];
@@ -177,6 +184,10 @@
                             map: map,
                             icon: item["icon"],
                         });
+                    // Show notification
+                    if (!markerCache[key] && !firstRefresh) {
+                        notifyList.push(item['name']);
+                    }
                     markerCache[key] = {item: item, marker: marker};
                     var disappearsAt;
 
@@ -216,8 +227,12 @@
                         _marker.key = key;
                     })(marker, disappearsAt);
                 }
+                firstRefresh = false;
+                if (notifyList.length) {
+                    var notification = new Notification(notifyList.join(', ') + ' added to map');
+                }
                 // deleteMarkers(markers.Length - json_obj.length);
-            })
+            });
         }
         window.setInterval(updateMap, {{ auto_refresh }});
     </script>
