@@ -11,6 +11,9 @@ Instead of from the command-line, all arguments are read from a `config.json` fi
 ## Install
 
 Install the necessary dependencies (including the Pushbullet client) by running `pip install --upgrade -r requirements.txt`. Create a config file and then run the main script using `python main.py`.
+Using this software is against the ToS and can get you banned. Use at your own risk.
+
+Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo API, [tejado's additions](https://github.com/tejado/pokemongo-api-demo), [leegao's additions](https://github.com/leegao/pokemongo-api-demo/tree/simulation) and [Flask-GoogleMaps](https://github.com/rochacbruno/Flask-GoogleMaps).
 
 ## Notifications
 You'll have to set up notifications where you'd like to receive them. I installed the [Pushbullet Chrome Extension](https://chrome.google.com/webstore/detail/pushbullet/chlffgpmiacpedhhbkiomidkjlcfhogd?hl=en) and then decided that I found more utility by installing the Pushbullet iPhone app and receiving the notifications on my phone.
