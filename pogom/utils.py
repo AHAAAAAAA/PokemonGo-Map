@@ -86,7 +86,7 @@ def load_credentials(filepath):
     with open(filepath+'/credentials.json') as file:
         creds = json.load(file)
         if not creds['gmaps_key']:
-            raise APIKeyException('No Google Maps API key entered.')
+            raise APIKeyException('No Google Maps Javascript API key entered.')
         return creds
 
 
