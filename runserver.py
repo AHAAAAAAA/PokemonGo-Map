@@ -4,24 +4,23 @@
 import os
 import logging
 
-from threading import Thread
+import time
+from Queue import LifoQueue
 
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
-from pogom.search import search_loop
+from pogom.search import Search
 from pogom.models import create_tables
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
-
+queue = LifoQueue()
 
 def start_locator_thread(args):
-    search_thread = Thread(target=search_loop, args=(args,))
+    search_thread = Search(args, queue)
     search_thread.daemon = True
-    search_thread.name = 'search_thread'
     search_thread.start()
-
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
@@ -57,10 +56,14 @@ if __name__ == '__main__':
     else:
         insert_mock_data(args.location, 6)
 
+    config['SEARCH_MARKER'] = args.search_marker
+
     app = Pogom(__name__)
+    app.queue = queue
     config['ROOT_PATH'] = app.root_path
     if args.gmaps_key is not None:
         config['GMAPS_KEY']  = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
+
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)

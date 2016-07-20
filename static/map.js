@@ -2,7 +2,7 @@ function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longit
     disappear_date = new Date(disappear_time)
 
     var pad = function pad(number) {
-      return number <= 99 ? ("0" + number).slice(-2) : number;
+        return number <= 99 ? ("0" + number).slice(-2) : number;
     };
 
     var str = '\
@@ -38,24 +38,76 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
-    $.getJSON("/pokemons", function(result){
-        $.each(result, function(i, item){
+    $.getJSON("/pokemons", function (result) {
+        $.each(result, function (i, item) {
 
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
                 map: map,
-                icon: 'static/icons/'+item.pokemon_id+'.png'
+                icon: 'static/icons/' + item.pokemon_id + '.png'
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
                 content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
             });
 
-            marker.addListener('click', function() {
+            marker.addListener('click', function () {
                 marker.infoWindow.open(map, marker);
             });
 
             console.log(item.latitude);
         });
+    });
+}
+
+var searchInterval;
+var searchActive = false;
+
+$(document).on('change', '#search-marker-enable', function () {
+    if (!searchActive) {
+        searchInterval = setInterval(showSearchMarker, 1000);
+        showSearchMarker();
+    } else {
+        clearInterval(searchInterval);
+
+        if (currentSearchMarker) {
+            currentSearchMarker.setMap(null);
+            currentSearchCircle.setMap(null);
+        }
+    }
+
+    searchActive = !searchActive;
+});
+
+var currentSearchMarker, currentSearchCircle;
+
+function showSearchMarker() {
+    $.getJSON('/meta', function (result) {
+        if (result.length < 3)
+            return;
+
+        var lat = result[0];
+        var lng = result[1];
+
+        if (currentSearchMarker) {
+            currentSearchMarker.setMap(null);
+            currentSearchCircle.setMap(null);
+        }
+
+        currentSearchMarker = new google.maps.Marker({
+            position: {lat: lat, lng: lng},
+            map: map
+        });
+
+        currentSearchCircle = new google.maps.Circle({
+            strokeColor: '#0b96b4',
+            strokeOpacity: 0.3,
+            strokeWeight: 2,
+            fillColor: '#0bd2fd',
+            fillOpacity: 0.15,
+            map: map,
+            center: {lat: lat, lng: lng},
+            radius: 120
+        })
     });
 }

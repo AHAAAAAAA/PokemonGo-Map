@@ -1379,7 +1379,7 @@ select {
 textarea {
   padding: 0.75em 1em; }
 
-input[type="checkbox"],
+input[type="checkbox"]:not('#search-marker-enable'),
 input[type="radio"] {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -1391,7 +1391,7 @@ input[type="radio"] {
   opacity: 0;
   width: 1em;
   z-index: -1; }
-  input[type="checkbox"] + label,
+  input[type="checkbox"]:not('#search-marker-enable') + label,
   input[type="radio"] + label {
     text-decoration: none;
     color: #444;
@@ -1402,7 +1402,7 @@ input[type="radio"] {
     padding-left: 2.4em;
     padding-right: 0.75em;
     position: relative; }
-    input[type="checkbox"] + label:before,
+    input[type="checkbox"]:not('#search-marker-enable') + label:before,
     input[type="radio"] + label:before {
       -moz-osx-font-smoothing: grayscale;
       -webkit-font-smoothing: antialiased;
@@ -1410,7 +1410,7 @@ input[type="radio"] {
       font-style: normal;
       font-weight: normal;
       text-transform: none !important; }
-    input[type="checkbox"] + label:before,
+    input[type="checkbox"]:not('#search-marker-enable') + label:before,
     input[type="radio"] + label:before {
       background: rgba(144, 144, 144, 0.075);
       border-radius: 4px;
@@ -1424,13 +1424,13 @@ input[type="radio"] {
       text-align: center;
       top: 0;
       width: 1.65em; }
-  input[type="checkbox"]:checked + label:before,
+  input[type="checkbox"]:not('#search-marker-enable'):checked + label:before,
   input[type="radio"]:checked + label:before {
     background: #5a5a5a;
     border-color: #5a5a5a;
     color: #ffffff;
     content: '\f00c'; }
-  input[type="checkbox"]:focus + label:before,
+  input[type="checkbox"]:not('#search-marker-enable'):focus + label:before,
   input[type="radio"]:focus + label:before {
     border-color: #5AA6ED;
     box-shadow: 0 0 0 1px #5AA6ED; }

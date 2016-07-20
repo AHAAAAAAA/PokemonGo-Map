@@ -13,17 +13,22 @@ from .models import Pokemon, Gym, Pokestop
 class Pogom(Flask):
     def __init__(self, name):
         super(Pogom, self).__init__(name)
+        self.queue = None # LifoQueue from Search thread
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/pokemons", methods=['GET'])(self.pokemons)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
 
+        if (config['SEARCH_MARKER']):
+            self.route("/meta", methods=['GET'])(self.metadata)
+
     def fullmap(self):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
-                               gmaps_key=config['GMAPS_KEY'])
+                               gmaps_key=config['GMAPS_KEY'],
+                               allow_search_marker=config['SEARCH_MARKER'])
 
     def pokemons(self):
         return jsonify(Pokemon.get_active(ignore=config['IGNORE'],
@@ -34,6 +39,14 @@ class Pogom(Flask):
 
     def gyms(self):
         return jsonify([g for g in Gym.select().dicts()])
+
+    def metadata(self):
+        if self.queue == None:
+            return '[]'
+        elif self.queue.empty():
+            return '[]'
+
+        return jsonify(self.queue.get())
 
 
 class CustomJSONEncoder(JSONEncoder):
