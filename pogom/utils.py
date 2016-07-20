@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 
 from . import config
 
-
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
@@ -68,13 +67,25 @@ def insert_mock_data(location, num_pokemons):
                        longitude=locations[i][1],
                        disappear_time=disappear_time)
 
+import logging
+log = logging.getLogger(__name__)
 
 def get_pokemon_name(pokemon_id):
     if not hasattr(get_pokemon_name, 'names'):
+        args = get_args()
+        locale = config['LOCALE']
+
+        if args.locale:
+            for file in os.listdir(config['LOCALES_DIR']):
+                # log.info('LOCALE: {}'.format(file))
+                if args.locale in file:
+                    locale = args.locale
+                    break
+
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
-            'pokemon.{}.json'.format(config['LOCALE']))
+            'pokemon.{}.json'.format(locale))
 
         with open(file_path, 'r') as f:
             get_pokemon_name.names = json.loads(f.read())
