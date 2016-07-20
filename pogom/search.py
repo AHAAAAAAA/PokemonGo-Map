@@ -94,6 +94,7 @@ def search(args):
         i += 1
         time.sleep(REQ_SLEEP)
 
+
 def search_loop(args):
     while True:
         search(args)
