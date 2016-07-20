@@ -11,8 +11,8 @@ from .models import Pokemon, Gym, Pokestop
 
 
 class Pogom(Flask):
-    def __init__(self, *args, **kwargs):
-        super(Pogom, self).__init__(*args, **kwargs)
+    def __init__(self, import_name, **kwargs):
+        super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/pokemons", methods=['GET'])(self.pokemons)
@@ -22,7 +22,8 @@ class Pogom(Flask):
     def fullmap(self):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'])
+                               lng=config['ORIGINAL_LONGITUDE'],
+                               gmaps_key=config['GMAPS_KEY'])
 
     def pokemons(self):
         return jsonify(Pokemon.get_active())

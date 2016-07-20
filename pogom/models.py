@@ -20,6 +20,9 @@ class BaseModel(Model):
 
 
 class Pokemon(BaseModel):
+    IGNORE = None
+    ONLY = None
+
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
     encounter_id = CharField(primary_key=True)
@@ -39,6 +42,14 @@ class Pokemon(BaseModel):
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemon_name = p['pokemon_name'].lower()
+            pokemon_id = str(p['pokemon_id'])
+            if cls.IGNORE:
+                if pokemon_name in cls.IGNORE or pokemon_id in cls.IGNORE:
+                    continue
+            if cls.ONLY:
+                if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
+                    continue
             pokemons.append(p)
 
         return pokemons
