@@ -69,6 +69,20 @@
             }
             var marker = new google.maps.Marker(default_options);
             markers.push(marker);
+
+            if (options.highlight) {
+              new google.maps.Circle({
+                strokeColor: options.rarityColor,
+                strokeOpacity: 1,
+                strokeWeight: 4,
+                fillColor: options.rarityColor,
+                fillOpacity: 0.6,
+                map: options.map,
+                center: options.position,
+                radius: 50
+              });
+            }
+
             return marker;
         }
 
@@ -176,6 +190,8 @@
                             position: new google.maps.LatLng(item["lat"], item["lng"]),
                             map: map,
                             icon: item["icon"],
+                            highlight: item['rarity_highlight'],
+                            rarityColor: item['rarity_color']
                         });
                     markerCache[key] = {item: item, marker: marker};
                     var disappearsAt;

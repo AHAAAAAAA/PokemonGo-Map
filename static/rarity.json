@@ -1,13 +1,13 @@
 {
   "rarity_types": [
-    { "key": "everywhere", "color": "#7fff8e" },
-    { "key": "common", "color": "#f4ff7f" },
-    { "key": "uncommon", "color": "#fee77d" },
-    { "key": "rare", "color": "#ffb382" },
-    { "key": "special", "color": "#82c9ff" },
-    { "key": "epic", "color": "#e16fa2" },
-    { "key": "mythic", "color": "#b05895" },
-    { "key": "unavailable", "color": "#bebebe" }
+    { "key": "everywhere", "color": "#7fff8e", "highlight": false },
+    { "key": "common", "color": "#f4ff7f", "highlight": false },
+    { "key": "uncommon", "color": "#fee77d", "highlight": false },
+    { "key": "rare", "color": "#ffb382", "highlight": true },
+    { "key": "special", "color": "#82c9ff", "highlight": true },
+    { "key": "epic", "color": "#e16fa2", "highlight": true },
+    { "key": "mythic", "color": "#b05895", "highlight": true },
+    { "key": "unavailable", "color": "#bebebe", "highlight": true }
   ],
   "pokemons": [
     {

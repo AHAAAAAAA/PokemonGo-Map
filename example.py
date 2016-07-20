@@ -41,6 +41,9 @@ APP = 'com.nianticlabs.pokemongo'
 with open('credentials.json') as file:
 	credentials = json.load(file)
 
+with open('./static/rarity.json') as file:
+    rarity_db = json.load(file)
+
 PTC_CLIENT_SECRET = credentials.get('ptc_client_secret', None)
 ANDROID_ID = credentials.get('android_id', None)
 SERVICE = credentials.get('service', None)
@@ -827,11 +830,17 @@ def get_pokemarkers():
         if is_ampm_clock:
         	dateoutput = datestr.strftime("%I:%M%p").lstrip('0')
         pokemon['disappear_time_formatted'] = dateoutput
+        pokemon['rarity'] = [i for i in rarity_db['pokemons'] if i['id'] == pokemon['id']][0]['rarity']
+        rarity_type_data = [i for i in rarity_db['rarity_types'] if i['key'] == pokemon['rarity']][0];
+        pokemon['rarity_color'] = rarity_type_data['color'];
+        pokemon['rarity_highlight'] = rarity_type_data['highlight'];
+        pokemon['rarity_style'] = '' if pokemon['rarity_highlight'] == False else 'style="font-weight: bold; color: %s"' % pokemon['rarity_color']
 
         LABEL_TMPL = u'''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
 <div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
 <div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
+<div><p>Rarity: <span {rarity_style}>{rarity}</span></p></div>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
@@ -844,7 +853,9 @@ def get_pokemarkers():
             'icon': 'static/icons/%d.png' % pokemon["id"],
             'lat': pokemon["lat"],
             'lng': pokemon["lng"],
-            'infobox': label
+            'infobox': label,
+            'rarity_highlight': pokemon['rarity_highlight'],
+            'rarity_color': pokemon['rarity_color']
         })
 
     for gym_key in gyms:
