@@ -38,7 +38,7 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
-    $.getJSON("/pokemons", function(result){
+    $.getJSON("pokemons", function(result){
         $.each(result, function(i, item){
 
             var marker = new google.maps.Marker({
