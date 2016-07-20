@@ -41,6 +41,7 @@ def get_args():
                         'locale folder for more options', default='en')
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
+    parser.add_argument('-sm', '--search-marker', help='Displays a search marker on the map', action='store_true', default=False, dest='search_marker')
     parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.set_defaults(DEBUG=False)
@@ -53,13 +54,13 @@ def get_args():
 
 def insert_mock_data(location, num_pokemons):
     from .models import Pokemon
-    from .search import generate_location_steps
+    from search import Search
 
     prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
     res = prog.match(location)
     latitude, longitude = float(res.group(1)), float(res.group(2))
 
-    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemons)]
+    locations = [l for l in Search.generate_location_steps((latitude, longitude), num_pokemons)]
     disappear_time = datetime.now() + timedelta(hours=1)
 
     for i in xrange(num_pokemons):
