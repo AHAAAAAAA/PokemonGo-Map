@@ -65,6 +65,15 @@ class Search(threading.Thread):
         self.args = args
         self.queue = queue
 
+    def cancel(self):
+        self._stop.set()
+
+    def run(self):
+        while not self._stop.is_set():
+            self.search()
+            log.info("Scanning complete.")
+            time.sleep(1)
+
     def search(self):
         num_steps = self.args.step_limit
         position = (config['ORIGINAL_LATITUDE'],
@@ -109,9 +118,3 @@ class Search(threading.Thread):
                 float(i) / num_steps**2 * 100))
             i += 1
             time.sleep(REQ_SLEEP)
-
-    def run(self):
-        while not self._stop.is_set():
-            self.search()
-            log.info("Scanning complete.")
-            time.sleep(1)

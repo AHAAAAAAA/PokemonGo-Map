@@ -4,20 +4,20 @@
 import os
 import logging
 
-from threading import Thread
-
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
-from pogom.search import search_loop
+from pogom.search import Search
 from pogom.models import create_tables, Pokemon
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
+search_thread = None
+
 
 def start_locator_thread(args):
-    search_thread = Thread(target=search_loop, args=(args,))
+    search_thread = Search(args)
     search_thread.daemon = True
     search_thread.name = 'search_thread'
     search_thread.start()
@@ -64,3 +64,4 @@ if __name__ == '__main__':
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
+    search_thread.cancel()
