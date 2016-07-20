@@ -11,6 +11,7 @@ import json
 from datetime import datetime, timedelta
 
 from . import config
+from exceptions import APIKeyException
 
 
 def parse_unicode(bytestring):
@@ -85,5 +86,7 @@ def load_credentials(filepath):
     with open(filepath+'/credentials.json') as file:
         creds = json.load(file)
         if not creds['gmaps_key']:
-            raise Exception('No Google Maps API key entered.')
+            raise APIKeyException('No Google Maps API key entered.')
         return creds
+
+
