@@ -28,6 +28,7 @@ class Pogom(Flask):
 
     def pokemons(self, stamp):
         return jsonify(Pokemon.get_active(stamp))
+
     def get_raw_data(self):
         return {
             'gyms': [g for g in Gym.select().dicts()],
