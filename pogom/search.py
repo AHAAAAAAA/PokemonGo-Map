@@ -64,21 +64,24 @@ def search(args):
     log.info('Login successful.')
 
     i = 1
-    for step_location in generate_location_steps(position, num_steps):
-        log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
+    while True:
+        for step_location in generate_location_steps(position, num_steps):
+            log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
 
-        response_dict = send_map_request(api, step_location)
-        while not response_dict:
-            log.info('Map Download failed. Trying again.')
             response_dict = send_map_request(api, step_location)
+            while not response_dict:
+                log.info('Map Download failed. Trying again.')
+                response_dict = send_map_request(api, step_location)
+                time.sleep(REQ_SLEEP)
+
+            try:
+                parse_map(response_dict)
+            except KeyError:
+                log.error('Scan step failed. Response dictionary key error.')
+
+            log.info('Completed {:5.2f}% of scan.'.format(
+                float(i) / num_steps**2*100))
+            i += 1
             time.sleep(REQ_SLEEP)
-
-        try:
-            parse_map(response_dict)
-        except KeyError:
-            log.error('Scan step failed. Response dictionary key error.')
-
-        log.info('Completed {:5.2f}% of scan.'.format(
-            float(i) / num_steps**2*100))
-        i += 1
-        time.sleep(REQ_SLEEP)
+        i = 1
+        log.info('Rescanning')
