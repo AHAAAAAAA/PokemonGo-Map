@@ -4,6 +4,7 @@ var map,
     requestInterval = 10000;
 
 var markers = [];
+var gym_types = [ "Uncontested", "Mystic", "Valor", "Instinct" ];
 
 pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time + (new Date().getTimezoneOffset() * 60000));
@@ -31,6 +32,35 @@ pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
     return str;
 };
 
+gymLabel = function gymLabel(item) {
+    var gym_color = [ "0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6" ];
+    var str;
+    if (gym_types[item.team_id] == 0) {
+        str = '\
+            <div><center>\
+            <div>\
+                <b style="color:rgba(' + gym_color[item.team_id] + ')">' + gym_types[item.team_id] + '</b><br>\
+            </div>\
+            </center></div>';
+    } else {
+        str = '\
+            <div><center>\
+            <div>\
+                Gym owned by:\
+            </div>\
+            <div>\
+                <b style="color:rgba(' + gym_color[item.team_id] + ')">Team ' + gym_types[item.team_id] + '</b><br>\
+                <img height="100px" src="/static/forts/' + gym_types[item.team_id] + '_large.png"> \
+            </div>\
+            <div>\
+                Prestige: ' + item.gym_points + '\
+            </div>\
+            </center></div>';
+    }
+
+    return str;
+};
+
 initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: center_lat, lng: center_lng},
@@ -42,6 +72,7 @@ initMap = function() {
         animation: google.maps.Animation.DROP
     });  
     GetNewPokemons(lastStamp);
+    GetNewGyms(lastStamp);
 };
 
 GetNewPokemons = function(stamp) {
@@ -84,12 +115,38 @@ GetNewPokemons = function(stamp) {
 
             console.log(item.latitude);
         });        
-    }).always(function() {setTimeout(function() { GetNewPokemons(lastStamp) }, requestInterval)});
+    }).always(function() {
+        setTimeout(function() {
+            GetNewPokemons(lastStamp);
+            GetNewGyms(lastStamp);
+        }, requestInterval)
+    });
+
     var dObj = new Date();
     lastStamp = dObj.getTime();
     
     $.each(markers, function(i, item){
         if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
             item.m.setMap(null);        
+    });
+};
+
+GetNewGyms = function(stamp) {
+    $.getJSON("/gyms/"+stamp, function(result){
+        $.each(result, function(i, item){
+            var marker = new google.maps.Marker({
+                position: {lat: item.latitude, lng: item.longitude},
+                map: map,
+                icon: 'static/forts/'+gym_types[item.team_id]+'.png'
+            });
+
+            marker.infoWindow = new google.maps.InfoWindow({
+                content: gymLabel(item)
+            });
+
+            marker.addListener('click', function() {
+                marker.infoWindow.open(map, marker);
+            });
+        });
     });
 };
