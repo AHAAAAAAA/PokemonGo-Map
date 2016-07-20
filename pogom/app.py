@@ -15,10 +15,10 @@ class Pogom(Flask):
         super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
-        self.route("/pokemons", methods=['GET'])(self.pokemons)
+        self.route("/pokemons/<stamp>", methods=['GET'])(self.pokemons)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
-        self.route("/raw_data", methods=['GET'])(self.raw_data)
+        self.route("/raw_data/<stamp>", methods=['GET'])(self.raw_data)
 
     def fullmap(self):
         return render_template('map.html',
@@ -26,15 +26,15 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'])
 
-    def raw_data(self):
+    def raw_data(self, stamp):
         return jsonify({
             'gyms': [g for g in Gym.select().dicts()],
             'pokestops': Pokestop.get_stops(),
-            'pokemons': Pokemon.get_active()
+            'pokemons': Pokemon.get_active(stamp)
         })
 
-    def pokemons(self):
-        return jsonify(Pokemon.get_active())
+    def pokemons(self, stamp):
+        return jsonify(Pokemon.get_active(stamp))
 
     def pokestops(self):
         return jsonify(Pokestop.get_stops())
@@ -42,7 +42,6 @@ class Pogom(Flask):
 
     def gyms(self):
         return jsonify([g for g in Gym.select().dicts()])
-
 
 
 
