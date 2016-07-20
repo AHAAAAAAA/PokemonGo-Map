@@ -38,14 +38,14 @@ class Pokemon(BaseModel):
 
         pokemons = []
         for p in query:
-            pokemon_id = p['pokemon_id']
-            pokemon_name = get_pokemon_name(pokemon_id)
-            p['pokemon_name'] = pokemon_name
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemon_name = p['pokemon_name'].lower()
+            pokemon_id = str(p['pokemon_id'])
             if ignore:
-                if pokemon_name.lower() in ignore or pokemon_id in ignore:
+                if pokemon_name in ignore or pokemon_id in ignore:
                     continue
             if only:
-                if pokemon_name.lower() not in only and pokemon_id not in only:
+                if pokemon_name not in only and pokemon_id not in only:
                     continue
             pokemons.append(p)
 
