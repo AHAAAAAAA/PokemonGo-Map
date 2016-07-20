@@ -28,7 +28,7 @@ elif [ \( "$auth" != "PTC" \) -a \( "$auth" != "google" \) ];then
 fi
 
 # Check python is accesible via PATH env variable
-if [ $(which python) -eq "" ];then
+if [ -z $(which python) ];then
     echo "Ensure python is installed and accesible via PATH variable"
     exit 1
 fi
