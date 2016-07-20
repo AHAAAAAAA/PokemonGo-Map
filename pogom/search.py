@@ -1,20 +1,23 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from __future__ import division
+
 import logging
 import time
 import threading
 import Queue
 
 from pgoapi import PGoApi
-from pgoapi.utilities import f2i, h2f, get_cellid, encode, get_pos_by_name
+from pgoapi.utilities import f2i, get_cellid
 
 from . import config
 from .models import parse_map
 
 log = logging.getLogger(__name__)
 
-TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
+TIMESTAMP = ('\000\000\000\000\000\000\000\000\000\000\000'
+             '\000\000\000\000\000\000\000\000\000\000')
 REQ_SLEEP = 1
 api = PGoApi()
 
@@ -33,12 +36,17 @@ def send_map_request(api, position):
 
 
 def generate_location_steps(initial_location, num_steps):
-    pos, x, y, dx, dy = 1, 0, 0, 0, -1
+    x, y, dx, dy = 0, 0, 0, -1
 
-    while -num_steps / 2 < x <= num_steps / 2 and -num_steps / 2 < y <= num_steps / 2:
-        yield (x * 0.0025 + initial_location[0], y * 0.0025 + initial_location[1], 0)
+    def valid(coord):
+        return -num_steps // 2 < coord <= num_steps // 2
 
-        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
+    while valid(x) and valid(y):
+        yield (x * 0.0025 + initial_location[0],
+               y * 0.0025 + initial_location[1],
+               0)
+
+        if abs(x) == abs(y) or (x > 0 and x == 1 - y):
             dx, dy = -dy, dx
 
         x, y = x + dx, y + dy
@@ -69,12 +77,16 @@ class Search(threading.Thread):
                     config['ORIGINAL_LONGITUDE'],
                     0)
 
-        if api._auth_provider and api._auth_provider._ticket_expire:
-            remaining_time = api._auth_provider._ticket_expire / 1000 - time.time()
+        provider = api._auth_provider
+
+        if provider:
+            expire_time = api._auth_provider._ticket_expire
+            remaining_time = expire_time / 1000 - time.time()
 
             if remaining_time > 60:
-                log.info("Skipping login process since already logged in for another {:.2f} seconds".format(
-                    remaining_time))
+                log.info("Skipping login process since already logged in for"
+                         " another {:.2f} seconds".format(
+                             remaining_time))
             else:
                 login(self.args, position)
         else:
