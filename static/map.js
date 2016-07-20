@@ -51,8 +51,24 @@ function initMap() {
                 content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
             });
 
+            google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
+                delete marker["persist"];
+                marker.infoWindow.close();
+            });
+
             marker.addListener('click', function() {
+                marker["persist"] = true;
                 marker.infoWindow.open(map, marker);
+            });
+
+            marker.addListener('mouseover', function() {
+                marker.infoWindow.open(map, marker);
+            });
+
+            marker.addListener('mouseout', function() {
+                if (!marker["persist"]) {
+                    marker.infoWindow.close();
+                }
             });
 
             console.log(item.latitude);
