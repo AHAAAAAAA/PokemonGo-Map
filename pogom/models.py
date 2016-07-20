@@ -79,54 +79,57 @@ class Gym(BaseModel):
     last_modified = DateTimeField()
 
 
-def parse_map(map_dict):
+def parse_map(map_dict, include_gyms, include_pokemons, include_pokestops):
     pokemons = {}
     pokestops = {}
     gyms = {}
 
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
-        for p in cell.get('wild_pokemons', []):
-            pokemons[p['encounter_id']] = {
-                'encounter_id': b64encode(str(p['encounter_id'])),
-                'spawnpoint_id': p['spawnpoint_id'],
-                'pokemon_id': p['pokemon_data']['pokemon_id'],
-                'latitude': p['latitude'],
-                'longitude': p['longitude'],
-                'disappear_time': datetime.fromtimestamp(
-                    (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0)
-            }
+        if include_pokemons:
+            for p in cell.get('wild_pokemons', []):
+                pokemons[p['encounter_id']] = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': p['spawnpoint_id'],
+                    'pokemon_id': p['pokemon_data']['pokemon_id'],
+                    'latitude': p['latitude'],
+                    'longitude': p['longitude'],
+                    'disappear_time': datetime.fromtimestamp(
+                        (p['last_modified_timestamp_ms'] +
+                         p['time_till_hidden_ms']) / 1000.0)
+                }
 
         for f in cell.get('forts', []):
             if f.get('type') == 1:  # Pokestops
-                if 'lure_info' in f:
-                    lure_expiration = datetime.fromtimestamp(
-                        f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
-                else:
-                    lure_expiration = None
+                if include_pokestops:
+                    if 'lure_info' in f:
+                        lure_expiration = datetime.fromtimestamp(
+                            f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
+                    else:
+                        lure_expiration = None
 
-                pokestops[f['id']] = {
-                    'pokestop_id': f['id'],
-                    'enabled': f['enabled'],
-                    'latitude': f['latitude'],
-                    'longitude': f['longitude'],
-                    'last_modified': datetime.fromtimestamp(
-                        f['last_modified_timestamp_ms'] / 1000.0),
-                    'lure_expiration': lure_expiration
-                }
+                    pokestops[f['id']] = {
+                        'pokestop_id': f['id'],
+                        'enabled': f['enabled'],
+                        'latitude': f['latitude'],
+                        'longitude': f['longitude'],
+                        'last_modified': datetime.fromtimestamp(
+                            f['last_modified_timestamp_ms'] / 1000.0),
+                        'lure_expiration': lure_expiration
+                    }
 
             else:  # Currently, there are only stops and gyms
-                gyms[f['id']] = {
-                    'gym_id': f['id'],
-                    'team_id': f['owned_by_team'],
-                    'guard_pokemon_id': f['guard_pokemon_id'],
-                    'enabled': f['enabled'],
-                    'latitude': f['latitude'],
-                    'longitude': f['longitude'],
-                    'last_modified': datetime.fromtimestamp(
-                        f['last_modified_timestamp_ms'] / 1000.0),
-                }
+                if include_gyms:
+                    gyms[f['id']] = {
+                        'gym_id': f['id'],
+                        'team_id': f['owned_by_team'],
+                        'guard_pokemon_id': f['guard_pokemon_id'],
+                        'enabled': f['enabled'],
+                        'latitude': f['latitude'],
+                        'longitude': f['longitude'],
+                        'last_modified': datetime.fromtimestamp(
+                            f['last_modified_timestamp_ms'] / 1000.0),
+                    }
 
     if pokemons:
         log.info("Upserting {} pokemon".format(len(pokemons)))

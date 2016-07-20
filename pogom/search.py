@@ -86,7 +86,7 @@ def search(args):
             time.sleep(REQ_SLEEP)
 
         try:
-            parse_map(response_dict)
+            parse_map(response_dict, args.display_gyms, args.display_pokemons, args.display_pokestops)
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
 
