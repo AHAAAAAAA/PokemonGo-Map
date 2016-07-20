@@ -68,11 +68,9 @@ GetNewPokemons = function(stamp) {
                 marker.infoWindow.open(map, marker);
             });
 
-<<<<<<< HEAD
             markers.push({
                     m: marker,
                     disapear: item.disappear_time});
-=======
             marker.addListener('mouseover', function() {
                 marker.infoWindow.open(map, marker);
             });
@@ -82,7 +80,6 @@ GetNewPokemons = function(stamp) {
                     marker.infoWindow.close();
                 }
             });
->>>>>>> refs/remotes/AHAAAAAAA/develop
 
             console.log(item.latitude);
         });        
