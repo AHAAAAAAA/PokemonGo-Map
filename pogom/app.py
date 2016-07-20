@@ -39,8 +39,11 @@ class Pogom(Flask):
     def pokestops(self):
         return jsonify(Pokestop.get_stops())
 
+
     def gyms(self):
         return jsonify([g for g in Gym.select().dicts()])
+
+
 
 
 class CustomJSONEncoder(JSONEncoder):
