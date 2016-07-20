@@ -11,6 +11,7 @@ import json
 from datetime import datetime, timedelta
 
 from . import config
+from exceptions import APIKeyException
 
 
 def parse_unicode(bytestring):
@@ -41,7 +42,7 @@ def get_args():
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
-    parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', dest='gmaps_key')
+    parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     args = parser.parse_args()
     if args.password is None:
         args.password = getpass.getpass()
@@ -80,3 +81,13 @@ def get_pokemon_name(pokemon_id):
             get_pokemon_name.names = json.loads(f.read())
 
     return get_pokemon_name.names[str(pokemon_id)]
+
+def load_credentials(filepath):
+    with open(filepath+'/credentials.json') as file:
+        creds = json.load(file)
+        if not creds['gmaps_key']:
+            raise APIKeyException(\
+                'No Google Maps Javascript API key entered. Please take a look at the wiki for instructions on how to generate this key.')
+        return creds
+
+

@@ -8,11 +8,11 @@
 		background: darken(_palette(accent2, bg), 12);
 		color: _palette(accent2, fg);
 		cursor: default;
-		height: 3.25em;
+		height: 3.50em;
 		left: 0;
-		line-height: 3.25em;
+		line-height: 3.50em;
 		position: fixed;
-		text-align: right;
+		text-align: left;
 		top: 0;
 		width: 100%;
 		z-index: _misc(z-index-base) + 1;
@@ -21,12 +21,9 @@
 			color: _palette(accent2, fg-bold);
 			display: inline-block;
 			height: inherit;
-			left: 1.25em;
 			line-height: inherit;
 			margin: 0;
 			padding: 0;
-			position: absolute;
-			top: 0;
 
 			a {
 				font-size: 1.25em;

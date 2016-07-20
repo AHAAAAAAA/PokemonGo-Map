@@ -18,13 +18,12 @@ class Pogom(Flask):
         self.route("/pokemons", methods=['GET'])(self.pokemons)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
-        self.gmaps_key = None
 
     def fullmap(self):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
-                               gmaps_key=self.gmaps_key)
+                               gmaps_key=config['GMAPS_KEY'])
 
     def pokemons(self):
         return jsonify(Pokemon.get_active())
