@@ -8,16 +8,19 @@ import re
 import uuid
 import os
 import json
+import logging
 from datetime import datetime, timedelta
 
 from . import config
 from exceptions import APIKeyException
 
+log = logging.getLogger(__name__)
+
+pokeNamesLocale = config['LOCALE']
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
-
 
 def get_args():
     # fuck PEP8
@@ -48,6 +51,22 @@ def get_args():
     if args.password is None:
         args.password = getpass.getpass()
 
+    # set locale
+    if args.locale:
+        global pokeNamesLocale
+        isValid = False
+        for file in os.listdir(config['LOCALES_DIR']):
+            lang = re.search('\.(.*?)\.', file).group(1)
+            if args.locale in lang:
+                isValid = True
+                pokeNamesLocale = args.locale
+                log.debug('Locale set to {}'.format(pokeNamesLocale))
+                break
+        if not isValid:
+            log.debug('Locale argument is invalid. Locale set to {}'.format(pokeNamesLocale))
+    else: # argument was an empty string
+        log.debug('Locale argument is invalid. Locale set to {}'.format(pokeNamesLocale))
+
     return args
 
 
@@ -70,13 +89,13 @@ def insert_mock_data(location, num_pokemons):
                        longitude=locations[i][1],
                        disappear_time=disappear_time)
 
-
 def get_pokemon_name(pokemon_id):
+    global pokeNamesLocale
     if not hasattr(get_pokemon_name, 'names'):
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
-            'pokemon.{}.json'.format(config['LOCALE']))
+            'pokemon.{}.json'.format(pokeNamesLocale))
 
         with open(file_path, 'r') as f:
             get_pokemon_name.names = json.loads(f.read())
