@@ -29,6 +29,8 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
+import wave
+import pyaudio
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -64,6 +66,7 @@ FLOAT_LONG = 0
 NEXT_LAT = 0
 NEXT_LONG = 0
 auto_refresh = 0
+playSoundBrowser = 0
 default_step = 0.001
 api_endpoint = None
 pokemons = {}
@@ -81,6 +84,27 @@ is_ampm_clock = False
 # stuff for in-background search thread
 
 search_thread = None
+
+is_playing = False
+def play_audio():
+    global is_playing
+    chunk = 206
+    wf = wave.open('a.wav', 'rb')
+    p = pyaudio.PyAudio()
+    stream = p.open(
+        format = p.get_format_from_width(wf.getsampwidth()),
+        channels = wf.getnchannels(),
+        rate = wf.getframerate(),
+        output = True)
+    data = wf.readframes(chunk)
+    while data != '':
+        is_playing = True
+        stream.write(data)
+        data = wf.readframes(chunk)
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    is_playing = False
 
 def memoize(obj):
     cache = obj.cache = {}
@@ -497,6 +521,19 @@ def get_args():
     	help="Toggles the AM/PM clock for Pokemon timers",
     	action='store_true',
     	default=False)
+    groupA = parser.add_mutually_exclusive_group(required=False)
+    groupA.add_argument(
+        '-s',
+        '--play-sound',
+        help='Play an alert in the console when a Pokemon is visible',
+        action='store_true',
+        default=False)
+    groupA.add_argument(
+        '-sw',
+        '--play-sound-web',
+        help='Play an alert in the browser when a Pokemon is visible',
+        action='store_true',
+        default=False)
     parser.add_argument(
         '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
@@ -656,7 +693,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
                 for wild in cell.WildPokemon:
                     hash = wild.SpawnPointId;
                     if hash not in seen.keys() or (seen[hash].TimeTillHiddenMs <= wild.TimeTillHiddenMs):
-                        visible.append(wild)    
+                        visible.append(wild)
                     seen[hash] = wild.TimeTillHiddenMs
                 if cell.Fort:
                     for Fort in cell.Fort:
@@ -690,6 +727,12 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
         elif args.only:
             if pokename.lower() not in only and pokeid not in only:
                 continue
+        if args.play_sound and not is_playing:
+            my_thread = threading.Thread(target=play_audio)
+            my_thread.start()
+        elif args.play_sound_web:
+            global playSoundBrowser
+            playSoundBrowser = 1
 
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
             / 1000
@@ -764,7 +807,12 @@ app = create_app()
 @app.route('/data')
 def data():
     """ Gets all the PokeMarkers via REST """
-    return json.dumps(get_pokemarkers())
+    global playSoundBrowser
+    retrieved_data = get_pokemarkers()
+    retrieved_data.append({"playSound":playSoundBrowser})
+    dump = json.dumps(retrieved_data)
+    playSoundBrowser = 0
+    return dump
 
 @app.route('/raw_data')
 def raw_data():
@@ -786,11 +834,13 @@ def config():
 
 @app.route('/')
 def fullmap():
+    global playSoundBrowser
     clear_stale_pokemons()
 
-    return render_template(
-        'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh)
-
+    webpage = render_template(
+        'example_fullmap.html', key=GOOGLEMAPS_KEY, fullmap=get_map(), auto_refresh=auto_refresh, playSound=playSoundBrowser)
+    playSoundBrowser = 0
+    return webpage
 
 @app.route('/next_loc')
 def next_loc():
