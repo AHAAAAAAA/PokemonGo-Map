@@ -18,7 +18,8 @@ def init():
         wanted_pokemon = [a.lower() for a in wanted_pokemon]
         # get api key
         api_key = _str( data["pushbullet"] )
-        pushbullet_client = Pushbullet(api_key)
+        if api_key:
+            pushbullet_client = Pushbullet(api_key)
 
 
 # Safely parse incoming strings to unicode
@@ -28,9 +29,9 @@ def _str(s):
 # Notify user for discovered Pokemon
 def pokemon_found(pokemon):
     # get name
-    pokename = _str( pokemon["name"] ).lower()
+    pokename = _str(pokemon["name"]).lower()
     # check array
-    if not pokename in wanted_pokemon: return
+    if not pushbullet_client or not pokename in wanted_pokemon: return
     # notify
     print "[+] Notifier found pokemon:", pokename
     address = Nominatim().reverse(str(pokemon["lat"])+", "+str(pokemon["lng"])).address
