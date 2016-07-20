@@ -163,8 +163,24 @@ GetNewGyms = function(stamp) {
                 content: gymLabel(item)
             });
 
+            google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
+                delete marker["persist"];
+                marker.infoWindow.close();
+            });
+
             marker.addListener('click', function() {
+                marker["persist"] = true;
                 marker.infoWindow.open(map, marker);
+            });
+
+            marker.addListener('mouseover', function() {
+                marker.infoWindow.open(map, marker);
+            });
+
+            marker.addListener('mouseout', function() {
+                if (!marker["persist"]) {
+                    marker.infoWindow.close();
+                }
             });
         });
     });
@@ -184,9 +200,31 @@ GetNewPokeStops = function(stamp) {
                 content: pokestopLabel(item)
             });
 
-            marker.addListener('click', function() {
-                marker.infoWindow.open(map, marker);
-            });
+            if (item.lure_expiration) {
+                google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
+                    delete marker["persist"];
+                    marker.infoWindow.close();
+                });
+
+                marker.addListener('click', function() {
+                    marker["persist"] = true;
+                    marker.infoWindow.open(map, marker);
+                });
+
+                marker.addListener('mouseover', function() {
+                    marker.infoWindow.open(map, marker);
+                });
+
+                marker.addListener('mouseout', function() {
+                    if (!marker["persist"]) {
+                        marker.infoWindow.close();
+                    }
+                });
+            } else {
+                marker.addListener('click', function() {
+                    marker.infoWindow.open(map, marker);
+                });
+            }
         });
     });
 };
