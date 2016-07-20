@@ -630,7 +630,7 @@ def main():
             t = threading.Thread(target=step,args=(x, y, dx, dy, stepcount))
             threads.append(t)
             t.start()
-            if(len(threads) > 25):
+            if(len(threads) == 25):
                 print("Thread cap reached, waiting for responses...")
                 for i in range(25):
                     threads[i].join()
