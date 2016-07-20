@@ -12,7 +12,7 @@
             {{ fullmap.html }}
 
         </div>
-        
+
 
     </body>
 {{ fullmap.js }}
@@ -25,20 +25,20 @@
         $('.label-countdown').each(function (index, element) {
             var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at"))*1000);
             var now = new Date();
-            
+
             var difference = Math.abs(disappearsAt - now);
             var hours = Math.floor(difference / 36e5);
             var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
             var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
-            
+
             if(disappearsAt < now){
                 timestring = "(expired)";
-            } 
+            }
             else {
                 timestring = "(";
                 if(hours > 0)
                     timestring = hours + "h";
-                
+
                 timestring += ("0" + minutes).slice(-2) + "m";
                 timestring += ("0" + seconds).slice(-2) + "s";
                 timestring += ")";
@@ -50,7 +50,7 @@
 
     window.setInterval(setLabelTime, 1000);
 
-  
+
   </script>
   {% if auto_refresh %}
     <script type="text/javascript">
@@ -146,9 +146,12 @@
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
                 var now = new Date();
-                
+
                 for (var index in json_obj) {
                     var item = json_obj[index];
+                    if(item.playSound === 1){
+                      playSound();
+                    }else{
                     var key = item["type"]+item["key"];
                     if(Object.keys(markerCache).indexOf(key) >= 0){
                         var needs_replacing = false;
@@ -218,6 +221,7 @@
                         }
                         _marker.key = key;
                     })(marker, disappearsAt);
+                  }
                 }
                 // deleteMarkers(markers.Length - json_obj.length);
             })
@@ -225,4 +229,13 @@
         window.setInterval(updateMap, {{ auto_refresh }});
     </script>
   {% endif %}
+  <script type="text/javascript">
+    var playSound = function(){
+      var audio = new Audio('https://github.com/NgJason/PokemonGo-Map/raw/master/a.wav');
+      audio.play();
+    }
+    if({{playSound}}){
+      playSound();
+    }
+  </script>
 </html>
