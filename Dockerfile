@@ -8,7 +8,7 @@ MAINTAINER Ahmed Osman (/u/Ashex)
 
 EXPOSE 5000
 
-RUN apk add --update openssl ca-certificates
+RUN apk add --update ca-certificates
 RUN apk add \
     python \
     python-dev \
