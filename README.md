@@ -5,6 +5,8 @@
 
 ##[Android Port](https://github.com/omkarmoghe/Pokemap) <== Direct all andriod related PRs and discussion here.
 
+Please submit all pull requests to [Develop Branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop)
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
 </p>
