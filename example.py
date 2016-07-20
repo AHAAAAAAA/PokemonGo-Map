@@ -632,7 +632,7 @@ def main():
             t.start()
             if(len(threads) == 25):
                 print("Thread cap reached, waiting for responses...")
-                for i in range(25):
+                for i in range(len(threads)):
                     threads[i].join()
                     count = count + 1
                     print('Completed: ' + str(((count) + pos * .25 - .25) / (steplimit2) * 100) + '%')
