@@ -11,8 +11,8 @@ from .models import Pokemon, Gym, Pokestop
 
 
 class Pogom(Flask):
-    def __init__(self, name):
-        super(Pogom, self).__init__(name)
+    def __init__(self, import_name, **kwargs):
+        super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/pokemons", methods=['GET'])(self.pokemons)
