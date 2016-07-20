@@ -2026,10 +2026,10 @@ body {
 
 /* Main */
 #main {
-  padding: 4em 0 2em 0; }
-  @media screen and (max-width: 736px) {
-    #main {
-      padding: 3em 0 1em 0; } }
+  height: 100%; }
+
+#map {
+  height: 100%; }
 
 /* Footer */
 #footer {
