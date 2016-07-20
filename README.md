@@ -1,4 +1,4 @@
-#Example.py rebase underway, look in [rewrite branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/py-rewrite) for more info.#
+#Rejecting all the pull requests due to upcoming refactor. #
 ##Please refrain from submitting pull requests at this time.##
 
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
