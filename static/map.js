@@ -38,40 +38,69 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
-    $.getJSON("/pokemons", function(result){
-        $.each(result, function(i, item){
+    initPokemon();
+    console.log(display_gyms);
+    if(display_gyms) {
+      initGyms();
+    }
+}
 
-            var marker = new google.maps.Marker({
-                position: {lat: item.latitude, lng: item.longitude},
-                map: map,
-                icon: 'static/icons/'+item.pokemon_id+'.png'
-            });
 
-            marker.infoWindow = new google.maps.InfoWindow({
-                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
-            });
+function initPokemon() {
+  $.getJSON("/pokemons", function(result){
+      $.each(result, function(i, item){
 
-            google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
-                delete marker["persist"];
-                marker.infoWindow.close();
-            });
+          var marker = new google.maps.Marker({
+              position: {lat: item.latitude, lng: item.longitude},
+              map: map,
+              icon: 'static/icons/'+item.pokemon_id+'.png'
+          });
 
-            marker.addListener('click', function() {
-                marker["persist"] = true;
-                marker.infoWindow.open(map, marker);
-            });
+          marker.infoWindow = new google.maps.InfoWindow({
+              content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
+          });
 
-            marker.addListener('mouseover', function() {
-                marker.infoWindow.open(map, marker);
-            });
+          google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
+              delete marker["persist"];
+              marker.infoWindow.close();
+          });
 
-            marker.addListener('mouseout', function() {
-                if (!marker["persist"]) {
-                    marker.infoWindow.close();
-                }
-            });
+          marker.addListener('click', function() {
+              marker["persist"] = true;
+              marker.infoWindow.open(map, marker);
+          });
 
-            console.log(item.latitude);
-        });
-    });
+          marker.addListener('mouseover', function() {
+              marker.infoWindow.open(map, marker);
+          });
+
+          marker.addListener('mouseout', function() {
+              if (!marker["persist"]) {
+                  marker.infoWindow.close();
+              }
+          });
+
+          console.log(item.latitude);
+      });
+  });
+}
+
+function initGyms() {
+  $.getJSON("/gyms", function(result) {
+    $.each(result, function(i, item) {
+      var icon;
+      switch(item.team_id) {
+        case 0: icon = 'static/forts/Gym.png'; break;
+        case 1: icon = 'static/forts/Mystic.png'; break;
+        case 2: icon = 'static/forts/Valor.png'; break;
+        case 3: icon = 'static/forts/Instinct.png'; break;
+      }
+
+      var marker = new google.maps.Marker({
+        position: {lat: item.latitude, lng: item.longitude},
+        map: map,
+        icon: icon
+      });
+    })
+  });
 }

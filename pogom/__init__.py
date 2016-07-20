@@ -7,5 +7,6 @@ config = {
     'ROOT_PATH': None,
     'ORIGINAL_LATITUDE': None,
     'ORIGINAL_LONGITUDE': None,
-    'GMAPS_KEY': None
+    'GMAPS_KEY': None,
+    'DISPLAY_GYMS': 'false'
 }
