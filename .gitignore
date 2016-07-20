@@ -2,5 +2,6 @@
 *.idea
 *.db
 *.sass-cache
-dist/
+credentials.json
+static/dist/
 node_modules/
