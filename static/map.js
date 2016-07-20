@@ -11,7 +11,7 @@ function pad(number) {
 };
 
 pokemonLabel = function(item) {
-    disappear_date = new Date(item.disappear_time + (new Date().getTimezoneOffset() * 60000));
+    disappear_date = new Date(item.disappear_time);
 
     var str = '\
         <div>\
