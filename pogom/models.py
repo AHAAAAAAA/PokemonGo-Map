@@ -132,9 +132,9 @@ def parse_map(map_dict):
         log.info("Upserting {} pokemon".format(len(pokemons)))
         InsertQuery(Pokemon, rows=pokemons.values()).upsert().execute()
 
-    #if pokestops:
-    #    log.info("Upserting {} pokestops".format(len(pokestops)))
-    #    InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
+    if pokestops:
+        log.info("Upserting {} pokestops".format(len(pokestops)))
+        InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
 
     if gyms:
         log.info("Upserting {} gyms".format(len(gyms)))
