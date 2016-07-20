@@ -42,14 +42,14 @@ module.exports = function(grunt) {
   			options: { livereload: true }
   		},
   		js: {
-  			files: ['**/*.js', '!node_modules/**/*.js'],
+  			files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
   			options: { livereload: true },
         tasks: ['uglify']
   		},
   		css: {
   			files: '**/*.scss',
   			options: { livereload: true },
-  			tasks: ['sass','cssmin']
+  			tasks: ['sass', 'cssmin']
   		}
     },
     cssmin: {
