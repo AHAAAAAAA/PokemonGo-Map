@@ -32,6 +32,11 @@ function initMap() {
         center: {lat: center_lat, lng: center_lng},
         zoom: 16
     });
+
+    GeoMarker = new GeolocationMarker();
+    GeoMarker.setCircleOptions({fillColor: '#808080'});
+    GeoMarker.setMap(map);
+
     marker = new google.maps.Marker({
         position: {lat: center_lat, lng: center_lng},
         map: map,
@@ -59,3 +64,5 @@ function initMap() {
         });
     });
 }
+
+initMap();
