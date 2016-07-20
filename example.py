@@ -826,9 +826,12 @@ def get_pokemarkers():
         if is_ampm_clock:
         	dateoutput = datestr.strftime("%I:%M%p").lstrip('0')
         pokemon['disappear_time_formatted'] = dateoutput
+        pokemon['img_id'] = '%03d' % pokemon['id']
 
         LABEL_TMPL = u'''
-<div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
+<div>
+<img src='https://assets.pokemon.com/assets/cms2/img/pokedex/full/{img_id}.png' class='pokemon-artwork' />
+<b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
 <div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
 <div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
 '''
