@@ -12,7 +12,7 @@
             {{ fullmap.html }}
 
         </div>
-        
+
 
     </body>
 {{ fullmap.js }}
@@ -25,20 +25,20 @@
         $('.label-countdown').each(function (index, element) {
             var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at"))*1000);
             var now = new Date();
-            
+
             var difference = Math.abs(disappearsAt - now);
             var hours = Math.floor(difference / 36e5);
             var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
             var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
-            
+
             if(disappearsAt < now){
                 timestring = "(expired)";
-            } 
+            }
             else {
                 timestring = "(";
                 if(hours > 0)
                     timestring = hours + "h";
-                
+
                 timestring += ("0" + minutes).slice(-2) + "m";
                 timestring += ("0" + seconds).slice(-2) + "s";
                 timestring += ")";
@@ -50,7 +50,7 @@
 
     window.setInterval(setLabelTime, 1000);
 
-  
+
   </script>
   {% if auto_refresh %}
     <script type="text/javascript">
@@ -59,8 +59,10 @@
         var map = null;
         var markers = [];
         var markerCache = {};
+        var currentLocation;
+
         // Adds a marker to the map and push to the array.
-        function addMarker(options = {}) {
+        function addMarker(options) {
             var default_options = {map: map}
             for(var prop in options){
                 if(options.hasOwnProperty(prop)){
@@ -73,7 +75,7 @@
         }
 
         // Sets the map on all markers in the array.
-        function setMapOnAll(map, length = null) {
+        function setMapOnAll(map, length) {
             var lastIndex = markers.length -1;
             if(length != null){
                 lastIndex = length;
@@ -119,6 +121,7 @@
                         options["zoom"] = json_obj["zoom"];
                         options["identifier"] = json_obj["identifier"];
                         updateMap();
+                        updateLocation();
                     });
 
         function createMap(){
@@ -146,7 +149,7 @@
             $.get(baseURL + "/data", function(response){
                 var json_obj = $.parseJSON(response);
                 var now = new Date();
-                
+
                 for (var index in json_obj) {
                     var item = json_obj[index];
                     var key = item["type"]+item["key"];
@@ -219,9 +222,50 @@
                         _marker.key = key;
                     })(marker, disappearsAt);
                 }
+
                 // deleteMarkers(markers.Length - json_obj.length);
             })
         }
+
+        if (navigator.geolocation) {
+          function updateLocation() {
+            createMap();
+
+            navigator.geolocation.getCurrentPosition(locationSuccess, locationFail);
+            function locationFail() { console.log('localization failed') };
+            function locationSuccess(position) {
+
+              var currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+              if (currentLocation !== undefined) {
+                currentLocation.setMap(null);
+              }
+
+              var currentPositionIcon = new google.maps.MarkerImage('static/misc/current_location.png', null, null, null, new google.maps.Size(16,16));
+
+              currentLocation = addMarker({
+                  position: currentLocationLatLng,
+                  map: map,
+                  icon: currentPositionIcon
+              });
+
+              currentLocation.infoWindow = new google.maps.InfoWindow({
+                  content: 'Current location'
+              });
+
+              currentLocation.addListener('click', function() {
+                  currentLocation.infoWindow.open(map, currentLocation);
+                  currentLocation["persist"] = true;
+              });
+
+              google.maps.event.addListener(currentLocation.infoWindow,'closeclick',function(){
+                 currentLocation["persist"] = null;
+              });
+            };
+          }
+          window.setInterval(updateLocation, {{ auto_refresh }});
+        }
+
         window.setInterval(updateMap, {{ auto_refresh }});
     </script>
   {% endif %}
