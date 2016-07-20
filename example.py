@@ -29,6 +29,8 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
+import wave
+import pyaudio
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -81,6 +83,27 @@ is_ampm_clock = False
 # stuff for in-background search thread
 
 search_thread = None
+
+is_playing = False
+def play_audio():
+    global is_playing
+    chunk = 206
+    wf = wave.open('a.wav', 'rb')
+    p = pyaudio.PyAudio()
+    stream = p.open(
+        format = p.get_format_from_width(wf.getsampwidth()),
+        channels = wf.getnchannels(),
+        rate = wf.getframerate(),
+        output = True)
+    data = wf.readframes(chunk)
+    while data != '':
+        is_playing = True
+        stream.write(data)
+        data = wf.readframes(chunk)
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    is_playing = False
 
 def memoize(obj):
     cache = obj.cache = {}
@@ -498,6 +521,12 @@ def get_args():
     	action='store_true',
     	default=False)
     parser.add_argument(
+        '-s',
+        '--play-sound',
+        help='Play an alert when a Pokemon is visible',
+        action='store_true',
+        default=False)
+    parser.add_argument(
         '-d', '--debug', help='Debug Mode', action='store_true')
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
@@ -656,7 +685,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
                 for wild in cell.WildPokemon:
                     hash = wild.SpawnPointId;
                     if hash not in seen.keys() or (seen[hash].TimeTillHiddenMs <= wild.TimeTillHiddenMs):
-                        visible.append(wild)    
+                        visible.append(wild)
                     seen[hash] = wild.TimeTillHiddenMs
                 if cell.Fort:
                     for Fort in cell.Fort:
@@ -690,6 +719,9 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
         elif args.only:
             if pokename.lower() not in only and pokeid not in only:
                 continue
+        if args.play_sound and not is_playing:
+            my_thread = threading.Thread(target=play_audio)
+            my_thread.start()
 
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
             / 1000
