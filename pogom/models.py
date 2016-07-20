@@ -20,6 +20,9 @@ class BaseModel(Model):
 
 
 class Pokemon(BaseModel):
+    IGNORE = None
+    ONLY = None
+
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
     encounter_id = CharField(primary_key=True)
@@ -30,7 +33,7 @@ class Pokemon(BaseModel):
     disappear_time = DateTimeField()
 
     @classmethod
-    def get_active(cls, ignore, only):
+    def get_active(cls):
         query = (Pokemon
                  .select()
                  .where(Pokemon.disappear_time > datetime.now())
@@ -41,11 +44,11 @@ class Pokemon(BaseModel):
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             pokemon_name = p['pokemon_name'].lower()
             pokemon_id = str(p['pokemon_id'])
-            if ignore:
-                if pokemon_name in ignore or pokemon_id in ignore:
+            if cls.IGNORE:
+                if pokemon_name in cls.IGNORE or pokemon_id in cls.IGNORE:
                     continue
-            if only:
-                if pokemon_name not in only and pokemon_id not in only:
+            if cls.ONLY:
+                if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
                     continue
             pokemons.append(p)
 

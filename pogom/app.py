@@ -11,14 +11,15 @@ from .models import Pokemon, Gym, Pokestop
 
 
 class Pogom(Flask):
-    def __init__(self, name):
-        super(Pogom, self).__init__(name)
-        self.queue = None # LifoQueue from Search thread
+    def __init__(self, import_name, **kwargs):
+        super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
+        self.queue = None  # LifoQueue from Search thread
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/pokemons", methods=['GET'])(self.pokemons)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
+        self.route("/raw_data", methods=['GET'])(self.raw_data)
 
         if (config['SEARCH_MARKER']):
             self.route("/meta", methods=['GET'])(self.metadata)
@@ -30,15 +31,24 @@ class Pogom(Flask):
                                gmaps_key=config['GMAPS_KEY'],
                                allow_search_marker=config['SEARCH_MARKER'])
 
+    def get_raw_data(self):
+        return {
+            'gyms': [g for g in Gym.select().dicts()],
+            'pokestops': [p for p in Pokestop.select().dicts()],
+            'pokemons': Pokemon.get_active()
+        }
+
+    def raw_data(self):
+        return jsonify(self.get_raw_data())
+
     def pokemons(self):
-        return jsonify(Pokemon.get_active(ignore=config['IGNORE'],
-                                          only=config['ONLY']))
+        return jsonify(self.get_raw_data()['pokemons'])
 
     def pokestops(self):
-        return jsonify([p for p in Pokestop.select().dicts()])
+        return jsonify(self.get_raw_data()['pokestops'])
 
     def gyms(self):
-        return jsonify([g for g in Gym.select().dicts()])
+        return jsonify(self.get_raw_data()['gyms'])
 
     def metadata(self):
         if self.queue == None:
