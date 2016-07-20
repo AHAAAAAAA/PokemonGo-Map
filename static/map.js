@@ -1,12 +1,5 @@
-var map, 
-    marker,
-    lastStamp = 0,
-    requestInterval = 10000;
-
-var markers = [];
-
-pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
-    disappear_date = new Date(disappear_time + (new Date().getTimezoneOffset() * 60000));
+function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
+    disappear_date = new Date(disappear_time)
 
     var pad = function pad(number) {
       return number <= 99 ? ("0" + number).slice(-2) : number;
@@ -29,23 +22,23 @@ pokemonLabel = function(name, disappear_time, id, latitude, longitude) {
         </div>';
 
     return str;
-};
+}
 
-initMap = function() {
+
+var map;
+var marker;
+function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: center_lat, lng: center_lng},
         zoom: 16
     });
-    var marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
         position: {lat: center_lat, lng: center_lng},
         map: map,
         animation: google.maps.Animation.DROP
-    });  
-    GetNewPokemons(lastStamp);
-};
+    });
 
-GetNewPokemons = function(stamp) {
-    $.getJSON("/pokemons/"+stamp, function(result){
+    $.getJSON("/pokemons", function(result){
         $.each(result, function(i, item){
 
             var marker = new google.maps.Marker({
@@ -55,7 +48,7 @@ GetNewPokemons = function(stamp) {
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
-                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+                content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
             });
 
             google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
@@ -68,9 +61,6 @@ GetNewPokemons = function(stamp) {
                 marker.infoWindow.open(map, marker);
             });
 
-            markers.push({
-                    m: marker,
-                    disapear: item.disappear_time});
             marker.addListener('mouseover', function() {
                 marker.infoWindow.open(map, marker);
             });
@@ -82,13 +72,6 @@ GetNewPokemons = function(stamp) {
             });
 
             console.log(item.latitude);
-        });        
-    }).always(function() {setTimeout(function() { GetNewPokemons(lastStamp) }, requestInterval)});
-    var dObj = new Date();
-    lastStamp = dObj.getTime();
-    
-    $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
+        });
     });
-};
+}

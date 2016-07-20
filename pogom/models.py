@@ -31,16 +31,14 @@ class Pokemon(BaseModel):
     latitude = FloatField()
     longitude = FloatField()
     disappear_time = DateTimeField()
-    detect_time = DateTimeField()
 
     @classmethod
-    def get_active(cls, stamp): 
-        r_stamp = datetime.fromtimestamp(int(stamp)/1e3)      
+    def get_active(cls):
         query = (Pokemon
                  .select()
-                 .where(Pokemon.disappear_time > datetime.now(), Pokemon.detect_time >= r_stamp)
+                 .where(Pokemon.disappear_time > datetime.now())
                  .dicts())
-        log.info("Get Pokemons for stamp: {}".format(r_stamp))
+
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
@@ -86,7 +84,6 @@ def parse_map(map_dict):
     pokestops = {}
     gyms = {}
 
-    detect_time = datetime.now()
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
@@ -98,8 +95,7 @@ def parse_map(map_dict):
                 'longitude': p['longitude'],
                 'disappear_time': datetime.fromtimestamp(
                     (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0),
-                'detect_time': detect_time
+                     p['time_till_hidden_ms']) / 1000.0)
             }
 
         for f in cell.get('forts', []):
