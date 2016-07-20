@@ -30,6 +30,8 @@ from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
 
+import db
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
@@ -67,6 +69,7 @@ auto_refresh = 0
 default_step = 0.001
 api_endpoint = None
 pokemons = {}
+add_to_db = []
 gyms = {}
 pokestops = {}
 numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
@@ -545,6 +548,7 @@ def login(args):
     return api_endpoint, access_token, profile_response
 
 def main():
+    global add_to_db
     full_path = os.path.realpath(__file__)
     (path, filename) = os.path.split(full_path)
 
@@ -615,6 +619,14 @@ def main():
         process_step(args, api_endpoint, access_token, profile_response,
                      pokemonsJSON, ignore, only)
 
+        # TODO: insert to DB
+        session = db.Session()
+        for spawn_id in add_to_db:
+            pokemon = pokemons[spawn_id]
+            db.add_sighting(session, pokemon)
+        session.commit()
+        add_to_db = []
+
         print('Completed: ' + str(
             ((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
 
@@ -633,6 +645,7 @@ def main():
 
 def process_step(args, api_endpoint, access_token, profile_response,
                  pokemonsJSON, ignore, only):
+    global add_to_db
     print('[+] Searching for Pokemon at location {} {}'.format(FLOAT_LAT, FLOAT_LONG))
     origin = LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
     step_lat = FLOAT_LAT
@@ -710,6 +723,7 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
             "id": poke.pokemon.PokemonId,
             "name": pokename
         }
+        add_to_db.append(poke.SpawnPointId)
 
 def clear_stale_pokemons():
     current_time = time.time()
