@@ -83,4 +83,7 @@ def get_pokemon_name(pokemon_id):
 
 def load_credentials(filepath):
     with open(filepath+'/credentials.json') as file:
-        return json.load(file)
+        creds = json.load(file)
+        if not creds['gmaps_key']:
+            raise Exception('No API key entered.')
+        return creds
