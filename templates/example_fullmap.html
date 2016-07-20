@@ -202,9 +202,16 @@
                                 _marker.infoWindow.open(_map, _marker);
                                 _marker["persist"] = true;
                             });
-
                             google.maps.event.addListener(_marker.infoWindow,'closeclick',function(){
                                _marker["persist"] = null;
+                            });
+                            _marker.addListener('mouseover', function() {
+                                _marker.infoWindow.open(_map, _marker);
+                            });
+                            _marker.addListener('mouseout', function() {
+                                if (!_marker["persist"]) {
+                                    _marker.infoWindow.close();
+                                }
                             });
                         })(item["infobox"], map, marker);
                     }
