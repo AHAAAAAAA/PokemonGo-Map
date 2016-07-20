@@ -2059,3 +2059,7 @@ body {
         border-left: 0;
         margin-left: 0;
         padding-left: 0; } }
+        
+.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom {
+    margin: 70px 35px !important;
+}
