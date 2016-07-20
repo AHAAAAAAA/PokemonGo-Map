@@ -34,13 +34,20 @@ class Pokemon(BaseModel):
     detect_time = DateTimeField()
 
     @classmethod
-    def get_active(cls, stamp): 
-        r_stamp = datetime.fromtimestamp(int(stamp)/1e3)      
-        query = (Pokemon
-                 .select()
-                 .where(Pokemon.disappear_time > datetime.utcnow())
-                 .dicts())
-        log.info("Get Pokemons for stamp: {}".format(r_stamp))
+    def get_active(cls, stamp):
+        if stamp != None:
+            r_stamp = datetime.fromtimestamp(int(stamp)/1e3)
+            query = (Pokemon
+                     .select()
+                     .where(Pokemon.disappear_time > datetime.utcnow(), Pokemon.detect_time >= r_stamp)
+                     .dicts())
+            log.info("Get Pokemons for stamp: {}".format(r_stamp))
+        else:
+            query = (Pokemon
+                     .select()
+                     .where(Pokemon.disappear_time > datetime.utcnow())
+                     .dicts())
+            log.info("Geting all Pokemons")
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
