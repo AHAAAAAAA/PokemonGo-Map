@@ -80,3 +80,7 @@ def get_pokemon_name(pokemon_id):
             get_pokemon_name.names = json.loads(f.read())
 
     return get_pokemon_name.names[str(pokemon_id)]
+
+def load_credentials(filepath):
+    with open(filepath+'/credentials.json') as file:
+        return json.load(file)
