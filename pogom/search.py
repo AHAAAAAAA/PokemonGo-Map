@@ -60,7 +60,7 @@ def login(args, position):
 
 class Search(threading.Thread):
     def __init__(self, args, queue=Queue.LifoQueue(), *posargs, **kwargs):
-        super().__init__(*posargs, **kwargs)
+        super(Search, self).__init__(*posargs, **kwargs)  # Python2.7
         self._stop = threading.Event()
         self.args = args
         self.queue = queue
