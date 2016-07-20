@@ -52,6 +52,8 @@ if __name__ == '__main__':
     elif args.only:
         Pokemon.ONLY = [i.lower().strip() for i in args.only.split(',')]
 
+    Pokestop.LURED_ONLY = args.display_lured
+
     if not args.mock:
         start_locator_thread(args)
     else:
