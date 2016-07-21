@@ -639,19 +639,13 @@ def process_step(args, api_endpoint, access_token, profile_response,
                       profile_response)
     hs = [h]
     seen = {}
-
-    import multiprocessing
-
-    po = multiprocessing.Pool()
-
+    start = datetime.now()
     for child in parent.children():
         latlng = LatLng.from_point(Cell(child).get_center())
         set_location_coords(latlng.lat().degrees, latlng.lng().degrees, 0)
-        hs.append(po.apply_async(
-            get_heartbeat, (args.auth_service, api_endpoint, access_token,
-                            profile_response)))
-    po.close()
-    po.join()
+        hs.append(get_heartbeat(args.auth_service, api_endpoint, access_token,
+                            profile_response))
+    print('time spent on heartbeat: {}'.format(datetime.now() - start))
     set_location_coords(step_lat, step_long, 0)
     visible = []
 
