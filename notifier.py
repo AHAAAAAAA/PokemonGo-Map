@@ -33,11 +33,11 @@ def pokemon_found(pokemon):
     if not pushbullet_client or not pokename in wanted_pokemon: return
     # notify
     print "[+] Notifier found pokemon:", pokename
-    # Locate pokemon on GMAPS
+    # Locate pokemon on Google Maps
     google_maps_link = "http://maps.google.com/maps?q=" + str(pokemon["lat"]) + "," + str(pokemon["lng"]) + ',20z'
     notification_text = "Pokemon Finder found " + _str(pokemon["name"]) + "!"
     disappear_time = str(datetime.fromtimestamp(pokemon["disappear_time"]).strftime("%I:%M%p").lstrip('0'))+")"
-    location_text = "Locate on Google Maps : " + gMaps + ". " + _str(pokemon["name"]) + " will be available until " + disappear_time + "."
+    location_text = "Locate on Google Maps : " + google_maps_link + ". " + _str(pokemon["name"]) + " will be available until " + disappear_time + "."
 
     push = pushbullet_client.push_link(notification_text, google_maps_link, body=location_text)
 
