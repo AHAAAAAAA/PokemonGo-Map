@@ -1213,7 +1213,6 @@ input[type="text"],
 input[type="password"],
 input[type="email"],
 input[type="tel"],
-select,
 textarea {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -1233,48 +1232,19 @@ textarea {
   input[type="password"]:invalid,
   input[type="email"]:invalid,
   input[type="tel"]:invalid,
-  select:invalid,
   textarea:invalid {
     box-shadow: none; }
   input[type="text"]:focus,
   input[type="password"]:focus,
   input[type="email"]:focus,
   input[type="tel"]:focus,
-  select:focus,
   textarea:focus {
     border-color: #5AA6ED;
     box-shadow: 0 0 0 1px #5AA6ED; }
 
-.select-wrapper {
-  text-decoration: none;
-  display: block;
-  position: relative; }
-  .select-wrapper:before {
-    content: "";
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-transform: none !important; }
-  .select-wrapper:before {
-    color: rgba(144, 144, 144, 0.25);
-    display: block;
-    height: 2.75em;
-    line-height: 2.75em;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    top: 0;
-    width: 2.75em; }
-  .select-wrapper select::-ms-expand {
-    display: none; }
-
 input[type="text"],
 input[type="password"],
-input[type="email"],
-select {
+input[type="email"] {
   height: 2.75em; }
 
 textarea {

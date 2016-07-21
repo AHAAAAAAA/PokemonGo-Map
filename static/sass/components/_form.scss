@@ -8,7 +8,6 @@
 	input[type="password"],
 	input[type="email"],
 	input[type="tel"],
-	select,
 	textarea {
 		@include vendor('appearance', 'none');
 		background: _palette(border-bg);
@@ -32,33 +31,9 @@
 		}
 	}
 
-	.select-wrapper {
-		@include icon('\f078');
-		display: block;
-		position: relative;
-
-		&:before {
-			color: _palette(border);
-			display: block;
-			height: _size(element-height);
-			line-height: _size(element-height);
-			pointer-events: none;
-			position: absolute;
-			right: 0;
-			text-align: center;
-			top: 0;
-			width: _size(element-height);
-		}
-
-		select::-ms-expand {
-			display: none;
-		}
-	}
-
 	input[type="text"],
 	input[type="password"],
-	input[type="email"],
-	select {
+	input[type="email"] {
 		height: _size(element-height);
 	}
 

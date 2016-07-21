@@ -31,6 +31,7 @@
 
 		<link rel="stylesheet" href="static/css/style8.css" />
 		<link rel="stylesheet" href="static/dist/css/app.min.css" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 		<script src="static/js/vendor/modernizr.custom.js"></script>
 
     <style>
@@ -40,6 +41,10 @@
           padding: 0;
           overflow: hidden;
         }
+				.select2-container--default .select2-selection--multiple .select2-selection__choice {
+			    background-color: #3b3b3b;
+			    border: 1px solid #aaa;
+			}
     </style>
 	</head>
 	<body id="top">
@@ -77,14 +82,15 @@
 						<span class="switch-handle"></span>
 					</label>
 			</div>
-			<button id="trigger-overlay">Test overlay</button>
+
+			<label for="exclude-pokemon">
+         	Hide common Pokémon:<br/>
+          <select id="exclude-pokemon" multiple="multiple"></select>
+      </label>
 		</nav>
 
 
 		<div id="map"></div>
-		<div id="zoom-in">IN</div>
-		<div id="zoom-out">OUT</div>
-
 
 		<div class="overlay overlay-contentscale">
 			<button type="button" class="overlay-close">Close</button>
@@ -97,19 +103,20 @@
 	</div>
 </body>
 
-<!-- Scripts -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+	<!-- Scripts -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
-  <script type="text/javascript" src="static/dist/js/app.min.js"></script>
-  <script type="text/javascript" src="static/js/vendor/classie.js"></script>
-  <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script>
+	<script type="text/javascript" src="static/dist/js/app.min.js"></script>
+	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
+	<script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script>
 
-  <script type="text/javascript">
-    var center_lat = {{lat}};
-    var center_lng = {{lng}};
-  </script>
+	<script type="text/javascript">
+	  var center_lat = {{lat}};
+	  var center_lng = {{lng}};
+	</script>
 
-  <script type="text/javascript" src="static/map.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
+	<script type="text/javascript" src="static/map.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
 </html>
