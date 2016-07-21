@@ -67,10 +67,9 @@ function initMap() {
     map.addListener('maptypeid_changed', function(s) {
         localStorage['map_style'] = this.mapTypeId;
     });
-
-    localStorage['map_style'] = localStorage['map_style'] || 'roadmap';
-
-    map.setMapTypeId(localStorage['map_style']);
+    
+    if (typeof localStorage['map_style'] != undefined && localStorage['map_style'] != 'undefined')
+	   map.setMapTypeId(localStorage['map_style']);
 
     marker = new google.maps.Marker({
         position: {
@@ -81,7 +80,7 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
-    initSidebar();
+    initSidebar()
 };
 
 function initSidebar() {
