@@ -8,8 +8,7 @@ from datetime import datetime
 from base64 import b64encode
 
 from .utils import get_pokemon_name
-from .sound import play
-from pogom.utils import get_args
+from .sound import play_audio
 
 args = get_args()
 
@@ -37,8 +36,8 @@ class Pokemon(BaseModel):
     detect_time = DateTimeField()
 
     @classmethod
-    def get_active(cls, stamp): 
-        r_stamp = datetime.fromtimestamp(int(stamp)/1e3)      
+    def get_active(cls, stamp):
+        r_stamp = datetime.fromtimestamp(int(stamp)/1e3)
         query = (Pokemon
                  .select()
                  .where(Pokemon.disappear_time > datetime.utcnow())
@@ -87,15 +86,7 @@ def parse_map(map_dict):
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
-            pokemon_name = get_pokemon_name(p['pokemon_data']['pokemon_id'])
-            pokemon_id = str(p['pokemon_data']['pokemon_id'])
-            if args.ignore:
-                if pokemon_name in args.ignore or pokemon_id in args.ignore:
-                    continue
-            if args.only:
-                if pokemon_name not in args.only and pokemon_id not in args.only:
-                    continue
-            play()
+            play_audio(p['pokemon_data']['pokemon_id'])
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
                 'spawnpoint_id': p['spawnpoint_id'],
