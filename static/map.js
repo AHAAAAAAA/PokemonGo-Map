@@ -118,10 +118,12 @@ function initSidebar() {
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
 }
 
+function pad(number) {
+    return number <= 99 ? ("0" + number).slice(-2) : number;
+}
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time)
-    var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
     var contentstring = `
         <div>
@@ -163,6 +165,26 @@ function gymLabel(team_name, team_id, gym_points) {
     }
 
     return str;
+}
+
+function pokestopLabel(lure_expiration) {
+
+    var contentstring;
+    if (lure_expiration && lure_expiration > new Date().getTime()) {
+        expiration_date = new Date(lure_expiration)
+        contentstring = `
+            <div>
+                Lure expires at ${pad(expiration_date.getHours())}:${pad(expiration_date.getMinutes())}:${pad(expiration_date.getSeconds())}
+                <span class='label-countdown' disappears-at='${lure_expiration}'>(00m00s)</span>
+            </div>`;
+    } else {
+        contentstring = `
+            <div>
+                Pokéstop does not have a lure module
+            </div>`;
+    }
+
+    return contentstring;
 }
 
 // Dicts
@@ -212,7 +234,7 @@ function setupGymMarker(item) {
 };
 
 function setupPokestopMarker(item) {
-    var imagename = item.lure_expiration ? "PstopLured" : "Pstop";
+    var imagename = (item.lure_expiration && item.lure_expiration > new Date().getTime()) ? "PstopLured" : "Pstop";
     var marker = new google.maps.Marker({
         position: {
             lat: item.latitude,
@@ -223,7 +245,7 @@ function setupPokestopMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: "I'm a Pokéstop, and soon enough I'll tell you more things about me."
+        content: pokestopLabel(item.lure_expiration)
     });
 
     addListeners(marker);
@@ -302,8 +324,20 @@ function updateMap() {
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
-            }
+            } else {
+                // if the lure_expiration time exists and its less than the current time, or it exists and
+                // is greater than our previous reading for that pokestop, or it doesn't exist but our
+                // previous reading did have one, reset it
+                if (item.lure_expiration && item.lure_expiration < new Date().getTime() ||
+                    item.lure_expiration && item.lure_expiration > map_pokestops[item.pokestop_id].lure_expiration ||
+                    !(item.lure_expiration) && map_pokestops[item.pokestop_id].lure_expiration) {
 
+                    map_pokestops[item.pokestop_id].marker.setMap(null);
+                    delete map_pokestops[item.pokestop_id];
+                    item.marker = setupPokestopMarker(item);
+                    map_pokestops[item.pokestop_id] = item;
+                }
+            }
         });
 
         $.each(result.gyms, function(i, item){
