@@ -142,7 +142,7 @@ def parse_map(map_dict):
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
-    step = 50
+    step = 120
 
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
