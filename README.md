@@ -1,11 +1,11 @@
-#Support for master branch dropped.#
-##Accepting only pull requests for develop branch. ##
+#Not accepting pull requests to Master branch at the moment.#
+#Please submit all pull requests to [Develop Branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) #
 
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
 ##[Android Port](https://github.com/omkarmoghe/Pokemap) <== Direct all andriod related PRs and discussion here.
 
-Please submit all pull requests to [Develop Branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop)
+
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
@@ -24,4 +24,3 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 ---
 #For instructions, please refer to [the wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki)#
 
-Hello Paul Xu the Internship king ;)
