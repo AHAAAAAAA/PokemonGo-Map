@@ -1,9 +1,11 @@
 /* Main */
 
 	#main {
-		height: 100%
+		position: absolute;
+		top: 3.5em;
+		bottom: 0;
 	}
 
 	#map {
-		height: 100%
+		height: 100% !important
 	}
