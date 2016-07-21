@@ -7,8 +7,8 @@ var pGoStyle=[{"featureType":"landscape.man_made","elementType":"geometry.fill",
 var selectedStyle = 'light';
 
 function initMap() {
-	
-		
+
+
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: center_lat,
@@ -26,21 +26,21 @@ function initMap() {
               'style_pgo']
         },
     });
-	
+
 	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
 	map.mapTypes.set('dark_style', style_dark);
 
 	var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
 	map.mapTypes.set('style_light2', style_light2);
-	
+
 	var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
 	map.mapTypes.set('style_pgo', style_pgo);
 
     map.addListener('maptypeid_changed', function(s) {
         localStorage['map_style'] = this.mapTypeId;
-    }); 
+    });
 
-    if (typeof localStorage['map_style'] != undefined)
+    if (typeof localStorage['map_style'] != undefined && localStorage['map_style'] != 'undefined')
 	   map.setMapTypeId(localStorage['map_style']);
 
     marker = new google.maps.Marker({
@@ -208,45 +208,54 @@ function updateMap() {
         dataType: "json"
     }).done(function(result) {
 
-        if (document.getElementById('pokemon-switch').checked) {
-            $.each(result.pokemons, function(i, item){                
-                if (!(item.encounter_id in map_pokemons)) {
-                    // add marker to map and item to dict
-                    if (item.marker) item.marker.setMap(null);
-                    item.marker = setupPokemonMarker(item);
-                    map_pokemons[item.encounter_id] = item;
-                }
-            });
-        }
+      $.each(result.pokemons, function(i, item){
+          if (!document.getElementById('pokemon-switch').checked) {
+              return false; // in case the checkbox was unchecked in the meantime.
+          }
+          if (!(item.encounter_id in map_pokemons)) {
+              // add marker to map and item to dict
+              if (item.marker) item.marker.setMap(null);
+              item.marker = setupPokemonMarker(item);
+              map_pokemons[item.encounter_id] = item;
+          }
 
-        if (document.getElementById('pokestops-switch').checked) {
-            $.each(result.pokestops, function (i, item) {
-                if (item.marker) item.marker.setMap(null);
+      });
+
+        $.each(result.pokestops, function(i, item) {
+            if (!document.getElementById('pokestops-switch').checked) {
+                return false;
+            } else if (!(item.pokestop_id in map_pokestops)) { // add marker to map and item to dict
+                  // add marker to map and item to dict
+                  if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
-            });
-        }
-        
-        if (document.getElementById('gyms-switch').checked) {
-            $.each(result.gyms, function (i, item) {               
-                if (item.gym_id in map_gyms) {
-                    // if team has changed, create new marker (new icon)
-                    if (map_gyms[item.gym_id].team_id != item.team_id) {
-                        map_gyms[item.gym_id].marker.setMap(null);
-                        map_gyms[item.gym_id].marker = setupGymMarker(item);
-                    } else { // if it hasn't changed generate new label only (in case prestige has changed)
-                        map_gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
-                            content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
-                        });
-                    }
+            }
+
+        });
+
+        $.each(result.gyms, function(i, item){
+            if (!document.getElementById('gyms-switch').checked) {
+                return false; // in case the checkbox was unchecked in the meantime.
+            }
+
+            if (item.gym_id in map_gyms) {
+                // if team has changed, create new marker (new icon)
+                if (map_gyms[item.gym_id].team_id != item.team_id) {
+                    map_gyms[item.gym_id].marker.setMap(null);
+                    map_gyms[item.gym_id].marker = setupGymMarker(item);
+                } else { // if it hasn't changed generate new label only (in case prestige has changed)
+                    map_gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
+                        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
+                    });
                 }
-                else { // add marker to map and item to dict
-                    if (item.marker) item.marker.setMap(null);
-                    item.marker = setupGymMarker(item);
-                    map_gyms[item.gym_id] = item;
-                }
-            });
-        }
+            }
+            else { // add marker to map and item to dict
+                if (item.marker) item.marker.setMap(null);
+                item.marker = setupGymMarker(item);
+                map_gyms[item.gym_id] = item;
+            }
+
+        });
 
         clearStaleMarkers();
     });
