@@ -31,7 +31,7 @@ class Pogom(Flask):
     def raw_data(self, stamp):
         return jsonify({
             'gyms': [g for g in Gym.get()],
-            'pokestops': Pokestop.get(),
+            'pokestops': [p for p in Pokestop.get()],
             'pokemons': Pokemon.get_active(stamp)
         })
 
