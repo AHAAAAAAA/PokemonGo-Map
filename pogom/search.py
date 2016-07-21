@@ -14,6 +14,7 @@ log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 REQ_SLEEP = 1
+failed_consecutive = 0
 api = PGoApi()
 
 
@@ -83,7 +84,11 @@ def search(args):
             parse_map(response_dict)
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
-
+            failed_consecutive += 1
+            if(failed_consecutive >= 5):
+                log.error('Niantic servers under heavy load. Waiting before trying again')
+            	time.sleep(5)
+        failed_consecutive = 0
         log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
         i += 1
         time.sleep(REQ_SLEEP)
