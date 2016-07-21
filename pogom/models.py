@@ -186,19 +186,3 @@ def create_tables():
     db.connect()
     db.create_tables([Pokemon, Pokestop, Gym], safe=True)
     db.close()
-
-class ResponseResult:
-    request=''
-    data=''
-    resultMsg=''
-
-    def __init__(self, request, resultMsg):
-        self.request=request
-        self.resultMsg=resultMsg
-    
-    def serialize(self):
-        return {
-            'request': self.request, 
-            'data': self.data,
-            'resultMsg': self.resultMsg,
-        }

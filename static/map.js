@@ -272,6 +272,20 @@ var setCurrentMarker = function(lat, lng, title){
     });
 };
 
+/**
+ * calls the server api to change the location
+ */
+var setNewLocation = function(lat, lng){
+    var newLocation={};
+    newLocation.lat = Number(lat);
+    newLocation.lon = Number(lng);
+
+    $.post("/next_loc", newLocation)
+    .fail(function(data){
+        alert('next_loc failed for: ' + newLocation);
+    });
+}
+
 //PLACES ADDITION
 
 InitPlaces = function(){
