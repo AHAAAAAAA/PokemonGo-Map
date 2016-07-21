@@ -208,10 +208,27 @@ function updateMap() {
         },
         dataType: "json"
     }).done(function(result) {
+<<<<<<< HEAD
 
         localStorage.showPokemon = localStorage.showPokemon || true;
         localStorage.showGyms = localStorage.showGyms || true;
         localStorage.showPokestops = localStorage.showPokestops || true;
+=======
+        localStorage.showPokemon = localStorage.showPokemon || true
+        localStorage.showGyms = localStorage.showGyms || true
+        localStorage.showPokestops = localStorage.showPokestops || true
+    
+      $.each(result.pokemons, function(i, item){
+          if (!localStorage.showPokemon) {
+              return false; // in case the checkbox was unchecked in the meantime.
+          }
+          if (!(item.encounter_id in map_pokemons)) {
+              // add marker to map and item to dict
+              if (item.marker) item.marker.setMap(null);
+              item.marker = setupPokemonMarker(item);
+              map_pokemons[item.encounter_id] = item;
+          }
+>>>>>>> dfcdc77ec95632e014b4dfa0ae48364383e94e66
 
         $.each(result.pokemons, function(i, item){
             if (!localStorage.showPokemon) {
