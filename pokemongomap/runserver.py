@@ -23,7 +23,7 @@ from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pok
 from pogom.pgoapi.utilities import get_pos_by_name
 
 
-if __name__ == '__main__':
+def main():
     args = get_args()
 
     if args.debug:
@@ -37,9 +37,6 @@ if __name__ == '__main__':
             log.critical('Please run "grunt build" before starting the server.');
             sys.exit();
 
-    main()
-
-def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 
 
@@ -117,3 +114,6 @@ def main():
             time.sleep(60)
     else:
         app.run(threaded=True, use_reloader=False, debug=args.debug, host=args.host, port=args.port)
+
+if __name__ == '__main__':
+    main()
