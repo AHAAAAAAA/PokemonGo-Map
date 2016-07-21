@@ -51,7 +51,8 @@ def add_sighting(session, spawn_id, pokemon):
     existing = session.query(Sighting) \
         .filter(Sighting.pokemon_id == obj.pokemon_id) \
         .filter(Sighting.spawn_id == obj.spawn_id) \
-        .filter(Sighting.normalized_timestamp == obj.normalized_timestamp) \
+        .filter(Sighting.expire_timestamp > obj.expire_timestamp - 10) \
+        .filter(Sighting.expire_timestamp < obj.expire_timestamp + 10) \
         .filter(Sighting.lat == obj.lat) \
         .filter(Sighting.lon == obj.lon) \
         .first()
