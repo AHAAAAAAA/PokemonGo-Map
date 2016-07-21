@@ -1,18 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-import re
-import sys
-import json
-import struct
 import logging
+<<<<<<< HEAD
 import requests
 import math
+=======
+>>>>>>> refs/remotes/AHAAAAAAA/develop
 import time
 
 from pgoapi import PGoApi
-from pgoapi.utilities import f2i, h2f, get_cellid, encode, get_pos_by_name
+from pgoapi.utilities import f2i, get_cellid
 
 from . import config
 from .models import parse_map
