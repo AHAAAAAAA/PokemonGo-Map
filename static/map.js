@@ -209,9 +209,9 @@ function updateMap() {
         dataType: "json"
     }).done(function(result) {
 
-        localStorage.showPokemon = localStorage.showPokemon || true
-        localStorage.showGyms = localStorage.showGyms || true
-        localStorage.showPokestops = localStorage.showPokestops || true
+        localStorage.showPokemon = localStorage.showPokemon || true;
+        localStorage.showGyms = localStorage.showGyms || true;
+        localStorage.showPokestops = localStorage.showPokestops || true;
 
         $.each(result.pokemons, function(i, item){
             if (!localStorage.showPokemon) {
