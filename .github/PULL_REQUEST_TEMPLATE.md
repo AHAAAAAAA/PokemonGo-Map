@@ -1,3 +1,4 @@
+<!-- Please note, we are no longer accepting pull requests for master branch -->
 This pull request includes a
 
 - [ ] Bug fix
