@@ -9,6 +9,7 @@ import uuid
 import os
 import json
 from datetime import datetime, timedelta
+import yaml
 
 from . import config
 from exceptions import APIKeyException
@@ -17,6 +18,12 @@ from exceptions import APIKeyException
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
+
+
+def get_config_from_yaml():
+    config_file = open("configuration.yaml", "r")
+    config = yaml.load(config_file)
+    return config
 
 
 def get_args():
