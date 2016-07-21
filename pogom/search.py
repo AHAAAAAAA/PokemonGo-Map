@@ -85,7 +85,7 @@ def search(args):
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
             failed_consecutive += 1
-            if(failed_consecutive >= 10):
+            if(failed_consecutive >= 5):
                 log.error('Niantic servers under heavy load. Waiting before trying again')
             	time.sleep(5)
         failed_consecutive = 0
