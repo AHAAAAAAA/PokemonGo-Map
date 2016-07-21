@@ -7,4 +7,3 @@ credentials.json
 static/dist/
 node_modules/
 venv/
-pogom/search.py
