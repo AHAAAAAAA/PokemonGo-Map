@@ -55,7 +55,7 @@ function initMap() {
 };
 
 
-function pokemonLabel(name, id, disappear_time, latitude, longitude) {
+function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time)
     var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
@@ -118,7 +118,7 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
+        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
 
     addListeners(marker);
