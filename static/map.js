@@ -67,7 +67,9 @@ function initMap() {
     map.addListener('maptypeid_changed', function(s) {
         localStorage['map_style'] = this.mapTypeId;
     });
-    
+
+    localStorage['map_style'] = localStorage['map_style'] || 'roadmap';
+
     if (typeof localStorage['map_style'] != undefined && localStorage['map_style'] != 'undefined')
 	   map.setMapTypeId(localStorage['map_style']);
 
