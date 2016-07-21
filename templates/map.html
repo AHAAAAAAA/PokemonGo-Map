@@ -57,17 +57,37 @@
 
 		<!-- Nav -->
 		<nav id="nav">
-			<ul class="links">
-				<li><a href="#top">Top</a></li>
-				<li><a href="#content">Content</a></li>
-				<li><a href="#elements">Elements</a></li>
-				<li><a href="#grid">Grid System</a></li>
-			</ul>
+				Pokemon
+				<div class="onoffswitch">
+					<label class="switch switch-flat">
+			    	<input id="pokemon-switch" class="switch-input" type="checkbox" checked/>
+			    	<span class="switch-label" data-on="On" data-off="Off"></span>
+			    	<span class="switch-handle"></span>
+			    </label>
+		    </div>
+				Gyms
+				<div class="onoffswitch">
+					<label class="switch switch-flat">
+			    	<input id="gyms-switch" class="switch-input" type="checkbox" checked/>
+			    	<span class="switch-label" data-on="On" data-off="Off"></span>
+			    	<span class="switch-handle"></span>
+			    </label>
+		    </div>
+				Pokéstops
+				<div class="onoffswitch">
+					<label class="switch switch-flat">
+			    	<input id="pokestops-switch" class="switch-input" type="checkbox" />
+			    	<span class="switch-label" data-on="On" data-off="Off"></span>
+			    	<span class="switch-handle"></span>
+			    </label>
+		    </div>
+			<button id="trigger-overlay">Test overlay</button>
 		</nav>
 
-    <div id="main">
-			<button id="trigger-overlay">Test</button>
+		<div id="main" class="container">
       <div id="map"></div>
+			<div id="zoom-in">IN</div>
+			<div id="zoom-out">OUT</div>
     </div>
 
 		<div class="overlay overlay-contentscale">
