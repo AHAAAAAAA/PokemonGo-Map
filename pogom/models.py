@@ -47,7 +47,7 @@ class Pokemon(BaseModel):
                      .select()
                      .where(Pokemon.disappear_time > datetime.utcnow())
                      .dicts())
-            log.info("Geting all Pokemons")
+            log.info("Getting all Pokemons")
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
@@ -122,7 +122,7 @@ def parse_map(map_dict):
     pokestops = {}
     gyms = {}
 
-    detect_time = datetime.now()
+    detect_time = datetime.utcnow()
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
