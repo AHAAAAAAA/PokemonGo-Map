@@ -95,7 +95,6 @@ def search(args):
 
     i = 1
     for step_location in generate_location_steps(position, num_steps):
-        print(step_location)
         log.info('Scanning step {:d} of {:d}.'.format(i, 3*num_steps**2-3*num_steps+1))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
