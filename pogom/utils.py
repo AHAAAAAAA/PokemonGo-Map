@@ -51,18 +51,22 @@ def get_args():
     return args
 
 
-def insert_mock_data(location, num_pokemons):
-    from .models import Pokemon
+def insert_mock_data():
+    num_pokemon = 6
+    num_pokestop = 6
+    num_gym = 6
+
+    from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
-    prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
-    res = prog.match(location)
-    latitude, longitude = float(res.group(1)), float(res.group(2))
+    latitude, longitude = float(config['ORIGINAL_LATITUDE']), float(config['ORIGINAL_LONGITUDE'])
 
-    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemons)]
+    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemon)]
     disappear_time = datetime.now() + timedelta(hours=1)
+
     detect_time = datetime.now()
-    for i in xrange(num_pokemons):
+
+    for i in xrange(num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
@@ -71,6 +75,28 @@ def insert_mock_data(location, num_pokemons):
                        disappear_time=disappear_time,
                        detect_time=detect_time)
 
+    for i in range(num_pokestop):
+
+        Pokestop.create(pokestop_id=uuid.uuid4(),
+                        enabled=True,
+                        latitude=locations[i+num_pokemon][0],
+                        longitude=locations[i+num_pokemon][1],
+                        last_modified=datetime.now(),
+                        #Every other pokestop be lured
+                        lure_expiration=disappear_time if (i % 2 == 0) else None
+                        )
+
+    for i in range(num_gym):
+
+        Gym.create(gym_id=uuid.uuid4(),
+                   team_id=i % 3,
+                   guard_pokemon_id=(i+1) % 150,
+                   latitude=locations[i + num_pokemon + num_pokestop][0],
+                   longitude=locations[i + num_pokemon + num_pokestop][1],
+                   last_modified=datetime.now(),
+                   enabled=True,
+                   gym_points=1000
+                   )
 
 def get_pokemon_name(pokemon_id):
     if not hasattr(get_pokemon_name, 'names'):

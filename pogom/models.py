@@ -8,6 +8,7 @@ from datetime import datetime
 from base64 import b64encode
 
 from .utils import get_pokemon_name
+from .transform import transform_from_wgs_to_gcj
 
 
 db = SqliteDatabase('pogom.db')
@@ -22,6 +23,7 @@ class BaseModel(Model):
 class Pokemon(BaseModel):
     IGNORE = None
     ONLY = None
+    CHINA = False
 
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
@@ -53,6 +55,8 @@ class Pokemon(BaseModel):
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             pokemon_name = p['pokemon_name'].lower()
             pokemon_id = str(p['pokemon_id'])
+            if cls.CHINA:
+                p['latitude'], p['longitude'] = transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             if cls.IGNORE:
                 if pokemon_name in cls.IGNORE or pokemon_id in cls.IGNORE:
                     continue
@@ -67,6 +71,7 @@ class Pokemon(BaseModel):
 class Pokestop(BaseModel):
     IGNORE = True
     LURED_ONLY = False
+    CHINA = False
 
     pokestop_id = CharField(primary_key=True)
     enabled = BooleanField()
@@ -77,22 +82,29 @@ class Pokestop(BaseModel):
 
     @classmethod
     def get(cls):
-        if cls.IGNORE:
-            return []
-        else:
+        pokestops = []
+
+        if not cls.IGNORE:
             if cls.LURED_ONLY:
-                return (Pokestop
-                        .select()
-                        .where(~(Pokestop.lure_expiration >> None))
-                        .dicts())
+                pokestops = (Pokestop
+                             .select()
+                             .where(~(Pokestop.lure_expiration >> None))
+                             .dicts())
             else:
-                return (Pokestop
-                        .select()
-                        .dicts())
+                pokestops = (Pokestop
+                             .select()
+                             .dicts())
+
+            if cls.CHINA:
+                for pokestop in pokestops:
+                    pokestop['latitude'], pokestop['longitude'] = transform_from_wgs_to_gcj(pokestop['latitude'], pokestop['longitude'])
+
+        return pokestops
 
 
 class Gym(BaseModel):
     IGNORE = True
+    CHINA = False
 
     UNCONTESTED = 0
     TEAM_MYSTIC = 1
@@ -110,12 +122,14 @@ class Gym(BaseModel):
 
     @classmethod
     def get(cls):
-        if cls.IGNORE:
-            return [];
-        else:
-            return (Gym
-                    .select()
-                    .dicts())
+        gyms = []
+
+
+        if cls.CHINA:
+            for gym in gyms:
+                gym['latitude'], gym['longitude'] = transform_from_wgs_to_gcj(gym['latitude'], gym['longitude'])
+
+        return gyms
 
 def parse_map(map_dict):
     pokemons = {}
