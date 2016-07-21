@@ -10,8 +10,6 @@ from base64 import b64encode
 from .utils import get_pokemon_name
 from .sound import play_audio
 
-args = get_args()
-
 db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
 
