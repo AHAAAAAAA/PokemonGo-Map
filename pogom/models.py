@@ -35,12 +35,19 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_active(cls, stamp):
-        r_stamp = datetime.fromtimestamp(int(stamp)/1e3)
-        query = (Pokemon
-                 .select()
-                 .where(Pokemon.disappear_time > datetime.utcnow())
-                 .dicts())
-        log.info("Get Pokemons for stamp: {}".format(r_stamp))
+        if stamp != None:
+            r_stamp = datetime.fromtimestamp(int(stamp)/1e3)
+            query = (Pokemon
+                     .select()
+                     .where(Pokemon.disappear_time > datetime.utcnow(), Pokemon.detect_time >= r_stamp)
+                     .dicts())
+            log.info("Get Pokemons for stamp: {}".format(r_stamp))
+        else:
+            query = (Pokemon
+                     .select()
+                     .where(Pokemon.disappear_time > datetime.utcnow())
+                     .dicts())
+            log.info("Geting all Pokemons")
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
@@ -51,6 +58,9 @@ class Pokemon(BaseModel):
 
 
 class Pokestop(BaseModel):
+    IGNORE = True
+    LURED_ONLY = False
+
     pokestop_id = CharField(primary_key=True)
     enabled = BooleanField()
     latitude = FloatField()
@@ -58,8 +68,25 @@ class Pokestop(BaseModel):
     last_modified = DateTimeField()
     lure_expiration = DateTimeField(null=True)
 
+    @classmethod
+    def get(cls):
+        if cls.IGNORE:
+            return []
+        else:
+            if cls.LURED_ONLY:
+                return (Pokestop
+                        .select()
+                        .where(~(Pokestop.lure_expiration >> None))
+                        .dicts())
+            else:
+                return (Pokestop
+                        .select()
+                        .dicts())
+
 
 class Gym(BaseModel):
+    IGNORE = True
+
     UNCONTESTED = 0
     TEAM_MYSTIC = 1
     TEAM_VALOR = 2
@@ -74,6 +101,14 @@ class Gym(BaseModel):
     longitude = FloatField()
     last_modified = DateTimeField()
 
+    @classmethod
+    def get(cls):
+        if cls.IGNORE:
+            return [];
+        else:
+            return (Gym
+                    .select()
+                    .dicts())
 
 def parse_map(map_dict):
     pokemons = {}
