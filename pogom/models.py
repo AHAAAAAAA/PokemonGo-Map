@@ -58,6 +58,9 @@ class Pokemon(BaseModel):
 
 
 class Pokestop(BaseModel):
+    IGNORE = True
+    LURED_ONLY = False
+
     pokestop_id = CharField(primary_key=True)
     enabled = BooleanField()
     latitude = FloatField()
@@ -65,8 +68,25 @@ class Pokestop(BaseModel):
     last_modified = DateTimeField()
     lure_expiration = DateTimeField(null=True)
 
+    @classmethod
+    def get(cls):
+        if cls.IGNORE:
+            return []
+        else:
+            if cls.LURED_ONLY:
+                return (Pokestop
+                        .select()
+                        .where(~(Pokestop.lure_expiration >> None))
+                        .dicts())
+            else:
+                return (Pokestop
+                        .select()
+                        .dicts())
+
 
 class Gym(BaseModel):
+    IGNORE = True
+
     UNCONTESTED = 0
     TEAM_MYSTIC = 1
     TEAM_VALOR = 2
@@ -81,6 +101,14 @@ class Gym(BaseModel):
     longitude = FloatField()
     last_modified = DateTimeField()
 
+    @classmethod
+    def get(cls):
+        if cls.IGNORE:
+            return [];
+        else:
+            return (Gym
+                    .select()
+                    .dicts())
 
 def parse_map(map_dict):
     pokemons = {}

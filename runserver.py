@@ -10,7 +10,7 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
-from pogom.models import create_tables, Pokemon
+from pogom.models import create_tables, Pokemon, Pokestop, Gym
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
@@ -56,6 +56,15 @@ if __name__ == '__main__':
         start_locator_thread(args)
     else:
         insert_mock_data(args.location, 6)
+
+    if args.display_pokestops or args.display_lured:
+        Pokestop.IGNORE = False
+
+    if args.display_lured:
+        Pokestop.LURED_ONLY = True
+
+    if args.display_gyms:
+        Gym.IGNORE = False
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path

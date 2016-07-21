@@ -28,8 +28,8 @@ class Pogom(Flask):
 
     def get_raw_data(self, stamp):
         return {
-            'gyms': [g for g in Gym.select().dicts()],
-            'pokestops': [p for p in Pokestop.select().dicts()],
+            'gyms': [g for g in Gym.get()],
+            'pokestops': [p for p in Pokestop.get()],
             'pokemons': Pokemon.get_active(stamp)
         }
 
