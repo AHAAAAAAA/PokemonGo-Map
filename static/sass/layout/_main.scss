@@ -1,9 +1,20 @@
 /* Main */
 
-	#main {
-		height: 100%
-	}
-
-	#map {
-		height: 100%
-	}
+#main {
+	margin-top: 3.5em;
+}
+.wrapper {
+	position:relative;
+}
+#header, #map, #footer {
+	position:absolute;
+}
+#header {
+	height:3.5em;
+	width:100%;
+}
+#map {
+	top:3.5em;
+	bottom:0px;
+	width:100%;
+}

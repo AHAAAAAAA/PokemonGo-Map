@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Pokémap</title>
+		<title>Pokémon Go Map</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,49 +31,56 @@
 
 		<link rel="stylesheet" href="static/css/style8.css" />
 		<link rel="stylesheet" href="static/dist/css/app.min.css" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 		<script src="static/js/vendor/modernizr.custom.js"></script>
 
     <style>
-        html, body {
+        html, body, .wrapper {
           height: 100%;
           margin: 0;
           padding: 0;
           overflow: hidden;
         }
-
-        #map {
-        	height: 100vh;
-        	width: 100vw;
-        }
+				.select2-container--default .select2-selection--multiple .select2-selection__choice {
+			    background-color: #3b3b3b;
+			    border: 1px solid #aaa;
+			}
     </style>
 	</head>
 	<body id="top">
 
+	<div class="wrapper">
 		<!-- Header -->
 		<header id="header">
-			<a href="#nav">Menu</a>
-			<h1><a href="#">GoMap</a></h1>
+			<a href="#nav">Filter</a>
+			<h1><a href="#">Pokémon Go Map</a></h1>
 		</header>
 
 		<!-- Nav -->
 		<nav id="nav">
-				Pokemon
+			<p>Filter through Pokémon, Gyms &amp; Pokéstops.</p>
+			<div class="switch-container">
+				<h3>Pokémon</h3>
 				<div class="onoffswitch">
-	      	<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
-	        <label class="onoffswitch-label" for="pokemon-switch">
+					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
+					<label class="onoffswitch-label" for="pokemon-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
 	        </label>
-	      </div>
-				Gyms
+				</div>
+			</div>
+			<div class="switch-container">
+				<h3>Gyms</h3>
 				<div class="onoffswitch">
-	      	<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
-	        <label class="onoffswitch-label" for="gyms-switch">
+					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
+					<label class="onoffswitch-label" for="gyms-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
 	        </label>
-	      </div>
-				Pokéstops
+				</div>
+			</div>
+			<div class="switch-container">
+				<h3>Pokéstops</h3>
 				<div class="onoffswitch">
 					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked />
 					<label class="onoffswitch-label" for="pokestops-switch">
@@ -81,14 +88,16 @@
 						<span class="switch-handle"></span>
 					</label>
 				</div>
-			<button id="trigger-overlay">Test overlay</button>
+			</div>
+			<!-- <button id="trigger-overlay">Test overlay</button> -->
+			<label for="exclude-pokemon">
+				<h3>Hide common Pokémon</h3>
+        <select id="exclude-pokemon" multiple="multiple"></select>
+      </label>
 		</nav>
 
-		<div id="main" class="container">
-      <div id="map"></div>
-			<div id="zoom-in">IN</div>
-			<div id="zoom-out">OUT</div>
-    </div>
+
+		<div id="map"></div>
 
 		<div class="overlay overlay-contentscale">
 			<button type="button" class="overlay-close">Close</button>
@@ -98,22 +107,23 @@
 				</ul>
 			</nav>
 		</div>
+	</div>
+</body>
 
-  </body>
-
-  <!-- Scripts -->
+	<!-- Scripts -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
-  <script type="text/javascript" src="static/dist/js/app.min.js"></script>
-  <script type="text/javascript" src="static/js/vendor/classie.js"></script>
-  <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script>
+	<script type="text/javascript" src="static/dist/js/app.min.js"></script>
+	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
+	<!-- <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script> -->
 
-  <script type="text/javascript">
-    var center_lat = {{lat}};
-    var center_lng = {{lng}};
-  </script>
+	<script type="text/javascript">
+	  var center_lat = {{lat}};
+	  var center_lng = {{lng}};
+	</script>
 
-  <script type="text/javascript" src="static/map.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
+	<script type="text/javascript" src="static/map.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
 </html>
