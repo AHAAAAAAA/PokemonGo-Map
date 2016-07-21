@@ -3,6 +3,7 @@
 @import 'libs/mixins';
 @import 'libs/skel';
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css);
+@import 'libs/select2';
 
 @include skel-breakpoints((
 	xlarge: '(max-width: 1680px)',
