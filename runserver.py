@@ -65,7 +65,9 @@ if __name__ == '__main__':
     app.config['BASIC_AUTH_PASSWORD'] = 'pokemon'
 
     basic_auth = BasicAuth(app)
-    app.config['BASIC_AUTH_FORCE'] = True
+    
+    if  args.auth_enable:
+        app.config['BASIC_AUTH_FORCE'] = True
 
     config['ROOT_PATH'] = app.root_path
     if args.gmaps_key is not None:
