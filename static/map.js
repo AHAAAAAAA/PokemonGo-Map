@@ -1,27 +1,27 @@
 var $selectExclude = $("#exclude-pokemon");
 
 $.getJSON("static/locales/pokemon.en.json").done(function(data) {
-    var pokeList = []
+  var pokeList = []
 
-    $.each(data, function(key, value) {
-        pokeList.push( { id: key, text: value } );
-    });
+  $.each(data, function(key, value) {
+    pokeList.push( { id: key, text: value } );
+  });
 
-    JSON.parse(readCookie("remember_select"));
-    $selectExclude.select2({
-        placeholder: "Select Pokemon to exclude",
-        data: pokeList
-    });
-    $selectExclude.val(JSON.parse(readCookie("remember_select"))).trigger("change");
+  JSON.parse(readCookie("remember_select"));
+  $selectExclude.select2({
+    placeholder: "Select Pokemon to exclude",
+    data: pokeList
+  });
+  $selectExclude.val(JSON.parse(readCookie("remember_select"))).trigger("change");
 });
 
 var excludedPokemon = [];
 
 $selectExclude.on("change", function (e) {
-    excludedPokemon = $selectExclude.val().map(Number);
-    clearStaleMarkers();
-    document.cookie = 'remember_select='+JSON.stringify(excludedPokemon)+
-            '; max-age=31536000; path=/';
+  excludedPokemon = $selectExclude.val().map(Number);
+  clearStaleMarkers();
+  document.cookie = 'remember_select='+JSON.stringify(excludedPokemon)+
+          '; max-age=31536000; path=/';
 });
 
 var map;
