@@ -1,0 +1,12 @@
+flask:
+    image: python:2.7-onbuild
+    ports:
+        - "5000:5000"
+    volumes:
+        - .:/usr/src/app
+    working_dir: /usr/src/app
+    entrypoint: |
+        bash -c 'bash -s <<EOF
+        pip install -r requirements.txt
+        python example.py -a google -u "XXXXXX" -p "YYYYYYY" -l "ZZZZZZZZ" -st 10 --host 0.0.0.0
+        EOF'
