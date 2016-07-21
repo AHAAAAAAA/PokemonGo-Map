@@ -77,4 +77,20 @@
 		$nav.classList.remove('visible');
 	});
 
+  $.getJSON("static/js/locales/pokemons." + locale + ".json", function(data){
+    $('#pokemon_select').select2({
+      data: data,
+      placeholder: "Select your pokemons...",
+      templateResult: function(element){
+        if (!element.id) { return element.text; }
+        return $('<span><img src="static/icons/'+ element.id + '.png">'+ element.text +'</span>');
+      },
+      templateSelection: function(result, container){
+        return $('<img src="static/icons/' + result.id + '.png">');
+      }
+    }).on("change", function(e){
+      var results = $(this).val();
+      selected_pokemons = results;
+    });
+  });
 })();
