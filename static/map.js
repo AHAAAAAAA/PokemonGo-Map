@@ -132,25 +132,35 @@ function initMap() {
 };
 
 
-function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
+function pokemonLabel(name, id, disappear_time, latitude, longitude) {
     disappear_date = new Date(disappear_time)
-    var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
+    var pad = function (number) {
+      return number <= 99 ? ("0" + number).slice(-2) : number;
+    }
 
-    var contentstring = `
-        <div>
-            <b>${name}</b>
-            <span> - </span>
-            <small>
-                <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
-            </small>
-        </div>
-        <div>
-            Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
-        <div>
-            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
-                    target='_blank' title='View in Maps'>Get directions</a>
-        </div>`;
+    var url = 'http://www.pokemon.com/us/pokedex/' + id
+    var diss = '' + pad(disappear_date.getHours()) + ':'
+      + pad(disappear_date.getMinutes()) + ':'
+      + pad(disappear_date.getSeconds());
+
+    var loc = 'https://www.google.com/maps/dir/Current+Location/'
+      + latitude + ',' + longitude;
+
+    var contentstring = "\
+        <div>\
+            <b>"+name+"</b>\
+            <span> - </span>\
+            <small>\
+                <a href='"+url+"' target='_blank' title='View in Pokedex'>#"+id+"</a>\
+            </small>\
+        </div>\
+        <div>\
+            Disappears at "+diss+"\
+            <span class='label-countdown' disappears-at='"+disappear_time+"'>(00m00s)</span></div>\
+        <div>\
+            <a href='"+loc+"'\
+                    target='_blank' title='View in Maps'>Get directions</a>\
+        </div>";
     return contentstring;
 };
 
@@ -195,7 +205,7 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
+        content: pokemonLabel(item.pokemon_name, item.pokemon_id, item.disappear_time, item.latitude, item.longitude)
     });
 
     addListeners(marker);
