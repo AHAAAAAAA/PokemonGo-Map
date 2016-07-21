@@ -84,7 +84,7 @@ def search(args):
             parse_map(response_dict)
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
-            if!(failed_consecutive)
+            if not (failed_consecutive):
                 failed_consecutive=0
             failed_consecutive += 1
             if(failed_consecutive >= 5):
