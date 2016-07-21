@@ -3,6 +3,7 @@
 
 import os
 import logging
+import time
 
 from threading import Thread
 
@@ -60,4 +61,8 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
-    app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
+    if args.no_server:
+        while True:
+            time.sleep(1000)
+    else:
+        app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
