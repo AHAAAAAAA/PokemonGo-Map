@@ -5,12 +5,6 @@
 
 FROM python:2.7-alpine
 
-# ca-certificates is needed because without it, pip fails to install packages due to a certificate failure
-# build-base contains gcc, which is needed during the installation of the pycryptodomex pip package
-RUN apk add --no-cache \
-    ca-certificates \
-    build-base
-
 # default port the app runs on
 EXPOSE 5000
 
@@ -18,7 +12,16 @@ WORKDIR /usr/src/app
 
 ENTRYPOINT ["python", "./runserver.py"]
 
+# Copy Python requirements so we only rebuild deps if they have changed
 COPY requirements.txt /usr/src/app/
-RUN pip install --no-cache-dir -r requirements.txt
 
+# ca-certificates is needed because without it, pip fails to install packages due to a certificate failure
+# build-base contains gcc, which is needed during the installation of the pycryptodomex pip package
+RUN apk add --no-cache \
+    ca-certificates \
+    build-base \
+ && pip install --no-cache-dir -r requirements.txt \
+ && apk del build-base
+
+# Add the rest of the app code
 COPY . /usr/src/app
