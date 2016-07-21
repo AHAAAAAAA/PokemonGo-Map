@@ -3,6 +3,7 @@
 
 import os
 import logging
+import time
 
 from threading import Thread
 
@@ -16,6 +17,7 @@ from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
+search_thread = Thread()
 
 def start_locator_thread(args):
     search_thread = Thread(target=search_loop, args=(args,))
@@ -60,4 +62,10 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
-    app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
+
+    if args.no_server:
+        while not search_thread.isAlive():
+            time.sleep(1)
+        search_thread.join()
+    else:
+        app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
