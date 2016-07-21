@@ -52,7 +52,7 @@ if __name__ == '__main__':
     elif args.only:
         Pokemon.ONLY = [i.lower().strip() for i in args.only.split(',')]
 
-    if args.play_sound_web:
+    if args.play_web_sound:
         config['PLAY_WEB_SOUND'] = 1
 
     if not args.mock:
