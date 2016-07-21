@@ -5,7 +5,7 @@
 
 ##[Android Port](https://github.com/omkarmoghe/Pokemap) <== Direct all android related PRs and discussion here.
 
-[Video Walkthrough](https://www.youtube.com/watch?v=nplNFl3SpOI)
+[Video Setup Tutorial](https://www.youtube.com/watch?v=nplNFl3SpOI)
 
 
 <p align="center">
