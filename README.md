@@ -38,3 +38,4 @@ You'll have to set up notifications where you'd like to receive them. I installe
 <img src="https://raw.githubusercontent.com/jxmorris12/PokemonGo-Finder/master/screenshots/ChromePushNotif.png" width="400">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
 </p>
+=======
