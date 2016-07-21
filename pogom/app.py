@@ -42,7 +42,7 @@ class Pogom(Flask):
         return jsonify(Pokemon.get_active(None))
 
     def pokestops(self):
-        return jsonify(Pokestop.get())
+        return jsonify([p for p in Pokestop.get()])
 
 
     def gyms(self):
