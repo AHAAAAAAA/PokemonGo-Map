@@ -169,7 +169,7 @@ function gymLabel(team_name, team_id, gym_points) {
             <div style='padding-bottom: 2px'>Gym owned by:</div>
             <div>
                 <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
-                <img height='70px' style='padding: 5px;' src='/static/forts/${team_name}_large.png'>
+                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
             <div>Prestige: ${gym_points}</div>
             </center></div>`;
@@ -275,7 +275,7 @@ function clearStaleMarkers() {
 
 function updateMap() {
     $.ajax({
-        url: "/raw_data",
+        url: "raw_data",
         type: 'GET',
         data: {
             'pokemon': document.getElementById('pokemon-switch').checked,
