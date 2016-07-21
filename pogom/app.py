@@ -28,9 +28,8 @@ class Pogom(Flask):
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/pokemons/<stamp>", methods=['GET'])(self.pokemons)
-        self.route("/pokemons", methods=['GET'])(self.pokemons)
-        self.route("/gyms", methods=['GET'])(self.gyms)
-        self.route("/pokestops", methods=['GET'])(self.pokestops)
+        self.route("/gyms/<stamp>", methods=['GET'])(self.gyms)
+        self.route("/pokestops/<stamp>", methods=['GET'])(self.pokestops)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/setLocation", methods=['POST'])(self.setLocation)
 
@@ -41,32 +40,23 @@ class Pogom(Flask):
                                gmaps_key=config['GMAPS_KEY'])
 
     def get_raw_data(self, stamp):
-         return {
-             'gyms': [g for g in Gym.select().dicts()],
-             'pokestops': [p for p in Pokestop.select().dicts()],
-             'pokemons': Pokemon.get_active(stamp)
-         }
-    
-    def pokemons(self):
-        return jsonify(Pokemon.get_active())
+        return {
+            'gyms': [g for g in Gym.select().dicts()],
+            'pokestops': [p for p in Pokestop.select().dicts()],
+            'pokemons': Pokemon.get_active(stamp)
+        }
 
-    def pokestops(self):
-        return jsonify([p for p in Pokestop.select().dicts()])
-    
     def raw_data(self, stamp):
-         return jsonify(self.get_raw_data(stamp))
+        return jsonify(self.get_raw_data(stamp))
 
-    def gyms(self):
-        return jsonify([g for g in Gym.select().dicts()])
-    
     def pokemons(self, stamp):
-         return jsonify(self.get_raw_data(stamp)['pokemons'])
+        return jsonify(self.get_raw_data(stamp)['pokemons'])
 
     def pokestops(self, stamp):
-         return jsonify(self.get_raw_data(stamp)['pokestops'])
+        return jsonify(self.get_raw_data(stamp)['pokestops'])
 
     def gyms(self, stamp):
-         return jsonify(self.get_raw_data(stamp)['gyms'])
+        return jsonify(self.get_raw_data(stamp)['gyms'])
 
     def setLocation(self):
         result = ResponseResult(request.data,'invalid request')
