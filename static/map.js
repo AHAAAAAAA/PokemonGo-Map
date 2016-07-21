@@ -19,6 +19,7 @@ function initMap() {
 		mapTypeControl: true,
 		mapTypeControlOptions: {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+          position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
               google.maps.MapTypeId.ROADMAP,
               'dark_style',
