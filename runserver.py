@@ -46,6 +46,7 @@ if __name__ == '__main__':
 
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]
+    config['LOCALE'] = args.locale
 
     if args.ignore:
         Pokemon.IGNORE = [i.lower().strip() for i in args.ignore.split(',')]
@@ -59,6 +60,7 @@ if __name__ == '__main__':
 
     if args.display_pokestops or args.display_lured:
         Pokestop.IGNORE = False
+
 
     if args.display_lured:
         Pokestop.LURED_ONLY = True
