@@ -89,9 +89,19 @@
 					</label>
 				</div>
 			</div>
+      <div class="switch-container">
+        <h3>Large Icons</h3>
+        <div class="onoffswitch">
+          <input id="icons-switch" type="checkbox" name="icons-switch" class="onoffswitch-checkbox" checked />
+          <label class="onoffswitch-label" for="icons-switch">
+            <span class="switch-label" data-on="Large" data-off="Small"></span>
+            <span class="switch-handle"></span>
+          </label>
+        </div>
+      </div>
 			<!-- <button id="trigger-overlay">Test overlay</button> -->
 			<label for="exclude-pokemon">
-       	Hide common Pokémon:<br/>
+       	<h3>Hide common Pokémon:</h3>
         <select id="exclude-pokemon" multiple="multiple"></select>
       </label>
 		</nav>
@@ -117,7 +127,7 @@
 
 	<script type="text/javascript" src="static/dist/js/app.min.js"></script>
 	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
-	<script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script>
+	<!-- <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script> -->
 
 	<script type="text/javascript">
 	  var center_lat = {{lat}};
