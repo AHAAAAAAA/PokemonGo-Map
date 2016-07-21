@@ -136,7 +136,7 @@ def parse_map(map_dict):
     pokestops = {}
     gyms = {}
 
-    detect_time = datetime.now()
+    detect_time = datetime.utcnow()
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
