@@ -50,7 +50,7 @@ gymLabel = function gymLabel(item) {
             </div>\
             <div>\
                 <b style="color:rgba(' + gym_color[item.team_id] + ')">Team ' + gym_types[item.team_id] + '</b><br>\
-                <img height="100px" src="/static/forts/' + gym_types[item.team_id] + '_large.png"> \
+                <img height="100px" src="static/forts/' + gym_types[item.team_id] + '_large.png"> \
             </div>\
             <div>\
                 Prestige: ' + item.gym_points + '\
@@ -99,7 +99,7 @@ initMap = function() {
 };
 
 GetNewPokemons = function(stamp) {
-    $.getJSON("/pokemons/"+stamp, function(result){
+    $.getJSON("pokemons/"+stamp, function(result){
         $.each(result, function(i, item){
 
             var marker = new google.maps.Marker({
@@ -154,7 +154,7 @@ GetNewPokemons = function(stamp) {
 };
 
 GetNewGyms = function() {
-    $.getJSON("/gyms", function(result){
+    $.getJSON("gyms", function(result){
         $.each(result, function(i, item){
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
@@ -190,7 +190,7 @@ GetNewGyms = function() {
 };
 
 GetNewPokeStops = function() {
-    $.getJSON("/pokestops", function(result){
+    $.getJSON("pokestops", function(result){
         $.each(result, function(i, item){
             var imagename = item.lure_expiration ? "PstopLured" : "Pstop";
             var marker = new google.maps.Marker({
@@ -280,7 +280,7 @@ var setNewLocation = function(lat, lng){
     newLocation.lat = Number(lat);
     newLocation.lon = Number(lng);
 
-    $.post("/next_loc", newLocation)
+    $.post("next_loc", newLocation)
     .fail(function(data){
         alert('next_loc failed for: ' + newLocation);
     });
