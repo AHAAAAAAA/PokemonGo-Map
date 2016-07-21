@@ -3,7 +3,7 @@
 
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
-##[Android Port](https://github.com/omkarmoghe/Pokemap) <== Direct all andriod related PRs and discussion here.
+##[Android Port](https://github.com/omkarmoghe/Pokemap) <== Direct all android related PRs and discussion here.
 
 
 
