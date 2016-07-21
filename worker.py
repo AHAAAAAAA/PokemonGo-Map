@@ -512,7 +512,7 @@ def main(worker_no, service, api_endpoint, access_token, profile_response):
 
         for spawn_id in add_to_db:
             pokemon = pokemons[spawn_id]
-            db.add_sighting(session, pokemon)
+            db.add_sighting(session, spawn_id, pokemon)
         session.commit()
         add_to_db = []
         print('Completed: ' + str(((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
