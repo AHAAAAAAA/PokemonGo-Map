@@ -97,6 +97,12 @@ initMap = function() {
 
 GetNewPokemons = function(stamp) {
     $.getJSON("/pokemons/"+stamp, function(result){
+
+        $.each(markers, function(i, item){
+            if (item.disapear <= lastStamp )
+                item.m.setMap(null);
+        });
+
         $.each(result, function(i, item){
 
             var marker = new google.maps.Marker({
@@ -144,10 +150,6 @@ GetNewPokemons = function(stamp) {
     var dObj = new Date();
     lastStamp = dObj.getTime();
     
-    $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
-    });
 };
 
 GetNewGyms = function() {
