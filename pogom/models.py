@@ -83,22 +83,21 @@ class Pokestop(BaseModel):
     @classmethod
     def get(cls):
         pokestops = []
-        if cls.IGNORE:
-            return pokestops
 
-        if cls.LURED_ONLY:
-            pokestops = (Pokesto
-                         .select()
-                         .where(~(Pokestop.lure_expiration >> None))
-                         .dicts())
-        else:
-            pokestops = (Pokestop
-                         .select()
-                         .dicts())
+        if not cls.IGNORE:
+            if cls.LURED_ONLY:
+                pokestops = (Pokestop
+                             .select()
+                             .where(~(Pokestop.lure_expiration >> None))
+                             .dicts())
+            else:
+                pokestops = (Pokestop
+                             .select()
+                             .dicts())
 
-        if cls.CHINA:
-            for pokestop in pokestops:
-                pokestop['latitude'], pokestop['longitude'] = transform_from_wgs_to_gcj(pokestop['latitude'], pokestop['longitude'])
+            if cls.CHINA:
+                for pokestop in pokestops:
+                    pokestop['latitude'], pokestop['longitude'] = transform_from_wgs_to_gcj(pokestop['latitude'], pokestop['longitude'])
 
         return pokestops
 
@@ -123,10 +122,8 @@ class Gym(BaseModel):
 
     @classmethod
     def get(cls):
-        if cls.IGNORE:
-            return []
+        gyms = []
 
-        gyms = Gym.select().dicts()
 
         if cls.CHINA:
             for gym in gyms:
