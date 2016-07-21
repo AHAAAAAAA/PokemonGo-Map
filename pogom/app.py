@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import calendar
+import logging
+
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from datetime import datetime
 
 from . import config
-from .models import Pokemon, Gym, Pokestop
+from .models import Pokemon, Gym, Pokestop, GoogleSearchBox
 
+log = logging.getLogger(__name__)
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
@@ -26,7 +29,11 @@ class Pogom(Flask):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
-                               gmaps_key=config['GMAPS_KEY'])
+                               gmaps_key=config['GMAPS_KEY'],
+                               is_luredOnly="{}".format(Pokestop.LURED_ONLY).lower(),
+                               is_pokestopIgnore="{}".format(Pokestop.IGNORE).lower(),
+                               is_gymsIgnore="{}".format(Gym.IGNORE).lower(),
+                               is_gsearchDisplay="{}".format(GoogleSearchBox.DISPLAY).lower())
 
     def raw_data(self, stamp):
         return jsonify({
@@ -50,14 +57,22 @@ class Pogom(Flask):
 
 
     def next_loc(self):
-        lat = request.args.get('lat', type=float)
-        lon = request.args.get('lon', type=float)
+        #part of query string
+        if request.args:
+            lat = request.args.get('lat', type=float)
+            lon = request.args.get('lon', type=float)
+        #from post requests
+        if request.form:
+            lat = request.form.get('lat', type=float)
+            lon = request.form.get('lon', type=float)
+
         if not (lat and lon):
-            print('[-] Invalid next location: %s,%s' % (lat, lon))
+            log.warning('Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
             config['ORIGINAL_LATITUDE'] = lat
             config['ORIGINAL_LONGITUDE'] = lon
+            log.info('Changing next location: %s,%s' % (lat, lon))
             return 'ok'
 
 

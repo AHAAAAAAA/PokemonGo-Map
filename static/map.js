@@ -1,5 +1,5 @@
-var map,
-    marker,
+var map, 
+    currentMarker,
     locationMarker,
     lastStamp = 0,
     requestInterval = 10000;
@@ -120,6 +120,11 @@ myLocationButton = function (map, marker) {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                
+                //clear the current marker
+                clearCurrentMarker();
+                setNewLocation(position.coords.latitude,  position.coords.longitude);
+                
                 locationMarker.setVisible(true);
                 locationMarker.setOptions({'opacity': 1});
                 locationMarker.setPosition(latlng);
@@ -167,17 +172,30 @@ addMyLocationButton = function () {
 initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: center_lat, lng: center_lng},
-        zoom: 16
+        zoom: 16,
+        //default to roadmap
+        mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    var marker = new google.maps.Marker({
-        position: {lat: center_lat, lng: center_lng},
-        map: map,
-        animation: google.maps.Animation.DROP
-    });
+    
+    if(is_gsearchDisplay){
+        InitPlaces();
+    }
+
+    //set current marker
+    setCurrentMarker(center_lat, center_lng);
+
+    //add location button
     addMyLocationButton();
+
+    //get the data
     GetNewPokemons(lastStamp);
-    GetNewGyms();
-    GetNewPokeStops();
+   
+    if(!is_gymsIgnore){
+        GetNewGyms();
+    }
+    if(!is_pokestopIgnore){
+        GetNewPokeStops();
+    }
 };
 
 GetNewPokemons = function(stamp) {
@@ -220,9 +238,13 @@ GetNewPokemons = function(stamp) {
         });
     }).always(function() {
         setTimeout(function() {
-            GetNewPokemons(lastStamp);
-            GetNewGyms();
-            GetNewPokeStops();
+           GetNewPokemons(lastStamp);
+           if(!is_gymsIgnore){
+                GetNewGyms();
+            }
+            if(!is_pokestopIgnore){
+                GetNewPokeStops();
+            }
         }, requestInterval)
     });
 
@@ -328,6 +350,100 @@ $('.label-countdown').each(function (index, element) {
     }
 
 
+    });
+};
+
+
+/**
+ * clears the current marker
+ */
+var clearCurrentMarker=function(){
+    if(currentMarker!=null){
+        //clear the marker
+        currentMarker.setMap(null);
+        currentMarker = null;
+    }
+}
+
+/**
+ * set the current marker location
+ * lat = latitude, lng = longitude, title = name of the marker
+ */
+var setCurrentMarker = function(lat, lng, title){
+
+    clearCurrentMarker();
+
+    var newLocation={};
+    newLocation.lat=lat;
+    newLocation.lng=lng;
+
+    currentMarker = new google.maps.Marker({
+        position: newLocation,
+        map: map,
+        title: title,
+        animation: google.maps.Animation.DROP
+    });
+};
+
+/**
+ * calls the server api to change the location
+ */
+var setNewLocation = function(lat, lng){
+    var newLocation={};
+    newLocation.lat = Number(lat);
+    newLocation.lon = Number(lng);
+
+    $.post("next_loc", newLocation)
+    .fail(function(data){
+        alert('next_loc failed for: ' + newLocation);
+    });
+}
+
+//PLACES ADDITION
+
+InitPlaces = function(){
+    var sInput = document.getElementById('pac-input');
+    sInput.style.display="inherit";
+
+    var searchBox = new google.maps.places.SearchBox(sInput);
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(sInput);
+
+    // Bias the SearchBox results towards current map's viewport.
+    map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+    });
+
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+            return;
+        }
+
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
+
+            //for now we assume one place, technically this is a for loop
+            //so its possible to set current marker multiple times
+            setCurrentMarker(place.geometry.location.lat(), place.geometry.location.lng(), place.name);
+            
+            //lets make a call to the api to change the lat lon, reset the search
+            setNewLocation(place.geometry.location.lat(), place.geometry.location.lng());
+           
+            if (place.geometry.viewport) {
+                // Only geocodes have viewport.
+                bounds.union(place.geometry.viewport);
+            } else {
+                bounds.extend(place.geometry.location);
+            }
+        });
+
+        //reset the map focus
+        map.fitBounds(bounds);
+        map.setZoom(15);
     });
 };
 

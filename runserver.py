@@ -10,8 +10,7 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
-from pogom.models import create_tables, Pokemon, Pokestop, Gym
-
+from pogom.models import create_tables, Pokemon, Pokestop, Gym, GoogleSearchBox
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
@@ -73,6 +72,9 @@ if __name__ == '__main__':
         Pokemon.CHINA = True
         Pokestop.CHINA = True
         Gym.CHINA = True
+
+    if args.display_gsearch:
+        GoogleSearchBox.DISPLAY = True
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
