@@ -94,7 +94,8 @@ def insert_mock_data():
                    latitude=locations[i + num_pokemon + num_pokestop][0],
                    longitude=locations[i + num_pokemon + num_pokestop][1],
                    last_modified=datetime.now(),
-                   enabled=True
+                   enabled=True,
+                   gym_points=1000
                    )
 
 def get_pokemon_name(pokemon_id):
