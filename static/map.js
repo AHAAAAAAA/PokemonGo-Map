@@ -40,13 +40,6 @@ function initMap() {
         localStorage['map_style'] = this.mapTypeId;
     }); 
 
-  
-	//selectedStyle = localStorage['map_style'] || 'light';
-	//if (selectedStyle == 'dark')
-	//	map.setMapTypeId('dark_style');
-	//else if (selectedStyle == 'light2')
-	//	map.setMapTypeId('style_light2');
-	//else if (selectedStyle == 'pgo')
     if (typeof localStorage['map_style'] != undefined)
 	   map.setMapTypeId(localStorage['map_style']);
 
