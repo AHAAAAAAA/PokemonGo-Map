@@ -13,6 +13,8 @@ from pogom.search import search_loop
 from pogom.models import create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
+from flask_basicauth import BasicAuth
+
 
 log = logging.getLogger(__name__)
 
@@ -55,6 +57,20 @@ if __name__ == '__main__':
         insert_mock_data()
 
     app = Pogom(__name__)
+    if args.auth_user is not None: 
+        app.config['BASIC_AUTH_USERNAME'] = args.auth_user
+    else:
+        app.config['BASIC_AUTH_USERNAME'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['auth_user'] 
+    if args.auth_pass is not None:
+        app.config['BASIC_AUTH_PASSWORD'] = args.auth_pass
+    else:
+        app.config['BASIC_AUTH_PASSWORD'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['auth_pass']
+    
+    basic_auth = BasicAuth(app)
+    
+    if  args.auth_enable:
+        app.config['BASIC_AUTH_FORCE'] = True
+
     config['ROOT_PATH'] = app.root_path
     if args.gmaps_key is not None:
         config['GMAPS_KEY'] = args.gmaps_key
