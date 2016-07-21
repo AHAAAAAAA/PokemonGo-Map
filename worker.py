@@ -75,9 +75,11 @@ is_ampm_clock = False
 search_thread = None
 workers = {}
 
+local_data = threading.local()
+
 
 def memoize(obj):
-    cache = threading.local().cache = {}
+    cache = local_data.cache = {}
 
     @functools.wraps(obj)
     def memoizer(*args, **kwargs):
@@ -193,7 +195,7 @@ def api_req(service, api_endpoint, access_token, *args, **kwargs):
 
     protobuf = p_req.SerializeToString()
 
-    session = threading.local().api_session
+    session = local_data.api_session
     r = session.post(api_endpoint, data=protobuf, verify=False)
 
     p_ret = pokemon_pb2.ResponseEnvelop()
@@ -291,7 +293,7 @@ def login_google(username, password):
 def login_ptc(username, password):
     print '[!] PTC login for: {}'.format(username)
     head = {'User-Agent': 'Niantic App'}
-    session = threading.local().api_session
+    session = local_data.api_session
     r = session.get(LOGIN_URL, headers=head)
 
     try:
@@ -447,7 +449,7 @@ def work(worker_no):
 
     # Login sequentially for PTC
     service = config.ACCOUNTS[worker_no][2]
-    api_session = threading.local().api_session = requests.session()
+    api_session = local_data.api_session = requests.session()
     api_session.headers.update({'User-Agent': 'Niantic App'})
     api_session.verify = False
 
