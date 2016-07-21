@@ -62,7 +62,7 @@
 			<div class="switch-container">
 				<h3>Pokémon</h3>
 				<div class="onoffswitch">
-					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
+					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked/>
 					<label class="onoffswitch-label" for="pokemon-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
@@ -72,7 +72,7 @@
 			<div class="switch-container">
 				<h3>Gyms</h3>
 				<div class="onoffswitch">
-					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
+					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked/>
 					<label class="onoffswitch-label" for="gyms-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
@@ -82,7 +82,7 @@
 			<div class="switch-container">
 				<h3>Pokéstops</h3>
 				<div class="onoffswitch">
-					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked />
+					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked/>
 					<label class="onoffswitch-label" for="pokestops-switch">
 						<span class="switch-label" data-on="On" data-off="Off"></span>
 						<span class="switch-handle"></span>
@@ -119,10 +119,16 @@
 	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
 	<!-- <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script> -->
 
-	<script type="text/javascript">
-	  var center_lat = {{lat}};
-	  var center_lng = {{lng}};
-	</script>
+
+  <script type="text/javascript">
+    var center_lat = {{lat}};
+    var center_lng = {{lng}};
+  </script>
+
+    <script type="text/javascript">
+      var center_lat = {{lat}};
+      var center_lng = {{lng}};
+    </script>
 
 	<script type="text/javascript" src="static/map.js"></script>
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
