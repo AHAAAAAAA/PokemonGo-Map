@@ -11,6 +11,7 @@ from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
 from pogom.models import create_tables, Pokemon, Pokestop, Gym
+
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     if not args.mock:
         start_locator_thread(args)
     else:
-        insert_mock_data(args.location, 6)
+        insert_mock_data()
 
     if args.display_pokestops or args.display_lured:
         Pokestop.IGNORE = False
