@@ -285,31 +285,33 @@ function updateMap() {
         dataType: "json"
     }).done(function(result) {
 
-        $.each(result.pokemons, function(i, item) {
-            if (!document.getElementById('pokemon-switch').checked) {
-                return false;
-            } else { // add marker to map and item to dict
-                item.marker = setupPokemonMarker(item);
-                map_pokemons[item.encounter_id] = item;
-            }
+      $.each(result.pokemons, function(i, item){
+          if (!document.getElementById('pokemon-switch').checked) {
+              return false; // in case the checkbox was unchecked in the meantime.
+          }
+          if (!(item.encounter_id in map_pokemons)) {
+              // add marker to map and item to dict
+              if (item.marker) item.marker.setMap(null);
+              item.marker = setupPokemonMarker(item);
+              map_pokemons[item.encounter_id] = item;
+          }
 
-        });
+      });
 
         $.each(result.pokestops, function(i, item) {
             if (!document.getElementById('pokestops-switch').checked) {
                 return false;
             } else { // add marker to map and item to dict
-                if (item.marker)
-                    item.marker.setMap(null);
+                if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
             }
 
         });
 
-        $.each(result.gyms, function(i, item) {
+        $.each(result.gyms, function(i, item){
             if (!document.getElementById('gyms-switch').checked) {
-                return false;
+                return false; // in case the checkbox was unchecked in the meantime.
             }
 
             if (item.gym_id in map_gyms) {
@@ -321,11 +323,10 @@ function updateMap() {
                     map_gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
                         content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
                     });
-
                 }
-            } else { // add marker to map and item to dict
-                if (item.marker)
-                    item.marker.setMap(null);
+            }
+            else { // add marker to map and item to dict
+                if (item.marker) item.marker.setMap(null);
                 item.marker = setupGymMarker(item);
                 map_gyms[item.gym_id] = item;
             }
