@@ -1,6 +1,11 @@
 import json
 from pushbullet import Pushbullet
 from datetime import datetime
+import sys
+
+# Fixes the encoding of the male/female symbol
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 pushbullet_client = None
 wanted_pokemon = None
