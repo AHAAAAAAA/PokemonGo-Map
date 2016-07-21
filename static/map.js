@@ -145,7 +145,7 @@ GetNewPokemons = function(stamp) {
     lastStamp = dObj.getTime();
     
     $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
+        if (item.disapear <= lastStamp)        
             item.m.setMap(null);        
     });
 };
