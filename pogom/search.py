@@ -87,7 +87,7 @@ def search(args):
             failed_consecutive += 1
             if(failed_consecutive >= 10):
                 log.error('Niantic servers under heavy load. Waiting before trying again')
-            	time.sleep(15)
+            	time.sleep(5)
         failed_consecutive = 0
         log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
         i += 1
