@@ -1,6 +1,7 @@
 *.pyc
 *.idea
 *.db
+*.db-journal
 *.sass-cache
 credentials.json
 static/dist/
