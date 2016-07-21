@@ -294,6 +294,9 @@ function updateMap() {
               if (item.marker) item.marker.setMap(null);
               item.marker = setupPokemonMarker(item);
               map_pokemons[item.encounter_id] = item;
+              if (document.getElementById('piw-switch').checked) {
+                item.marker.infoWindow.open(map, item.marker);                  
+              }
           }
 
       });
