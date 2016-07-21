@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Pokémap</title>
+		<title>Pokémon Go Map</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -52,40 +52,47 @@
 	<div class="wrapper">
 		<!-- Header -->
 		<header id="header">
-			<a href="#nav">Menu</a>
-			<h1><a href="#">GoMap</a></h1>
+			<a href="#nav">Filter</a>
+			<h1><a href="#">Pokémon Go Map</a></h1>
 		</header>
 
 		<!-- Nav -->
 		<nav id="nav">
-			Pokemon
-			<div class="onoffswitch">
-				<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
-				<label class="onoffswitch-label" for="pokemon-switch">
+			<p>Filter through Pokémon, Gyms &amp; Pokéstops.</p>
+			<div class="switch-container">
+				<h3>Pokémon</h3>
+				<div class="onoffswitch">
+					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
+					<label class="onoffswitch-label" for="pokemon-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
 	        </label>
+				</div>
 			</div>
-			Gyms
-			<div class="onoffswitch">
-				<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
-				<label class="onoffswitch-label" for="gyms-switch">
+			<div class="switch-container">
+				<h3>Gyms</h3>
+				<div class="onoffswitch">
+					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
+					<label class="onoffswitch-label" for="gyms-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
 	        </label>
+				</div>
 			</div>
-			Pokéstops
-			<div class="onoffswitch">
-				<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked />
-				<label class="onoffswitch-label" for="pokestops-switch">
+			<div class="switch-container">
+				<h3>Pokéstops</h3>
+				<div class="onoffswitch">
+					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked />
+					<label class="onoffswitch-label" for="pokestops-switch">
 						<span class="switch-label" data-on="On" data-off="Off"></span>
 						<span class="switch-handle"></span>
 					</label>
+				</div>
 			</div>
-
+			<!-- <button id="trigger-overlay">Test overlay</button> -->
 			<label for="exclude-pokemon">
-         	Hide common Pokémon:<br/>
-          <select id="exclude-pokemon" multiple="multiple"></select>
+       	Hide common Pokémon:<br/>
+        <select id="exclude-pokemon" multiple="multiple"></select>
       </label>
 		</nav>
 
