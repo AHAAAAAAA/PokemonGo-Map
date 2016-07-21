@@ -193,7 +193,7 @@ def api_req(service, api_endpoint, access_token, *args, **kwargs):
 
     protobuf = p_req.SerializeToString()
 
-    session = threading.local().session
+    session = threading.local().api_session
     r = session.post(api_endpoint, data=protobuf, verify=False)
 
     p_ret = pokemon_pb2.ResponseEnvelop()
@@ -291,7 +291,7 @@ def login_google(username, password):
 def login_ptc(username, password):
     print '[!] PTC login for: {}'.format(username)
     head = {'User-Agent': 'Niantic App'}
-    session = threading.local().session
+    session = threading.local().api_session
     r = session.get(LOGIN_URL, headers=head)
 
     try:
