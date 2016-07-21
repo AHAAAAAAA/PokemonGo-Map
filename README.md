@@ -22,10 +22,27 @@ Features:
 
 ![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
 
+## Install
 
-## How to setup
+You can install PokemonGo Map by just using pip
+
+```
+pip2 install -e git+https://github.com/AHAAAAAAA/PokemonGo-Map.git#egg=pokemongo-map
+```
+
+
+### More information
 
 For instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki), or the [video guide](https://www.youtube.com/watch?v=RJKAulPCkRI).
+
+
+## Usage
+
+This installs the runserver.py to your PATH as `pokemap` So you could use it like this
+
+```
+pokemap -st <step count> -l <location> -u <ptc user> -p <ptc password> -dg
+```
 
 
 ## Android Version
