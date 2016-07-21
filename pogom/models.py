@@ -9,6 +9,7 @@ from base64 import b64encode
 
 from .utils import get_pokemon_name
 from .transform import transform_from_wgs_to_gcj
+from pgoapi.utilities import split_list
 
 
 db = SqliteDatabase('pogom.db')
@@ -185,15 +186,18 @@ def parse_map(map_dict):
 
     if pokemons:
         log.info("Upserting {} pokemon".format(len(pokemons)))
-        InsertQuery(Pokemon, rows=pokemons.values()).upsert().execute()
+        for chunk in split_list(pokemons.values(), 50):
+            InsertQuery(Pokemon, rows=chunk).upsert().execute()
 
     if pokestops:
         log.info("Upserting {} pokestops".format(len(pokestops)))
-        InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
+        for chunk in split_list(pokestops.values(), 50):
+            InsertQuery(Pokestop, rows=chunk).upsert().execute()
 
     if gyms:
         log.info("Upserting {} gyms".format(len(gyms)))
-        InsertQuery(Gym, rows=gyms.values()).upsert().execute()
+        for chunk in split_list(gyms.values(), 50):
+            InsertQuery(Gym, rows=chunk).upsert().execute()
 
 
 def create_tables():
