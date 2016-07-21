@@ -49,30 +49,10 @@ if __name__ == '__main__':
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
 
-    if args.ignore:
-        Pokemon.IGNORE = [i.lower().strip() for i in args.ignore.split(',')]
-    elif args.only:
-        Pokemon.ONLY = [i.lower().strip() for i in args.only.split(',')]
-
     if not args.mock:
         start_locator_thread(args)
     else:
         insert_mock_data()
-
-    if args.display_pokestops or args.display_lured:
-        Pokestop.IGNORE = False
-
-    if args.display_lured:
-        Pokestop.LURED_ONLY = True
-
-    if args.display_gyms:
-        Gym.IGNORE = False
-
-    #Coordination transformation is needed inside China to display right map.
-    if args.china:
-        Pokemon.CHINA = True
-        Pokestop.CHINA = True
-        Gym.CHINA = True
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
