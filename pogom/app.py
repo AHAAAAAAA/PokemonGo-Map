@@ -25,8 +25,7 @@ class Pogom(Flask):
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
-                               PLAYSOUND=CONFIG['PLAY_WEB_SOUND']
-                               )
+                               PLAYSOUND=config['PLAY_WEB_SOUND'])
 
     def get_raw_data(self, stamp):
         return {
