@@ -88,14 +88,21 @@ initMap = function() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
     
-    InitPlaces();
+    if(is_gsearchDisplay){
+        InitPlaces();
+    }
 
     //set current marker
     setCurrentMarker(center_lat, center_lng);
 
     GetNewPokemons(lastStamp);
-    GetNewGyms();
-    GetNewPokeStops();
+   
+    if(!is_gymsIgnore){
+        GetNewGyms();
+    }
+    if(!is_pokestopIgnore){
+        GetNewPokeStops();
+    }
 };
 
 GetNewPokemons = function(stamp) {
@@ -138,9 +145,13 @@ GetNewPokemons = function(stamp) {
         });        
     }).always(function() {
         setTimeout(function() {
-            GetNewPokemons(lastStamp);
-            GetNewGyms();
-            GetNewPokeStops();
+           GetNewPokemons(lastStamp);
+           if(!is_gymsIgnore){
+                GetNewGyms();
+            }
+            if(!is_pokestopIgnore){
+                GetNewPokeStops();
+            }
         }, requestInterval)
     });
 
@@ -290,6 +301,8 @@ var setNewLocation = function(lat, lng){
 
 InitPlaces = function(){
     var sInput = document.getElementById('pac-input');
+    sInput.style.display="inherit";
+
     var searchBox = new google.maps.places.SearchBox(sInput);
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(sInput);
 

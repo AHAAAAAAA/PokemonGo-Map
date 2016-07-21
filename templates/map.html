@@ -67,7 +67,7 @@
 
     <div id="main">
 			<button id="trigger-overlay">Test</button>
-			<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+			<input id="pac-input" class="controls" type="text" placeholder="Search Box" style="display:none;">
       <div id="map"></div>
     </div>
 
@@ -92,6 +92,10 @@
   <script type="text/javascript">
     var center_lat = {{lat}};
     var center_lng = {{lng}};
+		var is_gsearchDisplay = {{is_gsearchDisplay}};
+		var is_gymsIgnore = {{is_gymsIgnore}};
+		var is_pokestopIgnore = {{is_pokestopIgnore}};
+		var is_luredOnly = {{is_luredOnly}};
   </script>
 
   <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&libraries=places&callback=initMap"></script>

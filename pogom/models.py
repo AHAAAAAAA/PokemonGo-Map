@@ -18,7 +18,6 @@ class BaseModel(Model):
     class Meta:
         database = db
 
-
 class Pokemon(BaseModel):
     IGNORE = None
     ONLY = None
@@ -186,3 +185,8 @@ def create_tables():
     db.connect()
     db.create_tables([Pokemon, Pokestop, Gym], safe=True)
     db.close()
+
+
+#placeholder class, instead of using the config?
+class GoogleSearchBox:
+    DISPLAY = False

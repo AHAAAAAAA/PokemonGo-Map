@@ -9,7 +9,7 @@ from flask.json import JSONEncoder
 from datetime import datetime
 
 from . import config
-from .models import Pokemon, Gym, Pokestop
+from .models import Pokemon, Gym, Pokestop, GoogleSearchBox
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +29,11 @@ class Pogom(Flask):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
-                               gmaps_key=config['GMAPS_KEY'])
+                               gmaps_key=config['GMAPS_KEY'],
+                               is_luredOnly="{}".format(Pokestop.LURED_ONLY).lower(),
+                               is_pokestopIgnore="{}".format(Pokestop.IGNORE).lower(),
+                               is_gymsIgnore="{}".format(Gym.IGNORE).lower(),
+                               is_gsearchDisplay="{}".format(GoogleSearchBox.DISPLAY).lower())
 
     def get_raw_data(self, stamp):
         return {
