@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import calendar
+from datetime import datetime
+
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
-from datetime import datetime
 
 from . import config
 from .models import Pokemon, Gym, Pokestop
@@ -42,12 +43,10 @@ class Pogom(Flask):
         return jsonify(Pokemon.get_active(None))
 
     def pokestops(self):
-        return jsonify(Pokestop.get())
-
+        return jsonify([p for p in Pokestop.get()])
 
     def gyms(self):
         return jsonify([g for g in Gym.select().dicts()])
-
 
     def next_loc(self):
         lat = request.args.get('lat', type=float)
@@ -62,7 +61,6 @@ class Pogom(Flask):
 
 
 class CustomJSONEncoder(JSONEncoder):
-
     def default(self, obj):
         try:
             if isinstance(obj, datetime):
