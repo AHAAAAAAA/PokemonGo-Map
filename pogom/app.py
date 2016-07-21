@@ -44,9 +44,8 @@ class Pogom(Flask):
     def pokestops(self):
         return jsonify(Pokestop.get())
 
-
     def gyms(self):
-        return jsonify([g for g in Gym.select().dicts()])
+        return jsonify([g for g in Gym.get()])
 
 
     def next_loc(self):
