@@ -1,0 +1,14 @@
+{
+  "auth_service": "ptc",
+  "username": "MyUsername",
+  "password": "MySuperStrongPassword",
+  "location": "Boulder, CO",
+  "step_limit": 5,
+  "locale": "en",
+  "china": false,
+  "debug": false,
+  "host": "127.0.0.1",
+  "port": 5000,
+  "mock": false,
+  "gmaps_key": "Your API Key Here"
+}
