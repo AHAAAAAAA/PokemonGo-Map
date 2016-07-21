@@ -198,6 +198,11 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
+    
+    localStorage.showPokemon = localStorage.showPokemon || true;
+    localStorage.showGyms = localStorage.showGyms || true;
+    localStorage.showPokestops = localStorage.showPokestops || true;
+
     $.ajax({
         url: "raw_data",
         type: 'GET',
@@ -208,10 +213,6 @@ function updateMap() {
         },
         dataType: "json"
     }).done(function(result) {
-
-        localStorage.showPokemon = localStorage.showPokemon || true;
-        localStorage.showGyms = localStorage.showGyms || true;
-        localStorage.showPokestops = localStorage.showPokestops || true;
 
         $.each(result.pokemons, function(i, item){
             if (!localStorage.showPokemon) {
