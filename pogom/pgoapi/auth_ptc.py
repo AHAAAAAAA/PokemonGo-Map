@@ -46,8 +46,8 @@ class AuthPtc(Auth):
 
     def login(self, username, password):
 
-        self.log.info('Login for: %s', username)
-        
+        self.log.info('PTC login for: %s', username)
+
         head = {'User-Agent': 'niantic'}
         r = self._session.get(self.PTC_LOGIN_URL, headers=head)
         
