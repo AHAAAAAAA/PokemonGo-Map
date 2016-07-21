@@ -1,0 +1,12 @@
+auth_service: "ptc" # Options are "ptc" or "google"
+username: "MyUsername" # Your account username
+password: "MySuperStrongPassword" # Your account password
+location: "Boulder, CO" # The location to scan from. Any location data that google maps can understand is valid.
+step_limit: 5 # The ammount of steps you will scan with
+locale: "en" # Locale for Pokemon names.
+china: False # True or False Coordinates transformer for China
+debug: False # True or False Debug Mode
+host: "127.0.0.1" # Set web server listening host "0.0.0.0" to listen on any address.
+port: 5000 # Set web server listening port
+mock: False # True or False. Mock mode. Starts the web server but not the background thread.
+gmaps_key: "Your API Key Here" # Google Maps Javascript API Key. for more info: https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Google-Maps-API:-a-brief-guide-to-your-own-key

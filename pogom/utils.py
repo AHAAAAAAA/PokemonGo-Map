@@ -8,6 +8,7 @@ import re
 import uuid
 import os
 import json
+import yaml
 from dict2object import Dict2Object
 from datetime import datetime, timedelta
 
@@ -43,10 +44,10 @@ def parse_args():
     return parser.parse_args()
 
 def parse_config():
-    config_file = os.path.join(os.path.dirname(__file__), '../config/config.json')
+    config_file = os.path.join(os.path.dirname(__file__), '../config/config.yml')
     if os.path.isfile(config_file):
         with open(config_file) as data_file:
-            args = json.load(data_file)
+            args = yaml.safe_load(data_file)
             return Dict2Object(args) if args else False
     else:
         return False
