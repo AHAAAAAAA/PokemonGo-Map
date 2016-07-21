@@ -140,9 +140,13 @@ class PGoApi:
             raise AuthException("Invalid authentication provider - only ptc/google available.")
             
         self.log.debug('Auth provider: %s', provider)
-        
-        if not self._auth_provider.login(username, password):
-            self.log.info('Login process failed') 
+
+        try:
+            if not self._auth_provider.login(username, password):
+                self.log.info('Login process failed')
+                return False
+        except requests.ConnectionError as e:
+            self.log.info(e)
             return False
         
         self.log.info('Starting RPC login sequence (app simulation)')
@@ -174,4 +178,3 @@ class PGoApi:
         self.log.info('Login process completed') 
         
         return True
-        
