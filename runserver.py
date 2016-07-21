@@ -61,12 +61,17 @@ if __name__ == '__main__':
     if args.display_pokestops or args.display_lured:
         Pokestop.IGNORE = False
 
-
     if args.display_lured:
         Pokestop.LURED_ONLY = True
 
     if args.display_gyms:
         Gym.IGNORE = False
+
+    #Coordination transformation is needed inside China to display right map.
+    if args.china:
+        Pokemon.CHINA = True
+        Pokestop.CHINA = True
+        Gym.CHINA = True
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path
