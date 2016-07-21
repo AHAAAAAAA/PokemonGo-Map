@@ -11,6 +11,9 @@ Live visualization of all the pokemon (with option to show gyms and pokestops) i
 
 For instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki).
 
+## Docker image
+Use the `docker build -t pokemongomap .` command to build the image.  
+Run it with the command `docker run -e USERNAME=user -e PASSWORD=password -e LOCATION="Lucca, IT" -e PORT=5000 -e ST=10 -e GMAP_KEY="THE_KEY" -t pokemongomap`
 
 ## Android Version
 
