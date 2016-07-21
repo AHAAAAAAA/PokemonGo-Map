@@ -127,6 +127,7 @@ myLocationButton = function (map, marker) {
                 clearInterval(animationInterval);
                 currentLocation.style.backgroundPosition = '-144px 0px';
             });
+            window.setInterval(updatePos, 2000);
         }
         else{
             clearInterval(animationInterval);
@@ -335,3 +336,14 @@ $('.label-countdown').each(function (index, element) {
 };
 
 window.setInterval(setLabelTime, 1000);
+
+var updatePos = function() {
+        navigator.geolocation.getCurrentPosition(function(position) {
+                var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                locationMarker.setVisible(true);
+                locationMarker.setOptions({'opacity': 1});
+                locationMarker.setPosition(latlng);
+                clearInterval(animationInterval);
+                currentLocation.style.backgroundPosition = '-144px 0px';
+        });
+};
