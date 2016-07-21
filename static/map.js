@@ -201,15 +201,18 @@ function updateMap() {
         url: "raw_data",
         type: 'GET',
         data: {
-            'pokemon': document.getElementById('pokemon-switch').checked,
-            'pokestops': document.getElementById('pokestops-switch').checked,
-            'gyms': document.getElementById('gyms-switch').checked
+            'pokemon': localStorage.showPokemon,
+            'pokestops': localStorage.showPokestops,
+            'gyms': localStorage.showGyms
         },
         dataType: "json"
     }).done(function(result) {
-
+        localStorage.showPokemon = localStorage.showPokemon || true
+        localStorage.showGyms = localStorage.showGyms || true
+        localStorage.showPokestops = localStorage.showPokestops || true
+    
       $.each(result.pokemons, function(i, item){
-          if (!document.getElementById('pokemon-switch').checked) {
+          if (!localStorage.showPokemon) {
               return false; // in case the checkbox was unchecked in the meantime.
           }
           if (!(item.encounter_id in map_pokemons)) {
@@ -222,7 +225,7 @@ function updateMap() {
       });
 
         $.each(result.pokestops, function(i, item) {
-            if (!document.getElementById('pokestops-switch').checked) {
+            if (!localStorage.showPokestops) {
                 return false;
             } else if (!(item.pokestop_id in map_pokestops)) { // add marker to map and item to dict
                   // add marker to map and item to dict
@@ -234,7 +237,7 @@ function updateMap() {
         });
 
         $.each(result.gyms, function(i, item){
-            if (!document.getElementById('gyms-switch').checked) {
+            if (!localStorage.showGyms) {
                 return false; // in case the checkbox was unchecked in the meantime.
             }
 
@@ -265,6 +268,7 @@ window.setInterval(updateMap, 5000);
 updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
+    localStorage["showGyms"] = this.checked
     if (this.checked) {
         updateMap();
     } else {
@@ -276,6 +280,7 @@ document.getElementById('gyms-switch').onclick = function() {
 };
 
 $('#pokemon-switch').change(function() {
+    localStorage["showPokemon"] = this.checked
     if (this.checked) {
         updateMap();
     } else {
@@ -287,6 +292,7 @@ $('#pokemon-switch').change(function() {
 });
 
 $('#pokestops-switch').change(function() {
+    localStorage["showPokestops"] = this.checked
     if (this.checked) {
         updateMap();
     } else {
