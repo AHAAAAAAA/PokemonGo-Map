@@ -67,11 +67,9 @@ function initMap() {
     localStorage['map_style'] = this.mapTypeId;
   });
 
-  if (typeof localStorage['map_style'] != undefined && localStorage['map_style'] != 'undefined') {
-    map.setMapTypeId(localStorage['map_style']);
-  } else {
-    map.setMapTypeId('style_pgo');
-  }
+  localStorage['map_style'] = localStorage['map_style'] || 'roadmap';
+
+  map.setMapTypeId(localStorage['map_style']);
 
   marker = new google.maps.Marker({
     position: {
@@ -81,7 +79,16 @@ function initMap() {
     map: map,
     animation: google.maps.Animation.DROP
   });
+  
+  initSidebar();
 
+}
+
+function initSidebar() {
+  $('#gyms-switch').prop('checked', localStorage.showGyms !== 'false');
+  $('#pokemon-switch').prop('checked', localStorage.showPokemon !== 'false');
+  $('#pokestops-switch').prop('checked', localStorage.showPokestops !== 'false');
+  $('#icons-switch').prop('checked', localStorage.largeIcons === 'true');
 }
 
 
@@ -148,17 +155,6 @@ function gymLabel(team_name, team_id, gym_points) {
     return str;
 }
 
-
-function getBoolSetting(key, defaultValue) {
-  return localStorage[key] === undefined ? defaultValue : localStorage[key] === 'true';
-}
-
-// Read settings from localStorage
-document.getElementById('icons-switch').checked = getBoolSetting('large_icons', true);
-document.getElementById('gyms-switch').checked = getBoolSetting('gyms_visible', true);
-document.getElementById('pokestops-switch').checked = getBoolSetting('pokestops_visible', true);
-document.getElementById('pokemon-switch').checked = getBoolSetting('pokemon_visible', true);
-
 // Dicts
 map_pokemons = {} // Pokemon
 map_gyms = {} // Gyms
@@ -166,14 +162,13 @@ map_pokestops = {} // Pokestops
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 
 function setupPokemonMarker(item) {
-  let large_icons = document.getElementById('icons-switch').checked;
   var marker = new google.maps.Marker({
     position: {
       lat: item.latitude,
       lng: item.longitude
     },
     map: map,
-    icon: 'static/icons-' + (large_icons ? 'large' : 'small') + '/' + item.pokemon_id + '.png'
+    icon: 'static/icons-' + (localStorage.largeIcons === 'true' ? 'large' : 'small') + '/' + item.pokemon_id + '.png'
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
@@ -260,15 +255,15 @@ function updateMap() {
     url: "raw_data",
     type: 'GET',
     data: {
-      'pokemon': document.getElementById('pokemon-switch').checked,
-      'pokestops': document.getElementById('pokestops-switch').checked,
-      'gyms': document.getElementById('gyms-switch').checked
+      'pokemon': localStorage.showPokemon !== 'false',
+      'pokestops': localStorage.showPokestops !== 'false',
+      'gyms': localStorage.showGyms !== 'false'
     },
     dataType: "json"
   }).done(function(result) {
 
     $.each(result.pokemons, function(i, item){
-      if (!document.getElementById('pokemon-switch').checked) {
+      if (localStorage.showPokemon === 'false') {
         return false; // in case the checkbox was unchecked in the meantime.
       }
       if (!(item.encounter_id in map_pokemons) &&
@@ -281,7 +276,7 @@ function updateMap() {
     });
 
     $.each(result.pokestops, function(i, item) {
-      if (!document.getElementById('pokestops-switch').checked) {
+      if (localStorage.showPokestops === 'false') {
         return false;
 
       } else if (!(item.pokestop_id in map_pokestops)) {
@@ -293,7 +288,7 @@ function updateMap() {
     });
 
     $.each(result.gyms, function(i, item){
-      if (!document.getElementById('gyms-switch').checked) {
+      if (localStorage.showGyms === 'false') {
         return false; // in case the checkbox was unchecked in the meantime.
       }
 
@@ -325,7 +320,7 @@ window.setInterval(updateMap, 5000);
 updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
-  localStorage['gyms_visible'] = this.checked;
+  localStorage['showGyms'] = this.checked;
   if (this.checked) {
     updateMap();
   } else {
@@ -337,7 +332,7 @@ document.getElementById('gyms-switch').onclick = function() {
 };
 
 $('#pokemon-switch').change(function() {
-  localStorage['pokemon_visible'] = this.checked;
+  localStorage['showPokemon'] = this.checked;
   if (this.checked) {
     updateMap();
   } else {
@@ -349,7 +344,7 @@ $('#pokemon-switch').change(function() {
 });
 
 $('#pokestops-switch').change(function() {
-  localStorage['pokestops_visible'] = this.checked;
+  localStorage['showPokestops'] = this.checked;
     if (this.checked) {
       updateMap();
     } else {
@@ -361,7 +356,7 @@ $('#pokestops-switch').change(function() {
 });
 
 $('#icons-switch').change(function() {
-  localStorage['large_icons'] = this.checked;
+  localStorage['largeIcons'] = this.checked;
 
   let icon_folder = `icon-${(this.checked ? 'large' : 'small')}`;
   $.each(map_pokemons, function(key, value) {
