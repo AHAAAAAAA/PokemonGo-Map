@@ -57,6 +57,15 @@ ACCOUNTS = [
 ]
 ```
 
+### Setting up database
+
+Run python REPL and:
+
+```python
+import db
+db.Base.metadata.create_all(db.get_engine())
+```
+
 ## License
 
 See [LICENSE](LICENSE).
