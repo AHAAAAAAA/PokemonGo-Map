@@ -53,6 +53,12 @@ class Pokemon(BaseModel):
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             pokemon_name = p['pokemon_name'].lower()
             pokemon_id = str(p['pokemon_id'])
+            if cls.IGNORE:
+                if pokemon_name in cls.IGNORE or pokemon_id in cls.IGNORE:
+                    continue
+            if cls.ONLY:
+                if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
+                    continue
             pokemons.append(p)
         return pokemons
 
