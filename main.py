@@ -445,19 +445,67 @@ def get_args():
         "debug": False,
         "display_gym": False,
         "display_pokestop": False,
+        "do_not_notify": None,
         "host": "127.0.0.1",
         "ignore": None,
         "locale": "en",
+        "location": None,
+        "notify": None,
         "only": None,
         "onlylure": False,
+        "password": None,
         "port": 5000,
-        "step_limit": 4
+        "pushbullet": None,
+        "step_limit": 4,
+        "username": None
+    }
+    
+    INTEGER_STR = "int"
+    BOOLEAN_STR = "bool"
+    STRING_STR = "str"
+    default_args_type = {
+        "DEBUG": BOOLEAN_STR,
+        "ampm_clock": BOOLEAN_STR,
+        "auth_service": STRING_STR,
+        "auto_refresh": INTEGER_STR,
+        "china": BOOLEAN_STR,
+        "debug": BOOLEAN_STR,
+        "display_gym": BOOLEAN_STR,
+        "display_pokestop": BOOLEAN_STR,
+        "do_not_notify": STRING_STR,
+        "host": STRING_STR,
+        "ignore": STRING_STR,
+        "locale": STRING_STR,
+        "location": STRING_STR,
+        "notify": STRING_STR,
+        "only": STRING_STR,
+        "onlylure": BOOLEAN_STR,
+        "password": STRING_STR,
+        "port": INTEGER_STR,
+        "pushbullet": STRING_STR,
+        "step_limit": INTEGER_STR,
+        "username": STRING_STR
     }
     # load config file
     with open('config.json') as data_file:
         data = json.load(data_file)
         for key in data:
-            default_args[key] = str(data[key])
+            if key not in default_args_type:
+                print key
+                raise LookupError('Arguments Type List Needs Updated')
+                
+            if default_args_type[key] == INTEGER_STR:
+                default_args[key] = int(data[key])
+                
+            elif default_args_type[key] == BOOLEAN_STR:
+                default_args[key] = data[key]
+                
+            else:
+                if default_args_type[key] != STRING_STR:
+                    import warnings
+                    warnings.warn( 'Unsupported Default Args Type' )
+            
+                default_args[key] = str(data[key])
         # create namespace obj
         namespace = argparse.Namespace()
         for key in default_args:
