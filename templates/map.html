@@ -91,8 +91,14 @@
   <script type="text/javascript">
     var center_lat = {{lat}};
     var center_lng = {{lng}};
+		var playSound = function(){
+			if({{PLAYSOUND}}){
+			  var audio = new Audio('https://github.com/NgJason/PokemonGo-Map/raw/master/a.wav');
+			  audio.play();
+			}
+		}
   </script>
+
   <script type="text/javascript" src="/static/map.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
-
 </html>

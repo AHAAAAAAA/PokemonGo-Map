@@ -1,4 +1,4 @@
-var map, 
+var map,
     marker,
     lastStamp = 0,
     requestInterval = 10000;
@@ -89,7 +89,7 @@ initMap = function() {
         position: {lat: center_lat, lng: center_lng},
         map: map,
         animation: google.maps.Animation.DROP
-    });  
+    });
     GetNewPokemons(lastStamp);
     GetNewGyms(lastStamp);
     GetNewPokeStops(lastStamp);
@@ -98,7 +98,7 @@ initMap = function() {
 GetNewPokemons = function(stamp) {
     $.getJSON("/pokemons/"+stamp, function(result){
         $.each(result, function(i, item){
-
+            playSound();
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
                 map: map,
@@ -132,7 +132,7 @@ GetNewPokemons = function(stamp) {
                     marker.infoWindow.close();
                 }
             });
-        });        
+        });
     }).always(function() {
         setTimeout(function() {
             GetNewPokemons(lastStamp);
@@ -143,10 +143,10 @@ GetNewPokemons = function(stamp) {
 
     var dObj = new Date();
     lastStamp = dObj.getTime();
-    
+
     $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
+        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))
+            item.m.setMap(null);
     });
 };
 

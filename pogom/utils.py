@@ -45,7 +45,7 @@ def get_args():
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     groupA = parser.add_mutually_exclusive_group(required=False)
     groupA.add_argument('-s','--play-sound',help='Play an alert in the console when a Pokemon is visible',action='store_true',default=False)
-    #groupA.add_argument('-sw','--play-sound-web',help='Play an alert in the browser when a Pokemon is visible',action='store_true',default=False)
+    groupA.add_argument('-sw','--play-sound-web',help='Play an alert in the browser when a Pokemon is visible',action='store_true',default=False)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
     if args.password is None:
