@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import calendar
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from datetime import datetime
 
@@ -11,27 +11,55 @@ from .models import Pokemon, Gym, Pokestop
 
 
 class Pogom(Flask):
-    def __init__(self, *args, **kwargs):
-        super(Pogom, self).__init__(*args, **kwargs)
+    def __init__(self, import_name, **kwargs):
+        super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
-        self.route("/pokemons", methods=['GET'])(self.pokemons)
+        self.route("/pokemons/<stamp>", methods=['GET'])(self.pokemons)
+        self.route("/pokemons", methods=['GET'])(self.pokemons_all)
         self.route("/gyms", methods=['GET'])(self.gyms)
         self.route("/pokestops", methods=['GET'])(self.pokestops)
+        self.route("/raw_data", methods=['GET'])(self.raw_data)
+        self.route("/next_loc", methods=['POST'])(self.next_loc)
 
     def fullmap(self):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'])
+                               lng=config['ORIGINAL_LONGITUDE'],
+                               gmaps_key=config['GMAPS_KEY'])
 
-    def pokemons(self):
-        return jsonify(Pokemon.get_active())
+    def get_raw_data(self, stamp):
+        return {
+            'gyms': [g for g in Gym.get()],
+            'pokestops': [p for p in Pokestop.get()],
+            'pokemons': Pokemon.get_active(stamp)
+        }
+
+    def raw_data(self):
+        return jsonify(self.get_raw_data(None))
+
+    def pokemons(self, stamp):
+        return jsonify(self.get_raw_data(stamp)['pokemons'])
+
+    def pokemons_all(self):
+        return jsonify(self.get_raw_data(None)['pokemons'])
 
     def pokestops(self):
-        return jsonify([p for p in Pokestop.select().dicts()])
+        return jsonify(self.get_raw_data(None)['pokestops'])
 
     def gyms(self):
-        return jsonify([g for g in Gym.select().dicts()])
+        return jsonify(self.get_raw_data(None)['gyms'])
+
+    def next_loc(self):
+        lat = request.args.get('lat', type=float)
+        lon = request.args.get('lon', type=float)
+        if not (lat and lon):
+            print('[-] Invalid next location: %s,%s' % (lat, lon))
+            return 'bad parameters', 400
+        else:
+            config['ORIGINAL_LATITUDE'] = lat
+            config['ORIGINAL_LONGITUDE'] = lon
+            return 'ok'
 
 
 class CustomJSONEncoder(JSONEncoder):

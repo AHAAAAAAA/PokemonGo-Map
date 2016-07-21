@@ -11,6 +11,7 @@ import json
 from datetime import datetime, timedelta
 
 from . import config
+from exceptions import APIKeyException
 
 
 def parse_unicode(bytestring):
@@ -32,7 +33,7 @@ def get_args():
     parser.add_argument('-ar', '--auto-refresh', help='Enables an autorefresh that behaves the same as'
                         ' a page reload. Needs an integer value for the amount of seconds')
     parser.add_argument('-dp', '--display-pokestops', help='Display pokéstops', action='store_true', default=False)
-    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop', action='store_true', default=False)
+    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop (implies --display-pokestops)', action='store_true', default=False)
     parser.add_argument('-dg', '--display-gyms', help='Display gyms', action='store_true', default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
@@ -41,7 +42,8 @@ def get_args():
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
-
+    parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
+    parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
     if args.password is None:
         args.password = getpass.getpass()
@@ -59,14 +61,15 @@ def insert_mock_data(location, num_pokemons):
 
     locations = [l for l in generate_location_steps((latitude, longitude), num_pokemons)]
     disappear_time = datetime.now() + timedelta(hours=1)
-
+    detect_time = datetime.now()
     for i in xrange(num_pokemons):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
                        latitude=locations[i][0],
                        longitude=locations[i][1],
-                       disappear_time=disappear_time)
+                       disappear_time=disappear_time,
+                       detect_time=detect_time)
 
 
 def get_pokemon_name(pokemon_id):
@@ -80,3 +83,11 @@ def get_pokemon_name(pokemon_id):
             get_pokemon_name.names = json.loads(f.read())
 
     return get_pokemon_name.names[str(pokemon_id)]
+
+def load_credentials(filepath):
+    with open(filepath+os.path.sep+'credentials.json') as file:
+        creds = json.load(file)
+        if not creds['gmaps_key']:
+            raise APIKeyException(\
+                'No Google Maps Javascript API key entered. Please take a look at the wiki for instructions on how to generate this key.')
+        return creds

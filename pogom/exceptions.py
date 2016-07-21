@@ -1,0 +1,2 @@
+class APIKeyException(Exception):
+    pass
