@@ -23,6 +23,8 @@ def get_args():
     # fuck PEP8
     parser = argparse.ArgumentParser()
     parser.add_argument('-ae', '--auth_enable', help ='Basic Auth', action='store_true', default=False)
+    parser.add_argument('-au', '--auth_user', type=str, help='Auth User')
+    parser.add_argument('-ap', '--auth_pass', type=str, help='Auth Password')
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
     parser.add_argument('-p', '--password', help='Password', required=False)

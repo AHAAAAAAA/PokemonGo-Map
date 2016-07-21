@@ -60,10 +60,15 @@ if __name__ == '__main__':
         insert_mock_data(args.location, 6)
 
     app = Pogom(__name__)
+    if args.auth_user is not None: 
+        app.config['BASIC_AUTH_USERNAME'] = args.auth_user
+    else:
+        app.config['BASIC_AUTH_USERNAME'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['auth_user'] 
+    if args.auth_pass is not None:
+        app.config['BASIC_AUTH_PASSWORD'] = args.auth_pass
+    else:
+        app.config['BASIC_AUTH_PASSWORD'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['auth_pass']
     
-    app.config['BASIC_AUTH_USERNAME'] = 'pokemon'
-    app.config['BASIC_AUTH_PASSWORD'] = 'pokemon'
-
     basic_auth = BasicAuth(app)
     
     if  args.auth_enable:
