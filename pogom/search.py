@@ -35,7 +35,7 @@ def hex_transform(x,y,r,il):
     return (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
 
 def generate_location_steps(il, num_steps):
-    pos, x, y, dx, dy, m = 1, 0., 0., 0, -1, 280
+    pos, x, y, dx, dy, m = 1, 0., 0., 0, -1, 240
     conv = float(111111)                            # ~meters per degree
     r = m/conv, m/conv / math.cos(il[0]*0.0174533)  # Conversion of radius from meters to deg
     yield hex_transform(x,y,r,il)
