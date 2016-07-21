@@ -134,7 +134,7 @@ function initMap() {
 
 function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
     disappear_date = new Date(disappear_time)
-    let pad = number => number <= 99 ? ("0" + number).slice(-2) : number;
+    var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
     var contentstring = `
         <div>
