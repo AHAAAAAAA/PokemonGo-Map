@@ -154,7 +154,10 @@ addMyLocationButton = function () {
         }
     });
     locationMarker.setVisible(false);
-
+    locationMarker.addListener('click', function() {
+        var currPos = locationMarker.getPosition();
+	$.post( "/next_loc", { lat: currPos.lat(), lon: currPos.lng() }); 
+    });
     myLocationButton(map, locationMarker);
 
     google.maps.event.addListener(map, 'dragend', function() {
