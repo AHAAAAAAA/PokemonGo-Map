@@ -1,14 +1,16 @@
-var map, 
+var map,
     marker,
     lastStamp = 0,
-    requestInterval = 10000;
+    requestInterval = 10000,
+    enabledNotifications = false;
 
 var markers = [];
 var gym_types = [ "Uncontested", "Mystic", "Valor", "Instinct" ];
+var selected_pokemons = [];
 
 function pad(number) {
     return number <= 99 ? ("0" + number).slice(-2) : number;
-};
+}
 
 pokemonLabel = function(item) {
     disappear_date = new Date(item.disappear_time);
@@ -89,7 +91,8 @@ initMap = function() {
         position: {lat: center_lat, lng: center_lng},
         map: map,
         animation: google.maps.Animation.DROP
-    });  
+    });
+    initBrowserNotifications();
     GetNewPokemons(lastStamp);
     GetNewGyms();
     GetNewPokeStops();
@@ -98,6 +101,14 @@ initMap = function() {
 GetNewPokemons = function(stamp) {
     $.getJSON("pokemons/"+stamp, function(result){
         $.each(result, function(i, item){
+            if (enabledNotifications){
+              if (selected_pokemons.indexOf(parseInt(item.pokemon_id)) > -1){
+                var not = new Notification(item.pokemon_name + " Found!", {
+                  icon: 'static/icons/' + item.pokemon_id + '.png',
+                  body: ''
+                })
+              }
+            }
 
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
@@ -132,7 +143,7 @@ GetNewPokemons = function(stamp) {
                     marker.infoWindow.close();
                 }
             });
-        });        
+        });
     }).always(function() {
         setTimeout(function() {
             GetNewPokemons(lastStamp);
@@ -143,10 +154,10 @@ GetNewPokemons = function(stamp) {
 
     var dObj = new Date();
     lastStamp = dObj.getTime();
-    
+
     $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
+        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))
+            item.m.setMap(null);
     });
 };
 
@@ -227,6 +238,20 @@ GetNewPokeStops = function() {
             }
         });
     });
+};
+
+initBrowserNotifications = function(){
+  if (!("Notification" in window)) {
+      console.log("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+      enabledNotifications = true;
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission(function (permission) {
+        if (permission === "granted") {
+          enabledNotifications = true;
+        }
+      });
+    }
 };
 
 var setLabelTime = function(){
