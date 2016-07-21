@@ -1,18 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-import re
-import sys
-import json
-import struct
 import logging
-import requests
 import time
 import threading
 
 from pgoapi import PGoApi
-from pgoapi.utilities import f2i, h2f, get_cellid, encode, get_pos_by_name
+from pgoapi.utilities import f2i, get_cellid
 
 from . import config
 from .models import parse_map
@@ -50,15 +44,15 @@ def generate_location_steps(initial_location, num_steps):
 
 
 def login(args, position):
-    log.info('Attempting login.')
+    log.info('Attempting login to Pokemon Go.')
 
     api.set_position(*position)
 
     while not api.login(args.auth_service, args.username, args.password):
-        log.info('Login failed. Trying again.')
+        log.info('Failed to login to Pokemon Go. Trying again.')
         time.sleep(REQ_SLEEP)
 
-    log.info('Login successful.')
+    log.info('Login to Pokemon Go successful.')
 
 
 def search(args, tStop):
@@ -69,7 +63,7 @@ def search(args, tStop):
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
         if remaining_time > 60:
-            log.info("Skipping login process since already logged in for another {:.2f} seconds".format(remaining_time))
+            log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
         else:
             login(args, position)
     else:

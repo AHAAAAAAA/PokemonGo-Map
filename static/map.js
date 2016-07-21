@@ -91,8 +91,8 @@ initMap = function() {
         animation: google.maps.Animation.DROP
     });  
     GetNewPokemons(lastStamp);
-    GetNewGyms(lastStamp);
-    GetNewPokeStops(lastStamp);
+    GetNewGyms();
+    GetNewPokeStops();
 };
 
 GetNewPokemons = function(stamp) {
@@ -136,8 +136,8 @@ GetNewPokemons = function(stamp) {
     }).always(function() {
         setTimeout(function() {
             GetNewPokemons(lastStamp);
-            GetNewGyms(lastStamp);
-            GetNewPokeStops(lastStamp);
+            GetNewGyms();
+            GetNewPokeStops();
         }, requestInterval)
     });
 
@@ -150,8 +150,8 @@ GetNewPokemons = function(stamp) {
     });
 };
 
-GetNewGyms = function(stamp) {
-    $.getJSON("/gyms/"+stamp, function(result){
+GetNewGyms = function() {
+    $.getJSON("/gyms", function(result){
         $.each(result, function(i, item){
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
@@ -186,8 +186,8 @@ GetNewGyms = function(stamp) {
     });
 };
 
-GetNewPokeStops = function(stamp) {
-    $.getJSON("/pokestops/"+stamp, function(result){
+GetNewPokeStops = function() {
+    $.getJSON("/pokestops", function(result){
         $.each(result, function(i, item){
             var imagename = item.lure_expiration ? "PstopLured" : "Pstop";
             var marker = new google.maps.Marker({
