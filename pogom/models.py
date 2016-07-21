@@ -38,7 +38,7 @@ class Pokemon(BaseModel):
         r_stamp = datetime.fromtimestamp(int(stamp)/1e3)      
         query = (Pokemon
                  .select()
-                 .where(Pokemon.disappear_time > datetime.now(), Pokemon.detect_time >= r_stamp)
+                 .where(Pokemon.disappear_time > datetime.utcnow())
                  .dicts())
         log.info("Get Pokemons for stamp: {}".format(r_stamp))
         pokemons = []
@@ -75,6 +75,7 @@ class Gym(BaseModel):
     gym_id = CharField(primary_key=True)
     team_id = IntegerField()
     guard_pokemon_id = IntegerField()
+    gym_points = IntegerField()
     enabled = BooleanField()
     latitude = FloatField()
     longitude = FloatField()
@@ -96,7 +97,7 @@ def parse_map(map_dict):
                 'pokemon_id': p['pokemon_data']['pokemon_id'],
                 'latitude': p['latitude'],
                 'longitude': p['longitude'],
-                'disappear_time': datetime.fromtimestamp(
+                'disappear_time': datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
                      p['time_till_hidden_ms']) / 1000.0),
                 'detect_time': detect_time
@@ -105,7 +106,7 @@ def parse_map(map_dict):
         for f in cell.get('forts', []):
             if f.get('type') == 1:  # Pokestops
                 if 'lure_info' in f:
-                    lure_expiration = datetime.fromtimestamp(
+                    lure_expiration = datetime.utcfromtimestamp(
                         f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
                 else:
                     lure_expiration = None
@@ -115,7 +116,7 @@ def parse_map(map_dict):
                     'enabled': f['enabled'],
                     'latitude': f['latitude'],
                     'longitude': f['longitude'],
-                    'last_modified': datetime.fromtimestamp(
+                    'last_modified': datetime.utcfromtimestamp(
                         f['last_modified_timestamp_ms'] / 1000.0),
                     'lure_expiration': lure_expiration
                 }
@@ -125,10 +126,11 @@ def parse_map(map_dict):
                     'gym_id': f['id'],
                     'team_id': f['owned_by_team'],
                     'guard_pokemon_id': f['guard_pokemon_id'],
+                    'gym_points': f['gym_points'],
                     'enabled': f['enabled'],
                     'latitude': f['latitude'],
                     'longitude': f['longitude'],
-                    'last_modified': datetime.fromtimestamp(
+                    'last_modified': datetime.utcfromtimestamp(
                         f['last_modified_timestamp_ms'] / 1000.0),
                 }
 
@@ -136,9 +138,9 @@ def parse_map(map_dict):
         log.info("Upserting {} pokemon".format(len(pokemons)))
         InsertQuery(Pokemon, rows=pokemons.values()).upsert().execute()
 
-    #if pokestops:
-    #    log.info("Upserting {} pokestops".format(len(pokestops)))
-    #    InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
+    if pokestops:
+        log.info("Upserting {} pokestops".format(len(pokestops)))
+        InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
 
     if gyms:
         log.info("Upserting {} gyms".format(len(gyms)))
