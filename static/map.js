@@ -1,124 +1,18 @@
 var map;
 
+var mapStyleCookie = 'map-style';
+var defaultMapStyle = 'dark';
+
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: center_lat,
             lng: center_lng
         },
-        zoom: 16,
-        styles: [{
-            "featureType": "all",
-            "elementType": "labels.text.fill",
-            "stylers": [{
-                "saturation": 36
-            }, {
-                "color": "#b39964"
-            }, {
-                "lightness": 40
-            }]
-        }, {
-            "featureType": "all",
-            "elementType": "labels.text.stroke",
-            "stylers": [{
-                "visibility": "on"
-            }, {
-                "color": "#000000"
-            }, {
-                "lightness": 16
-            }]
-        }, {
-            "featureType": "all",
-            "elementType": "labels.icon",
-            "stylers": [{
-                "visibility": "off"
-            }]
-        }, {
-            "featureType": "administrative",
-            "elementType": "geometry.fill",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 20
-            }]
-        }, {
-            "featureType": "administrative",
-            "elementType": "geometry.stroke",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }, {
-                "weight": 1.2
-            }]
-        }, {
-            "featureType": "landscape",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 20
-            }]
-        }, {
-            "featureType": "poi",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 21
-            }]
-        }, {
-            "featureType": "road.highway",
-            "elementType": "geometry.fill",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }]
-        }, {
-            "featureType": "road.highway",
-            "elementType": "geometry.stroke",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 29
-            }, {
-                "weight": 0.2
-            }]
-        }, {
-            "featureType": "road.arterial",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 18
-            }]
-        }, {
-            "featureType": "road.local",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#181818"
-            }, {
-                "lightness": 16
-            }]
-        }, {
-            "featureType": "transit",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 19
-            }]
-        }, {
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [{
-                "lightness": 17
-            }, {
-                "color": "#525252"
-            }]
-        }]
+        zoom: 16
     });
+
+    setStyle();
 
     marker = new google.maps.Marker({
         position: {
@@ -128,8 +22,42 @@ function initMap() {
         map: map,
         animation: google.maps.Animation.DROP
     });
+}
 
-};
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+}
+
+function setCookie(name, value, expires, path, domain, secure) {
+            expires instanceof Date ? expires = expires.toGMTString() : typeof(expires) == 'number' && (expires = (new Date(+(new Date) + expires * 1e3)).toGMTString());
+            var r = [name + "=" + escape(value)], s, i;
+            for(i in s = {expires: expires, path: path, domain: domain}){
+                s[i] && r.push(i + "=" + s[i]);
+            }
+            return secure && r.push("secure"), document.cookie = r.join(";"), true;
+}
+
+function getMapStyle(styleValue) {
+    if (styleValue in mapStyles) {
+        return mapStyles[styleValue];
+    }
+
+    return mapStyles[defaultMapStyle];
+}
+
+function saveStyle(style) {
+    setCookie(mapStyleCookie, style);
+
+    setStyle();
+}
+
+function setStyle() {
+    var styleValue = getCookie(mapStyleCookie) || defaultMapStyle;
+
+    map.setOptions({'styles': getMapStyle(styleValue)});
+}
 
 
 function pokemonLabel(name, disappear_time, id, disappear_time, latitude, longitude) {
@@ -373,6 +301,10 @@ $('#pokestops-switch').change(function() {
     }
 });
 
+$('#mapstyle-select').change(function() {
+    saveStyle($(this).val());
+});
+
 var updateLabelDiffTime = function() {
     $('.label-countdown').each(function(index, element) {
         var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at")));
@@ -400,3 +332,7 @@ var updateLabelDiffTime = function() {
 };
 
 window.setInterval(updateLabelDiffTime, 1000);
+
+$(document).ready(function() {
+    $('#mapstyle-select').val(getCookie(mapStyleCookie) || 'dark');
+});
