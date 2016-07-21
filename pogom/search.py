@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-<<<<<<< HEAD
 import requests
 import math
-=======
->>>>>>> refs/remotes/AHAAAAAAA/develop
 import time
 
 from pgoapi import PGoApi
