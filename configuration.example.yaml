@@ -1,0 +1,12 @@
+authservice: google
+username: username
+password: password
+location: "location"
+steplimit: 30
+host: localhost
+port: 5000
+locale: en
+china: false
+debug: true
+mock: false
+gmapskey: ""

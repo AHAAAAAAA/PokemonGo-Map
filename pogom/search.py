@@ -47,7 +47,7 @@ def login(args, position):
 
     api.set_position(*position)
 
-    while not api.login(args.auth_service, args.username, args.password):
+    while not api.login(args["authservice"], args["username"], args["password"]):
         log.info('Failed to login to Pokemon Go. Trying again.')
         time.sleep(REQ_SLEEP)
 
@@ -55,7 +55,7 @@ def login(args, position):
 
 
 def search(args):
-    num_steps = args.step_limit
+    num_steps = args["steplimit"]
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
