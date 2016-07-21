@@ -21,10 +21,10 @@ def play_audio(id):
             if pokemon_name not in args.only and pokemon_id not in args.only:
                 play = False
         if play:
-            my_thread = threading.Thread(target=play)
+            my_thread = threading.Thread(target=play_tone)
             my_thread.start()
 
-def play():
+def play_tone():
     global is_playing
     chunk = 206
     wf = wave.open('a.wav', 'rb')
