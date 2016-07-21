@@ -7,10 +7,9 @@ FROM python:2.7-alpine
 
 # ca-certificates is needed because without it, pip fails to install packages due to a certificate failure
 # build-base contains gcc, which is needed during the installation of the pycryptodomex pip package
-RUN apk add --update \
+RUN apk add --no-cache \
     ca-certificates \
-    build-base \
-    && rm -rf /var/cache/apk/*
+    build-base
 
 # default port the app runs on
 EXPOSE 5000
