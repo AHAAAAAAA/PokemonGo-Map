@@ -124,6 +124,10 @@ class Gym(BaseModel):
     def get(cls):
         gyms = []
 
+        if cls.IGNORE:
+            return gyms
+
+        gyms = Gym.select().dicts()
 
         if cls.CHINA:
             for gym in gyms:
