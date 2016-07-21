@@ -3,17 +3,28 @@ import pyaudio
 import threading
 
 from pogom.utils import get_args
+from .utils import get_pokemon_name
 
 args = get_args()
 is_playing = False
 
-def play():
+def play_audio(id):
     global is_playing
     if args.play_sound and not is_playing:
-        my_thread = threading.Thread(target=play_audio)
-        my_thread.start()
+        pokemon_name = get_pokemon_name(id)
+        pokemon_id = str(id)
+        play = True
+        if args.ignore:
+            if pokemon_name in args.ignore or pokemon_id in args.ignore:
+                play = False
+        elif args.only:
+            if pokemon_name not in args.only and pokemon_id not in args.only:
+                play = False
+        if play:
+            my_thread = threading.Thread(target=play)
+            my_thread.start()
 
-def play_audio():
+def play():
     global is_playing
     chunk = 206
     wf = wave.open('a.wav', 'rb')
