@@ -24,7 +24,7 @@ def start_locator_thread(args):
     search_thread.start()
 
 
-if __name__ == '__main__':
+def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 
     logging.getLogger("peewee").setLevel(logging.INFO)
@@ -61,3 +61,6 @@ if __name__ == '__main__':
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
+
+if __name__ == '__main__':
+    main()
