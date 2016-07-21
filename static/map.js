@@ -301,8 +301,9 @@ function updateMap() {
         $.each(result.pokestops, function(i, item) {
             if (!document.getElementById('pokestops-switch').checked) {
                 return false;
-            } else { // add marker to map and item to dict
-                if (item.marker) item.marker.setMap(null);
+            } else if (!(item.pokestop_id in map_pokestops)) { // add marker to map and item to dict
+                  // add marker to map and item to dict
+                  if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
             }
