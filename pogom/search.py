@@ -82,14 +82,13 @@ def search(args):
 
         try:
             parse_map(response_dict)
-            failed_consecutive = 0
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
             failed_consecutive += 1
             if(failed_consecutive >= 10):
-            	log.error('Niantic servers under heavy load. Waiting before trying again')
+                log.error('Niantic servers under heavy load. Waiting before trying again')
             	time.sleep(15)
-
+        failed_consecutive = 0
         log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
         i += 1
         time.sleep(REQ_SLEEP)
