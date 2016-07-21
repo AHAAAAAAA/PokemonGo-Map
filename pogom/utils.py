@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument('-ar', '--auto-refresh', help='Enables an autorefresh that behaves the same as'
                         ' a page reload. Needs an integer value for the amount of seconds')
     parser.add_argument('-dp', '--display-pokestops', help='Display pokéstops', action='store_true', default=False)
-    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop', action='store_true', default=False)
+    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop (implies --display-pokestops)', action='store_true', default=False)
     parser.add_argument('-dg', '--display-gyms', help='Display gyms', action='store_true', default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
@@ -110,7 +110,7 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 def load_credentials(filepath):
-    with open(filepath+'/credentials.json') as file:
+    with open(filepath+os.path.sep+'credentials.json') as file:
         creds = json.load(file)
         if not creds['gmaps_key']:
             raise APIKeyException(\
