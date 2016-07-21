@@ -13,12 +13,15 @@
     "LOCATION": {
       "description": "Location on which the map should be centered. This can be an address, co-ordinates or anything that Google Maps accepts."
     },
+    "GMAPS_KEY": {
+      "description": "A Google Maps API key for this application."
+    },
     "STEP_COUNT": {
       "description": "The number of steps to take.",
       "value": "5"
     },
     "EXTRA_ARGS": {
-      "description": "Any extra arguments that you want to pass to run_server.py.",
+      "description": "Any extra arguments that you want to pass to runserver.py.",
       "required": false
     }
   }
