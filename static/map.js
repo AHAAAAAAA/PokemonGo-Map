@@ -270,7 +270,7 @@ window.setInterval(updateMap, 5000);
 updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
-    localStorage["showGyms"] = this.checked
+    localStorage["showGyms"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
@@ -282,7 +282,7 @@ document.getElementById('gyms-switch').onclick = function() {
 };
 
 $('#pokemon-switch').change(function() {
-    localStorage["showPokemon"] = this.checked
+    localStorage["showPokemon"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
@@ -294,7 +294,7 @@ $('#pokemon-switch').change(function() {
 });
 
 $('#pokestops-switch').change(function() {
-    localStorage["showPokestops"] = this.checked
+    localStorage["showPokestops"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
