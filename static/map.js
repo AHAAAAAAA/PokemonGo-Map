@@ -22,6 +22,7 @@ function initMap() {
           position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
               google.maps.MapTypeId.ROADMAP,
+              google.maps.MapTypeId.SATELLITE,
               'dark_style',
               'style_light2',
               'style_pgo']
