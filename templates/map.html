@@ -53,29 +53,29 @@
 
 		<!-- Nav -->
 		<nav id="nav">
-				Pokemon
-				<div class="onoffswitch">
-	      	<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" />
-	        <label class="onoffswitch-label" for="pokemon-switch">
-	          <span class="switch-label" data-on="On" data-off="Off"></span>
-	          <span class="switch-handle"></span>
-	        </label>
-	      </div>
-				Gyms
-				<div class="onoffswitch">
-	      	<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" />
-	        <label class="onoffswitch-label" for="gyms-switch">
-	          <span class="switch-label" data-on="On" data-off="Off"></span>
-	          <span class="switch-handle"></span>
-	        </label>
-	      </div>
-				Pokéstops
-				<div class="onoffswitch">
-					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" />
-					<label class="onoffswitch-label" for="pokestops-switch">
-						<span class="switch-label" data-on="On" data-off="Off"></span>
-						<span class="switch-handle"></span>
-					</label>
+            Pokemon
+            <div class="onoffswitch">
+                <input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" />
+                <label class="onoffswitch-label" for="pokemon-switch">
+                  <span class="switch-label" data-on="On" data-off="Off"></span>
+                  <span class="switch-handle"></span>
+                </label>
+            </div>
+            Gyms
+            <div class="onoffswitch">
+                <input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" />
+                <label class="onoffswitch-label" for="gyms-switch">
+                  <span class="switch-label" data-on="On" data-off="Off"></span>
+                  <span class="switch-handle"></span>
+                </label>
+            </div>
+            Pokéstops
+            <div class="onoffswitch">
+                <input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" />
+                <label class="onoffswitch-label" for="pokestops-switch">
+                    <span class="switch-label" data-on="On" data-off="Off"></span>
+                    <span class="switch-handle"></span>
+                </label>
 			</div>
 			<button id="trigger-overlay">Test overlay</button>
 		</nav>
@@ -113,12 +113,6 @@
       $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
       $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
       $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
-  </script>
-
-  <script type="text/javascript">
-    $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
-    $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
-    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
   </script>
 
   <script type="text/javascript" src="static/map.js"></script>
