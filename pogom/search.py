@@ -56,8 +56,8 @@ def login(args, position):
     log.info('Login to Pokemon Go successful.')
 
 
-def search_thread(position, step_location, num_steps, step):
-        log.info('Scanning step {:d} of {:d}.'.format(step, num_steps**2))
+def search_thread(position, step_location, num_steps, step, responses):
+        log.info('Scanning step {:d} of {:d} started.'.format(step, num_steps**2))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
         response_dict = send_map_request(api, step_location)
@@ -66,15 +66,11 @@ def search_thread(position, step_location, num_steps, step):
             response_dict = send_map_request(api, step_location)
             time.sleep(REQ_SLEEP)
 
-        try:
-            parse_map(response_dict)
-        except KeyError:
-            log.error('Scan step failed. Response dictionary key error.')
-
-        log.info('Completed {:5.2f}% of scan.'.format(float(step) / num_steps**2*100))
+        responses.append(response_dict)
         time.sleep(REQ_SLEEP)   
 
 def search(args):
+    responses = []
     num_steps = args.step_limit
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
@@ -91,21 +87,34 @@ def search(args):
     max_threads = args.num_threads
     search_threads = []
 
-    for step, step_location in enumerate(generate_location_steps(position, num_steps)):
-        search_args = (position, step_location, num_steps, step)
-        search_threads.append(Thread(target=search_thread, args=search_args))
-        if (step+1) % max_threads == 0:
+    def process_search_threads(threads_processed, search_threads):
+        if search_threads:
             for thread in search_threads:
                 thread.start()
             for thread in search_threads:
                 thread.join()
+                # insert Pokémons as we go
+                while responses:
+                    response_dict = responses.pop()
+                    threads_processed += 1
+                    try:
+                        parse_map(response_dict)
+                        log.info('Completed {:5.2f}% of scan.'.format(
+                            float(threads_processed) / num_steps**2*100))
+                    except KeyError:
+                        log.error('Scan step failed. Response dictionary key error.')
+        return threads_processed
+
+    threads_processed = 0
+    for step, step_location in enumerate(generate_location_steps(position, num_steps)):
+        search_args = (position, step_location, num_steps, step+1, responses)
+        search_threads.append(Thread(target=search_thread, args=search_args))
+        if (step+1) % max_threads == 0:
+            threads_processed = process_search_threads(threads_processed, search_threads)
             search_threads = []
 
-    if search_threads:
-        for thread in search_threads:
-            thread.start()
-        for thread in search_threads:
-            thread.join()
+    # process whatever threads are left in the list
+    process_search_threads(threads_processed, search_threads)
 
 
 def search_loop(args):

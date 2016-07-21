@@ -3,9 +3,11 @@
 
 import logging
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
-                   CharField, FloatField, BooleanField, DateTimeField
+                   CharField, FloatField, BooleanField, DateTimeField,\
+                   OperationalError
 from datetime import datetime
 from base64 import b64encode
+import time
 
 from .utils import get_pokemon_name
 from .transform import transform_from_wgs_to_gcj
@@ -183,17 +185,27 @@ def parse_map(map_dict):
                         f['last_modified_timestamp_ms'] / 1000.0),
                 }
 
-    if pokemons:
-        log.info("Upserting {} pokemon".format(len(pokemons)))
-        InsertQuery(Pokemon, rows=pokemons.values()).upsert().execute()
+    pokethings = {'pokemons': pokemons, 
+                  'pokestops': pokestops,
+                  'gyms': gyms}
 
-    if pokestops:
-        log.info("Upserting {} pokestops".format(len(pokestops)))
-        InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
+    models = {'pokemons': Pokemon,
+              'pokestops': Pokestop,
+              'gyms': Gym}
 
-    if gyms:
-        log.info("Upserting {} gyms".format(len(gyms)))
-        InsertQuery(Gym, rows=gyms.values()).upsert().execute()
+    def insert(pokething, thing_name, retries=3, timeout=1):
+        while retries:
+            try:
+                log.info("Upserting {} {}".format(len(pokething), thing_name))
+                InsertQuery(models[thing_name], rows=pokething.values()).upsert().execute()
+                retries = 0
+            except OperationalError:
+                time.sleep(timeout)
+                retries -= 1
+
+    for thing_name, pokething in pokethings.items():
+        if pokething:
+            insert(pokething, thing_name)
 
 
 def create_tables():
