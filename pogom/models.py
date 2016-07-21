@@ -2,18 +2,25 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
+import smtplib
+
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, FloatField, BooleanField, DateTimeField
-from datetime import datetime
+from datetime import datetime, timedelta
 from base64 import b64encode
 
-from .utils import get_pokemon_name
+from .utils import get_pokemon_name, load_credentials
 from .transform import transform_from_wgs_to_gcj
+from pogom import config
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
 
+ACTIVE_RARES = {}
 
 class BaseModel(Model):
     class Meta:
@@ -195,6 +202,78 @@ def parse_map(map_dict):
         log.info("Upserting {} gyms".format(len(gyms)))
         InsertQuery(Gym, rows=gyms.values()).upsert().execute()
 
+
+def email_rare_pokemon():
+    global ACTIVE_RARES
+    rare_found = False
+    POKEMANS = Pokemon.get_active(None)
+    EMAIL_ADDRESS = config['GMAIL_USERNAME']
+    EMAIL_PASS = config['GMAIL_PASSWORD']
+    rare_pkmn = config['RARE_PKMN']
+    time_offset = datetime.now() - datetime.utcnow()
+
+    msg= MIMEMultipart('alternative')
+    msg['Subject'] = 'Rare pokemon have been spotted near you!'
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = EMAIL_ADDRESS
+
+    text = ""
+    html = """\
+        <html>
+            <head></head>
+                <body>"""
+    for pkmn in POKEMANS:
+        pokename = pkmn['pokemon_name']
+        if pokename == u'Nidoran\u2642':
+				    pokename = 'Nidoran-M'
+        elif pokename == u'Nidoran\u2640':
+            pokename = 'Nidoran-F'
+
+        if pkmn['pokemon_name'] in rare_pkmn and pkmn['encounter_id'] not in ACTIVE_RARES.values():
+            rare_found = True
+
+            ACTIVE_RARES[pkmn['disappear_time']] = pkmn['encounter_id']
+            bye_bye_time = pkmn['disappear_time'] + time_offset - timedelta(hours=1)
+            zero_hour = bye_bye_time.strftime('%m:%M:%S %p')
+            pkmn_map_link = "https://www.google.com/maps?q=%f,%f" % (pkmn['latitude'], pkmn['longitude'])
+            text += "OMG a %s has been spotted near you!\n\nHere's a map: %s\n\nYou have until %s to catch %s.\n\n" % (pokename, pkmn_map_link, zero_hour, pokename)
+            html += """\
+                <p>OMG a %s has been spotted near you!</p>
+                <p>Here's a map: <a href='%s'>HERE</a></p>
+                <p>You have until %s to catch %s.</p>
+                <br/>""" % (pkmn['pokemon_name'], pkmn_map_link, zero_hour, pkmn['pokemon_name'])
+        
+    if rare_found:
+        rare_found = False
+        text += "Happy hunting!"
+        html += """\
+				        <p>Happy hunting!</p>
+            </body>
+        </html>"""
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+			
+        msg.attach(part1)
+        msg.attach(part2)
+        try:
+            s= smtplib.SMTP('smtp.gmail.com',587)
+            s.ehlo()
+            s.starttls()
+            s.ehlo()
+            s.login(EMAIL_ADDRESS, EMAIL_PASS)
+            s.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, msg.as_string())
+            print "Found rare pokemon. Sending email to %s." % EMAIL_ADDRESS
+            s.quit()
+        except smtplib.SMTPException:
+            print "Found rare Pokemon but unable to send email. Check the map!"
+
+    # cleaning expired Pokemon from rare list
+    CLEAN_LIST = {}
+    for timeleft in ACTIVE_RARES:
+        if timeleft > datetime.utcnow():
+            CLEAN_LIST[timeleft] = ACTIVE_RARES[timeleft]
+    ACTIVE_RARES = CLEAN_LIST
 
 def create_tables():
     db.connect()

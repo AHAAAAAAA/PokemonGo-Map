@@ -80,4 +80,9 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
+
+    config['GMAIL_USERNAME'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmail_username']
+    print 'Gmail username: ' + config['GMAIL_USERNAME']
+    config['GMAIL_PASSWORD'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmail_password']
+    config['RARE_PKMN'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['rare_pkmn']
     app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)

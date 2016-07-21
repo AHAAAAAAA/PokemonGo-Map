@@ -8,7 +8,7 @@ from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
 
 from . import config
-from .models import parse_map
+from .models import parse_map, email_rare_pokemon
 
 log = logging.getLogger(__name__)
 
@@ -92,5 +92,6 @@ def search(args):
 def search_loop(args):
     while True:
         search(args)
+        email_rare_pokemon()
         log.info("Scanning complete.")
         time.sleep(1)
