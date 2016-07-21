@@ -23,7 +23,7 @@ def init():
 
 # Safely parse incoming strings to unicode
 def _str(s):
-  return s.encode('utf-8').strip()
+  return s.decode('utf-8').strip()
 
 # Notify user for discovered Pokemon
 def pokemon_found(pokemon):
