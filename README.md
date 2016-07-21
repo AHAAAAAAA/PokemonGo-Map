@@ -1,11 +1,6 @@
 ###Please submit all pull requests to the [develop branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) #
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
-[Android Port](https://github.com/omkarmoghe/Pokemap)
-
-[Video Setup Tutorial](https://www.youtube.com/watch?v=nplNFl3SpOI)
-
-
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
 </p>
@@ -13,6 +8,10 @@
 # PokemonGo Map
 
 [![Build Status](https://travis-ci.org/AHAAAAAAA/PokemonGo-Map.svg?branch=master)](https://travis-ci.org/AHAAAAAAA/PokemonGo-Map) [![Coverage Status](https://coveralls.io/repos/github/AHAAAAAAA/PokemonGo-Map/badge.svg?branch=master)](https://coveralls.io/github/AHAAAAAAA/PokemonGo-Map?branch=master)
+
+[Android Port](https://github.com/omkarmoghe/Pokemap)
+
+[Video Setup Tutorial](https://www.youtube.com/watch?v=nplNFl3SpOI)
 
 Live visualization of all pokemon (with options to show gyms, filter pokemon, localization, and pokestops) in your area. This is a proof of concept that we can load all nearby pokemon given a location. Currently runs on a Flask server displaying a Google Map with markers on it.
 
