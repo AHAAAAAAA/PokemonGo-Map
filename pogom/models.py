@@ -19,12 +19,12 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+    @classmethod
+    def get_all(cls):
+        return [m for m in cls.select().dicts()]
+
 
 class Pokemon(BaseModel):
-    IGNORE = None
-    ONLY = None
-    CHINA = False
-
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
     encounter_id = CharField(primary_key=True)
@@ -33,79 +33,33 @@ class Pokemon(BaseModel):
     latitude = FloatField()
     longitude = FloatField()
     disappear_time = DateTimeField()
-    detect_time = DateTimeField()
 
     @classmethod
-    def get_active(cls, stamp):
-        if stamp != None:
-            r_stamp = datetime.fromtimestamp(int(stamp)/1e3)
-            query = (Pokemon
-                     .select()
-                     .where(Pokemon.disappear_time > datetime.utcnow(), Pokemon.detect_time >= r_stamp)
-                     .dicts())
-            log.info("Get Pokemons for stamp: {}".format(r_stamp))
-        else:
-            query = (Pokemon
-                     .select()
-                     .where(Pokemon.disappear_time > datetime.utcnow())
-                     .dicts())
-            log.info("Geting all Pokemons")
+    def get_active(cls):
+        query = (Pokemon
+                 .select()
+                 .where(Pokemon.disappear_time > datetime.utcnow())
+                 .dicts())
+
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
-            pokemon_name = p['pokemon_name'].lower()
-            pokemon_id = str(p['pokemon_id'])
-            if cls.CHINA:
-                p['latitude'], p['longitude'] = transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
-            if cls.IGNORE:
-                if pokemon_name in cls.IGNORE or pokemon_id in cls.IGNORE:
-                    continue
-            if cls.ONLY:
-                if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
-                    continue
             pokemons.append(p)
 
         return pokemons
 
 
 class Pokestop(BaseModel):
-    IGNORE = True
-    LURED_ONLY = False
-    CHINA = False
-
     pokestop_id = CharField(primary_key=True)
     enabled = BooleanField()
     latitude = FloatField()
     longitude = FloatField()
     last_modified = DateTimeField()
     lure_expiration = DateTimeField(null=True)
-
-    @classmethod
-    def get(cls):
-        pokestops = []
-
-        if not cls.IGNORE:
-            if cls.LURED_ONLY:
-                pokestops = (Pokestop
-                             .select()
-                             .where(~(Pokestop.lure_expiration >> None))
-                             .dicts())
-            else:
-                pokestops = (Pokestop
-                             .select()
-                             .dicts())
-
-            if cls.CHINA:
-                for pokestop in pokestops:
-                    pokestop['latitude'], pokestop['longitude'] = transform_from_wgs_to_gcj(pokestop['latitude'], pokestop['longitude'])
-
-        return pokestops
+    active_pokemon_id = IntegerField(null=True)
 
 
 class Gym(BaseModel):
-    IGNORE = True
-    CHINA = False
-
     UNCONTESTED = 0
     TEAM_MYSTIC = 1
     TEAM_VALOR = 2
@@ -120,23 +74,12 @@ class Gym(BaseModel):
     longitude = FloatField()
     last_modified = DateTimeField()
 
-    @classmethod
-    def get(cls):
-        gyms = []
-
-
-        if cls.CHINA:
-            for gym in gyms:
-                gym['latitude'], gym['longitude'] = transform_from_wgs_to_gcj(gym['latitude'], gym['longitude'])
-
-        return gyms
 
 def parse_map(map_dict):
     pokemons = {}
     pokestops = {}
     gyms = {}
 
-    detect_time = datetime.now()
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
@@ -148,8 +91,7 @@ def parse_map(map_dict):
                 'longitude': p['longitude'],
                 'disappear_time': datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0),
-                'detect_time': detect_time
+                     p['time_till_hidden_ms']) / 1000.0)
             }
 
         for f in cell.get('forts', []):
@@ -157,8 +99,9 @@ def parse_map(map_dict):
                 if 'lure_info' in f:
                     lure_expiration = datetime.utcfromtimestamp(
                         f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
+                    active_pokemon_id = f['lure_info']['active_pokemon_id']
                 else:
-                    lure_expiration = None
+                    lure_expiration, active_pokemon_id = None, None
 
                 pokestops[f['id']] = {
                     'pokestop_id': f['id'],
@@ -167,7 +110,8 @@ def parse_map(map_dict):
                     'longitude': f['longitude'],
                     'last_modified': datetime.utcfromtimestamp(
                         f['last_modified_timestamp_ms'] / 1000.0),
-                    'lure_expiration': lure_expiration
+                    'lure_expiration': lure_expiration,
+                    'active_pokemon_id': active_pokemon_id
                 }
 
             else:  # Currently, there are only stops and gyms
@@ -185,15 +129,26 @@ def parse_map(map_dict):
 
     if pokemons:
         log.info("Upserting {} pokemon".format(len(pokemons)))
-        InsertQuery(Pokemon, rows=pokemons.values()).upsert().execute()
+        bulk_upsert(Pokemon, pokemons)
 
     if pokestops:
         log.info("Upserting {} pokestops".format(len(pokestops)))
-        InsertQuery(Pokestop, rows=pokestops.values()).upsert().execute()
+        bulk_upsert(Pokestop, pokestops)
 
     if gyms:
         log.info("Upserting {} gyms".format(len(gyms)))
-        InsertQuery(Gym, rows=gyms.values()).upsert().execute()
+        bulk_upsert(Gym, gyms)
+
+def bulk_upsert(cls, data):
+    num_rows = len(data.values())
+    i = 0
+    step = 50
+
+    while i < num_rows:
+        log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
+        InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+        i+=step
+
 
 
 def create_tables():
