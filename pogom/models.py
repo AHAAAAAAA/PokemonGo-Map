@@ -60,6 +60,7 @@ class Pokemon(BaseModel):
                 if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
                     continue
             pokemons.append(p)
+            
         return pokemons
 
 
