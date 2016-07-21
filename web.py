@@ -29,7 +29,7 @@ GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
 DEBUG = True
 origin_lat = (app_config.MAP_START[0] + app_config.MAP_END[0]) / 2.0
 origin_lon = (app_config.MAP_START[1] + app_config.MAP_END[1]) / 2.0
-auto_refresh = 0
+auto_refresh = 60000
 
 
 def debug(message):
@@ -137,6 +137,7 @@ def get_pokemarkers():
 
     session = db.Session()
     pokemons = db.get_sightings(session)
+    session.close()
 
     for pokemon in pokemons:
         name = pokemon_names[str(pokemon.pokemon_id)]

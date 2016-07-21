@@ -45,10 +45,6 @@ SERVICE = credentials.get('service', None)
 CLIENT_SIG = credentials.get('client_sig', None)
 GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
 
-SESSION = requests.session()
-SESSION.headers.update({'User-Agent': 'Niantic App'})
-SESSION.verify = False
-
 DEBUG = True
 VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
 COORDS_LATITUDE = 0
@@ -197,7 +193,8 @@ def api_req(service, api_endpoint, access_token, *args, **kwargs):
 
     protobuf = p_req.SerializeToString()
 
-    r = SESSION.post(api_endpoint, data=protobuf, verify=False)
+    session = threading.local().session
+    r = session.post(api_endpoint, data=protobuf, verify=False)
 
     p_ret = pokemon_pb2.ResponseEnvelop()
     p_ret.ParseFromString(r.content)
@@ -294,7 +291,8 @@ def login_google(username, password):
 def login_ptc(username, password):
     print '[!] PTC login for: {}'.format(username)
     head = {'User-Agent': 'Niantic App'}
-    r = SESSION.get(LOGIN_URL, headers=head)
+    session = threading.local().session
+    r = session.get(LOGIN_URL, headers=head)
 
     try:
         jdata = json.loads(r.content)
@@ -315,7 +313,7 @@ def login_ptc(username, password):
         'username': username,
         'password': password,
     }
-    r1 = SESSION.post(LOGIN_URL, data=data, headers=head)
+    r1 = session.post(LOGIN_URL, data=data, headers=head)
 
     ticket = None
     try:
@@ -332,7 +330,7 @@ def login_ptc(username, password):
         'grant_type': 'refresh_token',
         'code': ticket,
     }
-    r2 = SESSION.post(LOGIN_OAUTH, data=data1)
+    r2 = session.post(LOGIN_OAUTH, data=data1)
     access_token = re.sub('&expires.*', '', r2.content)
     access_token = re.sub('.*access_token=', '', access_token)
 
@@ -449,8 +447,9 @@ def work(worker_no):
 
     # Login sequentially for PTC
     service = config.ACCOUNTS[worker_no][2]
-    # if service == 'ptc':
-    #     time.sleep(worker_no * 20)
+    api_session = threading.local().api_session = requests.session()
+    api_session.headers.update({'User-Agent': 'Niantic App'})
+    api_session.verify = False
 
     api_endpoint, access_token, profile_response = login(
         username=config.ACCOUNTS[worker_no][0],
@@ -515,7 +514,7 @@ def main(worker_no, service, api_endpoint, access_token, profile_response):
         session.commit()
         add_to_db = []
         print('Completed: ' + str(((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
-
+    session.close()
     set_location_coords(origin_lat, origin_lon, 0)
 
 
