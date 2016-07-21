@@ -1,5 +1,8 @@
 FROM python:2-alpine
 
+# Expose the local port
+EXPOSE 5000
+
 # Install dependencies
 RUN apk --update add --virtual build-deps openssl ca-certificates python-dev build-base gcc
 
