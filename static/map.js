@@ -1,5 +1,6 @@
 var map, 
     currentMarker,
+    locationMarker,
     lastStamp = 0,
     requestInterval = 10000;
 
@@ -80,6 +81,94 @@ pokestopLabel = function pokestopLabel(item) {
     return str;
 }
 
+myLocationButton = function (map, marker) {
+    var locationContainer = document.createElement('div');
+
+    var locationButton = document.createElement('button');
+    locationButton.style.backgroundColor = '#fff';
+    locationButton.style.border = 'none';
+    locationButton.style.outline = 'none';
+    locationButton.style.width = '28px';
+    locationButton.style.height = '28px';
+    locationButton.style.borderRadius = '2px';
+    locationButton.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
+    locationButton.style.cursor = 'pointer';
+    locationButton.style.marginRight = '10px';
+    locationButton.style.padding = '0px';
+    locationButton.title = 'Your Location';
+    locationContainer.appendChild(locationButton);
+
+    var locationIcon = document.createElement('div');
+    locationIcon.style.margin = '5px';
+    locationIcon.style.width = '18px';
+    locationIcon.style.height = '18px';
+    locationIcon.style.backgroundImage = 'url(static/mylocation-sprite-1x.png)';
+    locationIcon.style.backgroundSize = '180px 18px';
+    locationIcon.style.backgroundPosition = '0px 0px';
+    locationIcon.style.backgroundRepeat = 'no-repeat';
+    locationIcon.id = 'current-location';
+    locationButton.appendChild(locationIcon);
+
+    locationButton.addEventListener('click', function() {
+        var currentLocation = document.getElementById('current-location');
+        var imgX = '0';
+        var animationInterval = setInterval(function(){
+            if(imgX == '-18') imgX = '0';
+            else imgX = '-18';
+            currentLocation.style.backgroundPosition = imgX+'px 0';
+        }, 500);
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                
+                //clear the current marker
+                clearCurrentMarker();
+                setNewLocation(position.coords.latitude,  position.coords.longitude);
+                
+                locationMarker.setVisible(true);
+                locationMarker.setOptions({'opacity': 1});
+                locationMarker.setPosition(latlng);
+                map.setCenter(latlng);
+                clearInterval(animationInterval);
+                currentLocation.style.backgroundPosition = '-144px 0px';
+            });
+        }
+        else{
+            clearInterval(animationInterval);
+            currentLocation.style.backgroundPosition = '0px 0px';
+        }
+    });
+
+    locationContainer.index = 1;
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationContainer);
+}
+
+addMyLocationButton = function () {
+    locationMarker = new google.maps.Marker({
+        map: map,
+        animation: google.maps.Animation.DROP,
+        position: {lat: center_lat, lng: center_lng},
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillOpacity: 1,
+            fillColor: '#1c8af6',
+            scale: 6,
+            strokeColor: '#1c8af6',
+            strokeWeight: 8,
+            strokeOpacity: 0.3
+        }
+    });
+    locationMarker.setVisible(false);
+
+    myLocationButton(map, locationMarker);
+
+    google.maps.event.addListener(map, 'dragend', function() {
+        var currentLocation = document.getElementById('current-location');
+        currentLocation.style.backgroundPosition = '0px 0px';
+        locationMarker.setOptions({'opacity': 0.5});
+    });
+}
+
 initMap = function() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: center_lat, lng: center_lng},
@@ -95,6 +184,10 @@ initMap = function() {
     //set current marker
     setCurrentMarker(center_lat, center_lng);
 
+    //add location button
+    addMyLocationButton();
+
+    //get the data
     GetNewPokemons(lastStamp);
    
     if(!is_gymsIgnore){
@@ -142,7 +235,7 @@ GetNewPokemons = function(stamp) {
                     marker.infoWindow.close();
                 }
             });
-        });        
+        });
     }).always(function() {
         setTimeout(function() {
            GetNewPokemons(lastStamp);
@@ -157,10 +250,10 @@ GetNewPokemons = function(stamp) {
 
     var dObj = new Date();
     lastStamp = dObj.getTime();
-    
+
     $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
+        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))
+            item.m.setMap(null);
     });
 };
 
@@ -260,16 +353,25 @@ $('.label-countdown').each(function (index, element) {
     });
 };
 
+
 /**
- * set the current marker location
- * lat = latitude, lng = longitude, title = name of the marker
+ * clears the current marker
  */
-var setCurrentMarker = function(lat, lng, title){
+var clearCurrentMarker=function(){
     if(currentMarker!=null){
         //clear the marker
         currentMarker.setMap(null);
         currentMarker = null;
     }
+}
+
+/**
+ * set the current marker location
+ * lat = latitude, lng = longitude, title = name of the marker
+ */
+var setCurrentMarker = function(lat, lng, title){
+
+    clearCurrentMarker();
 
     var newLocation={};
     newLocation.lat=lat;

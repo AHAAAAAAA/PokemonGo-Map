@@ -56,7 +56,7 @@ if __name__ == '__main__':
     if not args.mock:
         start_locator_thread(args)
     else:
-        insert_mock_data(args.location, 6)
+        insert_mock_data()
 
     if args.display_pokestops or args.display_lured:
         Pokestop.IGNORE = False
@@ -66,6 +66,12 @@ if __name__ == '__main__':
 
     if args.display_gyms:
         Gym.IGNORE = False
+
+    #Coordination transformation is needed inside China to display right map.
+    if args.china:
+        Pokemon.CHINA = True
+        Pokestop.CHINA = True
+        Gym.CHINA = True
 
     if args.display_gsearch:
         GoogleSearchBox.DISPLAY = True
