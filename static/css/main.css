@@ -1,6 +1,7 @@
 @charset "UTF-8";
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css);
 /* Reset */
+@import url(https://fonts.googleapis.com/css?family=Muli:400,300);
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin: 0;
   padding: 0;
@@ -1270,9 +1271,15 @@ textarea {
   color: #bbb !important;
   opacity: 1.0; }
 
+.switch-container {
+  float: left;
+  width: 100%; }
+
 .onoffswitch {
   position: relative;
   width: 70px;
+  float: right;
+  margin-bottom: 20px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none; }
@@ -1711,7 +1718,7 @@ body {
       text-decoration: none;
       -webkit-tap-highlight-color: transparent; }
       #header > a[href="#nav"]:before {
-        content: "";
+        content: "";
         -moz-osx-font-smoothing: grayscale;
         -webkit-font-smoothing: antialiased;
         font-family: FontAwesome;
@@ -1752,28 +1759,37 @@ body {
 
 /* Nav */
 #nav {
-  -moz-transform: translateX(-20em);
-  -webkit-transform: translateX(-20em);
-  -ms-transform: translateX(-20em);
-  transform: translateX(-20em);
+  -moz-transform: translateX(-18em);
+  -webkit-transform: translateX(-18em);
+  -ms-transform: translateX(-18em);
+  transform: translateX(-18em);
   -moz-transition: -moz-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -webkit-transition: -webkit-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -ms-transition: -ms-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   transition: transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -webkit-overflow-scrolling: touch;
-  background: #3b3b3b;
+  background: #F8F8F8;
   box-shadow: none;
   color: #ffffff;
   height: 100%;
   max-width: 80%;
   overflow-y: auto;
-  padding: 3em 2em;
+  padding: 1.5em;
   position: fixed;
   top: 3.50em;
   left: 0;
   visibility: hidden;
-  width: 20em;
+  width: 18em;
   z-index: 10002; }
+  #nav h3 {
+    font-size: 18px;
+    font-family: 'Muli', sans-serif;
+    color: #3b3b3b;
+    margin-bottom: 10px;
+    float: left; }
+  #nav p {
+    margin-bottom: 20px;
+    color: #3b3b3b; }
   #nav > ul {
     margin: 0 0 1em 0; }
     #nav > ul.links {
@@ -1803,7 +1819,7 @@ body {
     border: 0;
     color: #bdbdbd;
     cursor: pointer;
-    display: block;
+    display: none;
     height: 3.25em;
     line-height: 3.25em;
     padding-right: 1.25em;
@@ -1922,7 +1938,3 @@ body {
         border-left: 0;
         margin-left: 0;
         padding-left: 0; } }
-
-.gm-style-mtc {
-    margin-top: '+=55px';
-}

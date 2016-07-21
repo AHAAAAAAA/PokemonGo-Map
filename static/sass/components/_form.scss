@@ -66,9 +66,16 @@
 		opacity: 1.0;
 	}
 
+.switch-container {
+	float: left;
+	width: 100%;
+}
+
 .onoffswitch {
   position: relative;
 	width: 70px;
+	float: right;
+	margin-bottom: 20px;
   -webkit-user-select:none;
 	-moz-user-select:none;
 	-ms-user-select: none;
