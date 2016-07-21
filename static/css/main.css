@@ -1793,7 +1793,7 @@ body {
   left: 0;
   visibility: hidden;
   width: 18em;
-  z-index: 10002; }
+  z-index: 500; }
   #nav h3 {
     font-size: 18px;
     font-family: 'Muli', sans-serif;
