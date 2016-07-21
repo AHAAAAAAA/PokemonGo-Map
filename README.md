@@ -14,7 +14,7 @@
 
 [Video Setup Tutorial](https://www.youtube.com/watch?v=nplNFl3SpOI)
 
-Live visualization of all pokemon (with options to show gyms, filter pokemon, localization, and pokestops) in your area. This is a proof of concept that we can load all nearby pokemon given a location. Currently runs on a Flask server displaying a Google Map with markers on it.
+Live map visualization of all pokemon in your area with options to also show gyms, filter pokemon, localization, and pokestops. This is a proof of concept. Currently runs on a Flask server displaying a custom Google Map with markers on it.
 
 Using this software is against the ToS and can get you banned. Use at your own risk.
 
