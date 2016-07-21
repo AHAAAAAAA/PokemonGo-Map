@@ -34,21 +34,17 @@
 		<script src="static/js/vendor/modernizr.custom.js"></script>
 
     <style>
-        html, body {
+        html, body, .wrapper {
           height: 100%;
           margin: 0;
           padding: 0;
           overflow: hidden;
         }
-
-        #map {
-        	height: 100vh;
-        	width: 100vw;
-        }
     </style>
 	</head>
 	<body id="top">
 
+	<div class="wrapper">
 		<!-- Header -->
 		<header id="header">
 			<a href="#nav">Menu</a>
@@ -57,38 +53,38 @@
 
 		<!-- Nav -->
 		<nav id="nav">
-				Pokemon
-				<div class="onoffswitch">
-	      	<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
-	        <label class="onoffswitch-label" for="pokemon-switch">
+			Pokemon
+			<div class="onoffswitch">
+				<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked />
+				<label class="onoffswitch-label" for="pokemon-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
 	        </label>
-	      </div>
-				Gyms
-				<div class="onoffswitch">
-	      	<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
-	        <label class="onoffswitch-label" for="gyms-switch">
+			</div>
+			Gyms
+			<div class="onoffswitch">
+				<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked />
+				<label class="onoffswitch-label" for="gyms-switch">
 	          <span class="switch-label" data-on="On" data-off="Off"></span>
 	          <span class="switch-handle"></span>
 	        </label>
-	      </div>
-				Pokéstops
-				<div class="onoffswitch">
-					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked />
-					<label class="onoffswitch-label" for="pokestops-switch">
+			</div>
+			Pokéstops
+			<div class="onoffswitch">
+				<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked />
+				<label class="onoffswitch-label" for="pokestops-switch">
 						<span class="switch-label" data-on="On" data-off="Off"></span>
 						<span class="switch-handle"></span>
 					</label>
-				</div>
+			</div>
 			<button id="trigger-overlay">Test overlay</button>
 		</nav>
 
-		<div id="main" class="container">
-      <div id="map"></div>
-			<div id="zoom-in">IN</div>
-			<div id="zoom-out">OUT</div>
-    </div>
+
+		<div id="map"></div>
+		<div id="zoom-in">IN</div>
+		<div id="zoom-out">OUT</div>
+
 
 		<div class="overlay overlay-contentscale">
 			<button type="button" class="overlay-close">Close</button>
@@ -98,12 +94,12 @@
 				</ul>
 			</nav>
 		</div>
+	</div>
+</body>
 
-  </body>
-
-  <!-- Scripts -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+<!-- Scripts -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
 
   <script type="text/javascript" src="static/dist/js/app.min.js"></script>
   <script type="text/javascript" src="static/js/vendor/classie.js"></script>
