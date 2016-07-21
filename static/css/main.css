@@ -1952,3 +1952,7 @@ body {
         border-left: 0;
         margin-left: 0;
         padding-left: 0; } }
+
+.gm-style-mtc {
+    margin-top: '+=55px';
+}
