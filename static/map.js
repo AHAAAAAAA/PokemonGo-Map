@@ -403,30 +403,40 @@ window.setInterval(updateLabelDiffTime, 1000);
 // Adjust to current position through html5 api
 (function() {
     if ('geolocation' in navigator) {
-        var updateLocation = function() {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var baseURL = location.protocol + '//' + location.hostname + (location.port ? ':'+location.port: '') + '/',
-                    googleLatLang = new google.maps.LatLng(
-                        position.coords.latitude,
-                        position.coords.longitude
+        document.getElementById('centralize-switch').onclick = function() {
+            centralize = false;
+            if (this.checked) {
+                centralize = true;
+            }
+        };
+
+        var centralize = false,
+            updateLocation = function() {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var baseURL = location.protocol + '//' + location.hostname + (location.port ? ':'+location.port: '') + '/',
+                        googleLatLang = new google.maps.LatLng(
+                            position.coords.latitude,
+                            position.coords.longitude
+                        );
+
+                    $.post(
+                        baseURL +
+                        'next_loc' +
+                        '?lat=' + position.coords.latitude +
+                        '&lon=' + position.coords.longitude
                     );
 
-                $.post(
-                    baseURL +
-                    'next_loc' +
-                    '?lat=' + position.coords.latitude +
-                    '&lon=' + position.coords.longitude
-                );
-
-                map.panTo(googleLatLang);
-                marker.setMap(null);
-                marker = new google.maps.Marker({
-                    position: googleLatLang,
-                    map: map,
-                    animation: google.maps.Animation.DROP
+                    if (centralize) {
+                        map.panTo(googleLatLang);
+                    }
+                    marker.setMap(null);
+                    marker = new google.maps.Marker({
+                        position: googleLatLang,
+                        map: map,
+                        animation: google.maps.Animation.DROP
+                    });
                 });
-            });
-        };
+            };
         window.setInterval(updateLocation, 10 * 1000);
         updateLocation();
     }
