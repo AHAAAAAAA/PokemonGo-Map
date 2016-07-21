@@ -18,7 +18,8 @@ def init():
         wanted_pokemon = [a.lower() for a in wanted_pokemon]
         # get api key
         api_key = _str( data["pushbullet"] )
-        pushbullet_client = Pushbullet(api_key)
+        if api_key:
+            pushbullet_client = Pushbullet(api_key)
 
 
 # Safely parse incoming strings to unicode
@@ -28,18 +29,19 @@ def _str(s):
 # Notify user for discovered Pokemon
 def pokemon_found(pokemon):
     # get name
-    pokename = _str( pokemon["name"] ).lower()
+    pokename = _str(pokemon["name"]).lower()
     # check array
-    if not pokename in wanted_pokemon: return
+    if not pushbullet_client or not pokename in wanted_pokemon: return
     # notify
     print "[+] Notifier found pokemon:", pokename
     address = Nominatim().reverse(str(pokemon["lat"])+", "+str(pokemon["lng"])).address
     # Locate pokemon on GMAPS
-    gMaps = "http://maps.google.com/maps?q=" + str(pokemon["lat"]) + "," + str(pokemon["lng"]) + "," +"24z"
+    gMaps = "http://maps.google.com/maps?q=" + str(pokemon["lat"]) + "," + str(pokemon["lng"]) + ',20z'
     notification_text = "Pokemon Finder found " + _str(pokemon["name"]) + "!"
     disappear_time = str(datetime.fromtimestamp(pokemon["disappear_time"]).strftime("%I:%M%p").lstrip('0'))+")"
     location_text = "Go search at this location: " + address + ". Locate on Google Maps : " + gMaps + ". " + _str(pokemon["name"]) + " will be available until " + disappear_time + "."
-    push = pushbullet_client.push_note(notification_text, location_text)
+
+    push = pushbullet_client.push_link(notification_text, gMaps, body=location_text)
 
 
 
