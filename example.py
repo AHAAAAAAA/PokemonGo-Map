@@ -30,6 +30,7 @@ from requests.adapters import ConnectionError
 from requests.models import InvalidURL
 from transform import *
 
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
@@ -77,6 +78,8 @@ numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and the
 }
 origin_lat, origin_lon = None, None
 is_ampm_clock = False
+firebaseserverid="AIzaSyAScPYp0X2HM5XjHfx-fV4KVYZX8xqibe4"
+pushed=[]
 
 # stuff for in-background search thread
 
@@ -487,6 +490,11 @@ def get_args():
         help='Display only lured pokéstop',
         action='store_true')
     parser.add_argument(
+        "-f",
+        "--firebasetoken",
+        help="Firebase token for push notifications",
+        default=None)
+    parser.add_argument(
         '-c',
         '--china',
         help='Coordinates transformer for China',
@@ -690,6 +698,7 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
         elif args.only:
             if pokename.lower() not in only and pokeid not in only:
                 continue
+        push(poke, pokename)
 
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs \
             / 1000
@@ -716,7 +725,7 @@ def clear_stale_pokemons():
             print "[+] removing stale pokemon %s at %f, %f from list" % (
                 pokemon['name'].encode('utf-8'), pokemon['lat'], pokemon['lng'])
             del pokemons[pokemon_key]
-
+            
 
 def register_background_thread(initial_registration=False):
     """
@@ -902,6 +911,28 @@ def get_map():
         zoom='15', )
     return fullmap
 
+def push(poke, pokename):
+    if args.firebasetoken != None:
+		payload = {'to': args.firebasetoken, 'data': {'pokeId': poke.pokemon.PokemonId, 'pokename': pokename, 'lat': poke.Latitude, 'lon': poke.Longitude, 'hiddens': time.time() + poke.TimeTillHiddenMs/1000}}
+
+		for p in pushed:
+		    if p.get('data').get('hiddens') < time.time():
+		        pushed.remove(p)
+		
+		alreadyPushed = False
+
+		for p in pushed:
+		    if p.get('data').get('pokeId') == payload.get('data').get('pokeId') and p.get('data').get('lat') == payload.get('data').get('lat') and p.get('data').get('lon') == payload.get('data').get('lon'):
+		        alreadyPushed = True
+
+		if alreadyPushed == False:
+		    print("Pushing " + pokename)
+		    headers = {'Authorization': 'key='+firebaseserverid, 'Content-Type': 'application/json'}
+		    r = requests.post("https://fcm.googleapis.com/fcm/send", headers=headers, data=json.dumps(payload))
+		    pushed.append(payload)
+		    print(r)
+		else:
+		    print("Already pushed " + pokename)
 
 if __name__ == '__main__':
     args = get_args()
