@@ -36,7 +36,7 @@ def send_map_request(api, position):
         log.warn("Uncaught exception when downloading map "+ e)
         return False
 
-def generate_hexagonal_spiral(il, num_steps):
+def generate_location_steps(il, num_steps):
     pos, x, y, dx, dy, n, m = 1, 0., 0., 0, -1, 1, 280
     conv = float(111111) # ~meters per degree
     r = m/conv, m/conv / math.cos(il[0]*0.0174533)  # Convert radius from meters to degrees lat/lon
@@ -67,9 +67,6 @@ def generate_hexagonal_spiral(il, num_steps):
         x+=1
         yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
 
-
-
-
 def login(args, position):
     log.info('Attempting login to Pokemon Go.')
 
@@ -97,7 +94,7 @@ def search(args):
         login(args, position)
 
     i = 1
-    for step_location in generate_hexagonal_spiral(position, num_steps):
+    for step_location in generate_location_steps(position, num_steps):
         print(step_location)
         log.info('Scanning step {:d} of {:d}.'.format(i, 3*num_steps**2-3*num_steps+1))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
