@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument('-ar', '--auto-refresh', help='Enables an autorefresh that behaves the same as'
                         ' a page reload. Needs an integer value for the amount of seconds')
     parser.add_argument('-dp', '--display-pokestops', help='Display pokéstops', action='store_true', default=False)
-    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop', action='store_true', default=False)
+    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop (implies --display-pokestops)', action='store_true', default=False)
     parser.add_argument('-dg', '--display-gyms', help='Display gyms', action='store_true', default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
@@ -51,25 +51,52 @@ def get_args():
     return args
 
 
-def insert_mock_data(location, num_pokemons):
-    from .models import Pokemon
+def insert_mock_data():
+    num_pokemon = 6
+    num_pokestop = 6
+    num_gym = 6
+
+    from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
-    prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
-    res = prog.match(location)
-    latitude, longitude = float(res.group(1)), float(res.group(2))
+    latitude, longitude = float(config['ORIGINAL_LATITUDE']), float(config['ORIGINAL_LONGITUDE'])
 
-    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemons)]
+    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemon)]
     disappear_time = datetime.now() + timedelta(hours=1)
 
-    for i in xrange(num_pokemons):
+    detect_time = datetime.now()
+
+    for i in xrange(num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
                        latitude=locations[i][0],
                        longitude=locations[i][1],
-                       disappear_time=disappear_time)
+                       disappear_time=disappear_time,
+                       detect_time=detect_time)
 
+    for i in range(num_pokestop):
+
+        Pokestop.create(pokestop_id=uuid.uuid4(),
+                        enabled=True,
+                        latitude=locations[i+num_pokemon][0],
+                        longitude=locations[i+num_pokemon][1],
+                        last_modified=datetime.now(),
+                        #Every other pokestop be lured
+                        lure_expiration=disappear_time if (i % 2 == 0) else None
+                        )
+
+    for i in range(num_gym):
+
+        Gym.create(gym_id=uuid.uuid4(),
+                   team_id=i % 3,
+                   guard_pokemon_id=(i+1) % 150,
+                   latitude=locations[i + num_pokemon + num_pokestop][0],
+                   longitude=locations[i + num_pokemon + num_pokestop][1],
+                   last_modified=datetime.now(),
+                   enabled=True,
+                   gym_points=1000
+                   )
 
 def get_pokemon_name(pokemon_id):
     if not hasattr(get_pokemon_name, 'names'):
@@ -84,7 +111,7 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 def load_credentials(filepath):
-    with open(filepath+'/credentials.json') as file:
+    with open(filepath+os.path.sep+'credentials.json') as file:
         creds = json.load(file)
         if not creds['gmaps_key']:
             raise APIKeyException(\

@@ -46,8 +46,8 @@ class AuthPtc(Auth):
 
     def login(self, username, password):
 
-        self.log.info('Login for: %s', username)
-        
+        self.log.info('PTC login for: %s', username)
+
         head = {'User-Agent': 'niantic'}
         r = self._session.get(self.PTC_LOGIN_URL, headers=head)
         
@@ -57,7 +57,7 @@ class AuthPtc(Auth):
             'execution': jdata['execution'],
             '_eventId': 'submit',
             'username': username,
-            'password': password,
+            'password': password[:15],
         }
         r1 = self._session.post(self.PTC_LOGIN_URL, data=data, headers=head)
 
