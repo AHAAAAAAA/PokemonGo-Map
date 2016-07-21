@@ -3,7 +3,10 @@ var map,
     lastStamp = 0,
     requestInterval = 10000;
 
-var markers = [];
+var pokemons = [];
+var gyms = [];
+var pokestops = [];
+
 var gym_types = [ "Uncontested", "Mystic", "Valor", "Instinct" ];
 
 function pad(number) {
@@ -99,10 +102,23 @@ GetNewPokemons = function(stamp) {
     $.getJSON("/pokemons/"+stamp, function(result){
         $.each(result, function(i, item){
 
+            for (var i = 0; i < pokemons.length; i++) {
+                if (pokemons[i].m.encounter_id == item.encounter_id) {
+                    var now = new Date().getTime();
+                    if (item.disappear_time - now > 0) {
+                        return true;
+                    } else {
+                        pokemons.splice(pokemons.indexOf(pokemons[i], 1));
+                        break;
+                    }
+                }
+            }
+
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
                 map: map,
-                icon: 'static/icons/'+item.pokemon_id+'.png'
+                icon: 'static/icons/'+item.pokemon_id+'.png',
+                encounter_id: item.encounter_id
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
@@ -119,7 +135,7 @@ GetNewPokemons = function(stamp) {
                 marker.infoWindow.open(map, marker);
             });
 
-            markers.push({
+            pokemons.push({
                     m: marker,
                     disapear: item.disappear_time});
 
@@ -144,20 +160,41 @@ GetNewPokemons = function(stamp) {
     var dObj = new Date();
     lastStamp = dObj.getTime();
     
-    $.each(markers, function(i, item){
-        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000))        
-            item.m.setMap(null);        
+    $.each(pokemons, function(i, item){
+        if (item.disapear <= lastStamp - (dObj.getTimezoneOffset() * 60000)) {
+            pokemons.splice(pokemons.indexOf(item, 1));
+        }
     });
 };
 
 GetNewGyms = function() {
     $.getJSON("/gyms", function(result){
         $.each(result, function(i, item){
+
+            for (var i = 0; i < gyms.length; i++) {
+                if (gyms[i].gym_id == item.gym_id) {
+                    if (gyms[i].gym_points == item.gym_points &&
+                            gyms[i].team_id == item.team_id &&
+                            gyms[i].guard_pokemon_id == item.guard_pokemon_id) {
+                        return true;
+                    } else {
+                        gyms.splice(gyms.indexOf(gyms[i], 1));
+                        break;
+                    }
+                }
+            }
+
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
                 map: map,
-                icon: 'static/forts/'+gym_types[item.team_id]+'.png'
+                icon: 'static/forts/'+gym_types[item.team_id]+'.png',
+                gym_id: item.gym_id,
+                gym_points: item.gym_points,
+                team_id: item.team_id,
+                guard_pokemon_id: item.guard_pokemon_id
             });
+
+            gyms.push(marker);
 
             marker.infoWindow = new google.maps.InfoWindow({
                 content: gymLabel(item)
@@ -189,16 +226,32 @@ GetNewGyms = function() {
 GetNewPokeStops = function() {
     $.getJSON("/pokestops", function(result){
         $.each(result, function(i, item){
+
+            for (var i = 0; i < pokestops.length; i++) {
+                if (pokestops[i].pokestop_id == item.pokestop_id) {
+                    if (pokestops[i].lure_expiration == item.lure_expiration) {
+                        return true;
+                    } else {
+                        pokestops.splice(pokestops.indexOf(pokestops[i], 1));
+                        break;
+                    }
+                }
+            }
+
             var imagename = item.lure_expiration ? "PstopLured" : "Pstop";
             var marker = new google.maps.Marker({
                 position: {lat: item.latitude, lng: item.longitude},
                 map: map,
-                icon: 'static/forts/'+ imagename +'.png'
+                icon: 'static/forts/'+ imagename +'.png',
+                pokestop_id: item.pokestop_id,
+                lure_expiration: item.lure_expiration
             });
 
             marker.infoWindow = new google.maps.InfoWindow({
                 content: pokestopLabel(item)
             });
+
+            pokestops.push(marker);
 
             if (item.lure_expiration) {
                 google.maps.event.addListener(marker.infoWindow, 'closeclick', function(){
