@@ -8,7 +8,7 @@ from datetime import datetime
 from base64 import b64encode
 
 from .utils import get_pokemon_name
-
+from .sound import play_audio
 
 db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class Pokemon(BaseModel):
                 if pokemon_name not in cls.ONLY and pokemon_id not in cls.ONLY:
                     continue
             pokemons.append(p)
-
+            
         return pokemons
 
 
@@ -126,6 +126,7 @@ def parse_map(map_dict):
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
+            play_audio(p['pokemon_data']['pokemon_id'])
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
                 'spawnpoint_id': p['spawnpoint_id'],
