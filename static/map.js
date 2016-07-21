@@ -102,7 +102,7 @@ GetNewPokemons = function(stamp) {
     $.getJSON("pokemons/"+stamp, function(result){
         $.each(result, function(i, item){
             if (enabledNotifications){
-              if (selected_pokemons.indexOf(parseInt(item.pokemon_id)) > -1){
+              if (selected_pokemons.indexOf(String(item.pokemon_id)) > -1){
                 var not = new Notification(item.pokemon_name + " Found!", {
                   icon: 'static/icons/' + item.pokemon_id + '.png',
                   body: ''
