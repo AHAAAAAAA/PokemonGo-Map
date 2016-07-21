@@ -81,7 +81,16 @@
 						<span class="switch-handle"></span>
 					</label>
 				</div>
+            Map style
+            <div>
+                <select name="mapstyle" id="mapstyle-select" title="Map style">
+                    <option value="dark">Dark theme</option>
+                    <option value="default">Default theme</option>
+                </select>
+            </div>
+            <br>
 			<button id="trigger-overlay">Test overlay</button>
+
 		</nav>
 
 		<div id="main" class="container">
@@ -112,8 +121,10 @@
   <script type="text/javascript">
     var center_lat = {{lat}};
     var center_lng = {{lng}};
+    var mapStyles = [];
   </script>
 
+  <script type="text/javascript" src="static/mapstyles.js"></script>
   <script type="text/javascript" src="static/map.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
 </html>
