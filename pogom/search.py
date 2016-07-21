@@ -8,6 +8,7 @@ import json
 import struct
 import logging
 import requests
+import math
 import time
 
 from pgoapi import PGoApi
@@ -35,17 +36,38 @@ def send_map_request(api, position):
         log.warn("Uncaught exception when downloading map "+ e)
         return False
 
+def generate_hexagonal_spiral(il, num_steps):
+    pos, x, y, dx, dy, n, m = 1, 0., 0., 0, -1, 1, 280
+    conv = float(111111) # ~meters per degree
+    r = m/conv, m/conv / math.cos(il[0]*0.0174533)  # Convert radius from meters to degrees lat/lon
+    yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0 # same yield every time
+    while n < num_steps:
+        n+=1
+        for i in range(1, n):
+            x+=1
+            yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
+        for i in range(1, n-1):
+            y+=1
+            yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
+        for i in range(1, n):
+            x-=1
+            y+=1
+            yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
+        for i in range(1, n):
+            x-=1
+            yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
+        for i in range(1, n):
+            y-=1
+            yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
+        for i in range(1, n):
+            x+=1
+            y-=1
+            yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
+    for i in range(1, num_steps):
+        x+=1
+        yield (x+y/2)*r[0]+il[0],(0.886*y)*r[1]+il[1],0
 
-def generate_location_steps(initial_location, num_steps):
-    pos, x, y, dx, dy = 1, 0, 0, 0, -1
 
-    while -num_steps / 2 < x <= num_steps / 2 and -num_steps / 2 < y <= num_steps / 2:
-        yield (x * 0.0025 + initial_location[0], y * 0.0025 + initial_location[1], 0)
-
-        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
-            dx, dy = -dy, dx
-
-        x, y = x + dx, y + dy
 
 
 def login(args, position):
@@ -75,8 +97,9 @@ def search(args):
         login(args, position)
 
     i = 1
-    for step_location in generate_location_steps(position, num_steps):
-        log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
+    for step_location in generate_hexagonal_spiral(position, num_steps):
+        print(step_location)
+        log.info('Scanning step {:d} of {:d}.'.format(i, 3*num_steps**2-3*num_steps+1))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
         response_dict = send_map_request(api, step_location)
@@ -90,7 +113,7 @@ def search(args):
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
 
-        log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
+        log.info('Completed {:5.2f}% of scan.'.format(float(i) / (3*num_steps**2-3*num_steps+1)*100))
         i += 1
         time.sleep(REQ_SLEEP)
 
