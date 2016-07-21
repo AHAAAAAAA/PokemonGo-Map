@@ -168,21 +168,21 @@ function gymLabel(team_name, team_id, gym_points) {
     var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
     var str;
     if (team_name == 0) {
-        str = `<div><center>
-            <div>
-                <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
-            </div>
-            </center></div>`;
+        str = "<div><center>\
+            <div>\
+                <b style='color:rgba(" + gym_color[team_id] + ")'>" + team_name + "</b><br>\
+            </div>\
+            </center></div>";
     } else {
-        str = `
-            <div><center>
-            <div style='padding-bottom: 2px'>Gym owned by:</div>
-            <div>
-                <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
-                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
-            </div>
-            <div>Prestige: ${gym_points}</div>
-            </center></div>`;
+        str = "\
+            <div><center>\
+            <div style='padding-bottom: 2px'>Gym owned by:</div>\
+            <div>\
+                <b style='color:rgba(" + gym_color[team_id] + ")'>Team " + team_name + "</b><br>\
+                <img height='70px' style='padding: 5px;' src='static/forts/" + team_name +"_large.png'>\
+            </div>\
+            <div>Prestige: " + gym_points + "</div>\
+            </center></div>";
     }
 
     return str;
