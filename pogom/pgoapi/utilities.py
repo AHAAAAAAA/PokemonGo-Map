@@ -85,3 +85,7 @@ def encode(cellid):
     output = []
     encoder._VarintEncoder()(output.append, cellid)
     return ''.join(output)
+
+
+def split_list(list, chunk_size):
+    return [list[x:x+chunk_size] for x in xrange(0, len(list), chunk_size)]
