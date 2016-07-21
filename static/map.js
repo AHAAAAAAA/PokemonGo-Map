@@ -68,8 +68,9 @@ function initMap() {
         localStorage['map_style'] = this.mapTypeId;
     });
 
-    if (typeof localStorage['map_style'] != undefined && localStorage['map_style'] != 'undefined')
-	   map.setMapTypeId(localStorage['map_style']);
+    localStorage['map_style'] = localStorage['map_style'] || 'roadmap';
+
+    map.setMapTypeId(localStorage['map_style']);
 
     marker = new google.maps.Marker({
         position: {
@@ -80,7 +81,14 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
+    initSidebar();
 };
+
+function initSidebar() {
+    $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
+    $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
+    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
+}
 
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
