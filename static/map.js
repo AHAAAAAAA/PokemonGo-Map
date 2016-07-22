@@ -81,6 +81,20 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
+    map.addListener('click', function (e) {
+        $.post('next_loc?' + $.param({
+            lat: e.latLng.lat(),
+            lon: e.latLng.lng(),
+        }), function (r) {
+            if (r == 'ok') {
+                marker.setPosition({
+                    lat: e.latLng.lat(),
+                    lng: e.latLng.lng(),
+                });
+            }
+        });
+    });
+
     initSidebar();
 };
 
@@ -234,7 +248,7 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
-    
+
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
     localStorage.showPokestops = localStorage.showPokestops || true;
