@@ -21,9 +21,9 @@ def parse_unicode(bytestring):
 def parse_config(args):
     Config = ConfigParser.ConfigParser()
     Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
-    args.auth_service = Config.get('Athentication', 'Auth_Service')
-    args.username = Config.get('Athentication', 'Username')
-    args.password = Config.get('Athentication', 'Password')
+    args.auth_service = Config.get('Authentication', 'Service')
+    args.username = Config.get('Authentication', 'Username')
+    args.password = Config.get('Authentication', 'Password')
     args.location = Config.get('Search_Settings', 'Location')
     args.step_limit = int(Config.get('Search_Settings', 'Steps'))
     args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
