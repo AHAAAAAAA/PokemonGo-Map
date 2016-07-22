@@ -87,6 +87,12 @@
 					<select id="notify-pokemon" multiple="multiple"></select>
 				</label>
 			</div>
+			<div style="margin-top: 25px;" id="master-pw-box">
+                                <label for="master-pw">
+                                        <h3>Master PW</h3>
+                                        <input id="master-pw" type="password" placeholder="Master PW">
+                                </label>
+                        </div>
 		</nav>
 
 
@@ -112,13 +118,8 @@
 	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
 	<!-- <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script> -->
 
-
-  <script type="text/javascript">
-    var center_lat = {{lat}};
-    var center_lng = {{lng}};
-  </script>
-
     <script type="text/javascript">
+      var hasMaster = {{has_master|tojson}};
       var center_lat = {{lat}};
       var center_lng = {{lng}};
     </script>

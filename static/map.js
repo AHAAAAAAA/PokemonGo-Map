@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
+var $masterPw = $("#master-pw");
 
 $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
     var pokeList = []
@@ -18,6 +19,12 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
     $.each(data, function(key, value) {
         pokeList.push( { id: key, text: value } );
     });
+
+    if (hasMaster) {
+      $masterPw.val(readCookie("remember_master_pw")).trigger("change");
+    } else {
+      $('#master-pw-box').hide();
+    }
 
     JSON.parse(readCookie("remember_select_exclude"));
     $selectExclude.select2({
@@ -36,6 +43,13 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
 
 var excludedPokemon = [];
 var notifiedPokemon = [];
+var masterPw = "";
+
+$masterPw.on("input", function (e) {
+    masterPw = $masterPw.val();
+    document.cookie = 'remember_master_pw='+masterPw+
+            '; max-age=31536000; path=/';
+});
 
 $selectExclude.on("change", function (e) {
     excludedPokemon = $selectExclude.val().map(Number);
