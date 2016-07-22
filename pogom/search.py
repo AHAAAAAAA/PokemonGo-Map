@@ -27,7 +27,7 @@ def send_map_request(api, position):
                             cell_id=get_cellid(position[0], position[1]))
         return api.call()
     except Exception as e:
-        log.warn("Uncaught exception when downloading map "+ e)
+        log.warn("Uncaught exception when downloading map " + str(e))
         return False
 
 
