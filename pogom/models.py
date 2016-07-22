@@ -95,7 +95,7 @@ class ScannedLocation(BaseModel):
 
         return scans
 
-def parse_map(map_dict, step_location, step_location):
+def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
     pokestops = {}
     gyms = {}
