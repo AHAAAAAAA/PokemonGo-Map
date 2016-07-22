@@ -56,6 +56,7 @@ def login(args, position):
 
 
 def search(args):
+    global failed_consecutive
     num_steps = args.step_limit
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
