@@ -11,9 +11,10 @@ module.exports = function(grunt) {
   		}
 	  },
     jshint: {
-      files: ['Gruntfile.js', 'js/*.js', '!js/vendor/**/*.js'],
+      files: ['Gruntfile.js', 'static/js/*.js', '!js/vendor/**/*.js'],
       options: {
-		    reporter: require('jshint-stylish'),
+        reporter: require('jshint-stylish'),
+        esversion: 6,
         globals: {
           jQuery: true,
           console: true,
@@ -22,13 +23,26 @@ module.exports = function(grunt) {
         }
       }
     },
+    babel: {
+      options: {
+        sourceMap: true,
+        presets: ['es2015']
+      },
+      dist: {
+        files: {
+          'static/dist/js/app.js': 'static/js/app.js',
+          'static/dist/js/map.js': 'static/js/map.js'
+       }
+     }
+    },
     uglify: {
       options: {
         banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n'
       },
       build: {
         files: {
-          'static/dist/js/app.min.js': 'static/js/app.js'
+          'static/dist/js/app.min.js': 'static/dist/js/app.js',
+          'static/dist/js/map.min.js': 'static/dist/js/map.js'
         }
       }
     },
@@ -44,7 +58,7 @@ module.exports = function(grunt) {
   		js: {
   			files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
   			options: { livereload: true },
-        tasks: ['uglify']
+        tasks: ['babel', 'uglify']
   		},
   		css: {
   			files: '**/*.scss',
@@ -74,7 +88,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html-validation');
+  grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'uglify', 'watch']);
+  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'babel', 'uglify', 'watch']);
 
 };

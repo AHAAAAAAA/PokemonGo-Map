@@ -4,7 +4,9 @@
   "description": "Pokemon Go Map - Live Visualization",
   "main": "Gruntfile.js",
   "devDependencies": {
+    "babel-preset-es2015": "latest",
     "grunt": "^0.4.5",
+    "grunt-babel": "latest",
     "grunt-contrib-clean": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-connect": "latest",
