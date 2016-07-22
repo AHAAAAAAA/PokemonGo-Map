@@ -9,6 +9,8 @@ from datetime import datetime
 from . import config
 from .models import Pokemon, Gym, Pokestop
 
+from pogom.pgoapi.utilities import get_pos_by_name
+
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
@@ -40,9 +42,18 @@ class Pogom(Flask):
     def next_loc(self):
         lat = request.args.get('lat', type=float)
         lon = request.args.get('lon', type=float)
-        if not (lat and lon):
+        loc = request.args.get('loc', type=str)
+
+        if loc:
+            position = get_pos_by_name(loc)
+            config['ORIGINAL_LATITUDE'] = position[0]
+            config['ORIGINAL_LONGITUDE'] = position[1]
+            return 'ok'
+
+        elif not (lat and lon):
             print('[-] Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
+
         else:
             config['ORIGINAL_LATITUDE'] = lat
             config['ORIGINAL_LONGITUDE'] = lon
