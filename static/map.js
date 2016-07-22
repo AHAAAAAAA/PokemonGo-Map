@@ -121,23 +121,23 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
 
-    var input = document.getElementById('next-location');
-    var searchBox = new google.maps.places.SearchBox(input);
+    // var input = document.getElementById('next-location');
+    // var searchBox = new google.maps.places.SearchBox(input);
 
-    searchBox.addListener('places_changed', function() {
-        var places = searchBox.getPlaces();
+    // searchBox.addListener('places_changed', function() {
+        // var places = searchBox.getPlaces();
 
-        if (places.length == 0) {
-            return;
-        }
+        // if (places.length == 0) {
+            // return;
+        // }
 
-        var loc = places[0].geometry.location;
-        $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
-            $("#next-location").val("");
-            map.setCenter(loc);
-            marker.setPosition(loc);
-        });
-    });
+        // var loc = places[0].geometry.location;
+        // $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+            // $("#next-location").val("");
+            // map.setCenter(loc);
+            // marker.setPosition(loc);
+        // });
+    // });
 }
 
 var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
@@ -335,6 +335,114 @@ function clearStaleMarkers() {
     });
 };
 
+function countMarkers() {
+	arenaCount = [];
+	arenaTotal = 0;
+	pkmnCount = [];
+	pkmnName = [];
+	pkmnTotal = 0;
+	pokestopCount = [];
+	pokestopTotal = 0;
+    $.each(map_pokemons, function(key, value) {
+		if (pkmnCount[map_pokemons[key]['pokemon_id']] == 0 || pkmnCount[map_pokemons[key]['pokemon_id']] == null )
+		{
+			pkmnCount[map_pokemons[key]['pokemon_id']] = 1;
+			pkmnName[map_pokemons[key]['pokemon_id']] = map_pokemons[key]['pokemon_name'];
+		}
+		else
+		{
+			pkmnCount[map_pokemons[key]['pokemon_id']] += 1;
+		}
+		pkmnTotal++;
+		var pkmnListString = "<table><thead><tr><th>Nom</th><th>Quantité</th><th>%</th></tr></thead><tbody><tr><td>Total</td><td>"+pkmnTotal+"</td></tr>";
+		for(var i=0;i < pkmnCount.length;i++) {
+			if (pkmnCount[i] > 0)
+			{
+				pkmnListString += "<tr><td>" + pkmnName[i] + "</td><td>" + pkmnCount[i] + "</td><td>"+Math.round(pkmnCount[i]*100/pkmnTotal*100)/100+"%</td></tr>";
+			}
+		}
+		pkmnListString += "</tbody></table>";
+		document.getElementById("pokemonList").innerHTML = pkmnListString;
+    });
+    $.each(map_gyms, function(key, value) {
+		if (arenaCount[map_gyms[key]['team_id']] == 0 || arenaCount[map_gyms[key]['team_id']] == null )
+		{
+			arenaCount[map_gyms[key]['team_id']] = 1;
+		}
+		else
+		{
+			arenaCount[map_gyms[key]['team_id']] += 1;
+		}
+		arenaTotal++;
+		var arenaListString = "<table><th>Couleur</th><th>Quantité</th><th>%</th><tr><td>Total</td><td>"+arenaTotal+"</td></tr>";
+		for(var i=0;i < arenaCount.length;i++) {
+			if (arenaCount[i] > 0)
+			{
+				if(i == 1)
+				{
+					arenaListString += "<tr><td>" + "Bleu" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+				}
+				else if(i == 2)
+				{
+					arenaListString += "<tr><td>" + "Rouge" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+				}
+				else if(i == 3)
+				{
+					arenaListString += "<tr><td>" + "Jaune" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+				}
+				else
+				{
+					arenaListString += "<tr><td>" + "Vide" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+				}
+			}
+		}
+		arenaListString += "</table>";
+		document.getElementById("arenaList").innerHTML = arenaListString;
+    });
+    $.each(map_pokestops, function(key, value) {
+		var pokestopLured = false;
+		if(map_pokestops[key]['lure_expiration'] != null && map_pokestops[key]['lure_expiration'] > 0)
+		{
+			if (pokestopCount[1] == 0 || pokestopCount[1] == null )
+			{
+				pokestopCount[1] = 1;
+			}
+			else
+			{
+				pokestopCount[1] += 1;
+			}
+		}
+		else
+		{
+			if (pokestopCount[0] == 0 || pokestopCount[0] == null )
+			{
+				pokestopCount[0] = 1;
+			}
+			else
+			{
+				pokestopCount[0] += 1;
+			}
+		}
+		pokestopTotal++;
+		var pokestopListString = "<table><th>Type</th><th>Quantité</th><th>%</th><tr><td>Total</td><td>"+pokestopTotal+"</td></tr>";
+		for(var i=0;i < pokestopCount.length;i++) {
+			if (pokestopCount[i] > 0)
+			{
+				if(i == 0)
+				{
+					pokestopListString += "<tr><td>" + "Sans Leure" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*100)/100+"%</td></tr>";
+				}
+				else if(i == 1)
+				{
+					pokestopListString += "<tr><td>" + "Avec Leure" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*100)/100+"%</td></tr>";
+				}
+			}
+		}
+		pokestopListString += "</table>";
+		document.getElementById("pokestopList").innerHTML = pokestopListString;
+    });
+};
+
 function updateMap() {
     
     localStorage.showPokemon = localStorage.showPokemon || true;
@@ -401,6 +509,7 @@ function updateMap() {
         });
 
         clearStaleMarkers();
+		countMarkers();
     });
 };
 
