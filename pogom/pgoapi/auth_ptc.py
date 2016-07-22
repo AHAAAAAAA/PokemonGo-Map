@@ -51,7 +51,11 @@ class AuthPtc(Auth):
         head = {'User-Agent': 'niantic'}
         r = self._session.get(self.PTC_LOGIN_URL, headers=head)
         
-        jdata = json.loads(r.content)
+        try:
+            jdata = json.loads(r.content)
+        except Exception,e:
+            return False
+        
         data = {
             'lt': jdata['lt'],
             'execution': jdata['execution'],
