@@ -1,6 +1,6 @@
 var $selectExclude = $("#exclude-pokemon");
 
-$.getJSON("static/locales/pokemon.en.json").done(function(data) {
+$.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
     var pokeList = []
 
     $.each(data, function(key, value) {
