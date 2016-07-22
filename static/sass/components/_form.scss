@@ -1,70 +1,55 @@
 /* Form */
 
-	form {
-		margin: 0 0 _size(element-margin) 0;
+form {
+	margin: 0 0 _size(element-margin) 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+textarea {
+	@include vendor('appearance', 'none');
+	background: _palette(border-bg);
+	border-radius: _size(border-radius);
+	border: none;
+	border: solid _size(border-width) _palette(border);
+	color: inherit;
+	display: block;
+	outline: 0;
+	padding: 0 1em;
+	text-decoration: none;
+	width: 100%;
+
+	&:invalid {
+		box-shadow: none;
 	}
 
-	input[type="text"],
-	input[type="password"],
-	input[type="email"],
-	input[type="tel"],
-	textarea {
-		@include vendor('appearance', 'none');
-		background: _palette(border-bg);
-		border-radius: _size(border-radius);
-		border: none;
-		border: solid _size(border-width) _palette(border);
-		color: inherit;
-		display: block;
-		outline: 0;
-		padding: 0 1em;
-		text-decoration: none;
-		width: 100%;
-
-		&:invalid {
-			box-shadow: none;
-		}
-
-		&:focus {
-			border-color: _palette(accent1, bg);
-			box-shadow: 0 0 0 _size(border-width) _palette(accent1, bg);
-		}
+	&:focus {
+		border-color: _palette(accent1, bg);
+		box-shadow: 0 0 0 _size(border-width) _palette(accent1, bg);
 	}
+}
 
-	input[type="text"],
-	input[type="password"],
-	input[type="email"] {
-		height: _size(element-height);
-	}
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+	height: _size(element-height);
+}
 
-	textarea {
-		padding: 0.75em 1em;
-	}
+textarea {
+	padding: 0.75em 1em;
+}
 
-	::-webkit-input-placeholder {
-		color: _palette(fg-light) !important;
-		opacity: 1.0;
-	}
+::placeholder {
+	color: _palette(fg-light) !important;
+	opacity: 1.0;
+}
 
-	:-moz-placeholder {
-		color: _palette(fg-light) !important;
-		opacity: 1.0;
-	}
-
-	::-moz-placeholder {
-		color: _palette(fg-light) !important;
-		opacity: 1.0;
-	}
-
-	:-ms-input-placeholder {
-		color: _palette(fg-light) !important;
-		opacity: 1.0;
-	}
-
-	.formerize-placeholder {
-		color: _palette(fg-light) !important;
-		opacity: 1.0;
-	}
+.formerize-placeholder {
+	color: _palette(fg-light) !important;
+	opacity: 1.0;
+}
 
 .switch-container {
 	float: left;
@@ -76,9 +61,7 @@
 	width: 70px;
 	float: right;
 	margin-bottom: 20px;
-  -webkit-user-select:none;
-	-moz-user-select:none;
-	-ms-user-select: none;
+	user-select: none;
 	.onoffswitch-checkbox {
 	  display: none;
 	}
