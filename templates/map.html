@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="{{lang}}">
 	<head>
 		<title>Pokémon Go Map</title>
 		<meta charset="utf-8" />
@@ -29,23 +29,8 @@
 		<!-- retina iPhone 6 iOS 7 -->
 		<link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
 
-		<link rel="stylesheet" href="static/css/style8.css" />
 		<link rel="stylesheet" href="static/dist/css/app.min.css" />
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 		<script src="static/js/vendor/modernizr.custom.js"></script>
-
-    <style>
-        html, body, .wrapper {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          overflow: hidden;
-        }
-				.select2-container--default .select2-selection--multiple .select2-selection__choice {
-			    background-color: #3b3b3b;
-			    border: 1px solid #aaa;
-			}
-    </style>
 	</head>
 	<body id="top">
 
@@ -90,10 +75,18 @@
 				</div>
 			</div>
 			<!-- <button id="trigger-overlay">Test overlay</button> -->
-			<label for="exclude-pokemon">
-				<h3>Hide common Pokémon</h3>
-        <select id="exclude-pokemon" multiple="multiple"></select>
-      </label>
+			<div>
+				<label for="exclude-pokemon">
+					<h3>Hide common Pokémon</h3>
+	        		<select id="exclude-pokemon" multiple="multiple"></select>
+	      		</label>
+			</div>
+			<div style="margin-top: 25px;">
+				<label for="exclude-pokemon">
+					<h3>Notify of Pokémon spawn</h3>
+					<select id="notify-pokemon" multiple="multiple"></select>
+				</label>
+			</div>
 		</nav>
 
 

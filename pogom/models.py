@@ -9,7 +9,7 @@ from base64 import b64encode
 
 from .utils import get_pokemon_name
 from .transform import transform_from_wgs_to_gcj
-
+from .customLog import printPokemon
 
 db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
@@ -83,16 +83,17 @@ def parse_map(map_dict):
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
-
+            d_t = datetime.utcfromtimestamp(
+                (p['last_modified_timestamp_ms'] +
+                 p['time_till_hidden_ms']) / 1000.0)
+            printPokemon(p['pokemon_data']['pokemon_id'],p['latitude'],p['longitude'],d_t)
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
                 'spawnpoint_id': p['spawnpoint_id'],
                 'pokemon_id': p['pokemon_data']['pokemon_id'],
                 'latitude': p['latitude'],
                 'longitude': p['longitude'],
-                'disappear_time': datetime.utcfromtimestamp(
-                    (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0)
+                'disappear_time': d_t
             }
 
         for f in cell.get('forts', []):
