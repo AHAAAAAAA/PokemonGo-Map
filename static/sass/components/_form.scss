@@ -108,6 +108,9 @@
 		border-radius: 20px;
 	  transition: all 0.3s ease-in 0s;
 	}
+	&.left {
+		float: left;
+	}
 }
 
 .onoffswitch-checkbox:checked + .onoffswitch-label {

@@ -1309,6 +1309,8 @@ textarea {
     border: 2px solid #CCCCCC;
     border-radius: 20px;
     transition: all 0.3s ease-in 0s; }
+  .onoffswitch.left {
+    float: left; }
 
 .onoffswitch-checkbox:checked + .onoffswitch-label {
   background-color: #4A80F5; }
