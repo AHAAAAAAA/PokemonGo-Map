@@ -55,8 +55,7 @@ class Pogom(Flask):
             print('[-] Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
-            config['ORIGINAL_LATITUDE'] = lat
-            config['ORIGINAL_LONGITUDE'] = lon
+            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             return 'ok'
 
     def list_pokemon(self):

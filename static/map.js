@@ -112,11 +112,29 @@ function initMap() {
 };
 
 function initSidebar() {
-    $('#gyms-switch').prop('checked', localStorage.showGyms !== 'false');
-    $('#pokemon-switch').prop('checked', localStorage.showPokemon !== 'false');
-    $('#pokestops-switch').prop('checked', localStorage.showPokestops !== 'false');
-    $('#icons-switch').prop('checked', localStorage.largeIcons === 'true');
-};
+    $('#gyms-switch').prop('checked', localStorage.showGyms !== 'false'); // Default true
+    $('#pokemon-switch').prop('checked', localStorage.showPokemon !== 'false'); // Default true
+    $('#pokestops-switch').prop('checked', localStorage.showPokestops !== 'false'); // Default true
+    $('#icons-switch').prop('checked', localStorage.largeIcons === 'true'); // Default false
+
+    var input = document.getElementById('next-location');
+    var searchBox = new google.maps.places.SearchBox(input);
+
+    searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+            return;
+        }
+
+        var loc = places[0].geometry.location;
+        $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+            $("#next-location").val("");
+            map.setCenter(loc);
+            marker.setPosition(loc);
+        });
+    });
+}
 
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
@@ -351,7 +369,7 @@ window.setInterval(updateMap, 5000);
 updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
-    localStorage['showGyms'] = this.checked;
+    localStorage["showGyms"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
@@ -363,7 +381,7 @@ document.getElementById('gyms-switch').onclick = function() {
 };
 
 $('#pokemon-switch').change(function() {
-    localStorage['showPokemon'] = this.checked;
+    localStorage["showPokemon"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
@@ -375,7 +393,7 @@ $('#pokemon-switch').change(function() {
 });
 
 $('#pokestops-switch').change(function() {
-    localStorage['showPokestops'] = this.checked;
+    localStorage["showPokestops"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
@@ -387,7 +405,7 @@ $('#pokestops-switch').change(function() {
 });
 
 $('#icons-switch').change(function() {
-    localStorage['largeIcons'] = this.checked;
+    localStorage["largeIcons"] = this.checked;
 
     let icon_folder = `icon-${(this.checked ? 'large' : 'small')}`;
     $.each(map_pokemons, function(key, value) {

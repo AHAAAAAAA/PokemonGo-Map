@@ -67,6 +67,14 @@ def search(args):
         login(args, position)
 
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
+        if 'NEXT_LOCATION' in config:
+            log.info('New location found. Starting new scan.')
+            config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
+            config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
+            config.pop('NEXT_LOCATION', None)
+            search(args)
+            return
+
         log.info('Scanning step {:d} of {:d}.'.format(step, num_steps**2))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
