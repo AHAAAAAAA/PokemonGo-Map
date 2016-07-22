@@ -8,3 +8,4 @@ static/dist/
 node_modules/
 venv/
 credentials.alarm.json
+pokemon.alarm.json

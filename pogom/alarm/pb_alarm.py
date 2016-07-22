@@ -13,11 +13,12 @@ class PB_Alarm(Alarm):
 		Alarm.__init__(self, list)
 		self.client = PushBullet(api_key) 
 		log.info("PB_Alarm intialized.")
-		push = self.client.push_link("PokeAlarm activated!", "Link here", body="We will alert you about pokemon")
+		push = self.client.push_note("PokeAlarm activated!", "We will alert you about pokemon")
 		
 	def pokemon_alert(self, pokemon):
-		google_maps_link = "https://www.google.com/maps?q=" + str(pokemon["lat"]) + "," + str(pokemon["lng"])
-		notification_text = "Pokemon found: " + pokemon['name'].title()
+		latLon = '{},{}'.format(repr(pokemon["lat"]), repr(pokemon["lng"]))
+		google_maps_link = 'http://maps.google.com/maps/place/{}/@{},{}z'.format(latLon, latLon, 15)
+		notification_text = "A wild " + pokemon['name'].title() + " has appeared!"
 		s = pokemon["time"].total_seconds()
 		(m, s) = divmod(s, 60)
 		(h, m) = divmod(m, 60)
