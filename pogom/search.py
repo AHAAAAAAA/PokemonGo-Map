@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import requests
-import math
 import time
-
+import math
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
 
@@ -16,6 +14,7 @@ log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 REQ_SLEEP = 1
+failed_consecutive = 0
 api = PGoApi()
 
 
