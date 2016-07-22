@@ -82,7 +82,20 @@ class ScannedLocation(BaseModel):
     longitude = FloatField()
     last_modified = DateTimeField()
 
-def parse_map(map_dict, iteration_num, step, step_location):
+    @classmethod
+    def get_recent(cls):
+        query = (ScannedLocation
+                 .select()
+                 .where(ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15)))
+                 .dicts())
+
+        scans = []
+        for s in query:
+            scans.append(s)
+
+        return scans
+
+def parse_map(map_dict, step_location, step_location):
     pokemons = {}
     pokestops = {}
     gyms = {}

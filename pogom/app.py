@@ -40,7 +40,7 @@ class Pogom(Flask):
             d['gyms'] = Gym.get_all()
 
         if request.args.get('scanned', 'true') == 'true':
-            d['scanned'] = ScannedLocation.get_all()
+            d['scanned'] = ScannedLocation.get_recent()
 
         return jsonify(d)
 
