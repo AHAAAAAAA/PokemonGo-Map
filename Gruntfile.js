@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     sass: {
   		dist: {
   			files: {
-  			  'static/css/main.css' : 'static/sass/main.scss'
+  			  'static/dist/css/app.css' : 'static/sass/main.scss'
   			}
   		}
 	  },
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/css/app.min.css': 'static/css/main.css'
+          'static/dist/css/app.min.css': 'static/dist/css/app.css'
         }
       }
   	},
@@ -75,6 +75,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html-validation');
 
-  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'uglify', 'watch']);
+  grunt.registerTask('build', ['sass', 'cssmin', 'uglify']);
+
+  grunt.registerTask('default', ['jshint', 'build', 'watch']);
 
 };
