@@ -74,6 +74,16 @@
 					</label>
 				</div>
 			</div>
+ 			<div class="switch-container">
+                <h3>Notify unhidden Pokémon</h3>
+                <div class="onoffswitch">
+                    <input id="hidden-switch" type="checkbox" name="hidden-switch" class="onoffswitch-checkbox" checked/>
+                    <label class="onoffswitch-label" for="hidden-switch">
+                        <span class="switch-label" data-on="On" data-off="Off"></span>
+                        <span class="switch-handle"></span>
+                    </label>
+                </div>
+            </div>
 			<!-- <button id="trigger-overlay">Test overlay</button> -->
 			<div>
 				<label for="exclude-pokemon">
@@ -85,6 +95,12 @@
 				<label for="notify-pokemon">
 					<h3>Notify of Pokémon</h3>
 					<select id="notify-pokemon" multiple="multiple"></select>
+				</label>
+			</div>
+			<div style="margin-top: 25px;">
+				<label for="next-location">
+					<h3>Location</h3>
+					<input id="next-location" type="text" placeholder="Search Box">
 				</label>
 			</div>
 		</nav>
@@ -117,7 +133,7 @@
 	</script>
 
 	<script type="text/javascript" src="static/map.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&libraries=places&callback=initMap"></script>
 
 	</body>
 </html>
