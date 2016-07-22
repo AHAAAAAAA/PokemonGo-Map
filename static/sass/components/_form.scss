@@ -73,6 +73,8 @@
 		display: block;
 		cursor: pointer;
 		-webkit-user-select: none;
+		-moz-user-select:none;
+		-ms-user-select: none;
 
 		&__name {
 			position: relative;
