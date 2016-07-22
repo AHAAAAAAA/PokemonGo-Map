@@ -49,14 +49,17 @@ class Pogom(Flask):
         return jsonify(d)
 
     def next_loc(self):
-        lat = request.args.get('lat', type=float)
-        lon = request.args.get('lon', type=float)
-        if not (lat and lon):
-            print('[-] Invalid next location: %s,%s' % (lat, lon))
-            return 'bad parameters', 400
+        if (config['MASTER'] is None or config['MASTER']==request.args.get('master')):
+            lat = request.args.get('lat', type=float)
+            lon = request.args.get('lon', type=float)
+            if not (lat and lon):
+                print('[-] Invalid next location: %s,%s' % (lat, lon))
+                return 'bad parameters', 400
+            else:
+                config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
+                return 'ok'
         else:
-            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            return 'ok'
+            return 'nok', 401
 
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
