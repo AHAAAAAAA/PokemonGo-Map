@@ -5,6 +5,7 @@ import logging
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, FloatField, BooleanField, DateTimeField
 from datetime import datetime
+from datetime import timedelta
 from base64 import b64encode
 
 from .utils import get_pokemon_name, get_args
@@ -75,11 +76,30 @@ class Gym(BaseModel):
     longitude = FloatField()
     last_modified = DateTimeField()
 
+class ScannedLocation(BaseModel):
+    scanned_id = CharField(primary_key=True)
+    latitude = FloatField()
+    longitude = FloatField()
+    last_modified = DateTimeField()
 
-def parse_map(map_dict, iteration_num, step):
+    @classmethod
+    def get_recent(cls):
+        query = (ScannedLocation
+                 .select()
+                 .where(ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15)))
+                 .dicts())
+
+        scans = []
+        for s in query:
+            scans.append(s)
+
+        return scans
+
+def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
     pokestops = {}
     gyms = {}
+    scanned = {}
 
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
@@ -143,6 +163,15 @@ def parse_map(map_dict, iteration_num, step):
         log.info("Upserting {} gyms".format(len(gyms)))
         bulk_upsert(Gym, gyms)
 
+    scanned[0] = {
+        'scanned_id': str(step_location[0])+','+str(step_location[1]),
+        'latitude': step_location[0],
+        'longitude': step_location[1],
+        'last_modified': datetime.utcnow(),
+    }
+
+    bulk_upsert(ScannedLocation, scanned)
+
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
@@ -157,5 +186,5 @@ def bulk_upsert(cls, data):
 
 def create_tables():
     db.connect()
-    db.create_tables([Pokemon, Pokestop, Gym], safe=True)
+    db.create_tables([Pokemon, Pokestop, Gym, ScannedLocation], safe=True)
     db.close()
