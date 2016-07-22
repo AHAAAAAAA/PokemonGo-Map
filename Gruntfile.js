@@ -32,6 +32,17 @@ module.exports = function(grunt) {
         }
       }
     },
+    babel: {
+      options: {
+        sourceMap: true,
+      },
+      dist: {
+        files: {
+          'static/dist/js/app.min.js': 'static/dist/js/app.min.js',
+          'static/dist/map.js' : 'static/map.js'
+        }
+      }
+    },
     watch: {
   		options: {
   			interval: 1000,
@@ -44,7 +55,7 @@ module.exports = function(grunt) {
   		js: {
   			files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
   			options: { livereload: true },
-        tasks: ['uglify']
+        tasks: ['uglify', 'babel']
   		},
   		css: {
   			files: '**/*.scss',
@@ -74,7 +85,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html-validation');
+  grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'uglify', 'watch']);
+  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'uglify', 'babel', 'watch']);
 
 };
