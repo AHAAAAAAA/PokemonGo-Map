@@ -65,7 +65,8 @@ def insert_mock_data():
                        latitude=locations[i][0],
                        longitude=locations[i][1],
                        disappear_time=disappear_time,
-                       detect_time=detect_time)
+                       detect_time=detect_time,
+                       alerted=False)
 
     for i in range(num_pokestop):
 
@@ -110,3 +111,8 @@ def load_credentials(filepath):
                 " Please take a look at the wiki for instructions on how to generate this key,"
                 " then add that key to the file!")
         return creds
+
+def load_pokemon_alerts(filepath):
+    with open(filepath+'/alerts.json') as file:
+        alerts = json.load(file)
+        return alerts['pokemon']
