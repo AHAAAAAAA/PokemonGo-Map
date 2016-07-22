@@ -39,6 +39,7 @@ def get_args():
     parser.add_argument('-ns', '--no-server', help='No-Server Mode. Starts the searcher but not the Webserver.', action='store_true', default=False, dest='no_server')
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
+    parser.add_argument('-M', '--master', help='Master password to allow next_loc', dest='master', default=None)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
     if args.password is None:

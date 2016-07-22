@@ -64,6 +64,9 @@ if __name__ == '__main__':
         CORS(app);
 
     config['ROOT_PATH'] = app.root_path
+    if args.master is not None:
+        config['MASTER'] = args.master
+        
     if args.gmaps_key is not None:
         config['GMAPS_KEY'] = args.gmaps_key
     else:
