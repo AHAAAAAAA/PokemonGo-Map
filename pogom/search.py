@@ -3,6 +3,7 @@
 
 import logging
 import time
+import math
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
