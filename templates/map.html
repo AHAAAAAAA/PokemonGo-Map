@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="{{lang}}">
 	<head>
 		<title>Pokémon Go Map</title>
 		<meta charset="utf-8" />
@@ -90,10 +90,18 @@
 				</div>
 			</div>
 			<!-- <button id="trigger-overlay">Test overlay</button> -->
-			<label for="exclude-pokemon">
-				<h3>Hide common Pokémon</h3>
-        <select id="exclude-pokemon" multiple="multiple"></select>
-      </label>
+			<div>
+				<label for="exclude-pokemon">
+					<h3>Hide common Pokémon</h3>
+	        		<select id="exclude-pokemon" multiple="multiple"></select>
+	      		</label>
+			</div>
+			<div style="margin-top: 25px;">
+				<label for="exclude-pokemon">
+					<h3>Notify Pokémon spawn</h3>
+					<select id="notify-pokemon" multiple="multiple"></select>
+				</label>
+			</div>
 		</nav>
 
 
