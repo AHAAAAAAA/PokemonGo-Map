@@ -4,6 +4,7 @@
 *.db-journal
 *.sass-cache
 credentials.json
+database.json
 static/dist/
 node_modules/
 venv/
