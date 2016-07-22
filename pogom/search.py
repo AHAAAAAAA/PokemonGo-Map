@@ -139,7 +139,6 @@ def process_search_threads(search_threads, curr_steps, total_steps):
 def search(args, i):
     num_steps = args.step_limit
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
-    print(total_steps)
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
