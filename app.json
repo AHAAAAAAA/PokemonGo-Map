@@ -11,7 +11,7 @@
       "description": "Your username to login to the specified authentication service."
     },
     "PASSWORD": {
-      "description": "Your username to login to the specified authentication service."
+      "description": "Your password to login to the specified authentication service."
     },
     "LOCATION": {
       "description": "Location on which the map should be centered. This can be an address, co-ordinates or anything that Google Maps accepts."
