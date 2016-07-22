@@ -8,13 +8,12 @@ from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerFie
 from datetime import datetime
 from base64 import b64encode
 
-from .utils import get_pokemon_name, load_credentials
+from .utils import get_pokemon_name, load_config
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 log = logging.getLogger(__name__)
-
 
 db = None
 
@@ -23,7 +22,7 @@ def init_database():
     if db is not None:
         return db
 
-    credentials = load_credentials(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    credentials = load_config(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
     if credentials['mysql_db']:
         db = MySQLDatabase(
             credentials['mysql_db'], 

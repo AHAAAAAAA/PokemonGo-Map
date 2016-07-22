@@ -104,7 +104,7 @@ def get_pokemon_name(pokemon_id):
 
     return get_pokemon_name.names[str(pokemon_id)]
 
-def load_credentials(filepath):
+def load_config(filepath):
     try:
         with open(filepath+os.path.sep+'credentials.json') as file:
             creds = json.load(file)
