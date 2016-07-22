@@ -91,6 +91,7 @@ function initSidebar() {
 }
 
 
+
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time)
     var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
