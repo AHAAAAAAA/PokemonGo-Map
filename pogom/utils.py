@@ -103,7 +103,6 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 def load_credentials(filepath):#load the googlemaps api from file
-    
      if(not os.path.isfile(filepath+os.path.sep+'credentials.json')): #if there is no existing API credentials file
         os.rename(filepath+os.path.sep+'credentials.example.json', filepath+os.path.sep+'credentials.json') #rename the example
         
