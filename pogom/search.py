@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 REQ_SLEEP = 1
+failed_consecutive = 0
 api = PGoApi()
 
 
@@ -121,4 +122,6 @@ def search_loop(args):
     while True:
         search(args)
         log.info("Scanning complete.")
-        time.sleep(1)
+        if args.scan_delay > 1:
+            log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
+        time.sleep(args.scan_delay)
