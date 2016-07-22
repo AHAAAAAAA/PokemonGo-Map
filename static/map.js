@@ -168,7 +168,7 @@ function setupPokemonMarker(item) {
       lng: item.longitude
     },
     map: map,
-    icon: 'static/icons-' + (localStorage.largeIcons === 'true' ? 'large' : 'small') + '/' + item.pokemon_id + '.png'
+    icon: 'static/' + (localStorage.largeIcons === 'true' ? 'icons-large' : 'icons') + '/' + item.pokemon_id + '.png'
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
