@@ -1,9 +1,17 @@
 /* Main */
 
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
 	#main {
 		height: 100%
 	}
 
 	#map {
-		height: 100%
+		height: 100vh;
+    width: 100vw;
 	}
