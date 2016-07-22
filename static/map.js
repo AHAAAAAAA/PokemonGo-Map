@@ -379,6 +379,14 @@ function clearStaleMarkers() {
             delete map_pokemons[key];
         }
     });
+    
+    $.each(map_scanned, function(key, value) {
+        //If older than 15mins remove
+        if (map_scanned[key]['last_modified'] < (new Date().getTime() - 15 * 60 * 1000)) {
+            map_scanned[key].marker.setMap(null);
+            delete map_scanned[key];
+        }
+    });
 };
 
 function updateMap() {
@@ -454,13 +462,7 @@ function updateMap() {
             }
 
             if (item.scanned_id in map_scanned) {
-                // if team has changed, create new marker (new icon)
-                if (map_scanned[item.scanned_id].last_modified != item.last_modified) {
-                    map_scanned[item.scanned_id].marker.setMap(null);
-                    map_scanned[item.scanned_id].marker = setupScannedMarker(item);
-                }else{
-                    map_scanned[item.scanned_id].marker.setOptions({fillColor: getColorByDate(item.last_modified)});
-                }
+                map_scanned[item.scanned_id].marker.setOptions({fillColor: getColorByDate(item.last_modified)});
             }
             else { // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
