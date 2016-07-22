@@ -492,7 +492,8 @@ function sendNotification(title, text, icon) {
         });
 
         notification.onclick = function () {
-            window.open(window.location.href);
+            window.focus();
+            notification.close();
         };
     }
 }
