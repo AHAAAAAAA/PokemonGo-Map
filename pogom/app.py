@@ -42,24 +42,6 @@ class Pogom(Flask):
 
         return jsonify(d)
 
-    def set_loc(self):
-        nextPos = request.form['location']
-        if ('|' in nextPos):
-            config['ORIGINAL_LATITUDE'] = float(nextPos.split('|')[0])
-            config['ORIGINAL_LONGITUDE'] = float(nextPos.split('|')[1])
-        else:
-            position = pgoapi.utilities.get_pos_by_name(nextPos)
-            config['ORIGINAL_LATITUDE'] = position[0]
-            config['ORIGINAL_LONGITUDE'] = position[1]
-
-        args = get_args()
-        search_thread = Thread(target=search_loop, args=(args,))
-        search_thread.daemon = True
-        search_thread.name = 'search_thread'
-        search_thread.start()
-
-        return redirect('/')
-
     def next_loc(self):
         lat = request.args.get('lat', type=float)
         lon = request.args.get('lon', type=float)
@@ -69,6 +51,11 @@ class Pogom(Flask):
         else:
             config['ORIGINAL_LATITUDE'] = lat
             config['ORIGINAL_LONGITUDE'] = lon
+            args = get_args()
+            search_thread = Thread(target=search_loop, args=(args,))
+            search_thread.daemon = True
+            search_thread.name = 'search_thread'
+            search_thread.start()
             return 'ok'
 
 
