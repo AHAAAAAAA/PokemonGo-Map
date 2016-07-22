@@ -417,6 +417,7 @@ function sendNotification(title, text, icon) {
         var notification = new Notification(title, {
             icon: icon,
             body: text,
+            sound: 'sounds/ding.mp3'
         });
 
         notification.onclick = function () {
