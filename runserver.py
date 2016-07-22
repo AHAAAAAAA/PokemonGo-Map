@@ -15,6 +15,7 @@ from pogom.search import search_loop
 from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
+from pogom.exceptions import APIKeyException
 
 log = logging.getLogger(__name__)
 
@@ -68,7 +69,13 @@ if __name__ == '__main__':
     if args.gmaps_key is not None:
         config['GMAPS_KEY'] = args.gmaps_key
     else:
-        config['GMAPS_KEY'] = load_config(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
+        creds = load_config(os.path.dirname(os.path.realpath(__file__))+os.path.sep+'credentials.json')
+        if not creds.get('gmaps_key'):
+            raise APIKeyException(\
+                "No Google Maps Javascript API key entered in credentials.json file!"
+                " Please take a look at the wiki for instructions on how to generate this key,"
+                " then add that key to the file!")
+        config['GMAPS_KEY'] = creds['gmaps_key']
 
     if args.no_server:
         while not search_thread.isAlive():

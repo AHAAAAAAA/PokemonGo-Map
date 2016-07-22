@@ -22,14 +22,14 @@ def init_database():
     if db is not None:
         return db
 
-    credentials = load_config(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-    if credentials['mysql_db']:
+    credentials = load_config(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+os.path.sep+'database.json')
+    if credentials['db_type'] == 'mysql':
         db = MySQLDatabase(
-            credentials['mysql_db'], 
-            user=credentials['mysql_user'], 
-            password=credentials['mysql_pass'], 
-            host=credentials['mysql_host'])
-        log.info('Connecting to MySQL database on {}.'.format(credentials['mysql_host']))
+            credentials['db_name'], 
+            user=credentials['db_user'], 
+            password=credentials['db_pass'], 
+            host=credentials['db_host'])
+        log.info('Connecting to MySQL database on {}.'.format(credentials['db_host']))
     else:
         db = SqliteDatabase('pogom.db')
         log.info('Connecting to local SQLLite database.')

@@ -11,8 +11,6 @@ import json
 from datetime import datetime, timedelta
 
 from . import config
-from exceptions import APIKeyException
-
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
@@ -106,13 +104,8 @@ def get_pokemon_name(pokemon_id):
 
 def load_config(filepath):
     try:
-        with open(filepath+os.path.sep+'credentials.json') as file:
+        with open(filepath) as file:
             creds = json.load(file)
     except IOError:
         creds = {}
-    if not creds.get('gmaps_key'):
-        raise APIKeyException(\
-            "No Google Maps Javascript API key entered in credentials.json file!"
-            " Please take a look at the wiki for instructions on how to generate this key,"
-            " then add that key to the file!")
     return creds
