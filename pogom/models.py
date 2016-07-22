@@ -2,18 +2,19 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
+import os
+from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, FloatField, BooleanField, DateTimeField
 from datetime import datetime
 from base64 import b64encode
 
-from .utils import get_pokemon_name
+from .utils import get_pokemon_name, load_credentials
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
-db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
 
+db = None
 
 class BaseModel(Model):
     class Meta:
@@ -22,7 +23,6 @@ class BaseModel(Model):
     @classmethod
     def get_all(cls):
         return [m for m in cls.select().dicts()]
-
 
 class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
@@ -151,9 +151,26 @@ def bulk_upsert(cls, data):
         InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         i+=step
 
+def init_database(): 
+    global db
+    if db is not None:
+        return db
 
+    credentials = load_credentials(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    if credentials['mysql_db']:
+        db = MySQLDatabase(
+            credentials['mysql_db'], 
+            user=credentials['mysql_user'], 
+            password=credentials['mysql_pass'], 
+            host=credentials['mysql_host'])
+        log.info('Connecting to MySQL database on {}.'.format(credentials['mysql_host']))
+    else:
+        db = SqliteDatabase('pogom.db')
+        log.info('Connecting to local SQLLite database.')
 
-def create_tables():
+    return db
+
+def create_tables(db):
     db.connect()
     db.create_tables([Pokemon, Pokestop, Gym], safe=True)
     db.close()

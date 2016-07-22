@@ -10,7 +10,7 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
-from pogom.models import create_tables, Pokemon, Pokestop, Gym
+from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
@@ -39,7 +39,8 @@ if __name__ == '__main__':
         logging.getLogger("pgoapi").setLevel(logging.DEBUG)
         logging.getLogger("rpc_api").setLevel(logging.DEBUG)
 
-    create_tables()
+    db = init_database()
+    create_tables(db)
 
     position = get_pos_by_name(args.location)
     log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
