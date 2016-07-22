@@ -13,6 +13,7 @@ html, body {
 
 .wrapper {
 	position: relative;
+  height: 100%;
 }
 
 #header, #map, #footer {
@@ -27,6 +28,6 @@ html, body {
 #map {
 	top: 3.5em;
 	bottom: 0px;
-  height: 100vh;
+  height: unset;
   width: 100vw;
 }
