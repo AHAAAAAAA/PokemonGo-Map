@@ -2002,7 +2002,8 @@ html, body {
   margin-top: 3.5em; }
 
 .wrapper {
-  position: relative; }
+  position: relative;
+  height: 100%; }
 
 #header, #map, #footer {
   position: absolute; }
@@ -2014,7 +2015,7 @@ html, body {
 #map {
   top: 3.5em;
   bottom: 0px;
-  height: 100vh;
+  height: unset;
   width: 100vw; }
 
 /* Footer */
