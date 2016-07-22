@@ -234,10 +234,9 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
-    
-    localStorage.showPokemon = localStorage.showPokemon || true;
-    localStorage.showGyms = localStorage.showGyms || true;
-    localStorage.showPokestops = localStorage.showPokestops || true;
+    localStorage.showPokemon = typeof localStorage.showPokemon !== 'undefined' ? localStorage.showPokemon : true;
+    localStorage.showGyms = typeof localStorage.showGyms !== 'undefined' ? localStorage.showGyms : true;
+    localStorage.showPokestops = typeof localStorage.showPokestops !== 'undefined' ? localStorage.showPokestops : true;
 
     $.ajax({
         url: "raw_data",
