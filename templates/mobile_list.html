@@ -1,15 +1,36 @@
-<table border="1">
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <title>Pokemon List</title>
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1" name=viewport>
+    </head>
+    <body>
+        <h1>Pokemon List</h1>
+
+        <link rel="stylesheet" href="/static/css/mobile.css" type="text/css" />
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Time Remaining</th>
+                    <th>Direction from Origin</th>
+                    <th>Map Link</th>
+                </tr>
+            </thead>
+            <tbody>
 {% for pokemon in pokemon_list %}
-<tr>
-<td>
-<a href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
-<img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png'>
-</a>
-</td>
-<td>{{pokemon.time_to_disappear}}</td>
-<td>{{pokemon.distance}}m ({{pokemon.card_dir}})</td>
-</tr>
+                <tr>
+                    <td><img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png' alt="{{pokemon.name}}" /></td>
+                    <td>{{pokemon.time_to_disappear}}</td>
+                    <td>{{pokemon.distance}}m ({{pokemon.card_dir}})</td>
+                    <td><a href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>Open Map</td>
+                </tr>
 {% endfor %}
-<tr><td></td><td><b>low priority</b></td><td></td></tr>
-</table>
-<a href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>scan origin</a>
+            </tbody>
+        </table>
+
+        <a href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>open map @ scan origin</a>
+
+    </body>
+</html>
