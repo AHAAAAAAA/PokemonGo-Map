@@ -26,3 +26,4 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 
 ---
 #For instructions, please refer to [the wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki)#
+Bit coin donation Address:) 18ABe5rhZgLR6zdH27hDWp8DdTkWKJoKwo
