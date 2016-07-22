@@ -121,7 +121,7 @@ function initMap() {
     google.maps.event.addListener(map, 'dblclick', function(event) {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
-        post('/setLoc', {location: lat+'|'+lng});
+        post('/next_loc', {lat: lat, lng: lng});
     });
 
     if (!localStorage['map_style'] || localStorage['map_style'] === 'undefined') {
