@@ -36,6 +36,7 @@ def parse_config(args):
 def get_args():
     # fuck PEP8
     parser = argparse.ArgumentParser()
+    parser.add_argument('-se', '--settings',action='store_true',default=False)
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
     parser.add_argument('-p', '--password', help='Password', required=False)
