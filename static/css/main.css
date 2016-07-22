@@ -1,6 +1,7 @@
 @charset "UTF-8";
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css);
 /* Reset */
+@import url(https://fonts.googleapis.com/css?family=Muli:400,300);
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin: 0;
   padding: 0;
@@ -1213,7 +1214,6 @@ input[type="text"],
 input[type="password"],
 input[type="email"],
 input[type="tel"],
-select,
 textarea {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -1233,48 +1233,19 @@ textarea {
   input[type="password"]:invalid,
   input[type="email"]:invalid,
   input[type="tel"]:invalid,
-  select:invalid,
   textarea:invalid {
     box-shadow: none; }
   input[type="text"]:focus,
   input[type="password"]:focus,
   input[type="email"]:focus,
   input[type="tel"]:focus,
-  select:focus,
   textarea:focus {
     border-color: #5AA6ED;
     box-shadow: 0 0 0 1px #5AA6ED; }
 
-.select-wrapper {
-  text-decoration: none;
-  display: block;
-  position: relative; }
-  .select-wrapper:before {
-    content: "";
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-transform: none !important; }
-  .select-wrapper:before {
-    color: rgba(144, 144, 144, 0.25);
-    display: block;
-    height: 2.75em;
-    line-height: 2.75em;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    top: 0;
-    width: 2.75em; }
-  .select-wrapper select::-ms-expand {
-    display: none; }
-
 input[type="text"],
 input[type="password"],
-input[type="email"],
-select {
+input[type="email"] {
   height: 2.75em; }
 
 textarea {
@@ -1301,29 +1272,30 @@ textarea {
   opacity: 1.0; }
 
 .option {
-  position: relative;
   margin: .25em 0;
   padding: .5em;
   padding-left: 0;
   display: block;
-  cursor: pointer; }
-  .option:after {
-    position: absolute;
-    left: 0;
-    bottom: 11px;
-    width: 136px;
-    height: 1px;
-    content: '';
-    background: beige;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform .2s ease-out; }
-  .option:hover:after {
-    transform: scaleX(1); }
+  cursor: pointer;
+  -webkit-user-select: none; }
   .option__name {
+    position: relative;
     display: inline-block;
-    min-width: 120px;
+    width: 60%;
     vertical-align: middle; }
+    .option__name:after {
+      position: absolute;
+      left: 0;
+      bottom: 3px;
+      width: calc(100% + 15px);
+      height: 1px;
+      content: '';
+      background: #3b3b3b;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .2s ease-out; }
+  .option:hover .option__name:after {
+    transform: scaleX(1); }
   .option__input {
     display: none; }
   .option__checkbox {
@@ -1336,13 +1308,14 @@ textarea {
     vertical-align: -6px;
     overflow: hidden;
     background: white;
-    border-radius: 50%; }
+    border-radius: 50%;
+    border: 1px solid #3b3b3b; }
     .option__checkbox:before {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      border-bottom: 1px solid black;
+      border-bottom: inherit;
       height: 50%;
       content: '';
       background: #ccc;
@@ -1365,6 +1338,19 @@ textarea {
   .option__input:checked + .option__checkbox:after {
     background: black;
     box-shadow: inset 0 0 0 1px white; }
+
+.select2-container {
+  width: 100% !important;
+  float: left; }
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  background-color: #4A80F5 !important; }
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+  border: 1px solid #3b3b3b; }
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  color: #FFFFFF !important; }
 
 /* Box */
 .box {
@@ -1765,7 +1751,7 @@ body {
       text-decoration: none;
       -webkit-tap-highlight-color: transparent; }
       #header > a[href="#nav"]:before {
-        content: "";
+        content: "";
         -moz-osx-font-smoothing: grayscale;
         -webkit-font-smoothing: antialiased;
         font-family: FontAwesome;
@@ -1806,28 +1792,36 @@ body {
 
 /* Nav */
 #nav {
-  -moz-transform: translateX(-20em);
-  -webkit-transform: translateX(-20em);
-  -ms-transform: translateX(-20em);
-  transform: translateX(-20em);
+  -moz-transform: translateX(-18em);
+  -webkit-transform: translateX(-18em);
+  -ms-transform: translateX(-18em);
+  transform: translateX(-18em);
   -moz-transition: -moz-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -webkit-transition: -webkit-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -ms-transition: -ms-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   transition: transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -webkit-overflow-scrolling: touch;
-  background: #3b3b3b;
+  background: #F8F8F8;
   box-shadow: none;
   color: #ffffff;
   height: 100%;
   max-width: 80%;
   overflow-y: auto;
-  padding: 3em 2em;
+  padding: 1.5em;
   position: fixed;
   top: 3.50em;
   left: 0;
   visibility: hidden;
-  width: 20em;
-  z-index: 10002; }
+  width: 18em;
+  z-index: 500;
+  color: #3b3b3b; }
+  #nav h3 {
+    font-size: 18px;
+    font-family: 'Muli', sans-serif;
+    margin-bottom: 10px;
+    float: left; }
+  #nav p {
+    margin-bottom: 20px; }
   #nav > ul {
     margin: 0 0 1em 0; }
     #nav > ul.links {
@@ -1857,7 +1851,7 @@ body {
     border: 0;
     color: #bdbdbd;
     cursor: pointer;
-    display: block;
+    display: none;
     height: 3.25em;
     line-height: 3.25em;
     padding-right: 1.25em;
