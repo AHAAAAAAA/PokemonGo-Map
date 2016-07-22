@@ -131,7 +131,7 @@ def get_pokemarkers():
         markers.append({
             'type': 'pokemon',
             'name': name,
-            'key': pokemon.pokemon_id,
+            'key': '{}-{}'.format(pokemon.pokemon_id, pokemon.spawn_id),
             'disappear_time': pokemon.expire_timestamp,
             'icon': 'static/icons/%d.png' % pokemon.pokemon_id,
             'lat': pokemon.lat,
