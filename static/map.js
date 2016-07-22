@@ -63,6 +63,18 @@ var selectedStyle = 'light';
 
 function initMap() {
 
+    // Add support for URL passed locations.
+    var latitude = getParameterByName('lat');
+    var longitude = getParameterByName('long');
+
+    if (latitude) {
+	var pos = {
+	    lat: latitude,
+	    lng: longitude
+	};
+	center_lat = latitude;  // Override default lat/lang if passed via URL. /?lat=42.3152924&long=-83.0367337
+	center_lng = longitude;
+    }
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
@@ -115,6 +127,16 @@ function initMap() {
 
     initSidebar();
 };
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
