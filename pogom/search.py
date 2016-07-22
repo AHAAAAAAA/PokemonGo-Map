@@ -141,7 +141,7 @@ def search(args, i):
             else:
                 log.info('Map Download failed. Trying again.')
 
-        log.info('Completed {:5.2f}% of scan.'.format(float(step) / num_steps**2*100))
+        log.info('Completed {:5.2f}% of scan.'.format(float(step) / total_steps*100))
         time.sleep(config['REQ_SLEEP'])
 
 
