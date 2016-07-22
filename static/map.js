@@ -116,6 +116,7 @@ function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
+    $('#notifications-switch').prop('checked', localStorage.showNotifications === 'true');
 }
 
 
@@ -266,10 +267,11 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
-    
+
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
     localStorage.showPokestops = localStorage.showPokestops || true;
+    localStorage.showNotifications = localStorage.showNotifications || "false";
 
     $.ajax({
         url: "raw_data",
@@ -281,19 +283,45 @@ function updateMap() {
         },
         dataType: "json"
     }).done(function(result) {
-      $.each(result.pokemons, function(i, item){
-          if (!localStorage.showPokemon) {
+        var newPokemonList = []
+        $.each(result.pokemons, function(i, item){
+            if (!localStorage.showPokemon) {
               return false; // in case the checkbox was unchecked in the meantime.
-          }
-          if (!(item.encounter_id in map_pokemons) &&
+            }
+            if (!(item.encounter_id in map_pokemons) &&
                     excludedPokemon.indexOf(item.pokemon_id) < 0) {
               // add marker to map and item to dict
               if (item.marker) item.marker.setMap(null);
               item.marker = setupPokemonMarker(item);
               map_pokemons[item.encounter_id] = item;
-          }
+              newPokemonList.push(item)
+            }
         });
-
+        if(JSON.parse(localStorage.showNotifications) && window.Notification && Notification.permission !== "denied"){
+            if (newPokemonList.length<3){
+                $.each(newPokemonList, function (i, item) {
+                   {
+                        Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
+                            new Notification('New pokemon!', {
+                                body: item.pokemon_name,
+                                icon: item.marker.icon// optional
+                            });
+                        });
+                    }
+                })
+            }
+            else{
+                var names = []
+                $.each(newPokemonList, function (i, item) {
+                    names.push(item.pokemon_name)
+                });
+                Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
+                    new Notification('New pokemons!', {
+                        body: names.join(",")
+                    });
+                });
+            }
+        }
         $.each(result.pokestops, function(i, item) {
             if (!localStorage.showPokestops) {
                 return false;
@@ -371,6 +399,10 @@ $('#pokestops-switch').change(function() {
         });
         map_pokestops = {}
     }
+});
+
+$('#notifications-switch').change(function() {
+    localStorage["showNotifications"] = JSON.stringify(this.checked);
 });
 
 var updateLabelDiffTime = function() {
