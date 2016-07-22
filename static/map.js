@@ -81,18 +81,29 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
+    var timeout = null;
     map.addListener('click', function (e) {
-        $.post('next_loc?' + $.param({
-            lat: e.latLng.lat(),
-            lon: e.latLng.lng(),
-        }), function (r) {
-            if (r == 'ok') {
-                marker.setPosition({
-                    lat: e.latLng.lat(),
-                    lng: e.latLng.lng(),
-                });
-            }
-        });
+        timeout = setTimeout(function () {
+            timeout = null;
+
+            $.post('next_loc?' + $.param({
+                lat: e.latLng.lat(),
+                lon: e.latLng.lng(),
+            }), function (r) {
+                if (r == 'ok') {
+                    marker.setPosition({
+                        lat: e.latLng.lat(),
+                        lng: e.latLng.lng(),
+                    });
+                }
+            });
+        }, 1000);
+    });
+
+    map.addListener('dblclick', function () {
+        if (timeout != null) {
+            clearTimeout(timeout);
+        }
     });
 
     initSidebar();
