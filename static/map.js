@@ -13,7 +13,7 @@ var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
 
 $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
-    var pokeList = []
+    var pokeList = [];
 
     $.each(data, function(key, value) {
         pokeList.push( { id: key, text: value } );
@@ -22,13 +22,29 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
     JSON.parse(readCookie("remember_select_exclude"));
     $selectExclude.select2({
         placeholder: "Select Pokémon",
+        templateResult: function(element){
+          if(!element.id){ return element.text; }
+          return $('<span><img src="static/icons/' + element.id + '.png">' + element.text + '</span>');
+        },
+        templateSelection: function(element){
+          if(!element.id){ return element.text; }
+          return $('<span><img src="static/icons/' + element.id + '.png">' + element.text + '</span>');
+        },
         data: pokeList
     });
     $selectExclude.val(JSON.parse(readCookie("remember_select_exclude"))).trigger("change");
-    
+
     JSON.parse(readCookie("remember_select_notify"));
     $selectNotify.select2({
         placeholder: "Select Pokémon",
+        templateResult: function(element){
+          if(!element.id){ return element.text; }
+          return $('<span><img src="static/icons/' + element.id + '.png">' + element.text + '</span>');
+        },
+        templateSelection: function(element){
+          if(!element.id){ return element.text; }
+          return $('<span><img src="static/icons/' + element.id + '.png">' + element.text + '</span>');
+        },
         data: pokeList
     });
     $selectNotify.val(JSON.parse(readCookie("remember_select_notify"))).trigger("change");
@@ -202,7 +218,7 @@ function setupPokemonMarker(item) {
     marker.infoWindow = new google.maps.InfoWindow({
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
-    
+
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
     }
@@ -284,7 +300,7 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
-    
+
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
     localStorage.showPokestops = localStorage.showPokestops || true;
