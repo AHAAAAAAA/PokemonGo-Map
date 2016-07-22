@@ -3,6 +3,7 @@
 *.db
 *.db-journal
 *.sass-cache
+alerts.json
 credentials.json
 static/dist/
 node_modules/

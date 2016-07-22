@@ -33,6 +33,7 @@ class Pokemon(BaseModel):
     latitude = FloatField()
     longitude = FloatField()
     disappear_time = DateTimeField()
+    alerted = BooleanField()
 
     @classmethod
     def get_active(cls):
@@ -47,6 +48,10 @@ class Pokemon(BaseModel):
             pokemons.append(p)
 
         return pokemons
+
+    @classmethod
+    def mark_alerted(cls, encounter_id):
+        Pokemon.update(alerted=True).where(encounter_id == encounter_id).execute()
 
 
 class Pokestop(BaseModel):
@@ -92,7 +97,8 @@ def parse_map(map_dict):
                 'longitude': p['longitude'],
                 'disappear_time': datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0)
+                     p['time_till_hidden_ms']) / 1000.0),
+                'alerted': False
             }
 
         for f in cell.get('forts', []):
