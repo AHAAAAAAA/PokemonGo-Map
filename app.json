@@ -5,7 +5,7 @@
   "keywords": ["pokemon", "pokemon go"],
   "env": {
     "AUTH_SERVICE": {
-      "descritpion": "Authentication service to use. (ptc or google)"
+      "description": "Authentication service to use. (ptc or google)"
     },
     "USERNAME": {
       "description": "Your username to login to the specified authentication service."
