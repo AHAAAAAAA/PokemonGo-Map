@@ -72,6 +72,9 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=DEFAULT_THREADS, dest='num_threads')
+    parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 

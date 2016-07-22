@@ -39,6 +39,10 @@ if __name__ == '__main__':
 
     args = get_args()
 
+    config['parse_pokemon'] = not args.no_pokemon
+    config['parse_pokestops'] = not args.no_pokestops
+    config['parse_gyms'] = not args.no_gyms
+
     if args.debug:
         logging.getLogger("requests").setLevel(logging.DEBUG)
         logging.getLogger("pgoapi").setLevel(logging.DEBUG)
@@ -54,6 +58,12 @@ if __name__ == '__main__':
 
     log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
              format(*position))
+    if args.no_pokemon:
+        log.info('Parsing of Pokemon disabled.')
+    if args.no_pokestops:
+        log.info('Parsing of Pokestops disabled.')
+    if args.no_gyms:
+        log.info('Parsing of Gyms disabled.')
 
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]
