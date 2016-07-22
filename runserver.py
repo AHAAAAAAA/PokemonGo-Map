@@ -61,9 +61,11 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
-    if config['ssl_key'] != "":
+    config['SSL_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['ssl_key']
+    config['SSL_CERT'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['ssl_cert']
+    if config['SSL_KEY'] != "":
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        context.load_cert_chain(keyfile=config['ssl_key'], certfile=config['ssl_cert'])
+        context.load_cert_chain(keyfile=config['SSL_KEY'], certfile=config['SSL_CERT'])
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port, ssl_context=context)
     else:
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
