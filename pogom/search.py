@@ -60,7 +60,7 @@ def search(args):
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
-        remaining_time = api._auth_provider._ticket_expire/100000 - time.time()
+        remaining_time = api._auth_provider._ticket_expire/1 - time.time()
 
         if remaining_time > 60:
             log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
