@@ -168,7 +168,8 @@ class PGoApi:
             return False
         
         if 'auth_ticket' in response:
-            self._auth_provider.set_ticket(response['auth_ticket'].values())
+            auth_ticket = response['auth_ticket']
+            self._auth_provider.set_ticket([auth_ticket['expire_timestamp_ms'], auth_ticket['start'], auth_ticket['end']])
         
         self.log.info('Finished RPC login sequence (app simulation)')
         self.log.info('Login process completed') 
