@@ -130,7 +130,7 @@ def search(args, i):
             response_dict = send_map_request(api, step_location)
             if response_dict:
                 try:
-                    parse_map(response_dict, i, step)
+                    parse_map(response_dict, i, step, step_location)
                 except KeyError:
                     log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
                     failed_consecutive += 1
