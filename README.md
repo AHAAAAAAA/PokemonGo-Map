@@ -38,7 +38,7 @@ Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo AP
 ```bash
 git clone https://github.com/ufian/PokemonGo-Map.git
 cd PokemonGo-Map
-pip install -r requirements /Users/ufian/tests/poke/PokemonGo-Map-old/requirements.txt
+pip install -r requirements requirements.txt
 ```
 
 Отредактируйте config/config.ini, указав в секции Telegram полученный токен.
