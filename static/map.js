@@ -1,4 +1,16 @@
+document.addEventListener("DOMContentLoaded", function () {
+    if (!Notification) {
+        console.log('could not load notifications');
+        return;
+    }
+
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+});
+
 var $selectExclude = $("#exclude-pokemon");
+var $selectNotify = $("#notify-pokemon");
 
 $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
     var pokeList = []
@@ -7,20 +19,34 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
         pokeList.push( { id: key, text: value } );
     });
 
-    JSON.parse(readCookie("remember_select"));
+    JSON.parse(readCookie("remember_select_exclude"));
     $selectExclude.select2({
-        placeholder: "Select Pokemon to exclude",
+        placeholder: "Select Pokémon to exclude",
         data: pokeList
     });
-    $selectExclude.val(JSON.parse(readCookie("remember_select"))).trigger("change");
+    $selectExclude.val(JSON.parse(readCookie("remember_select_exclude"))).trigger("change");
+    
+    JSON.parse(readCookie("remember_select_notify"));
+    $selectNotify.select2({
+        placeholder: "Select Pokémon to notify on spawn",
+        data: pokeList
+    });
+    $selectNotify.val(JSON.parse(readCookie("remember_select_notify"))).trigger("change");
 });
 
 var excludedPokemon = [];
+var notifiedPokemon = [];
 
 $selectExclude.on("change", function (e) {
     excludedPokemon = $selectExclude.val().map(Number);
     clearStaleMarkers();
-    document.cookie = 'remember_select='+JSON.stringify(excludedPokemon)+
+    document.cookie = 'remember_select_exclude='+JSON.stringify(excludedPokemon)+
+            '; max-age=31536000; path=/';
+});
+
+$selectNotify.on("change", function (e) {
+    notifiedPokemon = $selectNotify.val().map(Number);
+    document.cookie = 'remember_select_notify='+JSON.stringify(notifiedPokemon)+
             '; max-age=31536000; path=/';
 });
 
@@ -156,6 +182,10 @@ function setupPokemonMarker(item) {
     marker.infoWindow = new google.maps.InfoWindow({
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
+    
+    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+        sendNotification('A ' + item.pokemon_name + ' Appeared', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
+    }
 
     addListeners(marker);
     return marker;
@@ -378,4 +408,20 @@ function readCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
     }
     return null;
+}
+
+function sendNotification(title, text, icon) {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    } else {
+        var notification = new Notification(title, {
+            icon: icon,
+            body: text,
+            sound: 'sounds/ding.mp3'
+        });
+
+        notification.onclick = function () {
+            window.open(window.location.href);
+        };
+    }
 }
