@@ -1,5 +1,8 @@
 ###Please submit all pull requests to the [develop branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) #
 
+#[Official Website] (https://jz6.github.io/PoGoMap/)#
+#[Official Twitter] (https://twitter.com/PoGoMDev)#
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
 </p>
@@ -9,6 +12,7 @@
 [![Build Status](https://travis-ci.org/AHAAAAAAA/PokemonGo-Map.svg?branch=master)](https://travis-ci.org/AHAAAAAAA/PokemonGo-Map) [![Coverage Status](https://coveralls.io/repos/github/AHAAAAAAA/PokemonGo-Map/badge.svg?branch=master)](https://coveralls.io/github/AHAAAAAAA/PokemonGo-Map?branch=master)
 
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
+#[Official Twitter] (https://twitter.com/PoGoMDev)#
 
 [Android Port](https://github.com/omkarmoghe/Pokemap)
 
