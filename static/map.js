@@ -15,7 +15,7 @@ var $selectNotify = $("#notify-pokemon");
 var idToPokemon = {};
 
 $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
-    var pokeList = [];
+    var pokeList = []
 
     $.each(data, function(key, value) {
         pokeList.push( { id: key, text: value } );
@@ -62,6 +62,8 @@ var pGoStyle=[{"featureType":"landscape.man_made","elementType":"geometry.fill",
 var selectedStyle = 'light';
 
 function initMap() {
+
+
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: center_lat,
@@ -70,28 +72,27 @@ function initMap() {
         zoom: 16,
         fullscreenControl: true,
         streetViewControl: false,
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-            position: google.maps.ControlPosition.RIGHT_TOP,
-            mapTypeIds: [
-                google.maps.MapTypeId.ROADMAP,
-                google.maps.MapTypeId.SATELLITE,
-                'dark_style',
-                'style_light2',
-                'style_pgo'
-            ]
+		mapTypeControl: true,
+		mapTypeControlOptions: {
+          style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+          position: google.maps.ControlPosition.RIGHT_TOP,
+          mapTypeIds: [
+              google.maps.MapTypeId.ROADMAP,
+              google.maps.MapTypeId.SATELLITE,
+              'dark_style',
+              'style_light2',
+              'style_pgo']
         },
     });
 
-    var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
-    map.mapTypes.set('dark_style', style_dark);
+	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
+	map.mapTypes.set('dark_style', style_dark);
 
-    var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
-    map.mapTypes.set('style_light2', style_light2);
+	var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
+	map.mapTypes.set('style_light2', style_light2);
 
-    var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
-    map.mapTypes.set('style_pgo', style_pgo);
+	var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
+	map.mapTypes.set('style_pgo', style_pgo);
 
     map.addListener('maptypeid_changed', function(s) {
         localStorage['map_style'] = this.mapTypeId;
@@ -111,15 +112,14 @@ function initMap() {
         map: map,
         animation: google.maps.Animation.DROP
     });
-    
+
     initSidebar();
 };
 
 function initSidebar() {
-    $('#gyms-switch').prop('checked', localStorage.showGyms !== 'false'); // Default true
-    $('#pokemon-switch').prop('checked', localStorage.showPokemon !== 'false'); // Default true
-    $('#pokestops-switch').prop('checked', localStorage.showPokestops !== 'false'); // Default true
-    $('#icons-switch').prop('checked', localStorage.largeIcons === 'true'); // Default false
+    $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
+    $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
+    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
 
     var input = document.getElementById('next-location');
     var searchBox = new google.maps.places.SearchBox(input);
@@ -147,63 +147,46 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time)
 
     var contentstring = `
-        <div class="row">
-            <div>
-                <img src="static/icons-large/${id}.png"/>
-            </div>
-            <div>
-                <div>
-                    <b>${name}</b>
-                    <span> - </span>
-                    <small>
-                        <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
-                    </small>
-                </div>
-                <div>
-                    Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-                    <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span>
-                </div>
-                <div>
-                    <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
-                        target='_blank' title='View in Maps'>Get directions</a>
-                </div>
-            </div>
+        <div>
+            <b>${name}</b>
+            <span> - </span>
+            <small>
+                <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
+            </small>
+        </div>
+        <div>
+            Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
+            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
+        <div>
+            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
+                    target='_blank' title='View in Maps'>Get directions</a>
         </div>`;
     return contentstring;
 }
 
 function gymLabel(team_name, team_id, gym_points) {
-    var gym_color = [
-        "0, 0, 0, .4",
-        "74, 138, 202, .6",
-        "240, 68, 58, .6",
-        "254, 217, 40, .6"
-    ];
+    var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
     var str;
     if (team_name == 0) {
-        str = `
+        str = `<div><center>
             <div>
-                <center>
-                    <div>
-                        <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
-                    </div>
-                </center>
-            </div>`;
+                <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
+            </div>
+            </center></div>`;
     } else {
         str = `
+            <div><center>
+            <div style='padding-bottom: 2px'>Gym owned by:</div>
             <div>
-                <center>
-                    <div style='padding-bottom: 2px'>Gym owned by:</div>
-                    <div>
-                        <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
-                        <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
-                    </div>
-                    <div>Prestige: ${gym_points}</div>
-                </center>
-            </div>`;
+                <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
+                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
+            </div>
+            <div>Prestige: ${gym_points}</div>
+            </center></div>`;
     }
+
     return str;
-};
+}
 
 function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longitude) {
     var str;
@@ -264,7 +247,7 @@ function setupPokemonMarker(item) {
             lng: item.longitude
         },
         map: map,
-        icon: 'static/' + (localStorage.largeIcons === 'true' ? 'icons-large' : 'icons') + '/' + item.pokemon_id + '.png'
+        icon: 'static/icons/' + item.pokemon_id + '.png'
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
@@ -337,11 +320,12 @@ function addListeners(marker) {
             marker.infoWindow.close();
         }
     });
-    return marker;
+    return marker
 };
 
 function clearStaleMarkers() {
     $.each(map_pokemons, function(key, value) {
+
         if (map_pokemons[key]['disappear_time'] < new Date().getTime() ||
                 excludedPokemon.indexOf(map_pokemons[key]['pokemon_id']) >= 0) {
             map_pokemons[key].marker.setMap(null);
@@ -351,44 +335,48 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
+    
+    localStorage.showPokemon = localStorage.showPokemon || true;
+    localStorage.showGyms = localStorage.showGyms || true;
+    localStorage.showPokestops = localStorage.showPokestops || true;
+
     $.ajax({
         url: "raw_data",
         type: 'GET',
         data: {
-            'pokemon': localStorage.showPokemon !== 'false',
-            'pokestops': localStorage.showPokestops !== 'false',
-            'gyms': localStorage.showGyms !== 'false'
+            'pokemon': localStorage.showPokemon,
+            'pokestops': localStorage.showPokestops,
+            'gyms': localStorage.showGyms
         },
         dataType: "json"
     }).done(function(result) {
-
-        $.each(result.pokemons, function(i, item){
-            if (localStorage.showPokemon === 'false') {
-                return false; // in case the checkbox was unchecked in the meantime.
-            }
-            if (!(item.encounter_id in map_pokemons) &&
+      $.each(result.pokemons, function(i, item){
+          if (!localStorage.showPokemon) {
+              return false; // in case the checkbox was unchecked in the meantime.
+          }
+          if (!(item.encounter_id in map_pokemons) &&
                     excludedPokemon.indexOf(item.pokemon_id) < 0) {
-                // add marker to map and item to dict
-                if (item.marker) item.marker.setMap(null);
-                item.marker = setupPokemonMarker(item);
-                map_pokemons[item.encounter_id] = item;
-            }
+              // add marker to map and item to dict
+              if (item.marker) item.marker.setMap(null);
+              item.marker = setupPokemonMarker(item);
+              map_pokemons[item.encounter_id] = item;
+          }
         });
 
         $.each(result.pokestops, function(i, item) {
-            if (localStorage.showPokestops === 'false') {
+            if (!localStorage.showPokestops) {
                 return false;
-
-            } else if (!(item.pokestop_id in map_pokestops)) {
+            } else if (!(item.pokestop_id in map_pokestops)) { // add marker to map and item to dict
                 // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
             }
+
         });
 
         $.each(result.gyms, function(i, item){
-            if (localStorage.showGyms === 'false') {
+            if (!localStorage.showGyms) {
                 return false; // in case the checkbox was unchecked in the meantime.
             }
 
@@ -397,19 +385,18 @@ function updateMap() {
                 if (map_gyms[item.gym_id].team_id != item.team_id) {
                     map_gyms[item.gym_id].marker.setMap(null);
                     map_gyms[item.gym_id].marker = setupGymMarker(item);
-
                 } else { // if it hasn't changed generate new label only (in case prestige has changed)
                     map_gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
                         content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
                     });
                 }
-
-            } else {
-                // add marker to map and item to dict
+            }
+            else { // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupGymMarker(item);
                 map_gyms[item.gym_id] = item;
             }
+
         });
 
         clearStaleMarkers();
@@ -455,20 +442,6 @@ $('#pokestops-switch').change(function() {
     }
 });
 
-$('#icons-switch').change(function() {
-    localStorage["largeIcons"] = this.checked;
-
-    let icon_folder = `icon-${(this.checked ? 'large' : 'small')}`;
-    $.each(map_pokemons, function(key, value) {
-        let item =  map_pokemons[key];
-        let image = `/static/${icon_folder}/${item.pokemon_id}.png`;
-        let marker = setupPokemonMarker(item);
-        item.marker.setMap(null);
-        map_pokemons[key].marker = marker;
-    });
-    updateMap();
-});
-
 var updateLabelDiffTime = function() {
     $('.label-countdown').each(function(index, element) {
         var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at")));
@@ -491,7 +464,7 @@ var updateLabelDiffTime = function() {
             timestring += ")";
         }
 
-        $(element).text(timestring);
+        $(element).text(timestring)
     });
 };
 
@@ -506,7 +479,7 @@ function readCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
     }
     return null;
-};
+}
 
 function sendNotification(title, text, icon) {
     if (Notification.permission !== "granted") {
