@@ -1300,47 +1300,71 @@ textarea {
   color: #bbb !important;
   opacity: 1.0; }
 
-.onoffswitch {
+.option {
   position: relative;
-  width: 70px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; }
-  .onoffswitch .onoffswitch-checkbox {
-    display: none; }
-  .onoffswitch .onoffswitch-label {
-    display: block;
-    overflow: hidden;
-    cursor: pointer;
-    height: 20px;
-    padding: 0;
-    line-height: 20px;
-    border: 2px solid #CCCCCC;
-    border-radius: 20px;
-    background-color: #FFFFFF;
-    transition: background-color 0.3s ease-in; }
-  .onoffswitch .onoffswitch-label:before {
-    content: "";
-    display: block;
-    width: 20px;
-    margin: 0px;
-    background: #FFFFFF;
+  margin: .25em 0;
+  padding: .5em;
+  padding-left: 0;
+  display: block;
+  cursor: pointer; }
+  .option:after {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 48px;
-    border: 2px solid #CCCCCC;
-    border-radius: 20px;
-    transition: all 0.3s ease-in 0s; }
-
-.onoffswitch-checkbox:checked + .onoffswitch-label {
-  background-color: #4A80F5; }
-
-.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-  border-color: #4A80F5; }
-
-.onoffswitch-checkbox:checked + .onoffswitch-label:before {
-  right: 0px; }
+    left: 0;
+    bottom: 11px;
+    width: 136px;
+    height: 1px;
+    content: '';
+    background: beige;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .2s ease-out; }
+  .option:hover:after {
+    transform: scaleX(1); }
+  .option__name {
+    display: inline-block;
+    min-width: 120px;
+    vertical-align: middle; }
+  .option__input {
+    display: none; }
+  .option__checkbox {
+    position: relative;
+    padding: 4px;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: -6px;
+    overflow: hidden;
+    background: white;
+    border-radius: 50%; }
+    .option__checkbox:before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      border-bottom: 1px solid black;
+      height: 50%;
+      content: '';
+      background: #ccc;
+      border-radius: 100% 100% 0 0; }
+    .option__checkbox:after {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      width: 8px;
+      height: 8px;
+      content: '';
+      background: white;
+      border: 1px solid black;
+      border-radius: 50%; }
+  .option__input:checked + .option__checkbox:before {
+    background: #FE2224; }
+  .option__input:checked + .option__checkbox:after {
+    background: black;
+    box-shadow: inset 0 0 0 1px white; }
 
 /* Box */
 .box {
