@@ -327,22 +327,22 @@ function getColorByDate(value){
 }
 
 function setupScannedMarker(item) {
-    var mapCenter = new google.maps.LatLng(item.latitude, item.longitude);
+    var circleCenter = new google.maps.LatLng(item.latitude, item.longitude);
 
     var marker = new google.maps.Circle({
         map: map,
-        center: mapCenter,
+        center: circleCenter,
         radius: 100,    // 10 miles in metres
         fillColor: getColorByDate(item.last_modified),
         strokeWeight: 1
     });
-    // circle.bindTo('center', marker, 'position');
 
-    marker.infoWindow = new google.maps.InfoWindow({
-        content: scannedLabel(item.last_modified)
-    });
+    // marker.infoWindow = new google.maps.InfoWindow({
+    //     content: scannedLabel(item.last_modified),
+    //     position: circleCenter
+    // });
 
-    addListeners(marker);
+    //addListeners(marker);
     return marker;
 };
 
