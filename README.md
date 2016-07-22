@@ -4,7 +4,8 @@ Live visualization of all the pokemon (with option to show gyms and pokestops) i
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment)
 
-[Official Website] (https://jz6.github.io/PoGoMap/)
+#[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact.
+#[Official Website] (https://jz6.github.io/PoGoMap/)#
 
 ![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
 
