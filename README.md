@@ -1,7 +1,7 @@
-###Please submit all pull requests to the [develop branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) #
+##Please submit all pull requests to the [develop branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) #
 
+#[Official Twitter] (https://twitter.com/PoGoMDev)# Please give us a follow or message about issues.
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
-#[Official Twitter] (https://twitter.com/PoGoMDev)#
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
