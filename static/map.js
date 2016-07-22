@@ -94,7 +94,9 @@ function initMap() {
         localStorage['map_style'] = this.mapTypeId;
     });
 
-    localStorage['map_style'] = localStorage['map_style'] || 'roadmap';
+    if (!localStorage['map_style'] || localStorage['map_style'] === 'undefined') {
+        localStorage['map_style'] = 'roadmap';
+    }
 
     map.setMapTypeId(localStorage['map_style']);
 
