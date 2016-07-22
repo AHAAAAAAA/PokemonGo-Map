@@ -24,6 +24,10 @@ Here it is in action:
 - data gathering for further analysis
 - visualization
 
+## ELI5: setting up
+
+[/u/gprez](https://www.reddit.com/u/gprez) made [a great tutorial on Reddit](https://www.reddit.com/r/pokemongodev/comments/4tz66s/pokeminer_your_individual_pokemon_locations/d5lovb6). Check it out if you're confused after reading this readme.
+
 ## Running
 
 The only parameter worker accepts is *step limit*, just as in `example.py`.

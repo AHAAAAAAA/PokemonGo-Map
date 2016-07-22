@@ -1,3 +1,4 @@
 *.pyc
 .idea
 config.py
+db.sqlite
