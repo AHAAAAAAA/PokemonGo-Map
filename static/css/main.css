@@ -1781,7 +1781,17 @@ body {
 body {
   padding-top: 3.125em; }
 
+#set-location {
+  padding: 0 12px;
+  font-size: 22px; }
+
+#set-location-busy {
+  font-size: 12px; }
+
 #header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: #3b3b3b;
   color: #d6d6d6;
   cursor: default;
@@ -1793,16 +1803,18 @@ body {
   top: 0;
   width: 100%;
   z-index: 10001; }
-  #header > h1 {
-    color: #ffffff;
-    display: inline-block;
-    height: inherit;
-    line-height: inherit;
-    margin: 0;
-    padding: 0; }
-    #header > h1 a {
-      font-size: 1.25em; }
-  #header > a {
+  #header .header-group {
+    display: flex; }
+    #header .header-group > h1 {
+      color: #ffffff;
+      display: inline-block;
+      height: inherit;
+      line-height: inherit;
+      margin: 0;
+      padding: 0; }
+      #header .header-group > h1 a {
+        font-size: 1.25em; }
+  #header a {
     -moz-transition: color 0.2s ease-in-out;
     -webkit-transition: color 0.2s ease-in-out;
     -ms-transition: color 0.2s ease-in-out;
@@ -1811,12 +1823,12 @@ body {
     padding: 0 0.75em;
     color: inherit;
     text-decoration: none; }
-    #header > a:hover {
+    #header a:hover {
       color: #ffffff; }
-    #header > a[href="#nav"] {
+    #header a[href="#nav"] {
       text-decoration: none;
       -webkit-tap-highlight-color: transparent; }
-      #header > a[href="#nav"]:before {
+      #header a[href="#nav"]:before {
         content: "";
         -moz-osx-font-smoothing: grayscale;
         -webkit-font-smoothing: antialiased;
@@ -1824,21 +1836,21 @@ body {
         font-style: normal;
         font-weight: normal;
         text-transform: none !important; }
-      #header > a[href="#nav"]:before {
+      #header a[href="#nav"]:before {
         margin: 0 0.5em 0 0; }
-    #header > a + a[href="#nav"]:last-child {
+    #header a + a[href="#nav"]:last-child {
       border-left: solid 1px rgba(255, 255, 255, 0.15);
       padding-left: 1.25em;
       margin-left: 0.5em; }
-    #header > a:last-child {
+    #header a:last-child {
       padding-right: 1.25em; }
     @media screen and (max-width: 736px) {
-      #header > a {
+      #header a {
         padding: 0 0.5em; }
-        #header > a + a[href="#nav"]:last-child {
+        #header a + a[href="#nav"]:last-child {
           padding-left: 1em;
           margin-left: 0.25em; }
-        #header > a:last-child {
+        #header a:last-child {
           padding-right: 1em; } }
 
 @media screen and (max-width: 980px) {
@@ -1847,9 +1859,9 @@ body {
   #header {
     height: 44px;
     line-height: 44px; }
-    #header > h1 {
+    #header h1 {
       left: 1em; }
-      #header > h1 a {
+      #header h1 a {
         font-size: 1em; } }
 
 @media screen and (max-width: 480px) {
@@ -2002,7 +2014,8 @@ html, body {
   margin-top: 3.5em; }
 
 .wrapper {
-  position: relative; }
+  position: relative;
+  height: 100%; }
 
 #header, #map, #footer {
   position: absolute; }
@@ -2014,7 +2027,7 @@ html, body {
 #map {
   top: 3.5em;
   bottom: 0px;
-  height: 100vh;
+  height: unset;
   width: 100vw; }
 
 /* Footer */

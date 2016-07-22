@@ -497,3 +497,39 @@ function sendNotification(title, text, icon) {
         };
     }
 }
+
+if ('geolocation' in navigator) {
+  $('#set-location').click(function() {
+    var options = {
+      //maximumAge: 5 * 60 * 1000,
+    };
+
+    $('#set-location-busy').css({ opacity: 1 });
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var baseURL = location.protocol + '//' + location.hostname + (location.port ? ':'+location.port: '') + '/';
+      var googleLatLang = new google.maps.LatLng(
+        position.coords.latitude,
+        position.coords.longitude
+      );
+
+      $.post(
+        baseURL +
+          'next_loc' +
+          '?lat=' + position.coords.latitude +
+          '&lon=' + position.coords.longitude
+      );
+
+      map.panTo(googleLatLang);
+      marker.setMap(null);
+      marker = new google.maps.Marker({
+        position: googleLatLang,
+        map: map,
+        animation: google.maps.Animation.DROP
+      });
+      $('#set-location-busy').css({ opacity: 0 });
+    }, function(err) {
+      console.log('geolocation error', err);
+    }, options);
+  });
+}
