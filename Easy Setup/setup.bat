@@ -23,14 +23,21 @@ if '%errorlevel%' NEQ '0' (
     CD /D "%~dp0"
 :--------------------------------------
 
-setx PATH "%PATH%;C:\Python27;C:\Python27\Scripts;"
+IF EXIST C:\Python27 (
+set PATH2=C:\Python27
+) ELSE (
+echo Python path not found, please specify or install.
+set /p PATH2= Specify Python path: 
+)
+
+setx PATH "%PATH%;%PATH2%;%PATH2%\Scripts;"
 
 popd
 
-C:\Python27\python get-pip.py
+%PATH2%\python get-pip.py
 cd ..
-C:\Python27\Scripts\pip install -r requirements.txt
-C:\Python27\Scripts\pip install -r requirements.txt --upgrade
+%PATH2%\Scripts\pip install -r requirements.txt
+%PATH2%\Scripts\pip install -r requirements.txt --upgrade
 rename credentials.example.json credentials.json
 set /p API= Enter your Google API key here:
 
@@ -39,3 +46,5 @@ set /p API= Enter your Google API key here:
     echo "gmaps_key" : "%API%"
     echo }
     ) > credentials.json
+echo All done!
+pause

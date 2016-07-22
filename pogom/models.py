@@ -9,7 +9,7 @@ from base64 import b64encode
 
 from .utils import get_pokemon_name
 from .transform import transform_from_wgs_to_gcj
-
+from .customLog import printPokemon
 
 db = SqliteDatabase('pogom.db')
 log = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ class Gym(BaseModel):
     last_modified = DateTimeField()
 
 
-def parse_map(map_dict):
+def parse_map(map_dict, iteration_num, step):
     pokemons = {}
     pokestops = {}
     gyms = {}
@@ -83,50 +83,52 @@ def parse_map(map_dict):
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
-
+            d_t = datetime.utcfromtimestamp(
+                (p['last_modified_timestamp_ms'] +
+                 p['time_till_hidden_ms']) / 1000.0)
+            printPokemon(p['pokemon_data']['pokemon_id'],p['latitude'],p['longitude'],d_t)
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
                 'spawnpoint_id': p['spawnpoint_id'],
                 'pokemon_id': p['pokemon_data']['pokemon_id'],
                 'latitude': p['latitude'],
                 'longitude': p['longitude'],
-                'disappear_time': datetime.utcfromtimestamp(
-                    (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0)
+                'disappear_time': d_t
             }
 
-        for f in cell.get('forts', []):
-            if f.get('type') == 1:  # Pokestops
-                    if 'lure_info' in f:
-                        lure_expiration = datetime.utcfromtimestamp(
-                            f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
-                        active_pokemon_id = f['lure_info']['active_pokemon_id']
-                    else:
-                        lure_expiration, active_pokemon_id = None, None
+        if iteration_num > 0 or step > 50:
+            for f in cell.get('forts', []):
+                if f.get('type') == 1:  # Pokestops
+                        if 'lure_info' in f:
+                            lure_expiration = datetime.utcfromtimestamp(
+                                f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
+                            active_pokemon_id = f['lure_info']['active_pokemon_id']
+                        else:
+                            lure_expiration, active_pokemon_id = None, None
 
-                    pokestops[f['id']] = {
-                        'pokestop_id': f['id'],
+                        pokestops[f['id']] = {
+                            'pokestop_id': f['id'],
+                            'enabled': f['enabled'],
+                            'latitude': f['latitude'],
+                            'longitude': f['longitude'],
+                            'last_modified': datetime.utcfromtimestamp(
+                                f['last_modified_timestamp_ms'] / 1000.0),
+                            'lure_expiration': lure_expiration,
+                            'active_pokemon_id': active_pokemon_id
+                    }
+
+                else:  # Currently, there are only stops and gyms
+                    gyms[f['id']] = {
+                        'gym_id': f['id'],
+                        'team_id': f.get('owned_by_team', 0),
+                        'guard_pokemon_id': f.get('guard_pokemon_id', 0),
+                        'gym_points': f.get('gym_points', 0),
                         'enabled': f['enabled'],
                         'latitude': f['latitude'],
                         'longitude': f['longitude'],
                         'last_modified': datetime.utcfromtimestamp(
                             f['last_modified_timestamp_ms'] / 1000.0),
-                        'lure_expiration': lure_expiration,
-                        'active_pokemon_id': active_pokemon_id
-                }
-
-            else:  # Currently, there are only stops and gyms
-                gyms[f['id']] = {
-                    'gym_id': f['id'],
-                    'team_id': f['owned_by_team'],
-                    'guard_pokemon_id': f['guard_pokemon_id'],
-                    'gym_points': f['gym_points'],
-                    'enabled': f['enabled'],
-                    'latitude': f['latitude'],
-                    'longitude': f['longitude'],
-                    'last_modified': datetime.utcfromtimestamp(
-                        f['last_modified_timestamp_ms'] / 1000.0),
-                }
+                    }
 
     if pokemons:
         log.info("Upserting {} pokemon".format(len(pokemons)))
