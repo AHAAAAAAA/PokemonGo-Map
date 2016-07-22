@@ -30,3 +30,19 @@ Using this software is against the ToS of the game. You can get banned, use this
 Please submit all pull requests to [develop](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) branch.
 
 Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo API, [tejado's additions](https://github.com/tejado/pokemongo-api-demo), [leegao's additions](https://github.com/leegao/pokemongo-api-demo/tree/simulation) and [Flask-GoogleMaps](https://github.com/rochacbruno/Flask-GoogleMaps).
+
+## Лепро-установка
+
+У @botfather заведите бота и получите токен
+
+```bash
+git clone https://github.com/ufian/PokemonGo-Map.git
+cd PokemonGo-Map
+pip install -r requirements /Users/ufian/tests/poke/PokemonGo-Map-old/requirements.txt
+```
+
+Отредактируйте config/config.ini
+Запускать
+```bash
+python runtelegram.py -se
+```
