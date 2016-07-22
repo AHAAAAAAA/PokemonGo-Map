@@ -41,8 +41,9 @@ cd PokemonGo-Map
 pip install -r requirements /Users/ufian/tests/poke/PokemonGo-Map-old/requirements.txt
 ```
 
-Отредактируйте config/config.ini
-Запускать
+Отредактируйте config/config.ini, указав в секции Telegram полученный токен.
+
+Запускать через
 ```bash
 python runtelegram.py -se
 ```
