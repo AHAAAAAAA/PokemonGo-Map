@@ -25,7 +25,7 @@ with open('locales/pokemon.en.json') as f:
 
 
 GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
-AUTO_REFRESH = 45000  # refresh map every X s
+AUTO_REFRESH = 45  # refresh map every X s
 
 
 def get_args():
