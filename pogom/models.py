@@ -75,7 +75,7 @@ class Gym(BaseModel):
     last_modified = DateTimeField()
 
 
-def parse_map(map_dict, iteration_num):
+def parse_map(map_dict, iteration_num, step):
     pokemons = {}
     pokestops = {}
     gyms = {}
@@ -96,7 +96,7 @@ def parse_map(map_dict, iteration_num):
                 'disappear_time': d_t
             }
 
-        if iteration_num > 0:
+        if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
                 if f.get('type') == 1:  # Pokestops
                         if 'lure_info' in f:
