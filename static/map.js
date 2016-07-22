@@ -119,7 +119,6 @@ function initMap() {
     });
     
     google.maps.event.addListener(map, 'dblclick', function(event) {
-        console.log(event.latLng);
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
         post('/setLoc', {location: lat+'|'+lng});
