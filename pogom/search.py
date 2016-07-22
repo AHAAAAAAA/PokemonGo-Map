@@ -55,6 +55,7 @@ def login(args, position):
 def search(args):
     num_steps = args.step_limit
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
+    config['LOCATION_CHANGED'] = False
 
     if api._auth_provider and api._auth_provider._ticket_expire:
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
@@ -67,6 +68,14 @@ def search(args):
         login(args, position)
 
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
+        if 'NEXT_LOCATION' in config:
+            log.info('New location found. Starting new scan.')
+            config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
+            config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
+            config.pop('NEXT_LOCATION', None)
+            search(args)
+            return
+
         log.info('Scanning step {:d} of {:d}.'.format(step, num_steps**2))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
