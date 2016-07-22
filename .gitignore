@@ -7,3 +7,4 @@ credentials.json
 static/dist/
 node_modules/
 venv/
+config/config.yml

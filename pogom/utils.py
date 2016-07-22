@@ -8,10 +8,12 @@ import re
 import uuid
 import os
 import json
+import yaml
+from dict2object import Dict2Object
 from datetime import datetime, timedelta
 
 from . import config
-from exceptions import APIKeyException
+
 
 
 def parse_unicode(bytestring):
@@ -19,26 +21,54 @@ def parse_unicode(bytestring):
     return decoded_string
 
 
-def get_args():
+def parse_args():
     # fuck PEP8
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
     parser.add_argument('-p', '--password', help='Password', required=False)
-    parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates', required=True)
+    parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates',
+                        required=True)
     parser.add_argument('-st', '--step-limit', help='Steps', required=True, type=int)
     parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', required=False, type=int, default=1)
     parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
     parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check'
-                        'locale folder for more options', default='en')
+                                               'locale folder for more options', default='en')
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
-    parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
-    parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
+    parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.',
+                        action='store_true', default=False)
+    parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None,
+                        dest='gmaps_key', required=True)
     parser.set_defaults(DEBUG=False)
-    args = parser.parse_args()
+    return parser.parse_args()
+
+def parse_config():
+    config_file = os.path.join(os.path.dirname(__file__), '../config/config.yml')
+    if os.path.isfile(config_file):
+        with open(config_file) as data_file:
+            args = yaml.safe_load(data_file)
+            return Dict2Object(args) if args else False
+    else:
+        return False
+
+def get_args():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-ic', '--ignore-config', help='Ignore the configuration file and use command line switches.', action='store_true')
+    initial_args = parser.parse_args()
+
+    config = parse_config()
+
+    if initial_args.ignore_config: # If we should ignore the config file then parse the rest of the arguments
+        args = parse_args()
+    elif config: # Otherwise check for a config file and parse it
+        args = config
+    else:   # If there was no config file try to fall back on commandline arguments
+        args = parse_args()
+
     if args.password is None:
         args.password = getpass.getpass()
 
@@ -101,13 +131,3 @@ def get_pokemon_name(pokemon_id):
             get_pokemon_name.names = json.loads(f.read())
 
     return get_pokemon_name.names[str(pokemon_id)]
-
-def load_credentials(filepath):
-    with open(filepath+os.path.sep+'credentials.json') as file:
-        creds = json.load(file)
-        if not creds['gmaps_key']:
-            raise APIKeyException(\
-                "No Google Maps Javascript API key entered in credentials.json file!"
-                " Please take a look at the wiki for instructions on how to generate this key,"
-                " then add that key to the file!")
-        return creds
