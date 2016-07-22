@@ -19,6 +19,7 @@ import threading
 import werkzeug.serving
 import pokemon_pb2
 import time
+import warnings
 from google.protobuf.internal import encoder
 from google.protobuf.message import DecodeError
 from s2sphere import *
@@ -491,8 +492,7 @@ def get_args():
         data = json.load(data_file)
         for key in data:
             if key not in default_args_type:
-                print key
-                raise LookupError('Arguments Type List Needs Updated')
+                warnings.warn( 'Config Item ' + key + 'Does Not Have a Default Type' )
                 
             if default_args_type[key] == INTEGER_STR:
                 default_args[key] = int(data[key])
@@ -502,7 +502,6 @@ def get_args():
                 
             else:
                 if default_args_type[key] != STRING_STR:
-                    import warnings
                     warnings.warn( 'Unsupported Default Args Type' )
             
                 default_args[key] = str(data[key])
