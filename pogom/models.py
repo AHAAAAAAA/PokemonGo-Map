@@ -120,9 +120,9 @@ def parse_map(map_dict, iteration_num, step):
                 else:  # Currently, there are only stops and gyms
                     gyms[f['id']] = {
                         'gym_id': f['id'],
-                        'team_id': f['owned_by_team'],
-                        'guard_pokemon_id': f['guard_pokemon_id'],
-                        'gym_points': f['gym_points'],
+                        'team_id': f.get('owned_by_team', 0),
+                        'guard_pokemon_id': f.get('guard_pokemon_id', 0),
+                        'gym_points': f.get('gym_points', 0),
                         'enabled': f['enabled'],
                         'latitude': f['latitude'],
                         'longitude': f['longitude'],

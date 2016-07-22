@@ -167,10 +167,11 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude) {
 function gymLabel(team_name, team_id, gym_points) {
     var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
     var str;
-    if (team_name == 0) {
+    if (team_id == 0) {
         str = `<div><center>
             <div>
                 <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
+                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
             </center></div>`;
     } else {
