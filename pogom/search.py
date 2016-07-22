@@ -13,10 +13,7 @@ from .models import parse_map
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
-REQ_SLEEP = 1
-failed_consecutive = 0
 api = PGoApi()
-
 
 def send_map_request(api, position):
     try:
@@ -27,7 +24,7 @@ def send_map_request(api, position):
                             cell_id=get_cellid(position[0], position[1]))
         return api.call()
     except Exception as e:
-        log.warn("Uncaught exception when downloading map "+ e)
+        log.warn("Uncaught exception when downloading map " + str(e))
         return False
 
 
@@ -35,7 +32,7 @@ def generate_location_steps(initial_location, num_steps):
     pos, x, y, dx, dy = 1, 0, 0, 0, -1
 
     while -num_steps / 2 < x <= num_steps / 2 and -num_steps / 2 < y <= num_steps / 2:
-        yield (x * 0.0025 + initial_location[0], y * 0.0025 + initial_location[1], 0)
+        yield (x * 0.00125 + initial_location[0], y * 0.00175 + initial_location[1], 0)
 
         if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
             dx, dy = -dy, dx
@@ -50,7 +47,7 @@ def login(args, position):
 
     while not api.login(args.auth_service, args.username, args.password):
         log.info('Failed to login to Pokemon Go. Trying again.')
-        time.sleep(REQ_SLEEP)
+        time.sleep(config['REQ_SLEEP'])
 
     log.info('Login to Pokemon Go successful.')
 
@@ -69,31 +66,29 @@ def search(args):
     else:
         login(args, position)
 
-    i = 1
-    for step_location in generate_location_steps(position, num_steps):
-        log.info('Scanning step {:d} of {:d}.'.format(i, num_steps**2))
+    for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
+        log.info('Scanning step {:d} of {:d}.'.format(step, num_steps**2))
         log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
-        response_dict = send_map_request(api, step_location)
-        while not response_dict:
-            log.info('Map Download failed. Trying again.')
-            response_dict = send_map_request(api, step_location)
-            time.sleep(REQ_SLEEP)
-
-        try:
-            parse_map(response_dict)
-        except KeyError:
-            log.error('Scan step failed. Response dictionary key error.')
-    
-            global failed_consecutive
-            failed_consecutive += 1
-            if(failed_consecutive >= 5):
-                log.error('Niantic servers under heavy load. Waiting before trying again')
-            	time.sleep(5)
+        response_dict = {}
         failed_consecutive = 0
-        log.info('Completed {:5.2f}% of scan.'.format(float(i) / num_steps**2*100))
-        i += 1
-        time.sleep(REQ_SLEEP)
+        while not response_dict:
+            response_dict = send_map_request(api, step_location)
+            if response_dict:
+                try:
+                    parse_map(response_dict)
+                except KeyError:
+                    log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
+                    failed_consecutive += 1
+                    if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                        log.error('Niantic servers under heavy load. Waiting before trying again')
+                        time.sleep(config['REQ_HEAVY_SLEEP'])
+                        failed_consecutive = 0
+            else:
+                log.info('Map Download failed. Trying again.')
+
+        log.info('Completed {:5.2f}% of scan.'.format(float(step) / num_steps**2*100))
+        time.sleep(config['REQ_SLEEP'])
 
 
 def search_loop(args):
