@@ -7,11 +7,12 @@ from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
 from datetime import datetime
 from base64 import b64encode
 
-from .utils import get_pokemon_name
+from .utils import get_pokemon_name, get_args
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
-db = SqliteDatabase('pogom.db')
+args = get_args()
+db = SqliteDatabase(args.db)
 log = logging.getLogger(__name__)
 
 
