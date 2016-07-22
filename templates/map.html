@@ -97,6 +97,12 @@
 					<select id="notify-pokemon" multiple="multiple"></select>
 				</label>
 			</div>
+			<div style="margin-top: 25px;">
+				<label for="next-location">
+					<h3>Next Location</h3>
+					<input type="text" id="next-location" style="color: black; background-color: white; border: 1px solid #3b3b3b;"/>
+				</label>
+			</div>
 		</nav>
 
 
@@ -127,7 +133,7 @@
 	</script>
 
 	<script type="text/javascript" src="static/map.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places"></script>
 
 	</body>
 </html>
