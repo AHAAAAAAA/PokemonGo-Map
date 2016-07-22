@@ -1,0 +1,15 @@
+<table border="1">
+{% for pokemon in pokemon_list %}
+<tr>
+<td>
+<a href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
+<img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png'>
+</a>
+</td>
+<td>{{pokemon.time_to_disappear}}</td>
+<td>{{pokemon.distance}}m ({{pokemon.card_dir}})</td>
+</tr>
+{% endfor %}
+<tr><td></td><td><b>low priority</b></td><td></td></tr>
+</table>
+<a href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>scan origin</a>
