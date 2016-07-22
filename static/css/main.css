@@ -2001,9 +2001,6 @@ html, body {
   height: 100%;
   margin-top: 3.5em; }
 
-.wrapper {
-  position: relative; }
-
 #header, #map, #footer {
   position: absolute; }
 
@@ -2013,9 +2010,9 @@ html, body {
 
 #map {
   top: 3.5em;
-  bottom: 0px;
-  height: 100vh;
-  width: 100vw; }
+  right: 0;
+  bottom: 0;
+  left: 0; }
 
 /* Footer */
 #footer {

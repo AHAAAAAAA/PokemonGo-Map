@@ -11,11 +11,6 @@ html, body {
 	margin-top: 3.5em;
 }
 
-.wrapper {
-	position: relative;
-  height: 100%;
-}
-
 #header, #map, #footer {
 	position: absolute;
 }
@@ -26,8 +21,8 @@ html, body {
 }
 
 #map {
-	top: 3.5em;
-	bottom: 0px;
-  height: unset;
-  width: 100vw;
+  top: 3.5em;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
