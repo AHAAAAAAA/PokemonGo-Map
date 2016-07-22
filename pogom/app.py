@@ -55,7 +55,7 @@ class Pogom(Flask):
             search_thread.daemon = True
             search_thread.name = 'search_thread'
             search_thread.start()
-            return 'ok'
+            return redirect('/')
 
 
 class CustomJSONEncoder(JSONEncoder):
