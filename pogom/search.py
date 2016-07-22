@@ -84,6 +84,8 @@ def search(args):
             parse_map(response_dict)
         except KeyError:
             log.error('Scan step failed. Response dictionary key error.')
+    
+            global failed_consecutive
             failed_consecutive += 1
             if(failed_consecutive >= 5):
                 log.error('Niantic servers under heavy load. Waiting before trying again')
