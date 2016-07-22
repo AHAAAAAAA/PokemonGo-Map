@@ -61,7 +61,7 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
-    if config['ssl_key'] is not None:
+    if config['ssl_key'] != "":
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.load_cert_chain(keyfile='privkey.pem', certfile='/cert.pem')
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port, ssl_context=context)
