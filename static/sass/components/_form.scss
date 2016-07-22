@@ -8,7 +8,6 @@
 	input[type="password"],
 	input[type="email"],
 	input[type="tel"],
-	select,
 	textarea {
 		@include vendor('appearance', 'none');
 		background: _palette(border-bg);
@@ -32,33 +31,9 @@
 		}
 	}
 
-	.select-wrapper {
-		@include icon('\f078');
-		display: block;
-		position: relative;
-
-		&:before {
-			color: _palette(border);
-			display: block;
-			height: _size(element-height);
-			line-height: _size(element-height);
-			pointer-events: none;
-			position: absolute;
-			right: 0;
-			text-align: center;
-			top: 0;
-			width: _size(element-height);
-		}
-
-		select::-ms-expand {
-			display: none;
-		}
-	}
-
 	input[type="text"],
 	input[type="password"],
-	input[type="email"],
-	select {
+	input[type="email"] {
 		height: _size(element-height);
 	}
 
@@ -91,9 +66,16 @@
 		opacity: 1.0;
 	}
 
+.switch-container {
+	float: left;
+	width: 100%;
+}
+
 .onoffswitch {
   position: relative;
 	width: 70px;
+	float: right;
+	margin-bottom: 20px;
   -webkit-user-select:none;
 	-moz-user-select:none;
 	-ms-user-select: none;
@@ -136,4 +118,21 @@
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
   right: 0px;
+}
+
+.select2-container {
+	width: 100% !important;
+	float: left;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	background-color: #4A80F5 !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border: 1px solid darken(_palette(accent2, bg), 12);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+	color: #FFFFFF !important;
 }
