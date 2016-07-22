@@ -52,7 +52,7 @@ def login(args, position):
     log.info('Login to Pokemon Go successful.')
 
 
-def search(args):
+def search(args, i):
     num_steps = args.step_limit
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
@@ -84,7 +84,7 @@ def search(args):
             response_dict = send_map_request(api, step_location)
             if response_dict:
                 try:
-                    parse_map(response_dict)
+                    parse_map(response_dict, i)
                 except KeyError:
                     log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
                     failed_consecutive += 1
@@ -100,9 +100,12 @@ def search(args):
 
 
 def search_loop(args):
+    i = 0
     while True:
-        search(args)
+        log.info("Map iteration: {}".format(i))
+        search(args, i)
         log.info("Scanning complete.")
         if args.scan_delay > 1:
             log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
+        i += 1
         time.sleep(args.scan_delay)
