@@ -12,13 +12,35 @@ from .utils import get_pokemon_name, load_credentials
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 log = logging.getLogger(__name__)
+
 
 db = None
 
+def init_database(): 
+    global db
+    if db is not None:
+        return db
+
+    credentials = load_credentials(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    if credentials['mysql_db']:
+        db = MySQLDatabase(
+            credentials['mysql_db'], 
+            user=credentials['mysql_user'], 
+            password=credentials['mysql_pass'], 
+            host=credentials['mysql_host'])
+        log.info('Connecting to MySQL database on {}.'.format(credentials['mysql_host']))
+    else:
+        db = SqliteDatabase('pogom.db')
+        log.info('Connecting to local SQLLite database.')
+
+    return db
+
+
 class BaseModel(Model):
     class Meta:
-        database = db
+        database = init_database()
 
     @classmethod
     def get_all(cls):
@@ -150,25 +172,6 @@ def bulk_upsert(cls, data):
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
         InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         i+=step
-
-def init_database(): 
-    global db
-    if db is not None:
-        return db
-
-    credentials = load_credentials(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-    if credentials['mysql_db']:
-        db = MySQLDatabase(
-            credentials['mysql_db'], 
-            user=credentials['mysql_user'], 
-            password=credentials['mysql_pass'], 
-            host=credentials['mysql_host'])
-        log.info('Connecting to MySQL database on {}.'.format(credentials['mysql_host']))
-    else:
-        db = SqliteDatabase('pogom.db')
-        log.info('Connecting to local SQLLite database.')
-
-    return db
 
 def create_tables(db):
     db.connect()
