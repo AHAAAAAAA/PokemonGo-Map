@@ -142,7 +142,7 @@ function initSidebar() {
         }
 
         var loc = places[0].geometry.location;
-        $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+        $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng()+ "&master=" + masterPw, {}).done(function (data) {
             $("#next-location").val("");
             map.setCenter(loc);
             marker.setPosition(loc);
