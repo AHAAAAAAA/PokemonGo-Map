@@ -164,7 +164,7 @@ class PGoApi:
             self._api_endpoint = ('https://{}/rpc'.format(response['api_url']))
             self.log.debug('Setting API endpoint to: %s', self._api_endpoint)
         
-        if 'auth_ticket' in response:
+        elif 'auth_ticket' in response:
             auth_ticket = response['auth_ticket']
             self._auth_provider.set_ticket([auth_ticket['expire_timestamp_ms'], auth_ticket['start'], auth_ticket['end']])
 
