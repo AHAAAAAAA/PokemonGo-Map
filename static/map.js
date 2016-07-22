@@ -319,8 +319,8 @@ document.getElementById('gyms-switch').onclick = function() {
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_gyms, function(key, value) {
-            map_gyms[key].marker.setMap(null);
+        $.each(map_gyms, function(key, item) {
+            item.marker.setMap(null);
         });
         map_gyms = {}
     }
@@ -331,8 +331,8 @@ $('#pokemon-switch').change(function() {
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_pokemons, function(key, value) {
-            map_pokemons[key].marker.setMap(null);
+        $.each(map_pokemons, function(key, item) {
+            item.marker.setMap(null);
         });
         map_pokemons = {}
     }
@@ -343,10 +343,21 @@ $('#pokestops-switch').change(function() {
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_pokestops, function(key, value) {
-            map_pokestops[key].marker.setMap(null);
+        $.each(map_pokestops, function(key, item) {
+            item.marker.setMap(null);
         });
         map_pokestops = {}
+    }
+});
+
+$('#piw-switch').change(function() {
+    localStorage["autoOpenPIW"] = this.checked;
+    if (this.checked) {
+        $.each(map_pokemons, function(key, item) {
+            item.marker.infoWindow.open(map, item.marker);
+        });
+    } else {
+       
     }
 });
 
