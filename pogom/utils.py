@@ -20,7 +20,6 @@ def parse_unicode(bytestring):
 
 
 def get_args():
-    # fuck PEP8
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
