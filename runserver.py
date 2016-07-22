@@ -3,7 +3,6 @@
 
 import os
 import logging
-import time
 
 from threading import Thread
 
@@ -15,12 +14,13 @@ from pogom.models import create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
+from pogom.alarm.create_alarm import create_alarm
+
 log = logging.getLogger(__name__)
 
-search_thread = Thread()
 
-def start_locator_thread(args):
-    search_thread = Thread(target=search_loop, args=(args,))
+def start_locator_thread(args, alarm):
+    search_thread = Thread(target=search_loop, args=(args, alarm))
     search_thread.daemon = True
     search_thread.name = 'search_thread'
     search_thread.start()
@@ -35,7 +35,6 @@ if __name__ == '__main__':
     logging.getLogger("pogom.pgoapi.rpc_api").setLevel(logging.INFO)
 
     args = get_args()
-
     if args.debug:
         logging.getLogger("requests").setLevel(logging.DEBUG)
         logging.getLogger("pgoapi").setLevel(logging.DEBUG)
@@ -51,8 +50,10 @@ if __name__ == '__main__':
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
 
+    alarm = create_alarm(os.path.dirname(os.path.realpath(__file__)))
+	
     if not args.mock:
-        start_locator_thread(args)
+        start_locator_thread(args, alarm)
     else:
         insert_mock_data()
 
@@ -62,10 +63,4 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = args.gmaps_key
     else:
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
-
-    if args.no_server:
-        while not search_thread.isAlive():
-            time.sleep(1)
-        search_thread.join()
-    else:
-        app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
+    app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)

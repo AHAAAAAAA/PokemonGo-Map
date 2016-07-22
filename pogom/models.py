@@ -75,7 +75,7 @@ class Gym(BaseModel):
     last_modified = DateTimeField()
 
 
-def parse_map(map_dict):
+def parse_map(map_dict, alarm):
     pokemons = {}
     pokestops = {}
     gyms = {}
@@ -132,6 +132,8 @@ def parse_map(map_dict):
     if pokemons:
         log.info("Upserting {} pokemon".format(len(pokemons)))
         bulk_upsert(Pokemon, pokemons)
+        if alarm:
+			alarm.notify_pokemon(pokemons)
 
     if pokestops:
         log.info("Upserting {} pokestops".format(len(pokestops)))
