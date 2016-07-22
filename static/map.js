@@ -21,14 +21,14 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
 
     JSON.parse(readCookie("remember_select_exclude"));
     $selectExclude.select2({
-        placeholder: "Select Pokémon to exclude",
+        placeholder: "Select Pokémon",
         data: pokeList
     });
     $selectExclude.val(JSON.parse(readCookie("remember_select_exclude"))).trigger("change");
     
     JSON.parse(readCookie("remember_select_notify"));
     $selectNotify.select2({
-        placeholder: "Select Pokémon to notify on spawn",
+        placeholder: "Select Pokémon",
         data: pokeList
     });
     $selectNotify.val(JSON.parse(readCookie("remember_select_notify"))).trigger("change");
