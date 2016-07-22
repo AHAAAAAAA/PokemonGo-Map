@@ -186,7 +186,7 @@ function setupPokemonMarker(item) {
     });
     
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        sendNotification('A ' + item.pokemon_name + ' Appeared', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
     }
 
     addListeners(marker);
