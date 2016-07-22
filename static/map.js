@@ -68,12 +68,8 @@ function initMap() {
     var longitude = getParameterByName('long');
 
     if (latitude) {
-	var pos = {
-	    lat: latitude,
-	    lng: longitude
-	};
-	center_lat = latitude;  // Override default lat/lang if passed via URL. /?lat=42.3152924&long=-83.0367337
-	center_lng = longitude;
+	center_lat = parseFloat(latitude);  // Override default lat/lang if passed via URL. /?lat=42.3152924&long=-83.0367337
+	center_lng = parseFloat(longitude);
     }
 
     map = new google.maps.Map(document.getElementById('map'), {
