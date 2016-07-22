@@ -105,11 +105,14 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 def load_credentials(filepath):
-    with open(filepath+os.path.sep+'credentials.json') as file:
-        creds = json.load(file)
-        if not creds['gmaps_key']:
-            raise APIKeyException(\
-                "No Google Maps Javascript API key entered in credentials.json file!"
-                " Please take a look at the wiki for instructions on how to generate this key,"
-                " then add that key to the file!")
-        return creds
+    try:
+        with open(filepath+os.path.sep+'credentials.json') as file:
+            creds = json.load(file)
+    except IOError:
+        creds = {}
+    if not creds.get('gmaps_key'):
+        raise APIKeyException(\
+            "No Google Maps Javascript API key entered in credentials.json file!"
+            " Please take a look at the wiki for instructions on how to generate this key,"
+            " then add that key to the file!")
+    return creds
