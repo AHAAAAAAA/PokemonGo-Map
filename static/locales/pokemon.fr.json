@@ -1,1 +1,4322 @@
-{"1":"Bulbizarre","2":"Herbizarre","3":"Florizarre","4":"Salamèche","5":"Reptincel","6":"Dracaufeu","7":"Carapuce","8":"Carabaffe","9":"Tortank","10":"Chenipan","11":"Chrysacier","12":"Papilusion","13":"Aspicot","14":"Coconfort","15":"Dardargnan","16":"Roucool","17":"Roucoups","18":"Roucarnage","19":"Rattata","20":"Rattatac","21":"Piafabec","22":"Rapasdepic","23":"Abo","24":"Arbok","25":"Pikachu","26":"Raichu","27":"Sabelette","28":"Sablaireau","29":"Nidoran♀","30":"Nidorina","31":"Nidoqueen","32":"Nidoran♂","33":"Nidorino","34":"Nidoking","35":"Mélofée","36":"Mélodelfe","37":"Goupix","38":"Feunard","39":"Rondoudou","40":"Grodoudou","41":"Nosferapti","42":"Nosferalto","43":"Mystherbe","44":"Ortide","45":"Rafflesia","46":"Paras","47":"Parasect","48":"Mimitoss","49":"Aéromite","50":"Taupiqueur","51":"Triopikeur","52":"Miaouss","53":"Persian","54":"Psykokwak","55":"Akwakwak","56":"Férosinge","57":"Colossinge","58":"Caninos","59":"Arcanin","60":"Ptitard","61":"Têtarte","62":"Tartard","63":"Abra","64":"Kadabra","65":"Alakazam","66":"Machoc","67":"Machopeur","68":"Mackogneur","69":"Chétiflor","70":"Boustiflor","71":"Empiflor","72":"Tentacool","73":"Tentacruel","74":"Racaillou","75":"Gravalanch","76":"Grolem","77":"Ponyta","78":"Galopa","79":"Ramoloss","80":"Flagadoss","81":"Magnéti","82":"Magnéton","83":"Canarticho","84":"Doduo","85":"Dodrio","86":"Otaria","87":"Lamantine","88":"Tadmorv","89":"Grotadmorv","90":"Kokiyas","91":"Crustabri","92":"Fantominus","93":"Spectrum","94":"Ectoplasma","95":"Onix","96":"Soporifik","97":"Hypnomade","98":"Krabby","99":"Krabboss","100":"Voltorbe","101":"Électrode","102":"Nœunœuf","103":"Noadkoko","104":"Osselait","105":"Ossatueur","106":"Kicklee","107":"Tygnon","108":"Excelangue","109":"Smogo","110":"Smogogo","111":"Rhinocorne","112":"Rhinoféros","113":"Leveinard","114":"Saquedeneu","115":"Kangourex","116":"Hypotrempe","117":"Hypocéan","118":"Poissirène","119":"Poissoroy","120":"Stari","121":"Staross","122":"M.Mime","123":"Insécateur","124":"Lippoutou","125":"Élektek","126":"Magmar","127":"Scarabrute","128":"Tauros","129":"Magicarpe","130":"Léviator","131":"Lokhlass","132":"Métamorph","133":"Évoli","134":"Aquali","135":"Voltali","136":"Pyroli","137":"Porygon","138":"Amonita","139":"Amonistar","140":"Kabuto","141":"Kabutops","142":"Ptéra","143":"Ronflex","144":"Artikodin","145":"Électhor","146":"Sulfura","147":"Minidraco","148":"Draco","149":"Dracolosse","150":"Mewtwo","151":"Mew","152":"Germignon","153":"Macronium","154":"Méganium","155":"Héricendre","156":"Feurisson","157":"Typhlosion","158":"Kaiminus","159":"Crocrodil","160":"Aligatueur","161":"Fouinette","162":"Fouinar","163":"Hoothoot","164":"Noarfang","165":"Coxy","166":"Coxyclaque","167":"Mimigal","168":"Migalos","169":"Nostenfer","170":"Loupio","171":"Lanturn","172":"Pichu","173":"Mélo","174":"Toudoudou","175":"Togepi","176":"Togetic","177":"Natu","178":"Xatu","179":"Wattouat","180":"Lainergie","181":"Pharamp","182":"Joliflor","183":"Marill","184":"Azumarill","185":"Simularbre","186":"Tarpaud","187":"Granivol","188":"Floravol","189":"Cotovol","190":"Capumain","191":"Tournegrin","192":"Héliatronc","193":"Yanma","194":"Axoloto","195":"Maraiste","196":"Mentali","197":"Noctali","198":"Cornèbre","199":"Roigada","200":"Feuforêve","201":"Zarbi","202":"Qulbutoké","203":"Girafarig","204":"Pomdepic","205":"Foretress","206":"Insolourdo","207":"Scorplane","208":"Steelix","209":"Snubbull","210":"Granbull","211":"Qwilfish","212":"Cizayox","213":"Caratroc","214":"Scarhino","215":"Farfuret","216":"Teddiursa","217":"Ursaring","218":"Limagma","219":"Volcaropod","220":"Marcacrin","221":"Cochignon","222":"Corayon","223":"Rémoraid","224":"Octillery","225":"Cadoizo","226":"Démanta","227":"Airmure","228":"Malosse","229":"Démolosse","230":"Hyporoi","231":"Phanpy","232":"Donphan","233":"Porygon2","234":"Cerfrousse","235":"Queulorior","236":"Debugant","237":"Kapoera","238":"Lippouti","239":"Élekid","240":"Magby","241":"Écrémeuh","242":"Leuphorie","243":"Raikou","244":"Entei","245":"Suicune","246":"Embrylex","247":"Ymphect","248":"Tyranocif","249":"Lugia","250":"Ho-Oh","251":"Celebi","252":"Arcko","253":"Massko","254":"Jungko","255":"Poussifeu","256":"Galifeu","257":"Braségali","258":"Gobou","259":"Flobio","260":"Laggron","261":"Medhyèna","262":"Grahyèna","263":"Zigzaton","264":"Linéon","265":"Chenipotte","266":"Armulys","267":"Charmillon","268":"Blindalys","269":"Papinox","270":"Nénupiot","271":"Lombre","272":"Ludicolo","273":"Grainipiot","274":"Pifeuil","275":"Tengalice","276":"Nirondelle","277":"Hélédelle","278":"Goélise","279":"Bekipan","280":"Tarsal","281":"Kirlia","282":"Gardevoir","283":"Arakdo","284":"Maskadra","285":"Balignon","286":"Chapignon","287":"Parecool","288":"Vigoroth","289":"Monaflèmit","290":"Ningale","291":"Ninjask","292":"Munja","293":"Chuchmur","294":"Ramboum","295":"Brouhabam","296":"Makuhita","297":"Hariyama","298":"Azurill","299":"Tarinor","300":"Skitty","301":"Delcatty","302":"Ténéfix","303":"Mysdibule","304":"Galekid","305":"Galegon","306":"Galeking","307":"Méditikka","308":"Charmina","309":"Dynavolt","310":"Élecsprint","311":"Posipi","312":"Négapi","313":"Muciole","314":"Lumivole","315":"Rosélia","316":"Gloupti","317":"Avaltout","318":"Carvanha","319":"Sharpedo","320":"Wailmer","321":"Wailord","322":"Chamallot","323":"Camérupt","324":"Chartor","325":"Spoink","326":"Groret","327":"Spinda","328":"Kraknoix","329":"Vibraninf","330":"Libégon","331":"Cacnea","332":"Cacturne","333":"Tylton","334":"Altaria","335":"Mangriff","336":"Séviper","337":"Séléroc","338":"Solaroc","339":"Barloche","340":"Barbicha","341":"Écrapince","342":"Colhomard","343":"Balbuto","344":"Kaorine","345":"Lilia","346":"Vacilys","347":"Anorith","348":"Armaldo","349":"Barpau","350":"Milobellus","351":"Morphéo","352":"Kecleon","353":"Polichombr","354":"Branette","355":"Skelénox","356":"Téraclope","357":"Tropius","358":"Éoko","359":"Absol","360":"Okéoké","361":"Stalgamin","362":"Oniglali","363":"Obalie","364":"Phogleur","365":"Kaimorse","366":"Coquiperl","367":"Serpang","368":"Rosabyss","369":"Relicanth","370":"Lovdisc","371":"Draby","372":"Drackhaus","373":"Drattak","374":"Terhal","375":"Métang","376":"Métalosse","377":"Regirock","378":"Regice","379":"Registeel","380":"Latias","381":"Latios","382":"Kyogre","383":"Groudon","384":"Rayquaza","385":"Jirachi","386":"Deoxys","387":"Tortipouss","388":"Boskara","389":"Torterra","390":"Ouisticram","391":"Chimpenfeu","392":"Simiabraz","393":"Tiplouf","394":"Prinplouf","395":"Pingoléon","396":"Étourmi","397":"Étourvol","398":"Étouraptor","399":"Keunotor","400":"Castorno","401":"Crikzik","402":"Mélokrik","403":"Lixy","404":"Luxio","405":"Luxray","406":"Rozbouton","407":"Roserade","408":"Kranidos","409":"Charkos","410":"Dinoclier","411":"Bastiodon","412":"Cheniti","413":"Cheniselle","414":"Papilord","415":"Apitrini","416":"Apireine","417":"Pachirisu","418":"Mustébouée","419":"Mustéflott","420":"Ceribou","421":"Ceriflor","422":"Sancoki","423":"Tritosor","424":"Capidextre","425":"Baudrive","426":"Grodrive","427":"Laporeille","428":"Lockpin","429":"Magirêve","430":"Corboss","431":"Chaglam","432":"Chaffreux","433":"Korillon","434":"Moufouette","435":"Moufflair","436":"Archéomire","437":"Archéodong","438":"Manzaï","439":"Mime Jr","440":"Ptiravi","441":"Pijako","442":"Spiritomb","443":"Griknot","444":"Carmache","445":"Carchacrok","446":"Goinfrex","447":"Riolu","448":"Lucario","449":"Hippopotas","450":"Hippodocus","451":"Rapion","452":"Drascore","453":"Cradopaud","454":"Coatox","455":"Vortente","456":"Écayon","457":"Luminéon","458":"Babimanta","459":"Blizzi","460":"Blizzaroi","461":"Dimoret","462":"Magnézone","463":"Coudlangue","464":"Rhinastoc","465":"Bouldeneu","466":"Élekable","467":"Maganon","468":"Togekiss","469":"Yanméga","470":"Phyllali","471":"Givrali","472":"Scorvol","473":"Mammochon","474":"Porygon-Z","475":"Gallame","476":"Tarinorme","477":"Noctunoir","478":"Momartik","479":"Motisma","480":"Créhelf","481":"Créfollet","482":"Créfadet","483":"Dialga","484":"Palkia","485":"Heatran","486":"Regigigas","487":"Giratina","488":"Cresselia","489":"Phione","490":"Manaphy","491":"Darkrai","492":"Shaymin","493":"Arceus","494":"Victini","495":"Vipélierre","496":"Lianaja","497":"Majaspic","498":"Gruikui","499":"Grotichon","500":"Roitiflam","501":"Moustillon","502":"Mateloutre","503":"Clamiral","504":"Ratentif","505":"Miradar","506":"Ponchiot","507":"Ponchien","508":"Mastouffe","509":"Chacripan","510":"Léopardus","511":"Feuillajou","512":"Feuiloutan","513":"Flamajou","514":"Flamoutan","515":"Flotajou","516":"Flotoutan","517":"Munna","518":"Mushana","519":"Poichigeon","520":"Colombeau","521":"Déflaisan","522":"Zébribon","523":"Zéblitz","524":"Nodulithe","525":"Géolithe","526":"Gigalithe","527":"Chovsourir","528":"Rhinolove","529":"Rototaupe","530":"Minotaupe","531":"Nanméouïe","532":"Charpenti","533":"Ouvrifier","534":"Bétochef","535":"Tritonde","536":"Batracné","537":"Crapustule","538":"Judokrak","539":"Karaclée","540":"Larveyette","541":"Couverdure","542":"Manternel","543":"Venipatte","544":"Scobolide","545":"Brutapode","546":"Doudouvet","547":"Farfaduvet","548":"Chlorobule","549":"Fragilady","550":"Bargantua","551":"Mascaïman","552":"Escroco","553":"Crocorible","554":"Darumarond","555":"Darumacho","556":"Maracachi","557":"Crabicoque","558":"Crabaraque","559":"Baggiguane","560":"Baggaïd","561":"Cryptéro","562":"Tutafeh","563":"Tutankafer","564":"Carapagos","565":"Mégapagos","566":"Arkéapti","567":"Aéroptéryx","568":"Miamiasme","569":"Miasmax","570":"Zorua","571":"Zoroark","572":"Chinchidou","573":"Pashmilla","574":"Scrutella","575":"Mesmérella","576":"Sidérella","577":"Nucléos","578":"Méios","579":"Symbios","580":"Couaneton","581":"Lakmécygne","582":"Sorbébé","583":"Sorboul","584":"Sorbouboul","585":"Vivaldaim","586":"Haydaim","587":"Emolga","588":"Carabing","589":"Lançargot","590":"Trompignon","591":"Gaulet","592":"Viskuse","593":"Moyade","594":"Mamanbo","595":"Statitik","596":"Mygavolt","597":"Grindur","598":"Noacier","599":"Tic","600":"Clic","601":"Cliticlic","602":"Anchwatt","603":"Lampéroie","604":"Ohmassacre","605":"Lewsor","606":"Neitram","607":"Funécire","608":"Mélancolux","609":"Lugulabre","610":"Coupenotte","611":"Incisache","612":"Tranchodon","613":"Polarhume","614":"Polagriffe","615":"Hexagel","616":"Escargaume","617":"Limaspeed","618":"Limonde","619":"Kungfouine","620":"Shaofouine","621":"Drakkarmin","622":"Gringolem","623":"Golemastoc","624":"Scalpion","625":"Scalproie","626":"Frison","627":"Furaiglon","628":"Gueriaigle","629":"Vostourno","630":"Vaututrice","631":"Aflamanoir","632":"Fermite","633":"Solochi","634":"Diamat","635":"Trioxhydre","636":"Pyronille","637":"Pyrax","638":"Cobaltium","639":"Terrakium","640":"Viridium","641":"Boréas","642":"Fulguris","643":"Reshiram","644":"Zekrom","645":"Démétéros","646":"Kyurem","647":"Keldeo","648":"Meloetta","649":"Genesect","650":"Marisson","651":"Boguérisse","652":"Blindépique","653":"Feunnec","654":"Roussil","655":"Goupelin","656":"Grenousse","657":"Croâporal","658":"Amphinobi","659":"Sapereau","660":"Excavarenne","661":"Passerouge","662":"Braisillon","663":"Flambusard","664":"Lépidonille","665":"Pérégrain","666":"Prismillon","667":"Hélionceau","668":"Némélios","669":"Flabébé","670":"Floette","671":"Florges","672":"Cabriolaine","673":"Chevroum","674":"Pandespiègle","675":"Pandarbare","676":"Couafarel","677":"Psystigri","678":"Mistigrix","679":"Monorpale","680":"Dimoclès","681":"Exagide","682":"Fluvetin","683":"Cocotine","684":"Sucroquin","685":"Cupcanaille","686":"Sepiatop","687":"Sepiatroce","688":"Opermine","689":"Golgopathe","690":"Venalgue","691":"Kravarech","692":"Flingouste","693":"Gamblast","694":"Galvaran","695":"Iguolta","696":"Ptyranidur","697":"Rexillius","698":"Amagara","699":"Dragmara","700":"Nymphali","701":"Brutalibré","702":"Dedenne","703":"Strassie","704":"Mucuscule","705":"Colimucus","706":"Muplodocus","707":"Trousselin","708":"Brocélôme","709":"Desséliande","710":"Pitrouille","711":"Banshitrouye","712":"Grelaçon","713":"Séracrawl","714":"Sonistrelle","715":"Bruyverne","716":"Xerneas","717":"Yveltal","718":"Zygarde","719":"Diancie","720":"Hoopa","721":"Volcanion"}
+{
+  "1": {
+    "name": "Bulbizarre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "2": {
+    "name": "Herbizarre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "3": {
+    "name": "Florizarre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "4": {
+    "name": "Salamèche",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "5": {
+    "name": "Reptincel",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "6": {
+    "name": "Dracaufeu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "7": {
+    "name": "Carapuce",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "8": {
+    "name": "Carabaffe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "9": {
+    "name": "Tortank",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "10": {
+    "name": "Chenipan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "11": {
+    "name": "Chrysacier",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "12": {
+    "name": "Papilusion",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "13": {
+    "name": "Aspicot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "14": {
+    "name": "Coconfort",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "15": {
+    "name": "Dardargnan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "16": {
+    "name": "Roucool",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "17": {
+    "name": "Roucoups",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "18": {
+    "name": "Roucarnage",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "19": {
+    "name": "Rattata",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "20": {
+    "name": "Rattatac",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "21": {
+    "name": "Piafabec",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "22": {
+    "name": "Rapasdepic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "23": {
+    "name": "Abo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "24": {
+    "name": "Arbok",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "25": {
+    "name": "Pikachu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "26": {
+    "name": "Raichu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "27": {
+    "name": "Sabelette",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "28": {
+    "name": "Sablaireau",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "29": {
+    "name": "Nidoran♀",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "30": {
+    "name": "Nidorina",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "31": {
+    "name": "Nidoqueen",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "32": {
+    "name": "Nidoran♂",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "33": {
+    "name": "Nidorino",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "34": {
+    "name": "Nidoking",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "35": {
+    "name": "Mélofée",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "36": {
+    "name": "Mélodelfe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "37": {
+    "name": "Goupix",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "38": {
+    "name": "Feunard",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "39": {
+    "name": "Rondoudou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "40": {
+    "name": "Grodoudou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "41": {
+    "name": "Nosferapti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "42": {
+    "name": "Nosferalto",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "43": {
+    "name": "Mystherbe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "44": {
+    "name": "Ortide",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "45": {
+    "name": "Rafflesia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "46": {
+    "name": "Paras",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "47": {
+    "name": "Parasect",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "48": {
+    "name": "Mimitoss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "49": {
+    "name": "Aéromite",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "50": {
+    "name": "Taupiqueur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "51": {
+    "name": "Triopikeur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "52": {
+    "name": "Miaouss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "53": {
+    "name": "Persian",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "54": {
+    "name": "Psykokwak",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "55": {
+    "name": "Akwakwak",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "56": {
+    "name": "Férosinge",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "57": {
+    "name": "Colossinge",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "58": {
+    "name": "Caninos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "59": {
+    "name": "Arcanin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "60": {
+    "name": "Ptitard",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "61": {
+    "name": "Têtarte",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "62": {
+    "name": "Tartard",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "63": {
+    "name": "Abra",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "64": {
+    "name": "Kadabra",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "65": {
+    "name": "Alakazam",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "66": {
+    "name": "Machoc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "67": {
+    "name": "Machopeur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "68": {
+    "name": "Mackogneur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "69": {
+    "name": "Chétiflor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "70": {
+    "name": "Boustiflor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "71": {
+    "name": "Empiflor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "72": {
+    "name": "Tentacool",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "73": {
+    "name": "Tentacruel",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "74": {
+    "name": "Racaillou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "75": {
+    "name": "Gravalanch",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "76": {
+    "name": "Grolem",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "77": {
+    "name": "Ponyta",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "78": {
+    "name": "Galopa",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "79": {
+    "name": "Ramoloss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "80": {
+    "name": "Flagadoss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "81": {
+    "name": "Magnéti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "82": {
+    "name": "Magnéton",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "83": {
+    "name": "Canarticho",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "84": {
+    "name": "Doduo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "85": {
+    "name": "Dodrio",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "86": {
+    "name": "Otaria",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "87": {
+    "name": "Lamantine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "88": {
+    "name": "Tadmorv",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "89": {
+    "name": "Grotadmorv",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "90": {
+    "name": "Kokiyas",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "91": {
+    "name": "Crustabri",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "92": {
+    "name": "Fantominus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "93": {
+    "name": "Spectrum",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "94": {
+    "name": "Ectoplasma",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "95": {
+    "name": "Onix",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "96": {
+    "name": "Soporifik",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "97": {
+    "name": "Hypnomade",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "98": {
+    "name": "Krabby",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "99": {
+    "name": "Krabboss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "100": {
+    "name": "Voltorbe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "101": {
+    "name": "Électrode",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "102": {
+    "name": "Nœunœuf",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "103": {
+    "name": "Noadkoko",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "104": {
+    "name": "Osselait",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "105": {
+    "name": "Ossatueur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "106": {
+    "name": "Kicklee",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "107": {
+    "name": "Tygnon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "108": {
+    "name": "Excelangue",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "109": {
+    "name": "Smogo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "110": {
+    "name": "Smogogo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "111": {
+    "name": "Rhinocorne",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "112": {
+    "name": "Rhinoféros",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "113": {
+    "name": "Leveinard",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "114": {
+    "name": "Saquedeneu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "115": {
+    "name": "Kangourex",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "116": {
+    "name": "Hypotrempe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "117": {
+    "name": "Hypocéan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "118": {
+    "name": "Poissirène",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "119": {
+    "name": "Poissoroy",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "120": {
+    "name": "Stari",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "121": {
+    "name": "Staross",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "122": {
+    "name": "M.Mime",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "123": {
+    "name": "Insécateur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "124": {
+    "name": "Lippoutou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "125": {
+    "name": "Élektek",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "126": {
+    "name": "Magmar",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "127": {
+    "name": "Scarabrute",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "128": {
+    "name": "Tauros",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "129": {
+    "name": "Magicarpe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "130": {
+    "name": "Léviator",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "131": {
+    "name": "Lokhlass",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "132": {
+    "name": "Métamorph",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "133": {
+    "name": "Évoli",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "134": {
+    "name": "Aquali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "135": {
+    "name": "Voltali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "136": {
+    "name": "Pyroli",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "137": {
+    "name": "Porygon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "138": {
+    "name": "Amonita",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "139": {
+    "name": "Amonistar",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "140": {
+    "name": "Kabuto",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "141": {
+    "name": "Kabutops",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "142": {
+    "name": "Ptéra",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "143": {
+    "name": "Ronflex",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "144": {
+    "name": "Artikodin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "145": {
+    "name": "Électhor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "146": {
+    "name": "Sulfura",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "147": {
+    "name": "Minidraco",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "148": {
+    "name": "Draco",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "149": {
+    "name": "Dracolosse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "150": {
+    "name": "Mewtwo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "151": {
+    "name": "Mew",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "152": {
+    "name": "Germignon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "153": {
+    "name": "Macronium",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "154": {
+    "name": "Méganium",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "155": {
+    "name": "Héricendre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "156": {
+    "name": "Feurisson",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "157": {
+    "name": "Typhlosion",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "158": {
+    "name": "Kaiminus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "159": {
+    "name": "Crocrodil",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "160": {
+    "name": "Aligatueur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "161": {
+    "name": "Fouinette",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "162": {
+    "name": "Fouinar",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "163": {
+    "name": "Hoothoot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "164": {
+    "name": "Noarfang",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "165": {
+    "name": "Coxy",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "166": {
+    "name": "Coxyclaque",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "167": {
+    "name": "Mimigal",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "168": {
+    "name": "Migalos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "169": {
+    "name": "Nostenfer",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "170": {
+    "name": "Loupio",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "171": {
+    "name": "Lanturn",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "172": {
+    "name": "Pichu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "173": {
+    "name": "Mélo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "174": {
+    "name": "Toudoudou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "175": {
+    "name": "Togepi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "176": {
+    "name": "Togetic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "177": {
+    "name": "Natu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "178": {
+    "name": "Xatu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "179": {
+    "name": "Wattouat",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "180": {
+    "name": "Lainergie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "181": {
+    "name": "Pharamp",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "182": {
+    "name": "Joliflor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "183": {
+    "name": "Marill",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "184": {
+    "name": "Azumarill",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "185": {
+    "name": "Simularbre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "186": {
+    "name": "Tarpaud",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "187": {
+    "name": "Granivol",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "188": {
+    "name": "Floravol",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "189": {
+    "name": "Cotovol",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "190": {
+    "name": "Capumain",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "191": {
+    "name": "Tournegrin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "192": {
+    "name": "Héliatronc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "193": {
+    "name": "Yanma",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "194": {
+    "name": "Axoloto",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "195": {
+    "name": "Maraiste",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "196": {
+    "name": "Mentali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "197": {
+    "name": "Noctali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "198": {
+    "name": "Cornèbre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "199": {
+    "name": "Roigada",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "200": {
+    "name": "Feuforêve",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "201": {
+    "name": "Zarbi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "202": {
+    "name": "Qulbutoké",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "203": {
+    "name": "Girafarig",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "204": {
+    "name": "Pomdepic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "205": {
+    "name": "Foretress",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "206": {
+    "name": "Insolourdo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "207": {
+    "name": "Scorplane",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "208": {
+    "name": "Steelix",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "209": {
+    "name": "Snubbull",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "210": {
+    "name": "Granbull",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "211": {
+    "name": "Qwilfish",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "212": {
+    "name": "Cizayox",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "213": {
+    "name": "Caratroc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "214": {
+    "name": "Scarhino",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "215": {
+    "name": "Farfuret",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "216": {
+    "name": "Teddiursa",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "217": {
+    "name": "Ursaring",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "218": {
+    "name": "Limagma",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "219": {
+    "name": "Volcaropod",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "220": {
+    "name": "Marcacrin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "221": {
+    "name": "Cochignon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "222": {
+    "name": "Corayon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "223": {
+    "name": "Rémoraid",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "224": {
+    "name": "Octillery",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "225": {
+    "name": "Cadoizo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "226": {
+    "name": "Démanta",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "227": {
+    "name": "Airmure",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "228": {
+    "name": "Malosse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "229": {
+    "name": "Démolosse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "230": {
+    "name": "Hyporoi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "231": {
+    "name": "Phanpy",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "232": {
+    "name": "Donphan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "233": {
+    "name": "Porygon2",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "234": {
+    "name": "Cerfrousse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "235": {
+    "name": "Queulorior",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "236": {
+    "name": "Debugant",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "237": {
+    "name": "Kapoera",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "238": {
+    "name": "Lippouti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "239": {
+    "name": "Élekid",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "240": {
+    "name": "Magby",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "241": {
+    "name": "Écrémeuh",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "242": {
+    "name": "Leuphorie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "243": {
+    "name": "Raikou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "244": {
+    "name": "Entei",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "245": {
+    "name": "Suicune",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "246": {
+    "name": "Embrylex",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "247": {
+    "name": "Ymphect",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "248": {
+    "name": "Tyranocif",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "249": {
+    "name": "Lugia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "250": {
+    "name": "Ho-Oh",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "251": {
+    "name": "Celebi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "252": {
+    "name": "Arcko",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "253": {
+    "name": "Massko",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "254": {
+    "name": "Jungko",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "255": {
+    "name": "Poussifeu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "256": {
+    "name": "Galifeu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "257": {
+    "name": "Braségali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "258": {
+    "name": "Gobou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "259": {
+    "name": "Flobio",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "260": {
+    "name": "Laggron",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "261": {
+    "name": "Medhyèna",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "262": {
+    "name": "Grahyèna",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "263": {
+    "name": "Zigzaton",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "264": {
+    "name": "Linéon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "265": {
+    "name": "Chenipotte",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "266": {
+    "name": "Armulys",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "267": {
+    "name": "Charmillon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "268": {
+    "name": "Blindalys",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "269": {
+    "name": "Papinox",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "270": {
+    "name": "Nénupiot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "271": {
+    "name": "Lombre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "272": {
+    "name": "Ludicolo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "273": {
+    "name": "Grainipiot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "274": {
+    "name": "Pifeuil",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "275": {
+    "name": "Tengalice",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "276": {
+    "name": "Nirondelle",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "277": {
+    "name": "Hélédelle",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "278": {
+    "name": "Goélise",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "279": {
+    "name": "Bekipan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "280": {
+    "name": "Tarsal",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "281": {
+    "name": "Kirlia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "282": {
+    "name": "Gardevoir",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "283": {
+    "name": "Arakdo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "284": {
+    "name": "Maskadra",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "285": {
+    "name": "Balignon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "286": {
+    "name": "Chapignon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "287": {
+    "name": "Parecool",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "288": {
+    "name": "Vigoroth",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "289": {
+    "name": "Monaflèmit",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "290": {
+    "name": "Ningale",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "291": {
+    "name": "Ninjask",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "292": {
+    "name": "Munja",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "293": {
+    "name": "Chuchmur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "294": {
+    "name": "Ramboum",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "295": {
+    "name": "Brouhabam",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "296": {
+    "name": "Makuhita",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "297": {
+    "name": "Hariyama",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "298": {
+    "name": "Azurill",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "299": {
+    "name": "Tarinor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "300": {
+    "name": "Skitty",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "301": {
+    "name": "Delcatty",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "302": {
+    "name": "Ténéfix",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "303": {
+    "name": "Mysdibule",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "304": {
+    "name": "Galekid",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "305": {
+    "name": "Galegon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "306": {
+    "name": "Galeking",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "307": {
+    "name": "Méditikka",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "308": {
+    "name": "Charmina",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "309": {
+    "name": "Dynavolt",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "310": {
+    "name": "Élecsprint",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "311": {
+    "name": "Posipi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "312": {
+    "name": "Négapi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "313": {
+    "name": "Muciole",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "314": {
+    "name": "Lumivole",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "315": {
+    "name": "Rosélia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "316": {
+    "name": "Gloupti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "317": {
+    "name": "Avaltout",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "318": {
+    "name": "Carvanha",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "319": {
+    "name": "Sharpedo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "320": {
+    "name": "Wailmer",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "321": {
+    "name": "Wailord",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "322": {
+    "name": "Chamallot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "323": {
+    "name": "Camérupt",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "324": {
+    "name": "Chartor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "325": {
+    "name": "Spoink",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "326": {
+    "name": "Groret",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "327": {
+    "name": "Spinda",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "328": {
+    "name": "Kraknoix",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "329": {
+    "name": "Vibraninf",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "330": {
+    "name": "Libégon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "331": {
+    "name": "Cacnea",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "332": {
+    "name": "Cacturne",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "333": {
+    "name": "Tylton",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "334": {
+    "name": "Altaria",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "335": {
+    "name": "Mangriff",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "336": {
+    "name": "Séviper",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "337": {
+    "name": "Séléroc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "338": {
+    "name": "Solaroc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "339": {
+    "name": "Barloche",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "340": {
+    "name": "Barbicha",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "341": {
+    "name": "Écrapince",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "342": {
+    "name": "Colhomard",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "343": {
+    "name": "Balbuto",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "344": {
+    "name": "Kaorine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "345": {
+    "name": "Lilia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "346": {
+    "name": "Vacilys",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "347": {
+    "name": "Anorith",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "348": {
+    "name": "Armaldo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "349": {
+    "name": "Barpau",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "350": {
+    "name": "Milobellus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "351": {
+    "name": "Morphéo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "352": {
+    "name": "Kecleon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "353": {
+    "name": "Polichombr",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "354": {
+    "name": "Branette",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "355": {
+    "name": "Skelénox",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "356": {
+    "name": "Téraclope",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "357": {
+    "name": "Tropius",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "358": {
+    "name": "Éoko",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "359": {
+    "name": "Absol",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "360": {
+    "name": "Okéoké",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "361": {
+    "name": "Stalgamin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "362": {
+    "name": "Oniglali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "363": {
+    "name": "Obalie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "364": {
+    "name": "Phogleur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "365": {
+    "name": "Kaimorse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "366": {
+    "name": "Coquiperl",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "367": {
+    "name": "Serpang",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "368": {
+    "name": "Rosabyss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "369": {
+    "name": "Relicanth",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "370": {
+    "name": "Lovdisc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "371": {
+    "name": "Draby",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "372": {
+    "name": "Drackhaus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "373": {
+    "name": "Drattak",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "374": {
+    "name": "Terhal",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "375": {
+    "name": "Métang",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "376": {
+    "name": "Métalosse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "377": {
+    "name": "Regirock",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "378": {
+    "name": "Regice",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "379": {
+    "name": "Registeel",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "380": {
+    "name": "Latias",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "381": {
+    "name": "Latios",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "382": {
+    "name": "Kyogre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "383": {
+    "name": "Groudon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "384": {
+    "name": "Rayquaza",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "385": {
+    "name": "Jirachi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "386": {
+    "name": "Deoxys",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "387": {
+    "name": "Tortipouss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "388": {
+    "name": "Boskara",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "389": {
+    "name": "Torterra",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "390": {
+    "name": "Ouisticram",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "391": {
+    "name": "Chimpenfeu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "392": {
+    "name": "Simiabraz",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "393": {
+    "name": "Tiplouf",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "394": {
+    "name": "Prinplouf",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "395": {
+    "name": "Pingoléon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "396": {
+    "name": "Étourmi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "397": {
+    "name": "Étourvol",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "398": {
+    "name": "Étouraptor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "399": {
+    "name": "Keunotor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "400": {
+    "name": "Castorno",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "401": {
+    "name": "Crikzik",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "402": {
+    "name": "Mélokrik",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "403": {
+    "name": "Lixy",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "404": {
+    "name": "Luxio",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "405": {
+    "name": "Luxray",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "406": {
+    "name": "Rozbouton",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "407": {
+    "name": "Roserade",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "408": {
+    "name": "Kranidos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "409": {
+    "name": "Charkos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "410": {
+    "name": "Dinoclier",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "411": {
+    "name": "Bastiodon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "412": {
+    "name": "Cheniti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "413": {
+    "name": "Cheniselle",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "414": {
+    "name": "Papilord",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "415": {
+    "name": "Apitrini",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "416": {
+    "name": "Apireine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "417": {
+    "name": "Pachirisu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "418": {
+    "name": "Mustébouée",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "419": {
+    "name": "Mustéflott",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "420": {
+    "name": "Ceribou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "421": {
+    "name": "Ceriflor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "422": {
+    "name": "Sancoki",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "423": {
+    "name": "Tritosor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "424": {
+    "name": "Capidextre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "425": {
+    "name": "Baudrive",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "426": {
+    "name": "Grodrive",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "427": {
+    "name": "Laporeille",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "428": {
+    "name": "Lockpin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "429": {
+    "name": "Magirêve",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "430": {
+    "name": "Corboss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "431": {
+    "name": "Chaglam",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "432": {
+    "name": "Chaffreux",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "433": {
+    "name": "Korillon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "434": {
+    "name": "Moufouette",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "435": {
+    "name": "Moufflair",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "436": {
+    "name": "Archéomire",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "437": {
+    "name": "Archéodong",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "438": {
+    "name": "Manzaï",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "439": {
+    "name": "Mime Jr",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "440": {
+    "name": "Ptiravi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "441": {
+    "name": "Pijako",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "442": {
+    "name": "Spiritomb",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "443": {
+    "name": "Griknot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "444": {
+    "name": "Carmache",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "445": {
+    "name": "Carchacrok",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "446": {
+    "name": "Goinfrex",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "447": {
+    "name": "Riolu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "448": {
+    "name": "Lucario",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "449": {
+    "name": "Hippopotas",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "450": {
+    "name": "Hippodocus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "451": {
+    "name": "Rapion",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "452": {
+    "name": "Drascore",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "453": {
+    "name": "Cradopaud",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "454": {
+    "name": "Coatox",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "455": {
+    "name": "Vortente",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "456": {
+    "name": "Écayon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "457": {
+    "name": "Luminéon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "458": {
+    "name": "Babimanta",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "459": {
+    "name": "Blizzi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "460": {
+    "name": "Blizzaroi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "461": {
+    "name": "Dimoret",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "462": {
+    "name": "Magnézone",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "463": {
+    "name": "Coudlangue",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "464": {
+    "name": "Rhinastoc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "465": {
+    "name": "Bouldeneu",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "466": {
+    "name": "Élekable",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "467": {
+    "name": "Maganon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "468": {
+    "name": "Togekiss",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "469": {
+    "name": "Yanméga",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "470": {
+    "name": "Phyllali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "471": {
+    "name": "Givrali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "472": {
+    "name": "Scorvol",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "473": {
+    "name": "Mammochon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "474": {
+    "name": "Porygon-Z",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "475": {
+    "name": "Gallame",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "476": {
+    "name": "Tarinorme",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "477": {
+    "name": "Noctunoir",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "478": {
+    "name": "Momartik",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "479": {
+    "name": "Motisma",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "480": {
+    "name": "Créhelf",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "481": {
+    "name": "Créfollet",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "482": {
+    "name": "Créfadet",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "483": {
+    "name": "Dialga",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "484": {
+    "name": "Palkia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "485": {
+    "name": "Heatran",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "486": {
+    "name": "Regigigas",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "487": {
+    "name": "Giratina",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "488": {
+    "name": "Cresselia",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "489": {
+    "name": "Phione",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "490": {
+    "name": "Manaphy",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "491": {
+    "name": "Darkrai",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "492": {
+    "name": "Shaymin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "493": {
+    "name": "Arceus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "494": {
+    "name": "Victini",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "495": {
+    "name": "Vipélierre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "496": {
+    "name": "Lianaja",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "497": {
+    "name": "Majaspic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "498": {
+    "name": "Gruikui",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "499": {
+    "name": "Grotichon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "500": {
+    "name": "Roitiflam",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "501": {
+    "name": "Moustillon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "502": {
+    "name": "Mateloutre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "503": {
+    "name": "Clamiral",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "504": {
+    "name": "Ratentif",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "505": {
+    "name": "Miradar",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "506": {
+    "name": "Ponchiot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "507": {
+    "name": "Ponchien",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "508": {
+    "name": "Mastouffe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "509": {
+    "name": "Chacripan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "510": {
+    "name": "Léopardus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "511": {
+    "name": "Feuillajou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "512": {
+    "name": "Feuiloutan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "513": {
+    "name": "Flamajou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "514": {
+    "name": "Flamoutan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "515": {
+    "name": "Flotajou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "516": {
+    "name": "Flotoutan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "517": {
+    "name": "Munna",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "518": {
+    "name": "Mushana",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "519": {
+    "name": "Poichigeon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "520": {
+    "name": "Colombeau",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "521": {
+    "name": "Déflaisan",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "522": {
+    "name": "Zébribon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "523": {
+    "name": "Zéblitz",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "524": {
+    "name": "Nodulithe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "525": {
+    "name": "Géolithe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "526": {
+    "name": "Gigalithe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "527": {
+    "name": "Chovsourir",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "528": {
+    "name": "Rhinolove",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "529": {
+    "name": "Rototaupe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "530": {
+    "name": "Minotaupe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "531": {
+    "name": "Nanméouïe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "532": {
+    "name": "Charpenti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "533": {
+    "name": "Ouvrifier",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "534": {
+    "name": "Bétochef",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "535": {
+    "name": "Tritonde",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "536": {
+    "name": "Batracné",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "537": {
+    "name": "Crapustule",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "538": {
+    "name": "Judokrak",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "539": {
+    "name": "Karaclée",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "540": {
+    "name": "Larveyette",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "541": {
+    "name": "Couverdure",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "542": {
+    "name": "Manternel",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "543": {
+    "name": "Venipatte",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "544": {
+    "name": "Scobolide",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "545": {
+    "name": "Brutapode",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "546": {
+    "name": "Doudouvet",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "547": {
+    "name": "Farfaduvet",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "548": {
+    "name": "Chlorobule",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "549": {
+    "name": "Fragilady",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "550": {
+    "name": "Bargantua",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "551": {
+    "name": "Mascaïman",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "552": {
+    "name": "Escroco",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "553": {
+    "name": "Crocorible",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "554": {
+    "name": "Darumarond",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "555": {
+    "name": "Darumacho",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "556": {
+    "name": "Maracachi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "557": {
+    "name": "Crabicoque",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "558": {
+    "name": "Crabaraque",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "559": {
+    "name": "Baggiguane",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "560": {
+    "name": "Baggaïd",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "561": {
+    "name": "Cryptéro",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "562": {
+    "name": "Tutafeh",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "563": {
+    "name": "Tutankafer",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "564": {
+    "name": "Carapagos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "565": {
+    "name": "Mégapagos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "566": {
+    "name": "Arkéapti",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "567": {
+    "name": "Aéroptéryx",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "568": {
+    "name": "Miamiasme",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "569": {
+    "name": "Miasmax",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "570": {
+    "name": "Zorua",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "571": {
+    "name": "Zoroark",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "572": {
+    "name": "Chinchidou",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "573": {
+    "name": "Pashmilla",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "574": {
+    "name": "Scrutella",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "575": {
+    "name": "Mesmérella",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "576": {
+    "name": "Sidérella",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "577": {
+    "name": "Nucléos",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "578": {
+    "name": "Méios",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "579": {
+    "name": "Symbios",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "580": {
+    "name": "Couaneton",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "581": {
+    "name": "Lakmécygne",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "582": {
+    "name": "Sorbébé",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "583": {
+    "name": "Sorboul",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "584": {
+    "name": "Sorbouboul",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "585": {
+    "name": "Vivaldaim",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "586": {
+    "name": "Haydaim",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "587": {
+    "name": "Emolga",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "588": {
+    "name": "Carabing",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "589": {
+    "name": "Lançargot",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "590": {
+    "name": "Trompignon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "591": {
+    "name": "Gaulet",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "592": {
+    "name": "Viskuse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "593": {
+    "name": "Moyade",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "594": {
+    "name": "Mamanbo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "595": {
+    "name": "Statitik",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "596": {
+    "name": "Mygavolt",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "597": {
+    "name": "Grindur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "598": {
+    "name": "Noacier",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "599": {
+    "name": "Tic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "600": {
+    "name": "Clic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "601": {
+    "name": "Cliticlic",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "602": {
+    "name": "Anchwatt",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "603": {
+    "name": "Lampéroie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "604": {
+    "name": "Ohmassacre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "605": {
+    "name": "Lewsor",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "606": {
+    "name": "Neitram",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "607": {
+    "name": "Funécire",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "608": {
+    "name": "Mélancolux",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "609": {
+    "name": "Lugulabre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "610": {
+    "name": "Coupenotte",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "611": {
+    "name": "Incisache",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "612": {
+    "name": "Tranchodon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "613": {
+    "name": "Polarhume",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "614": {
+    "name": "Polagriffe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "615": {
+    "name": "Hexagel",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "616": {
+    "name": "Escargaume",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "617": {
+    "name": "Limaspeed",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "618": {
+    "name": "Limonde",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "619": {
+    "name": "Kungfouine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "620": {
+    "name": "Shaofouine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "621": {
+    "name": "Drakkarmin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "622": {
+    "name": "Gringolem",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "623": {
+    "name": "Golemastoc",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "624": {
+    "name": "Scalpion",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "625": {
+    "name": "Scalproie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "626": {
+    "name": "Frison",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "627": {
+    "name": "Furaiglon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "628": {
+    "name": "Gueriaigle",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "629": {
+    "name": "Vostourno",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "630": {
+    "name": "Vaututrice",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "631": {
+    "name": "Aflamanoir",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "632": {
+    "name": "Fermite",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "633": {
+    "name": "Solochi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "634": {
+    "name": "Diamat",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "635": {
+    "name": "Trioxhydre",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "636": {
+    "name": "Pyronille",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "637": {
+    "name": "Pyrax",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "638": {
+    "name": "Cobaltium",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "639": {
+    "name": "Terrakium",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "640": {
+    "name": "Viridium",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "641": {
+    "name": "Boréas",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "642": {
+    "name": "Fulguris",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "643": {
+    "name": "Reshiram",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "644": {
+    "name": "Zekrom",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "645": {
+    "name": "Démétéros",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "646": {
+    "name": "Kyurem",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "647": {
+    "name": "Keldeo",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "648": {
+    "name": "Meloetta",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "649": {
+    "name": "Genesect",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "650": {
+    "name": "Marisson",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "651": {
+    "name": "Boguérisse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "652": {
+    "name": "Blindépique",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "653": {
+    "name": "Feunnec",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "654": {
+    "name": "Roussil",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "655": {
+    "name": "Goupelin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "656": {
+    "name": "Grenousse",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "657": {
+    "name": "Croâporal",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "658": {
+    "name": "Amphinobi",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "659": {
+    "name": "Sapereau",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "660": {
+    "name": "Excavarenne",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "661": {
+    "name": "Passerouge",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "662": {
+    "name": "Braisillon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "663": {
+    "name": "Flambusard",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "664": {
+    "name": "Lépidonille",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "665": {
+    "name": "Pérégrain",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "666": {
+    "name": "Prismillon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "667": {
+    "name": "Hélionceau",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "668": {
+    "name": "Némélios",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "669": {
+    "name": "Flabébé",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "670": {
+    "name": "Floette",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "671": {
+    "name": "Florges",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "672": {
+    "name": "Cabriolaine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "673": {
+    "name": "Chevroum",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "674": {
+    "name": "Pandespiègle",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "675": {
+    "name": "Pandarbare",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "676": {
+    "name": "Couafarel",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "677": {
+    "name": "Psystigri",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "678": {
+    "name": "Mistigrix",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "679": {
+    "name": "Monorpale",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "680": {
+    "name": "Dimoclès",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "681": {
+    "name": "Exagide",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "682": {
+    "name": "Fluvetin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "683": {
+    "name": "Cocotine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "684": {
+    "name": "Sucroquin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "685": {
+    "name": "Cupcanaille",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "686": {
+    "name": "Sepiatop",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "687": {
+    "name": "Sepiatroce",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "688": {
+    "name": "Opermine",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "689": {
+    "name": "Golgopathe",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "690": {
+    "name": "Venalgue",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "691": {
+    "name": "Kravarech",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "692": {
+    "name": "Flingouste",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "693": {
+    "name": "Gamblast",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "694": {
+    "name": "Galvaran",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "695": {
+    "name": "Iguolta",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "696": {
+    "name": "Ptyranidur",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "697": {
+    "name": "Rexillius",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "698": {
+    "name": "Amagara",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "699": {
+    "name": "Dragmara",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "700": {
+    "name": "Nymphali",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "701": {
+    "name": "Brutalibré",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "702": {
+    "name": "Dedenne",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "703": {
+    "name": "Strassie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "704": {
+    "name": "Mucuscule",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "705": {
+    "name": "Colimucus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "706": {
+    "name": "Muplodocus",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "707": {
+    "name": "Trousselin",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "708": {
+    "name": "Brocélôme",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "709": {
+    "name": "Desséliande",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "710": {
+    "name": "Pitrouille",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "711": {
+    "name": "Banshitrouye",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "712": {
+    "name": "Grelaçon",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "713": {
+    "name": "Séracrawl",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "714": {
+    "name": "Sonistrelle",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "715": {
+    "name": "Bruyverne",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "716": {
+    "name": "Xerneas",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "717": {
+    "name": "Yveltal",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "718": {
+    "name": "Zygarde",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "719": {
+    "name": "Diancie",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },
+  "720": {
+    "name": "Hoopa",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  },"721":"Volcanion"
+}
