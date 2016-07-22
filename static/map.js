@@ -88,6 +88,8 @@ function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
+    $('#piw-switch').prop('checked', localStorage.autoOpenPIW === 'true');
+    
 }
 
 
@@ -154,7 +156,8 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude),
+        disableAutoPan: true
     });
 
     addListeners(marker);
@@ -172,7 +175,8 @@ function setupGymMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
+        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points),
+        disableAutoPan: true
     });
 
     addListeners(marker);
@@ -191,7 +195,8 @@ function setupPokestopMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: "I'm a Pokéstop, and soon enough I'll tell you more things about me."
+        content: "I'm a Pokéstop, and soon enough I'll tell you more things about me.",
+        disableAutoPan: true
     });
 
     addListeners(marker);
@@ -235,9 +240,10 @@ function clearStaleMarkers() {
 
 function updateMap() {
     
-    localStorage.showPokemon = localStorage.showPokemon || true;
-    localStorage.showGyms = localStorage.showGyms || true;
-    localStorage.showPokestops = localStorage.showPokestops || true;
+    localStorage.showPokemon = typeof localStorage.showPokemon !== 'undefined' ? localStorage.showPokemon : true;
+    localStorage.showGyms = typeof localStorage.showGyms !== 'undefined' ? localStorage.showGyms : true;
+    localStorage.showPokestops = typeof localStorage.showPokestops !== 'undefined' ? localStorage.showPokestops : true;
+    localStorage.autoOpenPIW = typeof localStorage.autoOpenPIW !== 'undefined' ? localStorage.showGyms : true;
 
     $.ajax({
         url: "raw_data",
@@ -259,6 +265,9 @@ function updateMap() {
               if (item.marker) item.marker.setMap(null);
               item.marker = setupPokemonMarker(item);
               map_pokemons[item.encounter_id] = item;
+              if (localStorage.autoOpenPIW) {
+                  item.marker.infoWindow.open(map, item.marker);
+              }
           }
         });
 
