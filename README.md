@@ -1,6 +1,6 @@
 ##Please submit all pull requests to the [develop branch](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) #
 
-#[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or message about issues.#
+#[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact.
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
 <p align="center">
