@@ -37,6 +37,7 @@ def get_args():
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
+    parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
     if args.password is None:
