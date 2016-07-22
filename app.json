@@ -4,6 +4,9 @@
   "repository": "https://github.com/AHAAAAAAA/PokemonGo-Map",
   "keywords": ["pokemon", "pokemon go"],
   "env": {
+    "AUTH_SERVICE": {
+      "descritpion": "Authentication service to use. (ptc or google)"
+    },
     "USERNAME": {
       "description": "Your username to login to the specified authentication service."
     },
