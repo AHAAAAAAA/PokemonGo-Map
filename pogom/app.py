@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import calendar
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect
 from flask.json import JSONEncoder
 from datetime import datetime
+from threading import Thread
 
 from . import config
 from .models import Pokemon, Gym, Pokestop
+from .utils import get_args
+from .search import search_loop
 
 
 class Pogom(Flask):
@@ -17,6 +20,7 @@ class Pogom(Flask):
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
+        self.route("/setLoc", methods=['POST'])(self.set_loc)
 
     def fullmap(self):
         return render_template('map.html',
@@ -36,6 +40,24 @@ class Pogom(Flask):
             d['gyms'] = Gym.get_all()
 
         return jsonify(d)
+
+    def set_loc(self):
+        nextPos = request.form['location']
+        if ('|' in nextPos):
+            config['ORIGINAL_LATITUDE'] = float(nextPos.split('|')[0])
+            config['ORIGINAL_LONGITUDE'] = float(nextPos.split('|')[1])
+        else:
+            position = pgoapi.utilities.get_pos_by_name(nextPos)
+            config['ORIGINAL_LATITUDE'] = position[0]
+            config['ORIGINAL_LONGITUDE'] = position[1]
+
+        args = get_args()
+        search_thread = Thread(target=search_loop, args=(args,))
+        search_thread.daemon = True
+        search_thread.name = 'search_thread'
+        search_thread.start()
+
+        return redirect('/')
 
     def next_loc(self):
         lat = request.args.get('lat', type=float)
