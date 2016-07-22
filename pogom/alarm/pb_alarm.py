@@ -17,7 +17,7 @@ class PB_Alarm(Alarm):
 		
 	def pokemon_alert(self, pokemon):
 		latLon = '{},{}'.format(repr(pokemon["lat"]), repr(pokemon["lng"]))
-		google_maps_link = 'http://maps.google.com/maps/place/{}/@{},{}z'.format(latLon, latLon, 15)
+		google_maps_link = 'http://maps.google.com/maps?q={}'.format(latLon)
 		notification_text = "A wild " + pokemon['name'].title() + " has appeared!"
 		s = pokemon["time"].total_seconds()
 		(m, s) = divmod(s, 60)
