@@ -72,7 +72,7 @@ def search(args, i):
             config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
             config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
             config.pop('NEXT_LOCATION', None)
-            search(args)
+            search(args, i)
             return
 
         log.info('Scanning step {:d} of {:d}.'.format(step, num_steps**2))
