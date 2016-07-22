@@ -438,8 +438,9 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-a', '--auth_service', type=str.lower, help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username', required=True)
+    parser.add_argument('-u', '--username', help='Username', required=False)
     parser.add_argument('-p', '--password', help='Password', required=False)
+    parser.add_argument('-t', '--token', help='SSO Token', required=False)
     parser.add_argument(
         '-l', '--location', type=parse_unicode, help='Location', required=True)
     parser.add_argument('-st', '--step-limit', help='Steps', required=True)
@@ -505,13 +506,16 @@ def get_args():
 @memoize
 def login(args):
     global global_password
-    if not global_password:
+    if not global_password and not args.token:
       if args.password:
         global_password = args.password
       else:
         global_password = getpass.getpass()
 
-    access_token = get_token(args.auth_service, args.username, global_password)
+    if args.token:
+        access_token = args.token
+    else:
+        access_token = get_token(args.auth_service, args.username, global_password)
     if access_token is None:
         raise Exception('[-] Wrong username/password')
 
