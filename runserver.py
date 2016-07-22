@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import logging
 import time
 
@@ -46,6 +47,10 @@ if __name__ == '__main__':
     create_tables()
 
     position = get_pos_by_name(args.location)
+    if not any(position):
+        log.error('Could not get a position by name, aborting.')
+        sys.exit()
+
     log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
              format(*position))
 
