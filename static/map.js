@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
+var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
