@@ -17,16 +17,15 @@
 		visibility: hidden;
 		width: 18em;
 		z-index: 500;
+		color: darken(_palette(accent2, bg), 12);
 		h3 {
 			font-size: 18px;
 			font-family: 'Muli', sans-serif;
-			color: darken(_palette(accent2, bg), 12);
 			margin-bottom: 10px;
 			float: left;
 		}
 		p {
 			margin-bottom: 20px;
-			color: darken(_palette(accent2, bg), 12);
 		}
 		> ul {
 			margin: 0 0 (_size(element-margin) * 0.5) 0;
