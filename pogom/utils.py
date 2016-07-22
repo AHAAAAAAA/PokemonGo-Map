@@ -17,7 +17,21 @@ from exceptions import APIKeyException
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
-
+    
+def parse_config(args):
+    Config = ConfigParser.ConfigParser()
+    Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
+    args.auth_service = Config.get('Authentication', 'Service')
+    args.username = Config.get('Authentication', 'Username')
+    args.password = Config.get('Authentication', 'Password')
+    args.location = Config.get('Search_Settings', 'Location')
+    args.step_limit = int(Config.get('Search_Settings', 'Steps'))
+    args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
+    if Config.get('Misc', 'Google_Maps_API_Key') :
+        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
+    args.host = Config.get('Misc', 'Host') 
+    args.port = Config.get('Misc', 'Port') 
+    return args
 
 def get_args():
     # fuck PEP8
@@ -41,7 +55,9 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
-    if args.password is None:
+    if (args.settings) :
+        args = parse_config(args) 
+    elif args.password is None:
         args.password = getpass.getpass()
 
     return args
@@ -106,13 +122,13 @@ def get_pokemon_name(pokemon_id):
 
 def load_credentials(filepath):
     try:
-        with open(filepath+os.path.sep+'credentials.json') as file:
+        with open(filepath+os.path.sep+'/config/credentials.json') as file:
             creds = json.load(file)
     except IOError:
         creds = {}
     if not creds.get('gmaps_key'):
         raise APIKeyException(\
-            "No Google Maps Javascript API key entered in credentials.json file!"
+            "No Google Maps Javascript API key entered in \config\credentials.json file!"
             " Please take a look at the wiki for instructions on how to generate this key,"
             " then add that key to the file!")
     return creds
