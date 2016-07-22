@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import calendar
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from datetime import datetime
 
@@ -15,10 +15,8 @@ class Pogom(Flask):
         super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
-        self.route("/pokemons", methods=['GET'])(self.pokemons)
-        self.route("/gyms", methods=['GET'])(self.gyms)
-        self.route("/pokestops", methods=['GET'])(self.pokestops)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
+        self.route("/next_loc", methods=['POST'])(self.next_loc)
 
     def fullmap(self):
         return render_template('map.html',
@@ -26,26 +24,29 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'])
 
-    def get_raw_data(self):
-        return {
-            'gyms': [g for g in Gym.select().dicts()],
-            'pokestops': [p for p in Pokestop.select().dicts()],
-            'pokemons': Pokemon.get_active()
-        }
-
     def raw_data(self):
-        return jsonify(self.get_raw_data())
+        d = {}
+        if request.args.get('pokemon', 'true') == 'true':
+            d['pokemons'] = Pokemon.get_active()
 
-    def pokemons(self):
-        return jsonify(self.get_raw_data()['pokemons'])
+        if request.args.get('pokestops', 'false') == 'true':
+            d['pokestops'] = Pokestop.get_all()
 
-    def pokestops(self):
-        return jsonify(self.get_raw_data()['pokestops'])
+        if request.args.get('gyms', 'true') == 'true':
+            d['gyms'] = Gym.get_all()
 
-    def gyms(self):
-        return jsonify(self.get_raw_data()['gyms'])
+        return jsonify(d)
 
-
+    def next_loc(self):
+        lat = request.args.get('lat', type=float)
+        lon = request.args.get('lon', type=float)
+        if not (lat and lon):
+            print('[-] Invalid next location: %s,%s' % (lat, lon))
+            return 'bad parameters', 400
+        else:
+            config['ORIGINAL_LATITUDE'] = lat
+            config['ORIGINAL_LONGITUDE'] = lon
+            return 'ok'
 
 
 class CustomJSONEncoder(JSONEncoder):

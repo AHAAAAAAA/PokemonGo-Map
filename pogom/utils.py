@@ -27,14 +27,8 @@ def get_args():
     parser.add_argument('-p', '--password', help='Password', required=False)
     parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates', required=True)
     parser.add_argument('-st', '--step-limit', help='Steps', required=True, type=int)
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore')
-    group.add_argument('-o', '--only', help='Comma-separated list of Pokémon names or IDs to search')
-    parser.add_argument('-ar', '--auto-refresh', help='Enables an autorefresh that behaves the same as'
-                        ' a page reload. Needs an integer value for the amount of seconds')
-    parser.add_argument('-dp', '--display-pokestops', help='Display pokéstops', action='store_true', default=False)
-    parser.add_argument('-dl', '--display-lured', help='Display only lured pokéstop', action='store_true', default=False)
-    parser.add_argument('-dg', '--display-gyms', help='Display gyms', action='store_true', default=False)
+    parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', required=False, type=int, default=1)
+    parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
     parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check'
@@ -50,26 +44,51 @@ def get_args():
 
     return args
 
+def insert_mock_data():
+    num_pokemon = 6
+    num_pokestop = 6
+    num_gym = 6
 
-def insert_mock_data(location, num_pokemons):
-    from .models import Pokemon
+    from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
-    prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
-    res = prog.match(location)
-    latitude, longitude = float(res.group(1)), float(res.group(2))
+    latitude, longitude = float(config['ORIGINAL_LATITUDE']), float(config['ORIGINAL_LONGITUDE'])
 
-    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemons)]
+    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemon)]
     disappear_time = datetime.now() + timedelta(hours=1)
 
-    for i in xrange(num_pokemons):
+    detect_time = datetime.now()
+
+    for i in xrange(num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
                        latitude=locations[i][0],
                        longitude=locations[i][1],
-                       disappear_time=disappear_time)
+                       disappear_time=disappear_time,
+                       detect_time=detect_time)
 
+    for i in range(num_pokestop):
+
+        Pokestop.create(pokestop_id=uuid.uuid4(),
+                        enabled=True,
+                        latitude=locations[i+num_pokemon][0],
+                        longitude=locations[i+num_pokemon][1],
+                        last_modified=datetime.now(),
+                        #Every other pokestop be lured
+                        lure_expiration=disappear_time if (i % 2 == 0) else None
+                        )
+
+    for i in range(num_gym):
+        Gym.create(gym_id=uuid.uuid4(),
+                   team_id=i % 3,
+                   guard_pokemon_id=(i+1) % 150,
+                   latitude=locations[i + num_pokemon + num_pokestop][0],
+                   longitude=locations[i + num_pokemon + num_pokestop][1],
+                   last_modified=datetime.now(),
+                   enabled=True,
+                   gym_points=1000
+                   )
 
 def get_pokemon_name(pokemon_id):
     if not hasattr(get_pokemon_name, 'names'):
@@ -84,9 +103,11 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 def load_credentials(filepath):
-    with open(filepath+'/credentials.json') as file:
+    with open(filepath+os.path.sep+'credentials.json') as file:
         creds = json.load(file)
         if not creds['gmaps_key']:
             raise APIKeyException(\
-                'No Google Maps Javascript API key entered. Please take a look at the wiki for instructions on how to generate this key.')
+                "No Google Maps Javascript API key entered in credentials.json file!"
+                " Please take a look at the wiki for instructions on how to generate this key,"
+                " then add that key to the file!")
         return creds

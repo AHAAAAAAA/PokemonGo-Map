@@ -10,7 +10,8 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
-from pogom.models import create_tables, Pokemon
+from pogom.models import create_tables, Pokemon, Pokestop, Gym
+
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
@@ -46,16 +47,12 @@ if __name__ == '__main__':
 
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]
-
-    if args.ignore:
-        Pokemon.IGNORE = [i.lower().strip() for i in args.ignore.split(',')]
-    elif args.only:
-        Pokemon.ONLY = [i.lower().strip() for i in args.only.split(',')]
+    config['LOCALE'] = args.locale
 
     if not args.mock:
         start_locator_thread(args)
     else:
-        insert_mock_data(args.location, 6)
+        insert_mock_data()
 
     app = Pogom(__name__)
     config['ROOT_PATH'] = app.root_path

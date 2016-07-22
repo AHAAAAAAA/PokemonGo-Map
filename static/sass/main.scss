@@ -3,6 +3,7 @@
 @import 'libs/mixins';
 @import 'libs/skel';
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css);
 
 @include skel-breakpoints((
 	xlarge: '(max-width: 1680px)',
@@ -15,18 +16,12 @@
 @include skel-layout((
 	reset: 'full',
 	boxModel: 'border',
-	containers: 80em,
 	grid: ( gutters: 2em ),
 	breakpoints: (
 		large: (
-			containers: 65em,
 			grid: ( gutters: 1.5em )
 		),
-		medium: (
-			containers: 90%
-		),
 		small: (
-			containers: (90%, true),
 			grid: ( gutters: 1.25em )
 		)
 	)
