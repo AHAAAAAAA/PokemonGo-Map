@@ -37,8 +37,22 @@
 	<div class="wrapper">
 		<!-- Header -->
 		<header id="header">
-			<a href="#nav">Filter</a>
-			<h1><a href="#">Pokémon Go Map</a></h1>
+			<div class="header-group">
+				<a href="#nav">Filter</a>
+				<h1><a href="#">Pokémon Go Map</a></h1>
+			</div>
+
+			<div class="header-group">
+				<div id="set-location-busy" style="opacity: 0;">
+					<i id="set-location-busy" class="busy-spinner fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+					Retrieving Location
+				</div>
+
+
+				<a href="#" id="set-location" class="btn">
+					<i class="fa fa-location-arrow"></i>
+				</a>
+			</div>
 		</header>
 
 		<!-- Nav -->
