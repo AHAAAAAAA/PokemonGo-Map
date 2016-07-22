@@ -60,7 +60,7 @@ class Pogom(Flask):
                 config['ORIGINAL_LONGITUDE'] = lon
                 return 'ok'
         else:
-            return 'nok', 403
+            return 'nok', 401
 
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
