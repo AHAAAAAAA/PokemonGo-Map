@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import flask
+import notifier
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
@@ -18,6 +19,7 @@ import threading
 import werkzeug.serving
 import pokemon_pb2
 import time
+import warnings
 from google.protobuf.internal import encoder
 from google.protobuf.message import DecodeError
 from s2sphere import *
@@ -81,7 +83,6 @@ is_ampm_clock = False
 # stuff for in-background search thread
 
 search_thread = None
-
 def memoize(obj):
     cache = obj.cache = {}
 
@@ -246,7 +247,6 @@ def api_req(service, api_endpoint, access_token, *args, **kwargs):
         print 'Response:'
         print p_ret
         print '''
-
 '''
     time.sleep(0.51)
     return p_ret
@@ -434,73 +434,82 @@ def get_token(service, username, password):
         return global_token
 
 
+
 def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-a', '--auth_service', type=str.lower, help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username', required=True)
-    parser.add_argument('-p', '--password', help='Password', required=False)
-    parser.add_argument(
-        '-l', '--location', type=parse_unicode, help='Location', required=True)
-    parser.add_argument('-st', '--step-limit', help='Steps', required=True)
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument(
-        '-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore')
-    group.add_argument(
-        '-o', '--only', help='Comma-separated list of Pokémon names or IDs to search')
-    parser.add_argument(
-        "-ar",
-        "--auto_refresh",
-        help="Enables an autorefresh that behaves the same as a page reload. " +
-             "Needs an integer value for the amount of seconds")
-    parser.add_argument(
-        '-dp',
-        '--display-pokestop',
-        help='Display pokéstop',
-        action='store_true',
-        default=False)
-    parser.add_argument(
-        '-dg',
-        '--display-gym',
-        help='Display Gym',
-        action='store_true',
-        default=False)
-    parser.add_argument(
-        '-H',
-        '--host',
-        help='Set web server listening host',
-        default='127.0.0.1')
-    parser.add_argument(
-        '-P',
-        '--port',
-        type=int,
-        help='Set web server listening port',
-        default=5000)
-    parser.add_argument(
-        "-L",
-        "--locale",
-        help="Locale for Pokemon names: default en, check locale folder for more options",
-        default="en")
-    parser.add_argument(
-        "-ol",
-        "--onlylure",
-        help='Display only lured pokéstop',
-        action='store_true')
-    parser.add_argument(
-        '-c',
-        '--china',
-        help='Coordinates transformer for China',
-        action='store_true')
-    parser.add_argument(
-    	"-pm",
-    	"--ampm_clock",
-    	help="Toggles the AM/PM clock for Pokemon timers",
-    	action='store_true',
-    	default=False)
-    parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
-    parser.set_defaults(DEBUG=True)
-    return parser.parse_args()
+    # load default args
+    default_args = {
+        "DEBUG": True,
+        "ampm_clock": False,
+        "auth_service": "ptc",
+        "auto_refresh": None,
+        "china": False,
+        "debug": False,
+        "display_gym": False,
+        "display_pokestop": False,
+        "do_not_notify": None,
+        "host": "127.0.0.1",
+        "ignore": None,
+        "locale": "en",
+        "location": None,
+        "notify": None,
+        "only": None,
+        "onlylure": False,
+        "password": None,
+        "port": 5000,
+        "pushbullet": None,
+        "step_limit": 4,
+        "username": None
+    }
+
+    INTEGER_STR = "int"
+    BOOLEAN_STR = "bool"
+    STRING_STR = "str"
+    default_args_type = {
+        "DEBUG": BOOLEAN_STR,
+        "ampm_clock": BOOLEAN_STR,
+        "auth_service": STRING_STR,
+        "auto_refresh": INTEGER_STR,
+        "china": BOOLEAN_STR,
+        "debug": BOOLEAN_STR,
+        "display_gym": BOOLEAN_STR,
+        "display_pokestop": BOOLEAN_STR,
+        "do_not_notify": STRING_STR,
+        "host": STRING_STR,
+        "ignore": STRING_STR,
+        "locale": STRING_STR,
+        "location": STRING_STR,
+        "notify": STRING_STR,
+        "only": STRING_STR,
+        "onlylure": BOOLEAN_STR,
+        "password": STRING_STR,
+        "port": INTEGER_STR,
+        "pushbullet": STRING_STR,
+        "step_limit": INTEGER_STR,
+        "username": STRING_STR
+    }
+    # load config file
+    with open('config.json') as data_file:
+        data = json.load(data_file)
+        for key in data:
+            if key not in default_args_type:
+                warnings.warn( 'Config Item ' + key + 'Does Not Have a Default Type' )
+
+            if default_args_type[key] == INTEGER_STR:
+                default_args[key] = int(data[key])
+
+            elif default_args_type[key] == BOOLEAN_STR:
+                default_args[key] = data[key]
+
+            else:
+                if default_args_type[key] != STRING_STR:
+                    warnings.warn( 'Unsupported Default Args Type' )
+
+                default_args[key] = str(data[key])
+        # create namespace obj
+        namespace = argparse.Namespace()
+        for key in default_args:
+            vars(namespace)[key] = default_args[key]
+        return namespace
 
 @memoize
 def login(args):
@@ -656,7 +665,7 @@ def process_step(args, api_endpoint, access_token, profile_response,
                 for wild in cell.WildPokemon:
                     hash = wild.SpawnPointId;
                     if hash not in seen.keys() or (seen[hash].TimeTillHiddenMs <= wild.TimeTillHiddenMs):
-                        visible.append(wild)    
+                        visible.append(wild)
                     seen[hash] = wild.TimeTillHiddenMs
                 if cell.Fort:
                     for Fort in cell.Fort:
@@ -699,13 +708,20 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                 transform_from_wgs_to_gcj(Location(poke.Latitude,
                     poke.Longitude))
 
-        pokemons[poke.SpawnPointId] = {
+        pokemon_obj = {
             "lat": poke.Latitude,
             "lng": poke.Longitude,
             "disappear_time": disappear_timestamp,
             "id": poke.pokemon.PokemonId,
             "name": pokename
         }
+
+        pokemons[poke.SpawnPointId] = pokemon_obj
+
+        print "Pokemon :", pokemon_obj
+
+        if poke.SpawnPointId not in pokemons:
+            notifier.pokemon_found(pokemon_obj)
 
 def clear_stale_pokemons():
     current_time = time.time()
