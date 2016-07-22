@@ -1306,7 +1306,6 @@ textarea {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 48px;
     border: 2px solid #CCCCCC;
     border-radius: 20px;
     transition: all 0.3s ease-in 0s; }
@@ -2002,7 +2001,8 @@ html, body {
   margin-top: 3.5em; }
 
 .wrapper {
-  position: relative; }
+  position: relative;
+  height: 100%; }
 
 #header, #map, #footer {
   position: absolute; }
@@ -2014,7 +2014,7 @@ html, body {
 #map {
   top: 3.5em;
   bottom: 0px;
-  height: 100vh;
+  height: unset;
   width: 100vw; }
 
 /* Footer */
