@@ -180,15 +180,13 @@ function gymLabel(team_name, team_id, gym_points) {
         "254, 217, 40, .6"
     ];
     var str;
-    if (team_name == 0) {
-        str = `
+    if (team_id == 0) {
+        str = `<div><center>
             <div>
-                <center>
-                    <div>
-                        <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
-                    </div>
-                </center>
-            </div>`;
+                <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
+                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
+            </div>
+            </center></div>`;
     } else {
         str = `
             <div>
