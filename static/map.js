@@ -522,7 +522,7 @@ $(function(){
 
     updateMap();
 
-    document.getElementById('gyms-switch').onclick = function() {
+    $('#gyms-switch').click(function() {
         localStorage["showGyms"] = this.checked;
         if (this.checked) {
             updateMap();
@@ -532,7 +532,7 @@ $(function(){
             });
             map_gyms = {}
         }
-    };
+    });
 
     $('#pokemon-switch').change(function() {
         localStorage["showPokemon"] = this.checked;
