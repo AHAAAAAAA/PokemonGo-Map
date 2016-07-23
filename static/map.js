@@ -124,25 +124,6 @@ function initSidebar() {
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
 
-<<<<<<< HEAD
-    // var input = document.getElementById('next-location');
-    // var searchBox = new google.maps.places.SearchBox(input);
-
-    // searchBox.addListener('places_changed', function() {
-        // var places = searchBox.getPlaces();
-
-        // if (places.length == 0) {
-            // return;
-        // }
-
-        // var loc = places[0].geometry.location;
-        // $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
-            // $("#next-location").val("");
-            // map.setCenter(loc);
-            // marker.setPosition(loc);
-        // });
-    // });
-=======
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
     searchBox.addListener('places_changed', function() {
@@ -159,7 +140,6 @@ function initSidebar() {
             marker.setPosition(loc);
         });
     });
->>>>>>> c24590ec1ba6e925cc480855b26b3736784af3cf
 }
 
 var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
