@@ -5,7 +5,7 @@ import logging
 import time
 import math
 
-from threading import Thread, BoundedSemaphore
+from threading import Thread, Lock
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -100,7 +100,7 @@ def login(args, position):
 
 
 def search_thread(args):
-    i, total_steps, step_location, step, sem = args
+    i, total_steps, step_location, step, lock = args
 
     log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
     log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
@@ -110,7 +110,7 @@ def search_thread(args):
     while not response_dict:
         response_dict = send_map_request(api, step_location)
         if response_dict:
-            with sem:
+            with lock:
                 try:
                     parse_map(response_dict, i, step, step_location)
                 except KeyError:
@@ -149,7 +149,7 @@ def search(args, i):
     else:
         login(args, position)
 
-    sem = BoundedSemaphore()
+    lock = Lock()
 
     search_threads = []
     curr_steps = 0
@@ -164,7 +164,7 @@ def search(args, i):
             search(args, i)
             return
 
-        search_args = (i, total_steps, step_location, step, sem)
+        search_args = (i, total_steps, step_location, step, lock)
         search_threads.append(Thread(target=search_thread, name='search_step_thread {}'.format(step), args=(search_args, )))
 
         if step % max_threads == 0:
