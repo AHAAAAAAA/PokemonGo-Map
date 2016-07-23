@@ -177,8 +177,9 @@ def parse_map(map_dict, iteration_num, step, step_location):
         'longitude': step_location[1],
         'last_modified': datetime.utcnow(),
     }
-
+	
     bulk_upsert(ScannedLocation, scanned)
+    return (pokemons, pokestops, gyms)
 
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
