@@ -445,12 +445,12 @@ def get_args():
         "debug": False,
         "display_gym": False,
         "display_pokestop": False,
-        "host": "127.0.0.1",
+        "host": "0.0.0.0",
         "ignore": None,
         "locale": "en",
         "only": None,
         "onlylure": False,
-        "port": 5000,
+        "port": 3000,
         "step_limit": 4
     }
     # load config file
@@ -799,7 +799,7 @@ def get_pokemarkers():
         LABEL_TMPL = u'''
 <div><b>{name}</b><span> - </span><small><a href='http://www.pokemon.com/us/pokedex/{id}' target='_blank' title='View in Pokedex'>#{id}</a></small></div>
 <div>Disappears at - {disappear_time_formatted} <span class='label-countdown' disappears-at='{disappear_time}'></span></div>
-<div><a href='https://www.google.com/maps/dir/Current+Location/{lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
+<div><a class='map-link' href='comgooglemaps://?q={lat},{lng}' target='_blank' title='View in Maps'>Get Directions</a></div>
 '''
         label = LABEL_TMPL.format(**pokemon)
         #  NOTE: `infobox` field doesn't render multiple line string in frontend
