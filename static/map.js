@@ -46,6 +46,10 @@ function notifyAboutPokemon(id) {
     ).trigger('change')
 }
 
+function removePokemonMarker(encounter_id) {
+    map_pokemons[encounter_id].marker.setMap(null);
+}
+
 function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
@@ -124,7 +128,7 @@ function initSidebar() {
 
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
-function pokemonLabel(name, disappear_time, id, latitude, longitude) {
+function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_id) {
     disappear_date = new Date(disappear_time)
 
     var contentstring = `
@@ -141,6 +145,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude) {
         <div>
             <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
             <a href='javascript:notifyAboutPokemon(${id})'>Notify</a>&nbsp;&nbsp;
+            <a href='javascript:removePokemonMarker("${encounter_id}")'>Remove</a>&nbsp;&nbsp;
             <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                     target='_blank' title='View in Maps'>Get directions</a>
         </div>`;
@@ -251,7 +256,7 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id)
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
