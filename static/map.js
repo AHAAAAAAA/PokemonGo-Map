@@ -109,7 +109,7 @@ function initMapHelper(center_lat, center_lng) {
 
     map.setMapTypeId(localStorage['map_style']);
 
-    marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
         position: {
             lat: center_lat,
             lng: center_lng
@@ -118,14 +118,16 @@ function initMapHelper(center_lat, center_lng) {
         animation: google.maps.Animation.DROP
     });
 
-    addMyLocationButton();
+    addMyLocationButton(center_lat, center_lng);
     initSidebar();
+    updateMap();
 }
 
 function initMap() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-    initMapHelper(position.coords.latitude, position.coords.longitude);
+      initMapHelper(position.coords.latitude, position.coords.longitude);
+    });
   } else {
     initMapHelper(CONFIG.latitude, CONFIG.longitude);
   }
@@ -160,7 +162,7 @@ var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : n
 
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
-    disappear_date = new Date(disappear_time)
+    var disappear_date = new Date(disappear_time)
 
     var contentstring = `
         <div>
@@ -506,7 +508,6 @@ function updateMap() {
 };
 
 window.setInterval(updateMap, 5000);
-updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
@@ -604,7 +605,7 @@ function sendNotification(title, text, icon) {
     }
 }
 
-myLocationButton = function (map, marker) {
+var myLocationButton = function (map, marker) {
     var locationContainer = document.createElement('div');
 
     var locationButton = document.createElement('button');
@@ -661,7 +662,7 @@ myLocationButton = function (map, marker) {
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationContainer);
 }
 
-var addMyLocationButton = function () {
+var addMyLocationButton = function (center_lat, center_lng) {
     locationMarker = new google.maps.Marker({
         map: map,
         animation: google.maps.Animation.DROP,

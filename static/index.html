@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="{{lang}}">
+<html>
 	<head>
 		<title>Pokémon Go Map</title>
 		<meta charset="utf-8" />
@@ -137,22 +137,14 @@
 	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
 	<!-- <script type="text/javascript" src="static/js/vendor/svg-overlay.js"></script> -->
 
-	<script type="text/javascript">
-		// CHANGE ME
-		var CONFIG = {
-			latitude: 40.36915523640919
-		, longitude: -111.75098587678943
-		, gmaps_key: 'AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4'
-		}
-	</script>
-
+	<script type="text/javascript" src="static/config.js"></script>
 
 	<script>
 		var script = document.createElement('script');
 		script.src = 'https://maps.googleapis.com/maps/api/js?key=' + CONFIG.gmaps_key + '&callback=initMap&libraries=places';
 		script.async = true;
 		script.defer = true;
-		document.getElementsByTagName('head')[0].appendChild(script);
+		document.getElementsByTagName('body')[0].appendChild(script);
 	</script>
 	<script type="text/javascript" src="static/map.js"></script>
 	</body>
