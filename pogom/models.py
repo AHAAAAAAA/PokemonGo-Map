@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import time
+
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
-                   CharField, FloatField, BooleanField, DateTimeField
+                   CharField, FloatField, BooleanField, DateTimeField,\
+                   OperationalError
+
 from datetime import datetime
 from datetime import timedelta
 from base64 import b64encode
@@ -13,7 +17,9 @@ from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
 args = get_args()
-db = SqliteDatabase(args.db)
+db = SqliteDatabase(args.db, pragmas=(
+    ('busy_timeout', '30000'),
+))
 log = logging.getLogger(__name__)
 
 
@@ -186,8 +192,14 @@ def bulk_upsert(cls, data):
     step = 120
 
     while i < num_rows:
-        log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
-        InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+        while True:
+            try:
+                log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
+                InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+                break
+            except OperationalError as e:
+                print('{}... Trying again!'.format(str(e)))
+                time.sleep(1)
         i+=step
 
 
