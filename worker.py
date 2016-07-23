@@ -646,11 +646,11 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    logger.setLevel(args.log_level)
     if args.status_bar:
         configure_logger(filename='worker.log')
         logger.info('-' * 30)
         logger.info('Starting up!')
     else:
         configure_logger(filename=None)
+    logger.setLevel(args.log_level)
     spawn_workers(workers, status_bar=args.status_bar)
