@@ -8,7 +8,8 @@ from datetime import datetime
 from s2sphere import *
 
 from . import config
-from .models import Pokemon, Gym, Pokestop, ScannedLocation
+from .models import Pokemon, Gym, Pokestop, ScannedLocation, WorkerLocation
+from .search import calculate_total_area_corners
 
 
 class Pogom(Flask):
@@ -41,7 +42,15 @@ class Pogom(Flask):
 
         if request.args.get('scanned', 'true') == 'true':
             d['scanned'] = ScannedLocation.get_recent()
+            
+        if request.args.get('location', 'false') == 'true':
+            locations = WorkerLocation.get_recent()
 
+            for l in locations:
+                l['total_area_corners'] = calculate_total_area_corners(l['num_steps'], l['latitude'], l['longitude'])
+
+            d['locations'] = locations
+            
         return jsonify(d)
 
     def loc(self):

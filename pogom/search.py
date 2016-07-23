@@ -9,7 +9,7 @@ from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
 
 from . import config
-from .models import parse_map
+from .models import parse_map, mark_worker_active
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +27,24 @@ lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
 
 def calculate_lng_degrees(lat):
     return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
+
+def calculate_total_area_corners(num_steps, initial_lat, initial_lng ):
+
+    lng_move = calculate_lng_degrees(initial_lat) * 2 * (num_steps - 1) + ((50 / math.cos(math.radians(30))) / (meters_per_degree * math.cos(math.radians(initial_lat))))
+    lat_move = (math.ceil(num_steps / 2) + num_steps - 1) * float(100) / meters_per_degree
+
+    top_lat = initial_lat + lat_move
+    bot_lat = initial_lat - lat_move
+
+    top_lng_move = calculate_lng_degrees(top_lat) * (num_steps - 1) + ((math.tan(math.radians(30)) * 50) / (meters_per_degree * math.cos(math.radians(top_lat))))
+    bot_lng_move = calculate_lng_degrees(bot_lat) * (num_steps - 1) + ((math.tan(math.radians(30)) * 50) / (meters_per_degree * math.cos(math.radians(top_lat))))
+
+    return [top_lat, initial_lng - top_lng_move], \
+    [top_lat, initial_lng + top_lng_move], \
+    [initial_lat, initial_lng + lng_move], \
+    [bot_lat, initial_lng + bot_lng_move], \
+    [bot_lat, initial_lng - bot_lng_move], \
+    [initial_lat, initial_lng - lng_move]
 
 
 def send_map_request(api, position):
@@ -111,7 +129,9 @@ def search(args, i):
             login(args, position)
     else:
         login(args, position)
-
+        
+    mark_worker_active(position, num_steps)
+    
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
         if 'NEXT_LOCATION' in config:
             log.info('New location found. Starting new scan.')
@@ -156,7 +176,7 @@ def search_loop(args):
                 log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
             i += 1
 
-    # This seems appropriate
+    #This seems appropriate
     except:
         log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
         time.sleep(args.scan_delay)

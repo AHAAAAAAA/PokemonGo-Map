@@ -121,6 +121,7 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
+    $('#location-switch').prop('checked', localStorage.showLocation === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -250,7 +251,8 @@ function scannedLabel(last_modified) {
 map_pokemons = {} // Pokemon
 map_gyms = {} // Gyms
 map_pokestops = {} // Pokestops
-map_scanned = {} // Pokestops
+map_scanned = {} // Scanned Locations
+map_location = {} // Active Worker Locations
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 
 function setupPokemonMarker(item) {
@@ -335,13 +337,28 @@ function setupScannedMarker(item) {
         fillColor: getColorByDate(item.last_modified),
         strokeWeight: 1
     });
+    
+    return marker;
+};
 
-    // marker.infoWindow = new google.maps.InfoWindow({
-    //     content: scannedLabel(item.last_modified),
-    //     position: circleCenter
-    // });
-
-    //addListeners(marker);
+function setupLocationMarker(item) {
+    
+    coords = []
+    
+    for(var i = 0; i < item.total_area_corners.length; i++){
+        coords.push({
+            lat: item.total_area_corners[i][0],
+            lng: item.total_area_corners[i][1]
+        })
+    }
+    
+    var marker = new google.maps.Polygon({
+        map: map,
+        fillColor: '#0000FF',
+        strokeWeight: 1,
+        paths: coords
+    });
+    
     return marker;
 };
 
@@ -386,6 +403,14 @@ function clearStaleMarkers() {
             delete map_scanned[key];
         }
     });
+    
+    $.each(map_location, function(key, value) {
+        //If older than 15mins remove
+        if (map_location[key]['last_modified'] < (new Date().getTime() - 15 * 60 * 1000)) {
+            map_location[key].marker.setMap(null);
+            delete map_location[key];
+        }
+    });
 };
 
 function updateMap() {
@@ -394,6 +419,7 @@ function updateMap() {
     localStorage.showGyms = localStorage.showGyms || true;
     localStorage.showPokestops = localStorage.showPokestops || true;
     localStorage.showScanned = localStorage.showScanned || true;
+    localStorage.showLocation = localStorage.showLocation || false;
 
     $.ajax({
         url: "raw_data",
@@ -402,7 +428,8 @@ function updateMap() {
             'pokemon': localStorage.showPokemon,
             'pokestops': localStorage.showPokestops,
             'gyms': localStorage.showGyms,
-            'scanned': localStorage.showScanned
+            'scanned': localStorage.showScanned,
+            'location': localStorage.showLocation
         },
         dataType: "json"
     }).done(function(result) {
@@ -471,6 +498,21 @@ function updateMap() {
 
         });
 
+        $.each(result.locations, function(i, item) {
+            if (!localStorage.showScanned) {
+                return false;
+            }
+
+            if (item.center_id in map_location) {
+            }
+            else { // add marker to map and item to dict
+                if (item.marker) item.marker.setMap(null);
+                item.marker = setupLocationMarker(item);
+                map_location[item.center_id] = item;
+            }
+
+        });
+
         clearStaleMarkers();
     });
 };
@@ -514,7 +556,6 @@ $('#pokestops-switch').change(function() {
     }
 });
 
-
 $('#scanned-switch').change(function() {
     localStorage["showScanned"] = this.checked;
     if (this.checked) {
@@ -524,6 +565,18 @@ $('#scanned-switch').change(function() {
             map_scanned[key].marker.setMap(null);
         });
         map_scanned = {}
+    }
+});
+
+$('#location-switch').change(function() {
+    localStorage["showLocation"] = this.checked;
+    if (this.checked) {
+        updateMap();
+    } else {
+        $.each(map_location, function(key, value) {
+            map_location[key].marker.setMap(null);
+        });
+        map_location = {}
     }
 });
 
