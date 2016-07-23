@@ -25,7 +25,7 @@ There is an [Android port](https://github.com/omkarmoghe/Pokemap) in the works. 
 Using this software is against the ToS of the game. You can get banned, use this tool at your own risk.
 
 
-## Contributing
+## Contributions
 
 Please submit all pull requests to [develop](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) branch.
 
