@@ -183,9 +183,12 @@ def bulk_upsert(cls, data):
     step = 120
 
     while i < num_rows:
-        log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
-        InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
-        i+=step
+        try:
+          log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
+          InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+          i+=step
+        except:
+            log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
 
 
 
