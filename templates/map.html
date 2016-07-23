@@ -90,6 +90,16 @@
 					</label>
 				</div>
 			</div>
+			<div class="form-control switch-container">
+				<h3>Statistics</h3>
+				<div class="onoffswitch">
+					<input id="stats-switch" type="checkbox" name="stats-switch" class="onoffswitch-checkbox" checked/>
+					<label class="onoffswitch-label" for="stats-switch">
+						<span class="switch-label" data-on="On" data-off="Off"></span>
+						<span class="switch-handle"></span>
+					</label>
+				</div>
+			</div>
 			<div class="form-control">
 				<label for="exclude-pokemon">
 					<h3>Hide common Pokémon</h3>
@@ -104,18 +114,18 @@
 			</div>
 		
 			<div class="switch-container">
-				<h3>Stats</h3>
-			</div>
-			<div class="switch-container">
-				<center><h1>Pokémons</h1></center>
-			</div>
-			<div id="pokemonList" style="color: black;"></div>
-			<div class="switch-container">
-				<center><h1>Gyms</h1></center>
-			</div>
-			<div id="arenaList" style="color: black;"></div>
-			<div class="switch-container">
-				<center><h1>PokéStops</h1></center>
+				<h3 id="stats-label"></h3>
+				<div class="switch-container">
+					<center><h1 id="stats-pkmn-label"></h1></center>
+				</div>
+				<div id="pokemonList" style="color: black;"></div>
+				<div class="switch-container">
+					<center><h1 id="stats-gym-label"></h1></center>
+				</div>
+				<div id="arenaList" style="color: black;"></div>
+				<div class="switch-container">
+					<center><h1 id="stats-pkstop-label"></h1></center>
+				</div>
 			</div>
 			<div id="pokestopList" style="color: black;"></div>
 			

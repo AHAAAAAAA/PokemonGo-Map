@@ -123,7 +123,8 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
-
+	$('#stats-switch').prop('checked', localStorage.showStats === 'true');
+	
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
     searchBox.addListener('places_changed', function() {
@@ -404,13 +405,18 @@ var sort_by = function(field, reverse, primer){
 }
 
 function countMarkers() {
+	document.getElementById("stats-label").innerHTML = "Stats";
+	document.getElementById("stats-pkmn-label").innerHTML = "Pokémons";
+	document.getElementById("stats-gym-label").innerHTML = "Gyms";
+	document.getElementById("stats-pkstop-label").innerHTML = "PokéStops";
+	
 	arenaCount = [];
 	arenaTotal = 0;
 	pkmnCount = [];
 	pkmnTotal = 0;
 	pokestopCount = [];
 	pokestopTotal = 0;
-    $.each(map_pokemons, function(key, value) {
+	$.each(map_pokemons, function(key, value) {
 		if (pkmnCount[map_pokemons[key]['pokemon_id']] == 0 || pkmnCount[map_pokemons[key]['pokemon_id']] == null )
 		{
 			pkmnCount[map_pokemons[key]['pokemon_id']] = {
@@ -424,9 +430,9 @@ function countMarkers() {
 			pkmnCount[map_pokemons[key]['pokemon_id']].Count += 1;
 		}
 		pkmnTotal++;
-    });
-    pkmnCount.sort(sort_by('Name', false));
-    $.each(map_pokemons, function(key, value) {
+	});
+	pkmnCount.sort(sort_by('Name', false));
+	$.each(map_pokemons, function(key, value) {
 		var pkmnListString = "<table><thead><tr><th>Icon</th><th>Name</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td></td><td>Total</td><td>"+pkmnTotal+"</td></tr>";
 		for(var i=0;i < pkmnCount.length;i++) {
 			if (pkmnCount[i] != null && pkmnCount[i].Count > 0)
@@ -436,8 +442,8 @@ function countMarkers() {
 		}
 		pkmnListString += "</tbody></table>";
 		document.getElementById("pokemonList").innerHTML = pkmnListString;
-    });
-    $.each(map_gyms, function(key, value) {
+	});
+	$.each(map_gyms, function(key, value) {
 		if (arenaCount[map_gyms[key]['team_id']] == 0 || arenaCount[map_gyms[key]['team_id']] == null )
 		{
 			arenaCount[map_gyms[key]['team_id']] = 1;
@@ -471,8 +477,8 @@ function countMarkers() {
 		}
 		arenaListString += "</table>";
 		document.getElementById("arenaList").innerHTML = arenaListString;
-    });
-    $.each(map_pokestops, function(key, value) {
+	});
+	$.each(map_pokestops, function(key, value) {
 		var pokestopLured = false;
 		if(map_pokestops[key]['lure_expiration'] != null && map_pokestops[key]['lure_expiration'] > 0)
 		{
@@ -513,7 +519,7 @@ function countMarkers() {
 		}
 		pokestopListString += "</table>";
 		document.getElementById("pokestopList").innerHTML = pokestopListString;
-    });
+	});
 };
 
 function updateMap() {
@@ -600,7 +606,10 @@ function updateMap() {
         });
 
         clearStaleMarkers();
-		countMarkers();
+		if(localStorage.showStats == "true")
+		{
+			countMarkers();
+		}
     });
 };
 
@@ -653,6 +662,22 @@ $('#scanned-switch').change(function() {
             map_scanned[key].marker.setMap(null);
         });
         map_scanned = {}
+    }
+});
+
+
+$('#stats-switch').change(function() {
+    localStorage["showStats"] = this.checked;
+    if (this.checked) {
+        countMarkers();
+    } else {
+		document.getElementById("pokemonList").innerHTML = "";
+		document.getElementById("arenaList").innerHTML = "";
+		document.getElementById("pokestopList").innerHTML = "";
+		document.getElementById("stats-label").innerHTML = "";
+		document.getElementById("stats-pkmn-label").innerHTML = "";
+		document.getElementById("stats-gym-label").innerHTML = "";
+		document.getElementById("stats-pkstop-label").innerHTML = "";
     }
 });
 
