@@ -1,0 +1,385 @@
+package RpcSub;
+
+import "RpcEnum.proto";
+
+message GetPlayerResponse {
+    optional int32 unknown1 = 1;
+    optional Profile profile = 2;
+}
+
+message Profile {
+  required int64 creation_time = 1;
+  optional string username = 2;
+  optional RpcEnum.TeamColor team = 5;
+  optional bytes tutorial = 7; 
+  optional AvatarDetails avatar = 8; 
+  optional int32 poke_storage = 9;
+  optional int32 item_storage = 10;
+  optional DailyBonus daily_bonus = 11;
+  optional bytes unknown12 = 12;
+  optional bytes unknown13 = 13;
+  repeated Currency currency = 14;
+}
+
+message DailyBonus {
+  optional int64 NextCollectTimestampMs = 1;
+  optional int64 NextDefenderBonusCollectTimestampMs = 2;
+}
+
+message Currency {
+  required string type = 1;
+  optional int32 amount = 2;
+}
+
+message AvatarDetails {
+  optional int32 unknown2 = 2;
+  optional int32 unknown3 = 3;
+  optional int32 unknown9 = 9;
+  optional int32 unknown10 = 10;
+}
+
+message DownloadSettingsRequest {
+  optional string hash = 1;
+}
+
+message GetInventoryResponse {
+  optional bool success = 1;
+  optional InventoryDelta inventory_delta = 2;
+}
+
+message InventoryDelta {
+  optional int64 original_timestamp_ms = 1;
+  optional int64 new_timestamp_ms = 2;
+  repeated InventoryItem inventory_items = 3;
+}
+
+message InventoryItem {
+  optional int64 modified_timestamp_ms = 1;
+  optional int64 deleted_item_key = 2;
+  optional InventoryItemData inventory_item_data = 3;
+}
+
+message InventoryItemData {
+  optional Pokemon pokemon = 1;
+  optional Item item = 2;
+  optional PokedexEntry pokedex_entry = 3;
+  optional PlayerStats player_stats = 4;
+  optional PlayerCurrency player_currency = 5;
+  optional PlayerCamera player_camera = 6;
+  optional InventoryUpgrades inventory_upgrades = 7;
+  optional AppliedItems applied_items = 8;
+  optional EggIncubators egg_incubators = 9;
+  optional PokemonFamily pokemon_family = 10;
+}
+
+message Pokemon {
+  optional int32 id = 1;
+  optional RpcEnum.PokemonId pokemon_type = 2;
+  optional int32 cp = 3;
+  optional int32 stamina = 4;
+  optional int32 stamina_max = 5;
+  optional RpcEnum.PokemonMove move_1 = 6;
+  optional RpcEnum.PokemonMove move_2 = 7;
+  optional int32 deployed_fort_id = 8;
+  optional string owner_name = 9;
+  optional bool is_egg = 10;
+  optional int32 egg_km_walked_target = 11;
+  optional int32 egg_km_walked_start = 12;
+  optional int32 origin = 14;
+  optional float height_m = 15;
+  optional float weight_kg = 16;
+  optional int32 individual_attack = 17;
+  optional int32 individual_defense = 18;
+  optional int32 individual_stamina = 19;
+  optional int32 cp_multiplier = 20;
+  optional int32 pokeball = 21;
+  optional uint64 captured_cell_id = 22;
+  optional int32 battles_attacked = 23;
+  optional int32 battles_defended = 24;
+  optional int32 egg_incubator_id = 25;
+  optional uint64 creation_time_ms = 26;
+  optional int32 num_upgrades = 27;
+  optional int32 additional_cp_multiplier = 28;
+  optional int32 favorite = 29;
+  optional string nickname = 30;
+  optional int32 from_fort = 31;
+}
+
+message Item {
+  optional RpcEnum.ItemType item = 1;
+  optional int32 count = 2;
+  optional bool unseen = 3;
+}
+
+message PokedexEntry {
+  optional int32 pokedex_entry_number = 1;
+  optional int32 times_encountered = 2;
+  optional int32 times_captured = 3;
+  optional int32 evolution_stone_pieces = 4;
+  optional int32 evolution_stones = 5;
+}
+
+message PlayerStats {
+  optional int32 level = 1;
+  optional int64 experience = 2;
+  optional int64 prev_level_xp = 3;
+  optional int64 next_level_xp = 4;
+  optional float km_walked = 5;
+  optional int32 pokemons_encountered = 6;
+  optional int32 unique_pokedex_entries = 7;
+  optional int32 pokemons_captured = 8;
+  optional int32 evolutions = 9;
+  optional int32 poke_stop_visits = 10;
+  optional int32 pokeballs_thrown = 11;
+  optional int32 eggs_hatched = 12;
+  optional int32 big_magikarp_caught = 13;
+  optional int32 battle_attack_won = 14;
+  optional int32 battle_attack_total = 15;
+  optional int32 battle_defended_won = 16;
+  optional int32 battle_training_won = 17;
+  optional int32 battle_training_total = 18;
+  optional int32 prestige_raised_total = 19;
+  optional int32 prestige_dropped_total = 20;
+  optional int32 pokemon_deployed = 21;
+  optional bytes pokemon_caught_by_type = 22; // TODO: repeated PokemonType ??
+  optional int32 small_rattata_caught = 23;
+}
+
+message PlayerCurrency {
+  optional int32 gems = 1;
+}
+
+message PlayerCamera {
+  optional bool is_default_camera = 1;
+}
+
+message InventoryUpgrades {
+  repeated InventoryUpgrade inventory_upgrades = 1;
+}
+
+message InventoryUpgrade {
+  optional RpcEnum.ItemType item = 1;
+  optional RpcEnum.InventoryUpgradeType upgrade_type = 2;
+  optional int32 additional_storage = 3;
+}
+
+message AppliedItems {
+  optional AppliedItem item = 4;
+}
+
+message AppliedItem {
+  optional RpcEnum.ItemType item_type = 1;
+  optional RpcEnum.ItemTypeCategory item_type_category = 2;
+  optional int64 expire_ms = 3;
+  optional int64 applied_ms = 4;
+}
+
+message EggIncubators {
+  optional EggIncubator egg_incubator = 1;
+}
+
+message EggIncubator {
+  optional string item_id = 1;
+  optional RpcEnum.ItemType item_type = 2;
+  optional RpcEnum.EggIncubatorType incubator_type = 3;
+  optional int32 uses_remaining = 4;
+  optional int64 pokemon_id = 5; // TODO: Check if is PokemonType
+  optional double start_km_walked = 6;
+  optional double target_km_walked = 7;
+}
+
+message PokemonFamily {
+  optional RpcEnum.PokemonFamilyId family_id = 1;
+  optional int32 candy = 2;
+}
+
+message GetMapObjectsRequest {
+  optional bytes  cell_id = 1;
+  optional bytes since_timestamp_ms = 2;
+  optional double latitude = 3;
+  optional double longitude = 4;
+}
+
+message GetMapObjectsResponse {
+  repeated MapCell map_cells = 1;
+  optional RpcEnum.MapObjectsStatus status = 2;
+}
+
+message MapCell {
+  // S2 geographic area that the cell covers (http://s2map.com/) (https://code.google.com/archive/p/s2-geometry-library/)
+  optional uint64 s2_cell_id = 1;
+  optional int64 current_timestamp_ms = 2;
+  repeated FortData forts = 3;
+  repeated SpawnPoint spawn_points = 4;
+  repeated string deleted_objects = 6;
+  optional bool is_truncated_list = 7;
+  repeated FortSummary fort_summaries = 8;
+  repeated SpawnPoint decimated_spawn_points = 9;
+
+  // Pokemon within 2 steps or less.
+  repeated WildPokemon wild_pokemons = 5;
+  // Pokemon within 1 step or none.
+  repeated MapPokemon catchable_pokemons = 10;
+  // Pokemon farther away than 2 steps, but still in the area.
+  repeated NearbyPokemon nearby_pokemons = 11;
+}
+
+message FortData {
+  optional string id = 1;
+  optional int64 last_modified_timestamp_ms = 2;
+  optional double latitude = 3;
+  optional double longitude = 4;
+  optional bool enabled = 8;
+  optional RpcEnum.FortType type = 9;
+
+  //// Fields related to gyms only
+
+  // Team that owns the gym
+  optional RpcEnum.TeamColor owned_by_team = 5;
+
+  // Highest CP Pokemon at the gym
+  optional RpcEnum.PokemonId guard_pokemon_id = 6;
+  optional int32 guard_pokemon_cp = 7;
+
+  // Prestigate / experience of the gym
+  optional int64 gym_points = 10;
+
+  // Whether someone is battling at the gym currently
+  optional bool is_in_battle = 11;
+
+  //// Fields related to pokestops only
+
+  // Timestamp when the pokestop can be activated again to get items / xp
+  optional int64 cooldown_complete_timestamp_ms = 14;
+
+  optional RpcEnum.FortSponsor sponsor = 15;
+  optional RpcEnum.FortRenderingType rendering_type = 16;
+
+  // Might represent the type of item applied to the pokestop, right now only lures can be applied
+  optional bytes active_fort_modifier = 12;
+  optional FortLureInfo lure_info = 13;
+}
+
+message FortLureInfo {
+  optional string fort_id = 1;
+  optional double unknown2 = 2;
+  optional RpcEnum.PokemonId active_pokemon_id = 3;
+  optional int64 lure_expires_timestamp_ms = 4;
+}
+
+message SpawnPoint {
+  optional double latitude = 2;
+  optional double longitude = 3;
+}
+
+message FortSummary {
+  optional int32 fort_summary_id = 1;
+  optional int32 last_modified_timestamp_ms = 2;
+  optional int32 latitude = 3;
+  optional int32 longitude = 4;
+}
+
+message WildPokemon {
+  optional fixed64 encounter_id = 1;
+  optional int64 last_modified_timestamp_ms = 2;
+  optional double latitude = 3;
+  optional double longitude = 4;
+  optional string spawnpoint_id = 5;
+  optional PokemonData pokemon_data = 7;
+  optional int32 time_till_hidden_ms = 11;
+}
+
+message PokemonData {
+  optional int32 id = 1;
+  optional RpcEnum.PokemonId pokemon_id = 2;
+  optional int32 cp = 3;
+  optional int32 stamina = 4;
+  optional int32 stamina_max = 5;
+  optional RpcEnum.PokemonMove move_1 = 6;
+  optional RpcEnum.PokemonMove move_2 = 7;
+  optional int32 deployed_fort_id = 8;
+  optional string owner_name = 9;
+  optional bool is_egg = 10;
+  optional int32 egg_km_walked_target = 11;
+  optional int32 egg_km_walked_start = 12;
+  optional int32 origin = 14;
+  optional float height_m = 15;
+  optional float weight_kg = 16;
+  optional int32 individual_attack = 17;
+  optional int32 individual_defense = 18;
+  optional int32 individual_stamina = 19;
+  optional int32 cp_multiplier = 20;
+  optional int32 pokeball = 21;
+  optional uint64 captured_cell_id = 22;
+  optional int32 battles_attacked = 23;
+  optional int32 battles_defended = 24;
+  optional int32 egg_incubator_id = 25;
+  optional uint64 creation_time_ms = 26;
+  optional int32 num_upgrades = 27;
+  optional int32 additional_cp_multiplier = 28;
+  optional int32 favorite = 29;
+  optional string nickname = 30;
+  optional int32 from_fort = 31;
+}
+
+message MapPokemon {
+  optional string spawnpoint_id = 1;
+  optional fixed64 encounter_id = 2;
+  optional RpcEnum.PokemonId pokemon_id = 3;
+  // After this timestamp, the pokemon will be gone.
+  optional int64 expiration_timestamp_ms = 4;
+  optional double latitude = 5;
+  optional double longitude = 6;
+}
+
+message NearbyPokemon {
+  optional RpcEnum.PokemonId pokemon_id = 1;
+  optional float distance_in_meters = 2;
+  optional fixed64 encounter_id = 3;
+}
+
+message DownloadSettingsResponse {
+  optional string error = 1;
+  optional string hash = 2;
+  optional GlobalSettings settings = 3;
+}
+
+message GlobalSettings {
+  optional FortSettings fort_settings = 2;
+  optional MapSettings map_settings = 3;
+  optional LevelSettings level_settings = 4;
+  optional InventorySettings inventory_settings = 5;
+  optional string minimum_client_version = 6;
+}
+
+message FortSettings {
+  optional double interaction_range_meters = 1;
+  optional int32 max_total_deployed_pokemon = 2;
+  optional int32 max_player_deployed_pokemon = 3;
+  optional double deploy_stamina_multiplier = 4;
+  optional double deploy_attack_multiplier = 5;
+  optional double far_interaction_range_meters = 6;
+}
+
+message MapSettings {
+  optional double pokemon_visible_range = 1;
+  optional double poke_nav_range_meters = 2;
+  optional double encounter_range_meters = 3;
+  optional float get_map_objects_min_refresh_seconds = 4;
+  optional float get_map_objects_max_refresh_seconds = 5;
+  optional float get_map_objects_min_distance_meters = 6;
+  optional string google_maps_api_key = 7;
+}
+
+message LevelSettings {
+  optional double trainer_cp_modifier = 2;
+  optional double trainer_difficulty_modifier = 3;
+}
+
+message InventorySettings {
+  optional int32 max_pokemon = 1;
+  optional int32 max_bag_items = 2;
+  optional int32 base_pokemon = 3;
+  optional int32 base_bag_items = 4;
+  optional int32 base_eggs = 5;
+}

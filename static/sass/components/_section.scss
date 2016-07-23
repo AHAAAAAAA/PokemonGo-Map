@@ -1,0 +1,32 @@
+/* Section/Article */
+
+	section, article {
+		&.special {
+			text-align: center;
+		}
+	}
+
+	header {
+		p {
+			color: _palette(fg-light);
+			position: relative;
+			margin: 0 0 (_size(element-margin) * 0.75) 0;
+		}
+
+		h2 + p {
+			font-size: 1.25em;
+			margin-top: (_size(element-margin) * -0.5);
+		}
+
+		h3 + p {
+			font-size: 1.1em;
+			margin-top: (_size(element-margin) * -0.4);
+		}
+
+		h4 + p,
+		h5 + p,
+		h6 + p {
+			font-size: 0.9em;
+			margin-top: (_size(element-margin) * -0.3);
+		}
+	}

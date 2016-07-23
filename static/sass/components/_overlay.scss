@@ -1,0 +1,111 @@
+/* Overlay style */
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #3B3B3B;
+  z-index: 200;
+
+	/* Overlay closing cross */
+  .overlay-close {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    overflow: hidden;
+    border: none;
+    background: url(../img/cross.png) no-repeat center center;
+    text-indent: 200%;
+    color: transparent;
+    outline: none;
+    z-index: 100;
+  }
+
+	/* Menu style */
+  nav {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    height: 60%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    display: inline-block;
+    height: 100%;
+    position: relative;
+
+    li {
+      display: block;
+      height: 20%;
+      height: calc(100% / 5);
+      min-height: 54px;
+
+      a {
+        font-size: 54px;
+        font-weight: 300;
+        display: block;
+        color: #fff;
+        -webkit-transition: color 0.2s;
+        transition: color 0.2s;
+
+        &:hover, &:focus {
+          color: #f0f0f0;
+        }
+      }
+    }
+  }
+}
+
+/* Effects */
+body {
+  background: #ddd;
+}
+
+.container {
+  background: #fff;
+  -webkit-transition: -webkit-transform 0.5s;
+  transition: transform 0.5s;
+
+  &.overlay-open {
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+  }
+}
+
+.overlay-contentscale {
+  visibility: hidden;
+  -webkit-transform: translateY(100%);
+  transform: translateY(100%);
+  -webkit-transition: -webkit-transform 0.5s, visibility 0s 0.5s;
+  transition: transform 0.5s, visibility 0s 0.5s;
+
+  &.open {
+    visibility: visible;
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+  }
+}
+
+@media screen and (max-height: 30.5em) {
+  .overlay {
+    nav {
+      height: 70%;
+      font-size: 34px;
+    }
+
+    ul li {
+      min-height: 34px;
+    }
+  }
+}

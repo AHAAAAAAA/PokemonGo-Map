@@ -1,0 +1,54 @@
+@import 'libs/vars';
+@import 'libs/functions';
+@import 'libs/mixins';
+@import 'libs/skel';
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css);
+
+@include skel-breakpoints((
+	xlarge: '(max-width: 1680px)',
+	large: '(max-width: 1280px)',
+	medium: '(max-width: 980px)',
+	small: '(max-width: 736px)',
+	xsmall: '(max-width: 480px)'
+));
+
+@include skel-layout((
+	reset: 'full',
+	boxModel: 'border',
+	grid: ( gutters: 2em ),
+	breakpoints: (
+		large: (
+			grid: ( gutters: 1.5em )
+		),
+		small: (
+			grid: ( gutters: 1.25em )
+		)
+	)
+));
+
+// Base.
+
+@import 'base/page';
+@import 'base/typography';
+
+// Component.
+
+@import 'components/section';
+@import 'components/form';
+@import 'components/box';
+@import 'components/icon';
+@import 'components/image';
+@import 'components/list';
+@import 'components/table';
+@import 'components/button';
+@import 'components/grid-demo';
+@import 'components/overlay';
+
+// Layout.
+
+@import 'layout/header';
+@import 'layout/nav';
+@import 'layout/banner';
+@import 'layout/main';
+@import 'layout/footer';
