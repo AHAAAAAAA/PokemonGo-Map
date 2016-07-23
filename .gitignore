@@ -2,3 +2,4 @@
 .idea
 config.py
 db.sqlite
+*.log
