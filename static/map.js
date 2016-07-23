@@ -28,6 +28,11 @@ var map_scanned = {}
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
 
+//Exponential backoff on main map update loop
+var updateDelay=5000;
+var maxRetry=5;
+var updateWindowInterval;
+
 //
 // Functions
 //
@@ -379,7 +384,8 @@ function clearStaleMarkers() {
     });
 };
 
-function updateMap() {
+//changed it so i can override updateMap with less changes
+var updateMap =function () {
 
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
@@ -463,6 +469,14 @@ function updateMap() {
         });
 
         clearStaleMarkers();
+
+        //update var
+        isLocalUp = true;
+    }).fail(function(){
+        isLocalUp = false;
+    }).always(function(){
+        //refresh the timings
+        refreshUpdateTimings(isLocalUp);
     });
 };
 
@@ -592,12 +606,38 @@ function addMyLocationButton() {
 }
 
 //
-// Page Ready Exection
+// Exponential Backoff
+//
+
+var refreshUpdateTimings = function(isSuccess){
+     
+     if(isSuccess){
+         maxRetry=10;
+         updateDelay=5000;
+     } else{
+         if(maxRetry > 0){
+            maxRetry-=1;
+            updateDelay*=2;
+         }
+     }
+    
+     if(updateWindowInterval){
+          clearInterval(updateWindowInterval);
+     }
+
+     if(maxRetry > 0){
+        //console.log('max',maxRetry,'next delay',updateDelay);
+        updateWindowInterval = window.setInterval(updateMap, updateDelay);
+     }
+};
+
+//
+// Page Ready Exception
 //
 
 $(function () {
     if (!Notification) {
-        console.log('could not load notifications');
+        //console.log('could not load notifications');
         return;
     }
 
@@ -652,8 +692,7 @@ $(function () {
 
     // run interval timers to regularly update map and timediffs
     window.setInterval(updateLabelDiffTime, 1000);
-    window.setInterval(updateMap, 5000);
-
+    
     // Get this map started!
     updateMap();
 
