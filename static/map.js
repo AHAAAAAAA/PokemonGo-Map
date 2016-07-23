@@ -491,6 +491,7 @@ function sendNotification(title, text, icon, lat, lng) {
 
         notification.onclick = function () {
             window.focus();
+            notification.close();
 
             centerMap(lat, lng, 20);
         };
