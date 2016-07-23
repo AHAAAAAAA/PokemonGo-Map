@@ -59,6 +59,10 @@ ACCOUNTS = [
     ('trainer3', 'secret', 'google'),
     # ...
 ]
+
+# Trash Pokemon won't be shown on the live map.
+# Their data will still be collected to the database.
+TRASH_IDS = [16, 19, 41, 96]
 ```
 
 ### Setting up database
