@@ -10,10 +10,15 @@ import os
 import json
 from datetime import datetime, timedelta
 import ConfigParser
+import platform
 
 from . import config
 from exceptions import APIKeyException
 
+if platform.system() == "Windows":
+    DEFAULT_THREADS = 1
+else:
+    DEFAULT_THREADS = 5
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
@@ -56,7 +61,7 @@ def get_args():
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
-    parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=5, dest='num_threads')
+    parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=DEFAULT_THREADS, dest='num_threads')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
