@@ -34,6 +34,14 @@ You can now access the server at <http://localhost:5000>.
 
 For more advanced instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map-server/wiki), or the [video guide](https://www.youtube.com/watch?v=RJKAulPCkRI).
 
+## API Endpoints
+
+* `POST /login` - change the current logged in user
+* `GET /raw_data` - returns a json object representing the list of nearby pokemon, pokestops, and gyms
+* `GET /loc` - return the current gps location
+* `POST /next_loc` - update the gps location
+* `GET /pokemon` - get list of active pokemon
+
 ## Android Version
 
 There is an [Android port](https://github.com/omkarmoghe/Pokemap) in the works. All Android related prs and issues please refer to this [repo](https://github.com/omkarmoghe/Pokemap).
