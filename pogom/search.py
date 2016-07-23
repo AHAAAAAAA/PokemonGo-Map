@@ -40,7 +40,7 @@ def send_map_request(api, position):
                             cell_id=get_cellid(position[0], position[1]))
         return api.call()
     except Exception as e:
-        log.warn("Uncaught exception when downloading map " + str(e))
+        log.warning("Uncaught exception when downloading map " + str(e))
         return False
 
 
@@ -53,7 +53,7 @@ def generate_location_steps(initial_location, num_steps):
     yield (initial_location[0],initial_location[1], 0) #Middle circle
 
     while ring < num_steps:
-        #Move the location diagonally to top left spot, then start the circle which will end up back here for the next ring 
+        #Move the location diagonally to top left spot, then start the circle which will end up back here for the next ring
         #Move Lat north first
         lat_location += lat_gap_degrees
         lng_location -= calculate_lng_degrees(lat_location)
