@@ -343,7 +343,7 @@ function initSidebar() {
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_id) {
-    disappear_date = new Date(disappear_time)
+    var disappear_date = new Date(disappear_time)
 
     var contentstring = `
         <div>
@@ -771,7 +771,7 @@ function processPokestops(i, item) {
         map_data.pokestops[item.pokestop_id] = item;
     }
     else {
-        item2 = map_data.pokestops[item.pokestop_id];
+        var item2 = map_data.pokestops[item.pokestop_id];
         if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
             item2.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
@@ -901,6 +901,7 @@ var updateLabelDiffTime = function() {
         var hours = Math.floor(difference / 36e5);
         var minutes = Math.floor((difference - (hours * 36e5)) / 6e4);
         var seconds = Math.floor((difference - (hours * 36e5) - (minutes * 6e4)) / 1e3);
+        var timestring = "";
 
         if (disappearsAt < now) {
             timestring = "(expired)";
@@ -1111,8 +1112,8 @@ $(function () {
       if(navigator.geolocation && Store.get('geoLocate')) {
         navigator.geolocation.getCurrentPosition(function (position){
           var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
-          lat = position.coords.latitude;
-          lon = position.coords.longitude;
+          var lat = position.coords.latitude;
+          var lon = position.coords.longitude;
 
           //the search function makes any small movements cause a loop. Need to increase resolution
           if(getPointDistance(marker.getPosition(), (new google.maps.LatLng(lat, lon))) > 40) //changed to 40 from PR notes, less jitter.
