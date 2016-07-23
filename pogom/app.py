@@ -26,7 +26,8 @@ class Pogom(Flask):
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
-                               lang=config['LOCALE'])
+                               lang=config['LOCALE'],
+                               ga_code=config['GA_CODE'])
 
     def raw_data(self):
         d = {}

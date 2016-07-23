@@ -57,6 +57,7 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=5, dest='num_threads')
+    parser.add_argument('-ga', '--googleanalytics', help='The google analytics code', required=False, default='', type=str)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 

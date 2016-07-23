@@ -58,6 +58,7 @@ if __name__ == '__main__':
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
+    config['GA_CODE'] = args.googleanalytics
 
     if not args.mock:
         start_locator_thread(args)
