@@ -31,7 +31,11 @@ class Pogom(Flask):
     def raw_data(self):
         d = {}
         if request.args.get('pokemon', 'true') == 'true':
-            d['pokemons'] = Pokemon.get_active()
+            if request.args.get('ids'):
+                ids = [int(x) for x in request.args.get('ids').split(',')]
+                d['pokemons'] = Pokemon.get_active_by_id(ids)
+            else:
+                d['pokemons'] = Pokemon.get_active()
 
         if request.args.get('pokestops', 'false') == 'true':
             d['pokestops'] = Pokestop.get_all()
