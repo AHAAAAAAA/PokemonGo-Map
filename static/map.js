@@ -429,10 +429,10 @@ function clearMarkers() {
 
 function updateMap() {
 
-    localStorage.showPokemon = localStorage.showPokemon || true;
-    localStorage.showGyms = localStorage.showGyms || true;
-    localStorage.showPokestops = localStorage.showPokestops || false;
-    localStorage.showScanned = localStorage.showScanned || false;
+    var loadPokemon = localStorage.showPokemon || true;
+    var loadGyms = localStorage.showGyms || true;
+    var loadPokestops = true;
+    var loadScanned = localStorage.showScanned || false;
 
     var bounds = map.getBounds();
     var swPoint = bounds.getSouthWest();

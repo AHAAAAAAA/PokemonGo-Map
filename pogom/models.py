@@ -70,11 +70,11 @@ class Pokemon(BaseModel):
         query = (Pokemon
                  .select()
                  .where(
-                    Pokemon.disappear_time > datetime.utcnow() &
-                        (Pokemon.latitude >= swLat) &
-                        (Pokemon.longitude >= swLng) &
-                        (Pokemon.latitude <= neLat) &
-                        (Pokemon.longitude <= neLng))
+                    (Pokemon.disappear_time > datetime.utcnow()) &
+                    (Pokemon.latitude >= swLat) &
+                    (Pokemon.longitude >= swLng) &
+                    (Pokemon.latitude <= neLat) &
+                    (Pokemon.longitude <= neLng))
                  .dicts())
 
         pokemons = []
@@ -140,7 +140,7 @@ class ScannedLocation(BaseModel):
         query = (ScannedLocation
                  .select()
                  .where(
-                    ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15)) &
+                    (ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15))) &
                     (ScannedLocation.latitude >= swLat) &
                     (ScannedLocation.longitude >= swLng) &
                     (ScannedLocation.latitude <= neLat) &
