@@ -18,7 +18,7 @@ class Pogom(Flask):
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
-        self.route("/next_loc", methods=['POST'])(self.next_loc)
+        self.route("/next_loc", methods=['GET', 'POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
 
     def fullmap(self):
@@ -52,14 +52,22 @@ class Pogom(Flask):
         return jsonify(d)
 
     def next_loc(self):
-        lat = request.args.get('lat', type=float)
-        lon = request.args.get('lon', type=float)
-        if not (lat and lon):
-            print('[-] Invalid next location: %s,%s' % (lat, lon))
-            return 'bad parameters', 400
-        else:
-            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            return 'ok'
+        if request.method == 'GET':
+            return render_template('get_loc.html')
+        if request.method == 'POST':
+            if request.form['lat'] and request.form['lon']:
+                lat = float(request.form['lat'])
+                lon = float(request.form['lon'])
+            else:
+                lat = request.args.get('lat', type=float)
+                lon = request.args.get('lon', type=float)
+            if not (lat and lon):
+                print('[-] Invalid next location: %s,%s' % (lat, lon))
+                return 'bad parameters', 400
+            else:
+                config['ORIGINAL_LATITUDE'] = lat
+                config['ORIGINAL_LONGITUDE'] = lon
+                return 'ok'
 
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android

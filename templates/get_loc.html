@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Your coordinates will appear here shortly:</p>
+<p id="coords"></p>
+<script>
+var x = document.getElementById("coords");
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude+
+	"<br>Altitude: 0.0<br>"+
+	"<form action='next_loc' method='post'>"+
+	"<p><input type='text' name='lat' value='" + position.coords.latitude + "'/></p>"+
+	"<p><input type='text' name='lon' value='" + position.coords.longitude + "'/></p>"+
+	"<input type='submit' value='Submit' style='height:60px; width:100px' />"+
+	"</form>";
+}
+window.onload = getLocation
+</script>
+
+</body>
+</html>
