@@ -8,7 +8,7 @@ from datetime import datetime
 from s2sphere import *
 
 from . import config
-from .models import Pokemon, Gym, Pokestop
+from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
 
 class Pogom(Flask):
@@ -17,6 +17,7 @@ class Pogom(Flask):
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
+        self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
 
@@ -38,6 +39,16 @@ class Pogom(Flask):
         if request.args.get('gyms', 'true') == 'true':
             d['gyms'] = Gym.get_all()
 
+        if request.args.get('scanned', 'true') == 'true':
+            d['scanned'] = ScannedLocation.get_recent()
+
+        return jsonify(d)
+
+    def loc(self):
+        d = {}
+        d['lat']=config['ORIGINAL_LATITUDE']
+        d['lng']=config['ORIGINAL_LONGITUDE']
+
         return jsonify(d)
 
     def next_loc(self):
@@ -47,8 +58,7 @@ class Pogom(Flask):
             print('[-] Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
-            config['ORIGINAL_LATITUDE'] = lat
-            config['ORIGINAL_LONGITUDE'] = lon
+            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             return 'ok'
 
     def list_pokemon(self):

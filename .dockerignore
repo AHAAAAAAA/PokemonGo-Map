@@ -1,0 +1,9 @@
+.git
+.github
+.gitignore
+credentials.example.json
+node_modules
+Easy\ Setup
+Gruntfile.js
+package.json
+pogom.db
