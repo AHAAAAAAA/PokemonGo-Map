@@ -49,6 +49,16 @@
     };
 
     window.setInterval(setLabelTime, 1000);
+    
+    var updateGPS = function(){
+    	if (navigator.geolocation) {
+    		navigator.geolocation.getCurrentPosition(function(userPosition){
+    			$.post('update_gps', {latitude: userPosition.coords.latitude, longitude: userPosition.coords.longitude });
+    		});
+    	}
+    };
+    
+    window.setInterval(updateGPS, 5000);
 
   
   </script>

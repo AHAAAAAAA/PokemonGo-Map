@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import flask
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_googlemaps import icons
@@ -805,6 +805,21 @@ def next_loc():
         NEXT_LAT = float(lat)
         NEXT_LONG = float(lon)
         return 'ok'
+        
+@app.route('/update_gps', methods=['POST'])
+def update_gps():
+	latitude = request.form['latitude'];
+	longitude = request.form['longitude'];
+#	global origin_lat;
+#	global origin_lon;
+#	origin_lat, origin_lon = latitude, longitude;
+	retrying_set_location(latitude+','+longitude);
+	print("setting location as %s,%s" % (latitude, longitude));
+	#set_location_coords(latitude, longitude, 0);
+	return 'ok';
+	
+def place_position_marker():
+		return None;
 
 
 def get_pokemarkers():
