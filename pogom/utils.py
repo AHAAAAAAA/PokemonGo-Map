@@ -18,7 +18,7 @@ from exceptions import APIKeyException
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
-    
+
 def parse_config(args):
     Config = ConfigParser.ConfigParser()
     Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
@@ -59,10 +59,17 @@ def get_args():
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=5, dest='num_threads')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
-    if (args.settings) :
+
+    if (args.settings):
         args = parse_config(args) 
-    elif args.password is None:
-        args.password = getpass.getpass()
+    else:
+        if (args.username is None or args.location is None or args.step_limit is None):
+            parser.print_usage()
+            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
+            sys.exit(1);
+
+        if args.password is None:
+            args.password = getpass.getpass()
 
     return args
 
