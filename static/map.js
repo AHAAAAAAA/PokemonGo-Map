@@ -139,6 +139,8 @@ function initSidebar() {
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
+    $('#aepi-switch').prop('checked', localStorage.autoExpandPI === 'true');
+    
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -285,7 +287,8 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude),
+        disableAutoPan: true
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
@@ -428,6 +431,7 @@ function updateMap() {
     localStorage.showGyms = localStorage.showGyms || true;
     localStorage.showPokestops = localStorage.showPokestops || false;
     localStorage.showScanned = localStorage.showScanned || false;
+    localStorage.autoExpandPI = localStorage.autoExpandPI || false;
 
     $.ajax({
         url: "raw_data",
@@ -450,7 +454,10 @@ function updateMap() {
               if (item.marker) item.marker.setMap(null);
               item.marker = setupPokemonMarker(item);
               map_pokemons[item.encounter_id] = item;
-          }
+              if(localStorage["autoExpandPI"]==='true') {
+                  item.marker.infoWindow.open(map, item.marker);
+              }
+          } 
         });
 
         $.each(result.pokestops, function(i, item) {
@@ -517,8 +524,8 @@ document.getElementById('gyms-switch').onclick = function() {
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_gyms, function(key, value) {
-            map_gyms[key].marker.setMap(null);
+        $.each(map_gyms, function(key, item) {
+            item.marker.setMap(null);
         });
         map_gyms = {}
     }
@@ -529,8 +536,8 @@ $('#pokemon-switch').change(function() {
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_pokemons, function(key, value) {
-            map_pokemons[key].marker.setMap(null);
+        $.each(map_pokemons, function(key, item) {
+            item.marker.setMap(null);
         });
         map_pokemons = {}
     }
@@ -541,8 +548,8 @@ $('#pokestops-switch').change(function() {
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_pokestops, function(key, value) {
-            map_pokestops[key].marker.setMap(null);
+        $.each(map_pokestops, function(key, item) {
+            item.marker.setMap(null);
         });
         map_pokestops = {}
     }
@@ -551,18 +558,26 @@ $('#pokestops-switch').change(function() {
 $('#sound-switch').change(function() {
     localStorage["playSound"] = this.checked;
 });
+$('#aepi-switch').change(function() {
+    localStorage["autoExpandPI"] = this.checked;
+});
 
 $('#scanned-switch').change(function() {
     localStorage["showScanned"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
-        $.each(map_scanned, function(key, value) {
-            map_scanned[key].marker.setMap(null);
+        $.each(map_scanned, function(key, item) {
+            item.marker.setMap(null);
         });
         map_scanned = {}
     }
 });
+$("#close-pi").click(function () {
+    $.each(map_pokemons, function(key, item) {
+        item.marker.infoWindow.close();
+    });
+})
 
 var updateLabelDiffTime = function() {
     $('.label-countdown').each(function(index, element) {
