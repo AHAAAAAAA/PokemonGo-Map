@@ -3,13 +3,8 @@
 *.db
 *.db-journal
 *.sass-cache
-<<<<<<< HEAD
-credentials.json
-database.json
-=======
 config/config.ini
 config/credentials.json
->>>>>>> upstream/develop
 static/dist/
 node_modules/
 venv/
