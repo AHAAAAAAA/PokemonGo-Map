@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import logging
 import time
 
@@ -10,12 +11,11 @@ from flask_cors import CORS, cross_origin
 
 from pogom import config
 from pogom.app import Pogom
-from pogom.utils import get_args, insert_mock_data, load_config
+from pogom.utils import get_args, insert_mock_data, load_credentials
 from pogom.search import search_loop
 from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
-from pogom.exceptions import APIKeyException
 
 log = logging.getLogger(__name__)
 
@@ -48,12 +48,17 @@ if __name__ == '__main__':
     create_tables(db)
 
     position = get_pos_by_name(args.location)
+    if not any(position):
+        log.error('Could not get a position by name, aborting.')
+        sys.exit()
+
     log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
              format(*position))
 
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
+    config['CHINA'] = args.china
 
     if not args.mock:
         start_locator_thread(args)
@@ -69,13 +74,7 @@ if __name__ == '__main__':
     if args.gmaps_key is not None:
         config['GMAPS_KEY'] = args.gmaps_key
     else:
-        creds = load_config(os.path.dirname(os.path.realpath(__file__))+os.path.sep+'credentials.json')
-        if not creds.get('gmaps_key'):
-            raise APIKeyException(\
-                "No Google Maps Javascript API key entered in credentials.json file!"
-                " Please take a look at the wiki for instructions on how to generate this key,"
-                " then add that key to the file!")
-        config['GMAPS_KEY'] = creds['gmaps_key']
+        config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
 
     if args.no_server:
         while not search_thread.isAlive():

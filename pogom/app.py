@@ -8,7 +8,7 @@ from datetime import datetime
 from s2sphere import *
 
 from . import config
-from .models import Pokemon, Gym, Pokestop
+from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
 
 class Pogom(Flask):
@@ -39,6 +39,9 @@ class Pogom(Flask):
         if request.args.get('gyms', 'true') == 'true':
             d['gyms'] = Gym.get_all()
 
+        if request.args.get('scanned', 'true') == 'true':
+            d['scanned'] = ScannedLocation.get_recent()
+
         return jsonify(d)
 
     def loc(self):
@@ -55,8 +58,7 @@ class Pogom(Flask):
             print('[-] Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
-            config['ORIGINAL_LATITUDE'] = lat
-            config['ORIGINAL_LONGITUDE'] = lon
+            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             return 'ok'
 
     def list_pokemon(self):
