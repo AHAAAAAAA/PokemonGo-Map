@@ -23,7 +23,12 @@ class BaseModel(Model):
 
     @classmethod
     def get_all(cls):
-        return [m for m in cls.select().dicts()]
+        results = [m for m in cls.select().dicts()]
+        if args.china:
+            for result in results:
+                result['latitude'],  result['longitude'] = \
+                    transform_from_wgs_to_gcj(result['latitude'],  result['longitude'])
+        return results
 
 
 class Pokemon(BaseModel):
