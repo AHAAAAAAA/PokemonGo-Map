@@ -74,8 +74,8 @@ function initMap() {
         zoom: 16,
         fullscreenControl: true,
         streetViewControl: false,
-		mapTypeControl: true,
-		mapTypeControlOptions: {
+        mapTypeControl: true,
+        mapTypeControlOptions: {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
@@ -87,14 +87,14 @@ function initMap() {
         },
     });
 
-	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
-	map.mapTypes.set('dark_style', style_dark);
+    var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
+    map.mapTypes.set('dark_style', style_dark);
 
-	var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
-	map.mapTypes.set('style_light2', style_light2);
+    var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
+    map.mapTypes.set('style_light2', style_light2);
 
-	var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
-	map.mapTypes.set('style_pgo', style_pgo);
+    var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
+    map.mapTypes.set('style_pgo', style_pgo);
 
     map.addListener('maptypeid_changed', function(s) {
         localStorage['map_style'] = this.mapTypeId;
@@ -149,21 +149,20 @@ var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : n
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time)
 
-    var contentstring = `
-        <div>
-            <b>${name}</b>
-            <span> - </span>
-            <small>
-                <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
-            </small>
-        </div>
-        <div>
-            Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
-        <div>
-            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
-                    target='_blank' title='View in Maps'>Get directions</a>
-        </div>`;
+    var contentstring = "<div>" +
+            "<b>${name}</b>"+
+            "<span> - </span>"+
+            "<small>"+
+                "<a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>"+
+            "</small>"+
+        "</div>"+
+        "<div>"+
+            "Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}"+
+            "<span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>"+
+        "<div>"+
+            "<a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'"+
+                    "target='_blank' title='View in Maps'>Get directions</a>"+
+        "</div>";
     return contentstring;
 }
 
@@ -171,22 +170,21 @@ function gymLabel(team_name, team_id, gym_points) {
     var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
     var str;
     if (team_id == 0) {
-        str = `<div><center>
-            <div>
-                <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
-                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
-            </div>
-            </center></div>`;
+        str = "<div><center>"+
+            "<div>"+
+                "<b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>"+
+                "<img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>"+
+            "</div>"+
+            "</center></div>";
     } else {
-        str = `
-            <div><center>
-            <div style='padding-bottom: 2px'>Gym owned by:</div>
-            <div>
-                <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
-                <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
-            </div>
-            <div>Prestige: ${gym_points}</div>
-            </center></div>`;
+        str = "<div><center>"+
+            "<div style='padding-bottom: 2px'>Gym owned by:</div>"+
+            "<div>"+
+                "<b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>"+
+                "<img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>"+
+            "</div>"+
+            "<div>Prestige: ${gym_points}</div>"+
+            "</center></div>";
     }
 
     return str;
@@ -205,34 +203,32 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
         var expire_date = new Date(current_date.getTime() + time_until_expire);
         var expire_time = expire_date.getTime();
 
-        str = `
-            <div>
-                <b>Lured Pokéstop</b>
-            </div>
-            <div>
-                Lured Pokémon: ${active_pokemon}
-                <span> - </span>
-                <small>
-                    <a href='http://www.pokemon.com/us/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>
-                </small>
-            </div>
-            <div>
-                Lure expires at ${pad(expire_date.getHours())}:${pad(expire_date.getMinutes())}:${pad(expire_date.getSeconds())}
-                <span class='label-countdown' disappears-at='${expire_time}'>(00m00s)</span></div>
-            <div>
-            <div>
-                <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
-                        target='_blank' title='View in Maps'>Get directions</a>
-            </div>`;
+        str = "<div>"+
+               " <b>Lured Pokéstop</b>"+
+            "</div>"+
+           "<div>"+
+                "Lured Pokémon: ${active_pokemon}"+
+                "<span> - </span>"+
+                "<small>"+
+                    "<a href='http://www.pokemon.com/us/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>"+
+                "</small>"+
+            "</div>"+
+            "<div>"+
+                "Lure expires at ${pad(expire_date.getHours())}:${pad(expire_date.getMinutes())}:${pad(expire_date.getSeconds())}"+
+                "<span class='label-countdown' disappears-at='${expire_time}'>(00m00s)</span></div>"+
+            "<div>"+
+            "<div>"+
+                "<a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'"+
+                        "target='_blank' title='View in Maps'>Get directions</a>"+
+            "</div>";
     } else {
-        str = `
-            <div>
-                <b>Pokéstop</b>
-            </div>
-            <div>
-                <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
-                        target='_blank' title='View in Maps'>Get directions</a>
-            </div>`;
+        str = "<div>"+
+                "<b>Pokéstop</b>"+
+            "</div>"+
+            "<div>"+
+                "<a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'"+
+                        "target='_blank' title='View in Maps'>Get directions</a>"+
+            "</div>";
     }
 
     return str;
@@ -242,10 +238,10 @@ function scannedLabel(last_modified) {
     scanned_date = new Date(last_modified)
     var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
-    var contentstring = `
-        <div>
-            Scanned at ${pad(scanned_date.getHours())}:${pad(scanned_date.getMinutes())}:${pad(scanned_date.getSeconds())}
-        </div>`;
+    var contentstring = 
+        "<div>"+
+            "Scanned at ${pad(scanned_date.getHours())}:${pad(scanned_date.getMinutes())}:${pad(scanned_date.getSeconds())}"+
+        "</div>";
     return contentstring;
 };
 
@@ -352,9 +348,18 @@ function setupScannedMarker(item) {
     return marker;
 };
 
+function clearSelection() {
+    if (document.selection ) {
+        document.selection.empty();
+    } else if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+};
+
 function addListeners(marker) {
     marker.addListener('click', function() {
         marker.infoWindow.open(map, marker);
+        clearSelection();
         updateLabelDiffTime();
         marker.persist = true;
     });
@@ -365,6 +370,7 @@ function addListeners(marker) {
 
     marker.addListener('mouseover', function() {
         marker.infoWindow.open(map, marker);
+        clearSelection();
         updateLabelDiffTime();
     });
 
