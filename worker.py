@@ -1,35 +1,36 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+from datetime import datetime
+import argparse
+import json
+import os
+import random
 import re
 import sys
 import struct
-import json
-import requests
-import argparse
 import threading
-import pokemon_pb2
 import time
-import random
+
 from google.protobuf.internal import encoder
 from google.protobuf.message import DecodeError
-from s2sphere import *
-from datetime import datetime
 from gpsoauth import perform_master_login, perform_oauth
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import ConnectionError
 from requests.models import InvalidURL
+from s2sphere import *
 from transform import *
+import requests
 
 import config
 import db
+import pokemon_pb2
 import utils
+
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 API_URL = 'https://pgorelease.nianticlabs.com/plfe/rpc'
-LOGIN_URL = \
-    'https://sso.pokemon.com/sso/login?service=https://sso.pokemon.com/sso/oauth2.0/callbackAuthorize'
+LOGIN_URL = 'https://sso.pokemon.com/sso/login?service=https://sso.pokemon.com/sso/oauth2.0/callbackAuthorize'
 LOGIN_OAUTH = 'https://sso.pokemon.com/sso/oauth2.0/accessToken'
 APP = 'com.nianticlabs.pokemongo'
 
@@ -42,8 +43,7 @@ SERVICE = credentials.get('service', None)
 CLIENT_SIG = credentials.get('client_sig', None)
 GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
 
-DEBUG = True
-VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
+# TODO: these should go away
 COORDS_LATITUDE = 0
 COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
@@ -51,27 +51,10 @@ FLOAT_LAT = 0
 FLOAT_LONG = 0
 NEXT_LAT = 0
 NEXT_LONG = 0
-auto_refresh = 0
-default_step = 0.001
-api_endpoint = None
+# /TODO
+
 pokemons = {}
-add_to_db = []
-gyms = {}
-pokestops = {}
-numbertoteam = {  # At least I'm pretty sure that's it. I could be wrong and then I'd be displaying the wrong owner team of gyms.
-    0: 'Gym',
-    1: 'Mystic',
-    2: 'Valor',
-    3: 'Instinct',
-}
-origin_lat, origin_lon = None, None
-is_ampm_clock = False
-
-# stuff for in-background search thread
-
-search_thread = None
 workers = {}
-
 local_data = threading.local()
 
 
@@ -82,33 +65,10 @@ class CannotGetProfile(Exception):
     """
 
 
-def memoize(obj):
-    cache = local_data.cache = {}
-
-    @functools.wraps(obj)
-    def memoizer(*args, **kwargs):
-        key = str(args) + str(kwargs)
-        if key not in cache:
-            cache[key] = obj(*args, **kwargs)
-        return cache[key]
-    return memoizer
-
-
-def parse_unicode(bytestring):
-    decoded_string = bytestring.decode(sys.getfilesystemencoding())
-    return decoded_string
-
-
 def debug(message):
+    return
     if DEBUG:
         print '[-] {}'.format(message)
-
-
-def time_left(ms):
-    s = ms / 1000
-    (m, s) = divmod(s, 60)
-    (h, m) = divmod(m, 60)
-    return (h, m, s)
 
 
 def encode(cellid):
@@ -117,9 +77,10 @@ def encode(cellid):
     return ''.join(output)
 
 
-def getNeighbors():
-    origin = CellId.from_lat_lng(LatLng.from_degrees(FLOAT_LAT,
-                                                     FLOAT_LONG)).parent(15)
+def get_neighbours():
+    origin = CellId.from_lat_lng(
+        LatLng.from_degrees(FLOAT_LAT, FLOAT_LONG)
+    ).parent(15)
     walk = [origin.id()]
 
     # 10 before and 10 after
@@ -205,14 +166,12 @@ def api_req(service, api_endpoint, access_token, *args, **kwargs):
     p_ret = pokemon_pb2.ResponseEnvelop()
     p_ret.ParseFromString(r.content)
 
-    if VERBOSE_DEBUG:
+    if False:  # VERBOSE_DEBUG
         print 'REQUEST:'
         print p_req
         print 'Response:'
         print p_ret
-        print '''
-
-'''
+        print '\n\n'
     time.sleep(0.51)
     return p_ret
 
@@ -279,7 +238,7 @@ def get_profile(service, access_token, api, useauth, *reqq):
 
 
 def login_google(username, password):
-    print '[!] Google login for: {}'.format(username)
+    debug('[!] Google login for: {}'.format(username))
     r1 = perform_master_login(username, password, ANDROID_ID)
     r2 = perform_oauth(username,
                        r1.get('Token', ''),
@@ -291,7 +250,7 @@ def login_google(username, password):
 
 
 def login_ptc(username, password):
-    print '[!] PTC login for: {}'.format(username)
+    debug('[!] PTC login for: {}'.format(username))
     head = {'User-Agent': 'Niantic App'}
     session = local_data.api_session
     r = session.get(LOGIN_URL, headers=head)
@@ -305,7 +264,7 @@ def login_ptc(username, password):
     # Maximum password length is 15 (sign in page enforces this limit, API does not)
 
     if len(password) > 15:
-        print '[!] Trimming password to 15 characters'
+        debug('[!] Trimming password to 15 characters')
         password = password[:15]
 
     data = {
@@ -322,7 +281,7 @@ def login_ptc(username, password):
         ticket = re.sub('.*ticket=', '', r1.history[0].headers['Location'])
     except Exception:
         if DEBUG:
-            print r1.json()['errors'][0]
+            debug(r1.json()['errors'][0])
         return None
 
     data1 = {
@@ -351,7 +310,7 @@ def get_heartbeat(service,
     m = pokemon_pb2.RequestEnvelop.MessageSingleString()
     m.bytes = '05daf51635c82611d1aac95c0b051d3ec088a930'
     m5.message = m.SerializeToString()
-    walk = sorted(getNeighbors())
+    walk = sorted(get_neighbours())
     m1 = pokemon_pb2.RequestEnvelop.Requests()
     m1.type = 106
     m = pokemon_pb2.RequestEnvelop.MessageQuad()
@@ -392,7 +351,7 @@ def get_token(service, username, password):
         while not global_token:
             global_token = login_ptc(username, password)
             if not global_token:
-                print('Could not login to PTC - sleeping')
+                debug('Could not login to PTC - sleeping')
                 time.sleep(random.randint(10, 20))
     else:
         global_token = login_google(username, password)
@@ -413,123 +372,145 @@ def login(username, password, service):
     if access_token is None:
         raise Exception('[-] Wrong username/password')
 
-    print '[+] RPC Session Token: {} ...'.format(access_token[:25])
+    debug('[+] RPC Session Token: {} ...'.format(access_token[:25]))
 
     api_endpoint = get_api_endpoint(service, access_token)
     if api_endpoint is None:
         raise Exception('[-] RPC server offline')
 
-    print '[+] Received API endpoint: {}'.format(api_endpoint)
+    debug('[+] Received API endpoint: {}'.format(api_endpoint))
 
     profile_response = retrying_get_profile(service, access_token,
                                             api_endpoint, None)
     if profile_response is None or not profile_response.payload:
         raise Exception('Could not get profile')
 
-    print '[+] Login successful'
+    debug('[+] Login successful')
 
     payload = profile_response.payload[0]
     profile = pokemon_pb2.ResponseEnvelop.ProfilePayload()
     profile.ParseFromString(payload)
-    print '[+] Username: {}'.format(profile.profile.username)
+    debug('[+] Username: {}'.format(profile.profile.username))
 
     creation_time = \
         datetime.fromtimestamp(int(profile.profile.creation_time) / 1000)
-    print '[+] You started playing Pokemon Go on: {}'.format(
-        creation_time.strftime('%Y-%m-%d %H:%M:%S'))
+    debug('[+] You started playing Pokemon Go on: {}'.format(
+        creation_time.strftime('%Y-%m-%d %H:%M:%S')))
 
     for curr in profile.profile.currency:
-        print '[+] {}: {}'.format(curr.type, curr.amount)
+        debug('[+] {}: {}'.format(curr.type, curr.amount))
 
     return api_endpoint, access_token, profile_response
 
 
-def work(worker_no):
-    times_done = 1
+class Slave(threading.Thread):
+    def __init__(self, group=None, target=None, name=None, worker_no=None):
+        super(Slave, self).__init__(group, target, name)
+        self.worker_no = worker_no
+        self.step = 0
+        self.cycle = 0
 
-    # Login sequentially for PTC
-    service = config.ACCOUNTS[worker_no][2]
-    api_session = local_data.api_session = requests.session()
-    api_session.headers.update({'User-Agent': 'Niantic App'})
-    api_session.verify = False
+    def run(self):
+        self.cycle = 1
+        self.error_code = None
 
-    try:
-        api_endpoint, access_token, profile_response = login(
-            username=config.ACCOUNTS[worker_no][0],
-            password=config.ACCOUNTS[worker_no][1],
-            service=service,
+        # Login sequentially for PTC
+        service = config.ACCOUNTS[self.worker_no][2]
+        api_session = local_data.api_session = requests.session()
+        api_session.headers.update({'User-Agent': 'Niantic App'})
+        api_session.verify = False
+
+        try:
+            api_endpoint, access_token, profile_response = login(
+                username=config.ACCOUNTS[self.worker_no][0],
+                password=config.ACCOUNTS[self.worker_no][1],
+                service=service,
+            )
+        except CannotGetProfile:
+            # OMG! Sleep for a bit and restart the thread
+            self.error_code = 'LOGIN FAIL'
+            time.sleep(random.randint(5, 10))
+            start_worker(self.worker_no)
+            return
+        while self.cycle < 2:
+            self.main(service, api_endpoint, access_token, profile_response)
+            self.cycle += 1
+            if self.cycle < 2:
+                self.error_code = 'SLEEP'
+                time.sleep(random.randint(30, 60))
+                self.error_code = None
+        self.error_code = 'RESTART'
+        time.sleep(random.randint(30, 60))
+        start_worker(self.worker_no)
+
+    def main(self, service, api_endpoint, access_token, profile_response):
+        origin_lat, origin_lon = utils.get_start_coords(self.worker_no)
+
+        args = get_args()
+
+        steplimit = int(args.step_limit)
+
+        pos = 1
+        x = 0
+        y = 0
+        dx = 0
+        dy = -1
+        steplimit2 = steplimit**2
+        session = db.Session()
+        seen = 0
+        for step in range(steplimit2):
+            add_to_db = []
+            self.step = step + 1
+            # Scan location math
+            if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
+                lat = x * 0.0025 + origin_lat
+                lon = y * 0.0025 + origin_lon
+            if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
+                (dx, dy) = (-dy, dx)
+
+            (x, y) = (x + dx, y + dy)
+
+            process_step(
+                service,
+                api_endpoint,
+                access_token,
+                profile_response,
+                add_to_db=add_to_db,
+                lat=lat,
+                lon=lon,
+            )
+
+            for spawn_id in add_to_db:
+                pokemon = pokemons[spawn_id]
+                db.add_sighting(session, spawn_id, pokemon)
+                seen += 1
+            session.commit()
+            add_to_db = []
+            debug('Completed: ' + str(((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
+            # Clear error code and let know that there are Pokemon
+            if self.error_code and seen:
+                self.error_code = None
+        session.close()
+        if seen == 0:
+            self.error_code = 'NO POKEMON'
+        set_location_coords(origin_lat, origin_lon, 0)
+
+    @property
+    def status(self):
+        if self.error_code:
+            msg = self.error_code
+        else:
+            msg = 'C{cycle}, S{step}'.format(cycle=self.cycle, step=self.step)
+        return '[W{worker_no}: {msg}]'.format(
+            worker_no=self.worker_no,
+            msg=msg
         )
-    except CannotGetProfile:
-        # OMG! Sleep for a bit and restart the thread
-        print('[W%d] Could not login - sleeping & retrying' % worker_no)
-        time.sleep(random.randint(5, 10))
-        start_worker(worker_no)
-        return
-    while times_done < 5:
-        print('[W%d] Iteration %d' % (worker_no, times_done))
-        main(worker_no, service, api_endpoint, access_token, profile_response)
-        times_done += 1
-        print('[W%d] Sleeping' % worker_no)
-        time.sleep(60)
-    start_worker(worker_no)
-
-
-def main(worker_no, service, api_endpoint, access_token, profile_response):
-    origin_lat, origin_lon = utils.get_start_coords(worker_no)
-
-    args = get_args()
-
-    if args.debug:
-        global DEBUG
-        DEBUG = True
-        print '[!] DEBUG mode on'
-
-    steplimit = int(args.step_limit)
-
-    pos = 1
-    x = 0
-    y = 0
-    dx = 0
-    dy = -1
-    steplimit2 = steplimit**2
-    session = db.Session()
-    for step in range(steplimit2):
-        add_to_db = []
-        #starting at 0 index
-        debug('looping: step {} of {}'.format((step+1), steplimit**2))
-        # Scan location math
-        if -steplimit2 / 2 < x <= steplimit2 / 2 and -steplimit2 / 2 < y <= steplimit2 / 2:
-            lat = x * 0.0025 + origin_lat
-            lon = y * 0.0025 + origin_lon
-        if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
-            (dx, dy) = (-dy, dx)
-
-        (x, y) = (x + dx, y + dy)
-
-        process_step(
-            service,
-            api_endpoint,
-            access_token,
-            profile_response,
-            add_to_db=add_to_db,
-            lat=lat,
-            lon=lon,
-        )
-
-        for spawn_id in add_to_db:
-            pokemon = pokemons[spawn_id]
-            db.add_sighting(session, spawn_id, pokemon)
-        session.commit()
-        add_to_db = []
-        print('Completed: ' + str(((step+1) + pos * .25 - .25) / (steplimit2) * 100) + '%')
-    session.close()
-    set_location_coords(origin_lat, origin_lon, 0)
 
 
 def process_step(
     service, api_endpoint, access_token, profile_response, add_to_db, lat, lon
 ):
-    print('[+] Searching for Pokemon at location {} {}'.format(lat, lon))
+    debug('[+] Searching for Pokemon at location {} {}'.format(lat, lon))
     step_lat = lat
     step_long = lon
     parent = CellId.from_lat_lng(
@@ -562,23 +543,6 @@ def process_step(
                     if hash not in seen:
                         visible.append(wild)
                         seen.add(hash)
-                # if cell.Fort:
-                #     for Fort in cell.Fort:
-                #         if Fort.Enabled == True:
-                #             if Fort.GymPoints and args.display_gym:
-                #                 gyms[Fort.FortId] = [Fort.Team, Fort.Latitude,
-                #                                      Fort.Longitude, Fort.GymPoints]
-
-                #             elif Fort.FortType \
-                #                 and args.display_pokestop:
-                #                 expire_time = 0
-                #                 if Fort.LureInfo.LureExpiresTimestampMs:
-                #                     expire_time = datetime\
-                #                         .fromtimestamp(Fort.LureInfo.LureExpiresTimestampMs / 1000.0)\
-                #                         .strftime("%H:%M:%S")
-                #                 if (expire_time != 0 or not args.onlylure):
-                #                     pokestops[Fort.FortId] = [Fort.Latitude,
-                #                                               Fort.Longitude, expire_time]
         except AttributeError:
             break
 
@@ -593,13 +557,22 @@ def process_step(
         add_to_db.append(poke.SpawnPointId)
 
 
+def get_status_message(workers, count):
+    messages = [workers[i].status.ljust(20) for i in range(count)]
+    output = []
+    previous = 0
+    for i in range(4, count + 1, 4):
+        output.append('\t'.join(messages[previous:i]))
+        previous = i
+    return '\n'.join(output)
+
+
 def start_worker(worker_no):
     # Ok I NEED to global this here
     global workers
-    print('[W%d] Worker (re)starting up!' % worker_no)
-    worker = threading.Thread(target=work, args=[worker_no])
+    debug('[W%d] Worker (re)starting up!' % worker_no)
+    worker = Slave(name='worker-%d' % worker_no, worker_no=worker_no)
     worker.daemon = True
-    worker.name = 'worker-%d' % worker_no
     worker.start()
     workers[worker_no] = worker
 
@@ -609,7 +582,9 @@ def spawn_workers(workers):
     for worker_no in range(count):
         start_worker(worker_no)
     while True:
-        time.sleep(1)
+        _ = os.system('clear')
+        print get_status_message(workers, count)
+        time.sleep(0.5)
 
 
 if __name__ == '__main__':
