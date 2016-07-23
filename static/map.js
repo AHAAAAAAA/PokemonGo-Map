@@ -105,6 +105,7 @@ function initMap() {
 
     addMyLocationButton();
     initSidebar();
+    updateMap();
 };
 
 function initSidebar() {
@@ -554,7 +555,6 @@ function updateMap() {
 };
 
 window.setInterval(updateMap, 5000);
-updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
