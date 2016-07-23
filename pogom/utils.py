@@ -105,8 +105,10 @@ def get_args():
             print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
             sys.exit(1);
 
-        if args.password is None:
-            args.password = getpass.getpass()
+        if config["PASSWORD"] is None and args.password is None:
+            config["PASSWORD"] = args.password = getpass.getpass()
+        elif args.password is None:
+            args.password = config["PASSWORD"]
 
 
     return args
