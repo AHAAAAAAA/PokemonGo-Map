@@ -91,7 +91,9 @@ def get_pokemarkers():
     markers = []
 
     workers = app_config.GRID[0] * app_config.GRID[1]
-    for i in range(workers):
+    for i, icon in zip(range(workers), icons.alpha.options):
+        if icon == 'KL':
+            icon = 'W'
         coords = utils.get_start_coords(i)
         markers.append({
             'icon': icons.dots.red,
@@ -102,6 +104,17 @@ def get_pokemarkers():
             'key': 'start-position-%d' % i,
             'disappear_time': -1
         })
+        for no, point in enumerate(utils.get_worker_grid(i)):
+            markers.append({
+                'icon': getattr(icons.alpha, icon),
+                'lat': point[0],
+                'lng': point[1],
+                'infobox': "Worker %d point %d" % (i, no),
+                'type': 'custom',
+                'key': 'worker-%d-point-%d' % (i, no),
+                'disappear_time': -1
+            })
+    return markers
 
     session = db.Session()
     pokemons = db.get_sightings(session)
