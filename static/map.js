@@ -118,12 +118,38 @@ function initMap() {
     initSidebar();
 };
 
+searchControlURI = 'search_control'
+function searchControl(action){
+  $.post(searchControlURI + '?action='+encodeURIComponent(action));
+}
+function searchControlStatus(callback){
+  $.getJSON(searchControlURI).then(function(data){
+    callback(data.status);
+  })
+}
+
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
+
+    
+  $('button#stop-search').click(function(){
+    searchControl('stop');
+  });
+
+  $('button#start-search').click(function(){
+    searchControl('start');
+  });
+
+  var updateSearchStatusInterval = setInterval(function(){
+    searchControlStatus(function(status){
+      $('#search-status').text(status);
+    });
+  },1000);
+
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -496,6 +522,9 @@ document.getElementById('gyms-switch').onclick = function() {
         map_gyms = {}
     }
 };
+
+
+
 
 $('#pokemon-switch').change(function() {
     localStorage["showPokemon"] = this.checked;

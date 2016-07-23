@@ -12,16 +12,37 @@ from flask_cors import CORS, cross_origin
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data, load_credentials
-from pogom.search import search_loop
+from pogom.search import search_loop, search_loop_stop, search_loop_start
 from pogom.models import create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
-search_thread = Thread()
 
-def start_locator_thread(args):
+class SearchControl():
+    def __init__(self):
+        self.state = 'searching'
+        return
+    def start(self):
+        if self.state == 'searching':
+            return
+        log.info('Start')
+        start_locator_thread()
+        self.state = 'searching'
+    def stop(self):
+        if self.state == 'idle':
+            return
+        log.info('Stop')
+        search_loop_stop()
+        self.state = 'idle'
+    def status(self):
+        log.info('Status')
+        return self.state
+
+def start_locator_thread():
+    global args
+    search_loop_start()
     search_thread = Thread(target=search_loop, args=(args,))
     search_thread.daemon = True
     search_thread.name = 'search_thread'
@@ -60,12 +81,15 @@ if __name__ == '__main__':
     config['CHINA'] = args.china
 
     if not args.mock:
-        start_locator_thread(args)
+        start_locator_thread()
     else:
         insert_mock_data()
 
     app = Pogom(__name__)
 
+    control = SearchControl()
+    app.set_search_control(control)
+    
     if args.cors:
         CORS(app);
 
