@@ -270,7 +270,8 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
+        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude),
+        disableAutoPan: true
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
@@ -314,8 +315,7 @@ function setupPokestopMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude, item.longitude),
-        disableAutoPan: true
+        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude, item.longitude)
     });
 
     addListeners(marker);
