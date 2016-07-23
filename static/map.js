@@ -575,7 +575,7 @@ function sendNotification(title, text, icon, lat, lng) {
 function changeLocation(lat, lng) {
     var loc = new google.maps.LatLng(lat, lng);
 
-    $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+    $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
         map.setCenter(loc);
         marker.setPosition(loc);
     });
