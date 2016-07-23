@@ -1,4 +1,5 @@
-# PokemonGo Map
+# PokemonGo Map![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/PoGoMapDev)
+
 
 Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying a Google Maps with markers on it.
 

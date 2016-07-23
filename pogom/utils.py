@@ -13,12 +13,10 @@ import ConfigParser
 import platform
 
 from . import config
+
 from exceptions import APIKeyException
 
-if platform.system() == "Windows":
-    DEFAULT_THREADS = 1
-else:
-    DEFAULT_THREADS = 5
+DEFAULT_THREADS = 1
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
@@ -37,6 +35,18 @@ def parse_config(args):
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
     args.host = Config.get('Misc', 'Host') 
     args.port = Config.get('Misc', 'Port') 
+    
+    return args
+
+def parse_db_config(args):
+    Config = ConfigParser.ConfigParser()
+    Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
+    args.db_type = Config.get('Database','Type')
+    args.db_name = Config.get('Database', 'Database_Name')
+    args.db_user = Config.get('Database', 'Database_User')
+    args.db_pass = Config.get('Database', 'Database_Pass')
+    args.db_host = Config.get('Database', 'Database_Host')
+
     return args
 
 def get_args():
@@ -65,6 +75,8 @@ def get_args():
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
+    args = parse_db_config(args)
+
     if (args.settings):
         args = parse_config(args) 
     else:
@@ -75,6 +87,7 @@ def get_args():
 
         if args.password is None:
             args.password = getpass.getpass()
+
 
     return args
 
