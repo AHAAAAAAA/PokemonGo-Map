@@ -134,11 +134,7 @@ function initSidebar() {
         }
 
         var loc = places[0].geometry.location;
-        $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
-            $("#next-location").val("");
-            map.setCenter(loc);
-            marker.setPosition(loc);
-        });
+        changeLocation(loc.lat(), loc.lng());
     });
 }
 
@@ -557,7 +553,7 @@ var updateLabelDiffTime = function() {
 
 window.setInterval(updateLabelDiffTime, 1000);
 
-function sendNotification(title, text, icon) {
+function sendNotification(title, text, icon, lat, lng) {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
@@ -568,7 +564,29 @@ function sendNotification(title, text, icon) {
         });
 
         notification.onclick = function () {
-            window.open(window.location.href);
+            window.focus();
+            notification.close();
+
+            centerMap(lat, lng, 20);
         };
+    }
+}
+
+function changeLocation(lat, lng) {
+    var loc = new google.maps.LatLng(lat, lng);
+
+    $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+        map.setCenter(loc);
+        marker.setPosition(loc);
+    });
+}
+
+function centerMap(lat, lng, zoom) {
+    var loc = new google.maps.LatLng(lat, lng);
+
+    map.setCenter(loc);
+
+    if (zoom) {
+        map.setZoom(zoom)
     }
 }
