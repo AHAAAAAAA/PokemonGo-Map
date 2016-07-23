@@ -19,13 +19,20 @@ from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
-search_thread = Thread()
-
 def start_locator_thread(args):
-    search_thread = Thread(target=search_loop, args=(args,))
+    if not args.mock:
+        log.debug('Starting a real search thread')
+        search_thread = Thread(target=search_loop, args=(args,))
+    else:
+        log.debug('Starting a fake search thread')
+        insert_mock_data()
+        search_thread = Thread(target=fake_search_loop, args=(args,))
+
     search_thread.daemon = True
     search_thread.name = 'search_thread'
     search_thread.start()
+
+    return search_thread
 
 
 if __name__ == '__main__':
@@ -59,10 +66,8 @@ if __name__ == '__main__':
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
-    if not args.mock:
-        start_locator_thread(args)
-    else:
-        insert_mock_data()
+    # Gather the pokemons!
+    search_thread = start_locator_thread(args)
 
     app = Pogom(__name__)
 
@@ -76,8 +81,8 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
 
     if args.no_server:
-        while not search_thread.isAlive():
-            time.sleep(1)
-        search_thread.join()
+        # This loop allows for ctrl-c interupts to work since flask won't be holding the program open
+        while search_thread.is_alive():
+            time.sleep(60)
     else:
         app.run(threaded=True, use_reloader=False, debug=args.debug, host=args.host, port=args.port)
