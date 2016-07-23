@@ -77,6 +77,10 @@ var pGoStyle=[{"featureType":"landscape.man_made","elementType":"geometry.fill",
 
 var selectedStyle = 'light';
 
+var expire_click_time= Date.now();
+var dragging = false;
+var time_padding = 500;
+
 function initMap() {
 
 
@@ -110,10 +114,6 @@ function initMap() {
 	var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
 	map.mapTypes.set('style_pgo', style_pgo);
 
-    map.addListener('maptypeid_changed', function(s) {
-        localStorage['map_style'] = this.mapTypeId;
-    });
-
     if (!localStorage['map_style'] || localStorage['map_style'] === 'undefined') {
         localStorage['map_style'] = 'roadmap';
     }
@@ -129,9 +129,50 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
+    initMapListeners();
     addMyLocationButton();
     initSidebar();
 };
+
+function initMapListeners() {
+
+    map.addListener('maptypeid_changed', function(s) {
+        localStorage['map_style'] = this.mapTypeId;
+    });
+
+    map.addListener('dragstart', function(event) {
+        expire_click_time = Date.now();
+        expire_click_time += 500;
+        dragging = true;
+    });
+
+    map.addListener('dragend', function(event) {
+        expire_click_time = Date.now();
+        expire_click_time += 500;
+        dragging = false;
+    });
+
+    map.addListener('mouseup', function(event) {
+        var current_time = Date.now();
+        if (current_time > expire_click_time && dragging == false) {
+            console.log("new Location")
+            newLocation(event.latLng)
+        }
+
+    });
+
+    map.addListener('click', function(event) {
+        var current_time = Date.now();
+        
+        if (current_time > expire_click_time && dragging == false) {
+            console.log("new Location")
+            newLocation(event.latLng)
+        }
+
+    });
+
+
+}
 
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
@@ -150,13 +191,11 @@ function initSidebar() {
         }
 
         var loc = places[0].geometry.location;
-        $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
-            $("#next-location").val("");
-            map.setCenter(loc);
-            marker.setPosition(loc);
-        });
+        newLocation(loc);
     });
 }
+
+
 
 var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
@@ -421,6 +460,16 @@ function clearStaleMarkers() {
         }
     });
 };
+
+
+function newLocation(loc) {
+
+    $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+            $("#next-location").val("");
+            map.setCenter(loc);
+            marker.setPosition(loc);
+        });
+}
 
 function updateMap() {
 
