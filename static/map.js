@@ -92,18 +92,43 @@ function initMap() {
 
     map.setMapTypeId(localStorage['map_style']);
 
-    marker = new google.maps.Marker({
+    marker = createSearchMarker();
+
+    addMyLocationButton();
+    initSidebar();
+};
+
+function createSearchMarker() {
+    var marker = new google.maps.Marker({
         position: {
             lat: center_lat,
             lng: center_lng
         },
         map: map,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
+        draggable: true
     });
 
-    addMyLocationButton();
-    initSidebar();
-};
+    var oldLocation = null;
+    google.maps.event.addListener(marker, 'dragstart', function() {
+        oldLocation = marker.getPosition();
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function() {
+        var newLocation = marker.getPosition();
+        changeSearchLocation(newLocation.lat(), newLocation.lng())
+            .done(function() {
+                oldLocation = null;
+            })
+            .fail(function() {
+                if (oldLocation) {
+                    marker.setPosition(oldLocation);
+                }
+            });
+    });
+
+    return marker;
+}
 
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
@@ -715,11 +740,14 @@ function addMyLocationButton() {
 
 function changeLocation(lat, lng) {
     var loc = new google.maps.LatLng(lat, lng);
-
-    $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+    changeSearchLocation(lat, lng).done(function() {
         map.setCenter(loc);
         marker.setPosition(loc);
     });
+}
+
+function changeSearchLocation(lat, lng) {
+    return $.post("next_loc?lat=" + lat + "&lon=" + lng, {});
 }
 
 function centerMap(lat, lng, zoom) {
