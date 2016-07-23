@@ -445,24 +445,17 @@ def get_args():
         "debug": False,
         "display_gym": False,
         "display_pokestop": False,
-<<<<<<< HEAD
         "host": "0.0.0.0",
-=======
         "do_not_notify": None,
-        "host": "127.0.0.1",
->>>>>>> 89d611903f2813320e8648410130936712d4931d
         "ignore": None,
         "locale": "en",
         "location": None,
         "notify": None,
         "only": None,
         "onlylure": False,
-<<<<<<< HEAD
         "port": 3000,
-        "step_limit": 4
-=======
+        "step_limit": 4,
         "password": None,
-        "port": 5000,
         "pushbullet": None,
         "step_limit": 4,
         "username": None
@@ -493,7 +486,6 @@ def get_args():
         "pushbullet": STRING_STR,
         "step_limit": INTEGER_STR,
         "username": STRING_STR
->>>>>>> 89d611903f2813320e8648410130936712d4931d
     }
     # load config file
     with open('config.json') as data_file:
