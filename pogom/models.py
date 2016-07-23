@@ -67,7 +67,13 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_active(cls, swLat, swLng, neLat, neLng):
-        query = (Pokemon
+        if swLat == None or swLng == None or neLat == None or neLng == None:
+            query = (Pokemon
+                 .select()
+                 .where(Pokemon.disappear_time > datetime.utcnow())
+                 .dicts())
+        else:
+            query = (Pokemon
                  .select()
                  .where((Pokemon.disappear_time > datetime.utcnow()) &
                     (Pokemon.latitude >= swLat) &
@@ -85,15 +91,22 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_active_by_id(cls, ids, swLat, swLng, neLat, neLng):
-        query = (Pokemon
-                 .select()
-                 .where((Pokemon.pokemon_id << ids) &
-                        (Pokemon.disappear_time > datetime.utcnow()) &
-                        (Pokemon.latitude >= swLat) &
-                        (Pokemon.longitude >= swLng) &
-                        (Pokemon.latitude <= neLat) &
-                        (Pokemon.longitude <= neLng))
-                 .dicts())
+        if swLat == None or swLng == None or neLat == None or neLng == None:
+            query = (Pokemon
+                     .select()
+                     .where((Pokemon.pokemon_id << ids) &
+                            (Pokemon.disappear_time > datetime.utcnow()))
+                     .dicts())
+        else:
+            query = (Pokemon
+                     .select()
+                     .where((Pokemon.pokemon_id << ids) &
+                            (Pokemon.disappear_time > datetime.utcnow()) &
+                            (Pokemon.latitude >= swLat) &
+                            (Pokemon.longitude >= swLng) &
+                            (Pokemon.latitude <= neLat) &
+                            (Pokemon.longitude <= neLng))
+                     .dicts())
 
         pokemons = []
         for p in query:
