@@ -413,7 +413,7 @@ function countMarkers() {
 		for(var i=0;i < pkmnCount.length;i++) {
 			if (pkmnCount[i] > 0)
 			{
-				pkmnListString += "<tr><td><img src=\"/static/icons/" + i + ".png\" /></td><td>" + pkmnName[i] + "</td><td>" + pkmnCount[i] + "</td><td>"+Math.round(pkmnCount[i]*100/pkmnTotal*10)/10+"%</td></tr>";
+				pkmnListString += "<tr><td><img src=\"/static/icons/" + i + ".png\" /></td><td><a href='http://www.pokemon.com/us/pokedex/" + i + "' target='_blank' title='View in Pokedex' style=\"color: black;\">" + pkmnName[i] + "</a></td><td>" + pkmnCount[i] + "</td><td>"+Math.round(pkmnCount[i]*100/pkmnTotal*10)/10+"%</td></tr>";
 			}
 		}
 		pkmnListString += "</tbody></table>";
