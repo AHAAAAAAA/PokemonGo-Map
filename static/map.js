@@ -471,12 +471,9 @@ var map_scanned = {} // Pokestops
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 
 $(function(){
-    if (!Notification) {
-        console.log('could not load notifications');
-        return;
-    }
 
-    if (Notification.permission !== "granted") {
+    // Ask to send alerts
+    if (Notification && Notification.permission !== "granted") {
         Notification.requestPermission();
     }
 
