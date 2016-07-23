@@ -156,6 +156,12 @@ function initSidebar() {
         if (places.length == 0) {
             return;
         }
+        
+		    $('#gps-switch').prop('checked', false);
+		    localStorage.trackGps = false;
+		    if (gpsInterval != false) {
+			    clearInterval(gpsInterval);
+		    }
 
         var loc = places[0].geometry.location;
         $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
@@ -170,7 +176,7 @@ var updateGps = function(){
   	if (navigator.geolocation) {
   		navigator.geolocation.getCurrentPosition(function(userPosition){
   			var loc = new google.maps.LatLng(userPosition.coords.latitude, userPosition.coords.longitude);
-  			$.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+  			$.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
           $("#next-location").val("");
           map.setCenter(loc);
           marker.setPosition(loc);
@@ -593,6 +599,7 @@ $('#gps-switch').change(function() {
 		gpsInterval = setInterval(updateGps, 10000);
 	} else {
 		clearInterval(gpsInterval);
+		gpsInterval = false;
 	}
 });
 
