@@ -87,6 +87,17 @@ function initMap() {
         },
     });
 
+    for (var i=1;i < 4; i++) {
+        new google.maps.Circle({
+          map: map,
+          radius: i*100,
+          fillColor: '#AA0000',
+          strokeWeight: 0,
+          strokeOpacity: 0.2,
+          center: { lat: center_lat, lng: center_lng }
+        });
+    }
+
 	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
 	map.mapTypes.set('dark_style', style_dark);
 
