@@ -12,9 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
 var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
 
+var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
 
-$.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
+$.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
     var pokeList = []
 
     $.each(data, function(key, value) {
@@ -54,6 +55,18 @@ $selectNotify.on("change", function (e) {
     notifiedPokemon = $selectNotify.val().map(Number);
     localStorage.remember_select_notify = JSON.stringify(notifiedPokemon);
 });
+
+function excludePokemon(id) {
+    $selectExclude.val(
+        $selectExclude.val().concat(id)
+    ).trigger('change')
+}
+
+function notifyAboutPokemon(id) {
+    $selectNotify.val(
+        $selectNotify.val().concat(id)
+    ).trigger('change')
+}
 
 var map,
     locationMarker;
@@ -163,6 +176,8 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude) {
             Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
             <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
         <div>
+            <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
+            <a href='javascript:notifyAboutPokemon(${id})'>Notify</a>&nbsp;&nbsp;
             <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                     target='_blank' title='View in Maps'>Get directions</a>
         </div>`;
