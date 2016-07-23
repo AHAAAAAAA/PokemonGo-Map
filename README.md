@@ -2,12 +2,12 @@
 
 Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying a Google Maps with markers on it.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment)
+[![Deploy](https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/Deploy-to-Jelastic.png)](https://jelastic.com/install-application/?manifest=https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/manifest.jps)   [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment) 
 
-#[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact.
+#[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact us here.
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
-![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
+![Map](https://i.imgur.com/ZjB9lo0.jpg)
 
 
 ## How to setup
@@ -25,8 +25,10 @@ There is an [Android port](https://github.com/omkarmoghe/Pokemap) in the works. 
 Using this software is against the ToS of the game. You can get banned, use this tool at your own risk.
 
 
-## Contributing
+## Contributions
 
 Please submit all pull requests to [develop](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) branch.
 
 Building off [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s PokemonGo API, [tejado's additions](https://github.com/tejado/pokemongo-api-demo), [leegao's additions](https://github.com/leegao/pokemongo-api-demo/tree/simulation) and [Flask-GoogleMaps](https://github.com/rochacbruno/Flask-GoogleMaps).
+
+ Bitcoin donations appreciated! **18ABe5rhZgLR6zdH27hDWp8DdTkWKJoKwo**
