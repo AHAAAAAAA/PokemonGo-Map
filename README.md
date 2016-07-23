@@ -1,8 +1,8 @@
-# PokemonGo Map
+# PokemonGo Map Server
 
 Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying a Google Maps with markers on it.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment)
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map-server/wiki/Heroku-Deployment)
 
 #[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact.
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
@@ -12,8 +12,27 @@ Live visualization of all the pokemon (with option to show gyms and pokestops) i
 
 ## How to setup
 
-For instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki), or the [video guide](https://www.youtube.com/watch?v=RJKAulPCkRI).
+```bash
+git clone https://github.com/AHAAAAAAA/PokemonGo-Map-server
+cd PokemonGo-Map-server/
 
+git clone https://github.com/AHAAAAAAA/PokemonGo-Map-web-client
+ln -s PokemonGo-Map-web-client/static/ ./
+
+pip install -r requirements.txt
+
+python runserver.py -u $USERNAME -p $PASSWORD -st 10 -l "$LOCATION" --host 127.0.0.1
+```
+
+If you want to login with Google instead of Pokemon Trainer Club add `-a google`:
+
+```
+python runserver.py -a google -u $USERNAME -p $PASSWORD -st 10 -l "$LOCATION" --host 127.0.0.1
+```
+
+You can now access the server at <http://localhost:5000>.
+
+For more advanced instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map-server/wiki), or the [video guide](https://www.youtube.com/watch?v=RJKAulPCkRI).
 
 ## Android Version
 
