@@ -14,8 +14,7 @@ Live visualization of all the pokemon (with option to show gyms and pokestops) i
 
 ## How to setup
 
-For instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki), or the [video guide](https://www.youtube.com/watch?v=RJKAulPCkRI).
-
+For instructions on how to setup and run the tool, please refer to the project [wiki](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki), or the [video guide](https://www.youtube.com/watch?v=RJKAulPCkRI). German Users may also be interested in this [video guide](https://www.youtube.com/watch?v=FxcVGrszl3I) that describes how to set up PokemonGo-Maps on an Amazon EC2 instance.
 
 ## Android Version
 
