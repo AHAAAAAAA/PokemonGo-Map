@@ -27,7 +27,7 @@ import struct
 import re
 
 from importlib import import_module
-from s2sphere import CellId, LatLng
+from s2sphere import LatLng, Cell, RegionCoverer, Cap
 from google.protobuf.internal import encoder
 from geopy.geocoders import GoogleV3
 
@@ -40,7 +40,7 @@ def f2h(float):
 
 def h2f(hex):
   return struct.unpack('<d', struct.pack('<Q', int(hex,16)))[0]
-  
+
 def to_camel_case(value):
   def camelcase():
     while True:
@@ -60,28 +60,42 @@ def get_pos_by_name(location_name):
         loc = geolocator.geocode(location_name)
         if loc:
             latitude, longitude, altitude = loc.latitude, loc.longitude, loc.altitude
-    
+
     return (latitude, longitude, altitude)
-    
+
 
 def get_class(cls):
     module_, class_ = cls.rsplit('.', 1)
     class_ = getattr(import_module(module_), class_)
     return class_
-    
-def get_cellid(lat, long):
-    origin = CellId.from_lat_lng(LatLng.from_degrees(lat, long)).parent(15)
-    walk = [origin.id()]
 
-    # 10 before and 10 after
-    next = origin.next()
-    prev = origin.prev()
-    for i in range(10):
-        walk.append(prev.id())
-        walk.append(next.id())
-        next = next.next()
-        prev = prev.prev()
-    return ''.join(map(encode, sorted(walk)))
+# cap height defaults to a circle of 100m (pokemon visible radius)
+# you seem to always need 21 cells worth of coverage, but I have no idea why
+def build_cap_coverage(lat, lng, cell_count=21, radius=100.0):
+    # these are the zoom levels for s2cells
+    min_zoom_level = 15
+    max_zoom_level = 30
+
+    # radius of the earth in meters
+    R = 6378137.0;
+
+    cap_height = ((radius/R)**2)/2
+    axis = LatLng.from_degrees(lat, lng).to_point()
+    cap = Cap.from_axis_height(axis, cap_height)
+
+    coverer = RegionCoverer()
+    coverer.min_level = min_zoom_level
+    coverer.max_level = max_zoom_level
+    coverer.max_cells = cell_count
+    covering = list(coverer.get_covering(cap))
+    while(len(covering) < cell_count):
+        covering.append(covering[-1].next())
+    return covering
+
+def get_cellid(lat, long):
+    cells = build_cap_coverage(lat, long)
+    walk = map(lambda cell: cell.id(), cells)
+    return ''.join(map(encode, walk))
 
 def encode(cellid):
     output = []
