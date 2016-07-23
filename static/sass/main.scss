@@ -3,6 +3,7 @@
 @import 'libs/mixins';
 @import 'libs/skel';
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css);
 
 @include skel-breakpoints((
 	xlarge: '(max-width: 1680px)',
@@ -42,6 +43,7 @@
 @import 'components/table';
 @import 'components/button';
 @import 'components/grid-demo';
+// @import 'components/overlay';
 
 // Layout.
 

@@ -10,7 +10,7 @@
 		height: 100%;
 		max-width: 80%;
 		overflow-y: auto;
-		padding: 1.5em;
+		padding: 1.5em 1.5em 4em 1.5em;
 		position: fixed;
 		top: 3.50em;
 		left: 0;
@@ -21,8 +21,6 @@
 			font-size: 18px;
 			font-family: 'Muli', sans-serif;
 			color: darken(_palette(accent2, bg), 12);
-			margin-bottom: 10px;
-			float: left;
 		}
 		p {
 			margin-bottom: 20px;
