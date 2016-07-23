@@ -3,6 +3,9 @@
 
 import logging
 import time
+import math
+
+from threading import Thread, Semaphore
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -14,6 +17,19 @@ log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
+
+#Constants for Hex Grid
+#Gap between vertical and horzonal "rows"
+lat_gap_meters = 150
+lng_gap_meters = 86.6
+
+#111111m is approx 1 degree Lat, which is close enough for this
+meters_per_degree = 111111
+lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
+
+def calculate_lng_degrees(lat):
+    return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
+
 
 def send_map_request(api, position):
     try:
@@ -29,15 +45,46 @@ def send_map_request(api, position):
 
 
 def generate_location_steps(initial_location, num_steps):
-    pos, x, y, dx, dy = 1, 0, 0, 0, -1
 
-    while -num_steps / 2 < x <= num_steps / 2 and -num_steps / 2 < y <= num_steps / 2:
-        yield (x * 0.00125 + initial_location[0], y * 0.00175 + initial_location[1], 0)
+    ring = 1 #Which ring are we on, 0 = center
+    lat_location = initial_location[0]
+    lng_location = initial_location[1]
 
-        if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
-            dx, dy = -dy, dx
+    yield (initial_location[0],initial_location[1], 0) #Middle circle
 
-        x, y = x + dx, y + dy
+    while ring < num_steps:
+        #Move the location diagonally to top left spot, then start the circle which will end up back here for the next ring 
+        #Move Lat north first
+        lat_location += lat_gap_degrees
+        lng_location -= calculate_lng_degrees(lat_location)
+
+        for direction in range(6):
+            for i in range(ring):
+                if direction == 0: #Right
+                    lng_location += calculate_lng_degrees(lat_location) * 2
+
+                if direction == 1: #Right Down
+                    lat_location -= lat_gap_degrees
+                    lng_location += calculate_lng_degrees(lat_location)
+
+                if direction == 2: #Left Down
+                    lat_location -= lat_gap_degrees
+                    lng_location -= calculate_lng_degrees(lat_location)
+
+                if direction == 3: #Left
+                    lng_location -= calculate_lng_degrees(lat_location) * 2
+
+                if direction == 4: #Left Up
+                    lat_location += lat_gap_degrees
+                    lng_location -= calculate_lng_degrees(lat_location)
+
+                if direction == 5: #Right Up
+                    lat_location += lat_gap_degrees
+                    lng_location += calculate_lng_degrees(lat_location)
+
+                yield (lat_location, lng_location, 0) #Middle circle
+
+        ring += 1
 
 
 def login(args, position):
@@ -52,8 +99,46 @@ def login(args, position):
     log.info('Login to Pokemon Go successful.')
 
 
+def search_thread(args):
+    i, total_steps, step_location, step, sem = args
+
+    log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
+    log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
+
+    response_dict = {}
+    failed_consecutive = 0
+    while not response_dict:
+        response_dict = send_map_request(api, step_location)
+        if response_dict:
+            try:
+                sem.acquire()
+                parse_map(response_dict, i, step, step_location)
+            except KeyError:
+                log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
+                failed_consecutive += 1
+                if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                    log.error('Niantic servers under heavy load. Waiting before trying again')
+                    time.sleep(config['REQ_HEAVY_SLEEP'])
+                    failed_consecutive = 0
+            finally:
+                sem.release()
+        else:
+            log.info('Map Download failed. Trying again.')
+
+    time.sleep(config['REQ_SLEEP'])
+
+def process_search_threads(search_threads, curr_steps, total_steps):
+    for thread in search_threads:
+        thread.start()
+    for thread in search_threads:
+        curr_steps += 1
+        thread.join()
+        log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
+    return curr_steps
+
 def search(args, i):
     num_steps = args.step_limit
+    total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
@@ -66,6 +151,12 @@ def search(args, i):
     else:
         login(args, position)
 
+    sem = Semaphore()
+
+    search_threads = []
+    curr_steps = 0
+    max_threads = args.num_threads
+
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
         if 'NEXT_LOCATION' in config:
             log.info('New location found. Starting new scan.')
@@ -75,28 +166,15 @@ def search(args, i):
             search(args, i)
             return
 
-        log.info('Scanning step {:d} of {:d}.'.format(step, num_steps**2))
-        log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
+        search_args = (i, total_steps, step_location, step, sem)
+        search_threads.append(Thread(target=search_thread, name='search_step_thread {}'.format(step), args=(search_args, )))
 
-        response_dict = {}
-        failed_consecutive = 0
-        while not response_dict:
-            response_dict = send_map_request(api, step_location)
-            if response_dict:
-                try:
-                    parse_map(response_dict, i, step)
-                except KeyError:
-                    log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
-                    failed_consecutive += 1
-                    if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                        log.error('Niantic servers under heavy load. Waiting before trying again')
-                        time.sleep(config['REQ_HEAVY_SLEEP'])
-                        failed_consecutive = 0
-            else:
-                log.info('Map Download failed. Trying again.')
+        if step % max_threads == 0:
+            curr_steps = process_search_threads(search_threads, curr_steps, total_steps)
+            search_threads = []
 
-        log.info('Completed {:5.2f}% of scan.'.format(float(step) / num_steps**2*100))
-        time.sleep(config['REQ_SLEEP'])
+    if search_threads:
+        process_search_threads(search_threads, curr_steps, total_steps)
 
 
 def search_loop(args):
@@ -108,10 +186,11 @@ def search_loop(args):
             log.info("Scanning complete.")
             if args.scan_delay > 1:
                 log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
+                time.sleep(args.scan_delay)
             i += 1
 
     # This seems appropriate
-    except:
+    except Exception as e:
         log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
         time.sleep(args.scan_delay)
         search_loop(args)

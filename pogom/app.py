@@ -8,7 +8,7 @@ from datetime import datetime
 from s2sphere import *
 
 from . import config
-from .models import Pokemon, Gym, Pokestop
+from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
 
 class Pogom(Flask):
@@ -38,6 +38,9 @@ class Pogom(Flask):
 
         if request.args.get('gyms', 'true') == 'true':
             d['gyms'] = Gym.get_all()
+
+        if request.args.get('scanned', 'true') == 'true':
+            d['scanned'] = ScannedLocation.get_recent()
 
         return jsonify(d)
 
