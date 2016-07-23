@@ -623,7 +623,7 @@ def main():
         session = db.Session()
         for spawn_id in add_to_db:
             pokemon = pokemons[spawn_id]
-            db.add_sighting(session, pokemon)
+            db.add_sighting(session, spawn_id, pokemon)
         session.commit()
         add_to_db = []
 

@@ -52,8 +52,8 @@
         var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
         var options = {};
         var map = null;
-        var markers = [];
-        var markerCache = {};
+        var markers = window.markers = [];
+        var markerCache = window.markerCache = {};
         // Adds a marker to the map and push to the array.
         function addMarker(options = {}) {
             var default_options = {map: map}
