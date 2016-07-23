@@ -123,6 +123,7 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
+    $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -134,7 +135,7 @@ function initSidebar() {
         }
 
         var loc = places[0].geometry.location;
-        $.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+        $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
             $("#next-location").val("");
             map.setCenter(loc);
             marker.setPosition(loc);
@@ -254,6 +255,7 @@ map_gyms = {} // Gyms
 map_pokestops = {} // Pokestops
 map_scanned = {} // Pokestops
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
+var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
 
 function setupPokemonMarker(item) {
     var marker = new google.maps.Marker({
@@ -270,6 +272,9 @@ function setupPokemonMarker(item) {
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+        if(localStorage.playSound === 'true'){
+          audio.play();
+        }
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
     }
 
@@ -347,9 +352,18 @@ function setupScannedMarker(item) {
     return marker;
 };
 
+function clearSelection() {
+    if (document.selection ) {
+        document.selection.empty();
+    } else if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+};
+
 function addListeners(marker) {
     marker.addListener('click', function() {
         marker.infoWindow.open(map, marker);
+        clearSelection();
         updateLabelDiffTime();
         marker.persist = true;
     });
@@ -360,6 +374,7 @@ function addListeners(marker) {
 
     marker.addListener('mouseover', function() {
         marker.infoWindow.open(map, marker);
+        clearSelection();
         updateLabelDiffTime();
     });
 
@@ -394,8 +409,8 @@ function updateMap() {
 
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
-    localStorage.showPokestops = localStorage.showPokestops || true;
-    localStorage.showScanned = localStorage.showScanned || true;
+    localStorage.showPokestops = localStorage.showPokestops || false;
+    localStorage.showScanned = localStorage.showScanned || false;
 
     $.ajax({
         url: "raw_data",
@@ -516,6 +531,9 @@ $('#pokestops-switch').change(function() {
     }
 });
 
+$('#sound-switch').change(function() {
+    localStorage["playSound"] = this.checked;
+});
 
 $('#scanned-switch').change(function() {
     localStorage["showScanned"] = this.checked;
