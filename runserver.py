@@ -57,6 +57,7 @@ if __name__ == '__main__':
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
+    config['CHINA'] = args.china
 
     if not args.mock:
         start_locator_thread(args)
