@@ -29,8 +29,11 @@ var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
 
 //Exponential backoff on main map update loop
-var updateDelay=5000;
-var maxRetry=5;
+var INITIAL_DELAY = 5000;
+var INITIAL_MAX_RETRY = 5;
+
+var updateDelay = INITIAL_DELAY;
+var maxRetry = INITIAL_MAX_RETRY;
 var updateWindowInterval;
 
 //
@@ -612,12 +615,12 @@ function addMyLocationButton() {
 var refreshUpdateTimings = function(isSuccess){
      
      if(isSuccess){
-         maxRetry=10;
-         updateDelay=5000;
+         maxRetry = INITIAL_MAX_RETRY;
+         updateDelay = INITIAL_DELAY;
      } else{
          if(maxRetry > 0){
-            maxRetry-=1;
-            updateDelay*=2;
+            maxRetry -= 1;
+            updateDelay *= 2;
          }
      }
     
