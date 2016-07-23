@@ -102,7 +102,6 @@ def get_pokemarkers():
             'key': 'start-position-%d' % i,
             'disappear_time': -1
         })
-    return markers
 
     session = db.Session()
     pokemons = db.get_sightings(session)
