@@ -188,7 +188,7 @@ def bulk_upsert(cls, data):
           InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
           i+=step
         except:
-            log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
+            log.debug("Failed to insert items {} to {}".format(i, min(i+step, num_rows)))
 
 
 
