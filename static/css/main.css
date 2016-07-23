@@ -1275,12 +1275,31 @@ textarea {
 .switch-container {
   float: left;
   width: 100%; }
+  .switch-container h3 {
+    margin-bottom: 0 !important;
+    float: left; }
+
+.form-control {
+  display: block;
+  margin-bottom: 15px; }
+  .form-control h3 {
+    margin-bottom: 15px; }
+  .form-control input[type="text"] {
+    background-color: white;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    display: block;
+    padding: 0 10px; }
+    .form-control input[type="text"]:focus, .form-control input[type="text"]:active {
+      color: #3b3b3b;
+      border: 1px solid #3b3b3b;
+      outline: 0;
+      box-shadow: none; }
 
 .onoffswitch {
   position: relative;
-  width: 70px;
+  width: 50px;
   float: right;
-  margin-bottom: 20px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none; }
@@ -1306,7 +1325,7 @@ textarea {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 48px;
+    right: 30px;
     border: 2px solid #CCCCCC;
     border-radius: 20px;
     transition: all 0.3s ease-in 0s; }
@@ -1321,8 +1340,7 @@ textarea {
   right: 0px; }
 
 .select2-container {
-  width: 100% !important;
-  float: left; }
+  width: 100% !important; }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
   background-color: #4A80F5 !important; }
@@ -1873,7 +1891,7 @@ body {
   height: 100%;
   max-width: 80%;
   overflow-y: auto;
-  padding: 1.5em;
+  padding: 1.5em 1.5em 4em 1.5em;
   position: fixed;
   top: 3.50em;
   left: 0;
@@ -1883,9 +1901,7 @@ body {
   #nav h3 {
     font-size: 18px;
     font-family: 'Muli', sans-serif;
-    color: #3b3b3b;
-    margin-bottom: 10px;
-    float: left; }
+    color: #3b3b3b; }
   #nav p {
     margin-bottom: 20px;
     color: #3b3b3b; }

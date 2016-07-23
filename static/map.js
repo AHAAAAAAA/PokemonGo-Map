@@ -28,7 +28,7 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
         data: pokeList
     });
     $selectExclude.val(JSON.parse(readCookie("remember_select_exclude"))).trigger("change");
-    
+
     JSON.parse(readCookie("remember_select_notify"));
     $selectNotify.select2({
         placeholder: "Select Pokémon",
@@ -121,9 +121,8 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
-    
-    var input = document.getElementById('next-location');
-    var searchBox = new google.maps.places.SearchBox(input);
+
+    var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
     searchBox.addListener('places_changed', function() {
         var places = searchBox.getPlaces();
@@ -267,7 +266,7 @@ function setupPokemonMarker(item) {
     marker.infoWindow = new google.maps.InfoWindow({
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
-    
+
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
     }
@@ -379,7 +378,7 @@ function clearStaleMarkers() {
             delete map_pokemons[key];
         }
     });
-    
+
     $.each(map_scanned, function(key, value) {
         //If older than 15mins remove
         if (map_scanned[key]['last_modified'] < (new Date().getTime() - 15 * 60 * 1000)) {
@@ -390,7 +389,7 @@ function clearStaleMarkers() {
 };
 
 function updateMap() {
-    
+
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
     localStorage.showPokestops = localStorage.showPokestops || true;
