@@ -116,11 +116,7 @@ function initSidebar() {
         }
 
         var loc = places[0].geometry.location;
-        $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
-            $("#next-location").val("");
-            map.setCenter(loc);
-            marker.setPosition(loc);
-        });
+        changeLocation(loc.lat(), loc.lng());
     });
 }
 
@@ -246,10 +242,11 @@ function setupPokemonMarker(item) {
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        if(localStorage.playSound === 'true'){
+        if (localStorage.playSound === 'true') {
           audio.play();
         }
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
+        
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
 
     addListeners(marker);
@@ -492,7 +489,7 @@ function updateLabelDiffTime() {
     });
 };
 
-function sendNotification(title, text, icon) {
+function sendNotification(title, text, icon, lat, lng) {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
@@ -503,7 +500,10 @@ function sendNotification(title, text, icon) {
         });
 
         notification.onclick = function () {
-            window.open(window.location.href);
+            window.focus();
+            notification.close();
+
+            centerMap(lat, lng, 20);
         };
     }
 }
@@ -589,6 +589,25 @@ function addMyLocationButton() {
         currentLocation.style.backgroundPosition = '0px 0px';
         locationMarker.setOptions({'opacity': 0.5});
     });
+}
+
+function changeLocation(lat, lng) {
+    var loc = new google.maps.LatLng(lat, lng);
+
+    $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+        map.setCenter(loc);
+        marker.setPosition(loc);
+    });
+}
+
+function centerMap(lat, lng, zoom) {
+    var loc = new google.maps.LatLng(lat, lng);
+
+    map.setCenter(loc);
+
+    if (zoom) {
+        map.setZoom(zoom)
+    }
 }
 
 //
