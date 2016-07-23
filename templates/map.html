@@ -8,6 +8,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<meta name="apple-mobile-web-app-title" content="PokeMap">
 		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="theme-color" content="#3b3b3b">
 
 		<!-- Fav- & Apple-Touch-Icons -->
 		<!-- Favicon -->
@@ -101,6 +102,16 @@
 					<h3>Notify of Pokémon</h3>
 					<select id="notify-pokemon" multiple="multiple"></select>
 				</label>
+			</div>
+			<div class="form-control switch-container">
+				<h3>Notify with sound</h3>
+				<div class="onoffswitch">
+					<input id="sound-switch" type="checkbox" name="sound-switch" class="onoffswitch-checkbox" checked/>
+					<label class="onoffswitch-label" for="sound-switch">
+						<span class="switch-label" data-on="On" data-off="Off"></span>
+						<span class="switch-handle"></span>
+					</label>
+				</div>
 			</div>
 			<!-- <button id="trigger-overlay">Test overlay</button> -->
 		</nav>
