@@ -245,7 +245,7 @@ function setupPokemonMarker(item) {
             lng: item.longitude
         },
         zIndex: 9999,
-        optimized: false, 
+        optimized: false,
         map: map,
         icon: 'static/icons/' + item.pokemon_id + '.png'
     });
@@ -258,7 +258,7 @@ function setupPokemonMarker(item) {
         if (localStorage.playSound === 'true') {
           audio.play();
         }
-        
+
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
 
@@ -294,7 +294,7 @@ function setupPokestopMarker(item) {
         },
         map: map,
         zIndex: 2,
-        optimized: false, 
+        optimized: false,
         icon: 'static/forts/' + imagename + '.png',
     });
 
@@ -383,10 +383,9 @@ function clearStaleMarkers() {
             delete map_pokemons[key];
         }
     });
-    
-    $.each(map_lure_pokemons, function(key, value) {
 
-        if (map_lure_pokemons[key]['lure_expiration'] < new Date().getTime() ||
+    $.each(map_lure_pokemons, function(key, value) {
+        if (map_lure_pokemons[key]['disappear_time'] < new Date().getTime() ||
                 excludedPokemon.indexOf(map_lure_pokemons[key]['pokemon_id']) >= 0) {
             map_lure_pokemons[key].marker.setMap(null);
             delete map_lure_pokemons[key];
@@ -424,6 +423,7 @@ function updateMap() {
           if (!(localStorage.showPokemon === 'true')) {
               return false; // in case the checkbox was unchecked in the meantime.
           }
+
           if (!(item.encounter_id in map_pokemons) &&
                     excludedPokemon.indexOf(item.pokemon_id) < 0) {
               // add marker to map and item to dict
@@ -436,38 +436,48 @@ function updateMap() {
         $.each(result.pokestops, function(i, item) {
         	if (!(localStorage.showPokestops === 'true')) {
                 return false;
-            } 
+            }
+
             if ((localStorage.showPokestops === 'true') && map_pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
                 // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
             }
-            
-            
          });
-         $.each(result.pokestops, function(i, item) { 
-         if (!(localStorage.showPokemon === 'true')) {
+
+         $.each(result.pokestops, function(i, item) {
+            if (!(localStorage.showPokemon === 'true') && item.lure_expiration) {
                 return false;
-            }  
-            var item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
-            if(map_lure_pokemons[item2.pokestop_id] == null  && item2.lure_expiration) {
-            	//if (item.marker) item.marker.setMap(null);
-                item2.marker = setupPokemonMarker(item2);
-  		map_lure_pokemons[item2.pokestop_id] = item2;
-  		
-  		}
-            if(map_lure_pokemons[item.pokestop_id] != null  && item2.lure_expiration && item2.active_pokemon_id != map_lure_pokemons[item2.pokestop_id].active_pokemon_id) {
-            	//if (item.marker) item.marker.setMap(null);
-            	map_lure_pokemons[item2.pokestop_id].marker.setMap(null);
-            	item2.marker = setupPokemonMarker(item2);
-                map_lure_pokemons[item2.pokestop_id] = item2;
-  		
-  		}
-            
+            }
 
+            var last_modified_date = new Date(item.last_modified);
+            var current_date = new Date();
+
+            var time_until_expire = current_date.getTime() - last_modified_date.getTime();
+
+            var expire_date = new Date(current_date.getTime() + time_until_expire);
+            var expire_time = expire_date.getTime();
+
+            var lured_pokemon = {
+                pokestop_id: item.pokestop_id,
+                pokemon_id: item.active_pokemon_id,
+                latitude: item.latitude+ 0.00005,
+                longitude: item.longitude + 0.00005,
+                pokemon_name: idToPokemon[item.active_pokemon_id],
+                disappear_time: expire_time
+            };
+
+            if (map_lure_pokemons[lured_pokemon.pokestop_id] == null) {
+                lured_pokemon.marker = setupPokemonMarker(lured_pokemon);
+                map_lure_pokemons[lured_pokemon.pokestop_id] = lured_pokemon;
+            } else if (lured_pokemon.active_pokemon_id !== map_lure_pokemons[item2.pokestop_id].active_pokemon_id) {
+                map_lure_pokemons[item2.pokestop_id].marker.setMap(null);
+
+                lured_pokemon.marker = setupPokemonMarker(lured_pokemon);
+                map_lure_pokemons[item2.pokestop_id] = lured_pokemon;
+            }
         });
-
 
         $.each(result.gyms, function(i, item){
             if (!(localStorage.showGyms === 'true')) {
@@ -484,8 +494,7 @@ function updateMap() {
                         content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude)
                     });
                 }
-            }
-            else { // add marker to map and item to dict
+            } else { // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupGymMarker(item);
                 map_gyms[item.gym_id] = item;
@@ -500,8 +509,7 @@ function updateMap() {
 
             if (item.scanned_id in map_scanned) {
                 map_scanned[item.scanned_id].marker.setOptions({fillColor: getColorByDate(item.last_modified)});
-            }
-            else { // add marker to map and item to dict
+            } else { // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupScannedMarker(item);
                 map_scanned[item.scanned_id] = item;
@@ -735,17 +743,17 @@ $(function () {
 });
 
 $(function () {
-
     $selectExclude = $("#exclude-pokemon");
     $selectNotify  = $("#notify-pokemon");
 
     // Load pokemon names and populate lists
     $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
+        idToPokemon = data;
+
         var pokeList = []
 
         $.each(data, function(key, value) {
             pokeList.push( { id: key, text: value } );
-            idToPokemon[key] = value;
         });
 
         // setup the filter lists
@@ -764,6 +772,7 @@ $(function () {
             clearStaleMarkers();
             localStorage.remember_select_exclude = JSON.stringify(excludedPokemon);
         });
+
         $selectNotify.on("change", function (e) {
             notifiedPokemon = $selectNotify.val().map(Number);
             localStorage.remember_select_notify = JSON.stringify(notifiedPokemon);
@@ -773,6 +782,7 @@ $(function () {
         if (localStorage['remember_select_exclude']) {
             $selectExclude.val(JSON.parse(localStorage.remember_select_exclude)).trigger("change");
         }
+
         if (localStorage['remember_select_notify']) {
             $selectNotify.val(JSON.parse(localStorage.remember_select_notify)).trigger("change");
         }
