@@ -97,6 +97,8 @@ function initMap() {
         animation: google.maps.Animation.DROP
     });
 
+    google.maps.event.addListener(map, 'idle', updateMap);
+
     addMyLocationButton();
     initSidebar();
 };
@@ -402,12 +404,43 @@ function clearStaleMarkers() {
     });
 };
 
+
+function clearMarkers() {
+  $.each(map_gyms, function(key, value) {
+      map_gyms[key].marker.setMap(null);
+  });
+  map_gyms = {}
+
+  $.each(map_pokemons, function(key, value) {
+      map_pokemons[key].marker.setMap(null);
+  });
+  map_pokemons = {}
+
+  $.each(map_pokestops, function(key, value) {
+      map_pokestops[key].marker.setMap(null);
+  });
+  map_pokestops = {}
+
+  $.each(map_scanned, function(key, value) {
+      map_scanned[key].marker.setMap(null);
+  });
+  map_scanned = {}
+}
+
 function updateMap() {
 
-    var loadPokemon = localStorage.showPokemon || true;
-    var loadGyms = localStorage.showGyms || true;
-    var loadPokestops = true;
-    var loadScanned = localStorage.showScanned || false;
+    localStorage.showPokemon = localStorage.showPokemon || true;
+    localStorage.showGyms = localStorage.showGyms || true;
+    localStorage.showPokestops = localStorage.showPokestops || false;
+    localStorage.showScanned = localStorage.showScanned || false;
+
+    var bounds = map.getBounds();
+    var swPoint = bounds.getSouthWest();
+    var nePoint = bounds.getNorthEast();
+    var swLat = swPoint.lat();
+    var swLng = swPoint.lng();
+    var neLat = nePoint.lat();
+    var neLng = nePoint.lng();
 
     $.ajax({
         url: "raw_data",
@@ -416,10 +449,15 @@ function updateMap() {
             'pokemon': loadPokemon,
             'pokestops': loadPokestops,
             'gyms': loadGyms,
-            'scanned': loadScanned
+            'scanned': loadScanned,
+            'swLat': swLat,
+            'swLng': swLng,
+            'neLat': neLat,
+            'neLng': neLng
         },
         dataType: "json"
     }).done(function(result) {
+      clearMarkers();
       $.each(result.pokemons, function(i, item){
           if (!(localStorage.showPokemon === 'true')) {
               return false; // in case the checkbox was unchecked in the meantime.

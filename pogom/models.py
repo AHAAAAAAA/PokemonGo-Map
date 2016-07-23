@@ -66,10 +66,15 @@ class Pokemon(BaseModel):
     disappear_time = DateTimeField()
 
     @classmethod
-    def get_active(cls):
+    def get_active(cls, swLat, swLng, neLat, neLng):
         query = (Pokemon
                  .select()
-                 .where(Pokemon.disappear_time > datetime.utcnow())
+                 .where(
+                    Pokemon.disappear_time > datetime.utcnow() &
+                        (Pokemon.latitude >= swLat) &
+                        (Pokemon.longitude >= swLng) &
+                        (Pokemon.latitude <= neLat) &
+                        (Pokemon.longitude <= neLng))
                  .dicts())
 
         pokemons = []
@@ -80,11 +85,15 @@ class Pokemon(BaseModel):
         return pokemons
 
     @classmethod
-    def get_active_by_id(cls, ids):
+    def get_active_by_id(cls, ids, swLat, swLng, neLat, neLng):
         query = (Pokemon
                  .select()
                  .where((Pokemon.pokemon_id << ids) &
-                        (Pokemon.disappear_time > datetime.utcnow()))
+                        (Pokemon.disappear_time > datetime.utcnow()) &
+                        (Pokemon.latitude >= swLat) &
+                        (Pokemon.longitude >= swLng) &
+                        (Pokemon.latitude <= neLat) &
+                        (Pokemon.longitude <= neLng))
                  .dicts())
 
         pokemons = []
@@ -127,10 +136,15 @@ class ScannedLocation(BaseModel):
     last_modified = DateTimeField()
 
     @classmethod
-    def get_recent(cls):
+    def get_recent(cls, swLat, swLng, neLat, neLng):
         query = (ScannedLocation
                  .select()
-                 .where(ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15)))
+                 .where(
+                    ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15)) &
+                    (ScannedLocation.latitude >= swLat) &
+                    (ScannedLocation.longitude >= swLng) &
+                    (ScannedLocation.latitude <= neLat) &
+                    (ScannedLocation.longitude <= neLng))
                  .dicts())
 
         scans = []
