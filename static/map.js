@@ -266,10 +266,9 @@ function setupPokemonMarker(item) {
     marker.infoWindow = new google.maps.InfoWindow({
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
-
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
-    }
+    
+    if (notifiedPokemon.indexOf(item.pokemon_id) > -1 || localStorage.notifyNonHidden) {
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude)
 
     addListeners(marker);
     return marker;
@@ -514,6 +513,10 @@ $('#pokestops-switch').change(function() {
     }
 });
 
+$('#hidden-switch').change(function() {
+     localStorage["notifyNonHidden"] = this.checked;
+ });
+
 
 $('#scanned-switch').change(function() {
     localStorage["showScanned"] = this.checked;
@@ -566,7 +569,7 @@ function readCookie(name) {
     return null;
 }
 
-function sendNotification(title, text, icon) {
+function sendNotification(title, text, icon, lat, lng) {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
@@ -577,7 +580,10 @@ function sendNotification(title, text, icon) {
         });
 
         notification.onclick = function () {
-            window.open(window.location.href);
+            window.focus();
+            notification.close();
+            var center = new google.maps.LatLng(lat, lng);
+            map.panTo(center);
         };
     }
 }
