@@ -12,9 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
 var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
 
+var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
 
-$.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
+$.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
     var pokeList = []
 
     $.each(data, function(key, value) {
