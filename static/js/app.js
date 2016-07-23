@@ -34,8 +34,6 @@
 		$navToggle = document.querySelector('a[href="#nav"]'),
 		$navClose;
 
-	var $overlay = document.querySelector('#trigger-overlay');
-
 	// Event: Prevent clicks/taps inside the nav from bubbling.
 	addEventsListener($nav, 'click touchend', function(event) {
 		event.stopPropagation();
