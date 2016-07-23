@@ -27,17 +27,15 @@ cd PokemonGo-Map-web-client
 npm install
 ```
 
-The **Google Maps API Key** should be changed in `index.html`:
+The **Google Maps API Key** should be changed in `static/js/config.js`:
 
 ```html
-	<script type="text/javascript">
-		// CHANGE ME
-		var CONFIG = {
-			latitude: 40.36915523640919
-		, longitude: -111.75098587678943
-		, gmaps_key: 'AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4'
-		}
-	</script>
+// CHANGE ME
+var CONFIG = {
+  latitude: 40.36915523640919
+, longitude: -111.75098587678943
+, gmaps_key: 'AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4'
+}
 ```
 
 The key above **WILL NOT WORK**, it is just an example.

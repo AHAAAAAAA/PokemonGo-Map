@@ -1,3 +1,5 @@
+'use strict';
+
 document.addEventListener("DOMContentLoaded", function () {
     if (!Notification) {
         console.log('could not load notifications');
@@ -64,7 +66,7 @@ var pGoStyle=[{"featureType":"landscape.man_made","elementType":"geometry.fill",
 
 var selectedStyle = 'light';
 
-function initMap() {
+function initMapHelper(center_lat, center_lng) {
 
 
     map = new google.maps.Map(document.getElementById('map'), {
@@ -118,7 +120,16 @@ function initMap() {
 
     addMyLocationButton();
     initSidebar();
-};
+}
+
+function initMap() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+    initMapHelper(position.coords.latitude, position.coords.longitude);
+  } else {
+    initMapHelper(CONFIG.latitude, CONFIG.longitude);
+  }
+}
 
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
@@ -252,10 +263,10 @@ function scannedLabel(last_modified) {
 };
 
 // Dicts
-map_pokemons = {} // Pokemon
-map_gyms = {} // Gyms
-map_pokestops = {} // Pokestops
-map_scanned = {} // Pokestops
+var map_pokemons = {} // Pokemon
+var map_gyms = {} // Gyms
+var map_pokestops = {} // Pokestops
+var map_scanned = {} // Pokestops
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
 
@@ -650,7 +661,7 @@ myLocationButton = function (map, marker) {
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationContainer);
 }
 
-addMyLocationButton = function () {
+var addMyLocationButton = function () {
     locationMarker = new google.maps.Marker({
         map: map,
         animation: google.maps.Animation.DROP,
