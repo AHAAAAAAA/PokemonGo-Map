@@ -97,7 +97,9 @@ function initMap() {
 
     addMyLocationButton();
     initSidebar();
-    updateMap();
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+        updateMap();
+    });
     
 };
 
@@ -849,9 +851,6 @@ $(function () {
     // run interval timers to regularly update map and timediffs
     window.setInterval(updateLabelDiffTime, 1000);
     window.setInterval(updateMap, 5000);
-
-    // Get this map started!
-    updateMap();
 
     // Seutp UI element interactions
     $('#gyms-switch').change(function() {
