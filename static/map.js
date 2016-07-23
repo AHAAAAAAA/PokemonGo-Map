@@ -121,8 +121,8 @@ function initMap() {
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
-    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'false');
-    $('#scanned-switch').prop('checked', localStorage.showScanned === 'false');
+    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
+    $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -394,8 +394,8 @@ function updateMap() {
 
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
-    localStorage.showPokestops = localStorage.showPokestops || true;
-    localStorage.showScanned = localStorage.showScanned || true;
+    localStorage.showPokestops = localStorage.showPokestops || false;
+    localStorage.showScanned = localStorage.showScanned || false;
 
     $.ajax({
         url: "raw_data",
