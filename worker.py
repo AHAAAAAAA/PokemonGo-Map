@@ -423,11 +423,18 @@ def login(username, password, service):
 
 
 class Slave(threading.Thread):
-    def __init__(self, group=None, target=None, name=None, worker_no=None):
+    def __init__(
+        self,
+        group=None,
+        target=None,
+        name=None,
+        worker_no=None,
+        points=None,
+    ):
         super(Slave, self).__init__(group, target, name)
         self.worker_no = worker_no
         local_data.worker_no = worker_no
-        self.points = utils.get_worker_grid(worker_no)
+        self.points = points
         self.count_points = len(self.points)
         self.step = 0
         self.cycle = 0
@@ -453,7 +460,7 @@ class Slave(threading.Thread):
             # OMG! Sleep for a bit and restart the thread
             self.error_code = 'LOGIN FAIL'
             time.sleep(random.randint(5, 10))
-            start_worker(self.worker_no)
+            start_worker(self.worker_no, self.points)
             return
         while self.cycle < 2:
             self.main(service, api_endpoint, access_token, profile_response)
@@ -464,7 +471,7 @@ class Slave(threading.Thread):
                 self.error_code = None
         self.error_code = 'RESTART'
         time.sleep(random.randint(30, 60))
-        start_worker(self.worker_no)
+        start_worker(self.worker_no, self.points)
 
     def main(self, service, api_endpoint, access_token, profile_response):
         session = db.Session()
@@ -582,21 +589,26 @@ def get_status_message(workers, count, start_time):
     return '\n'.join(output)
 
 
-def start_worker(worker_no):
+def start_worker(worker_no, points):
     # Ok I NEED to global this here
     global workers
     logger.info('Worker (re)starting up!')
-    worker = Slave(name='worker-%d' % worker_no, worker_no=worker_no)
+    worker = Slave(
+        name='worker-%d' % worker_no,
+        worker_no=worker_no,
+        points=points
+    )
     worker.daemon = True
     worker.start()
     workers[worker_no] = worker
 
 
 def spawn_workers(workers, status_bar=True):
+    points = utils.get_points_per_worker()
     start_time = datetime.now()
     count = config.GRID[0] * config.GRID[1]
     for worker_no in range(count):
-        start_worker(worker_no)
+        start_worker(worker_no, points[worker_no])
     while True:
         if status_bar:
             if sys.platform == 'win32':

@@ -90,16 +90,16 @@ def fullmap():
 def get_pokemarkers():
     markers = []
 
-    workers = app_config.GRID[0] * app_config.GRID[1]
-    for i in range(workers):
-        coords = utils.get_start_coords(i)
+    total_workers = app_config.GRID[0] * app_config.GRID[1]
+    for worker_no in range(total_workers):
+        coords = utils.get_start_coords(worker_no)
         markers.append({
             'icon': icons.dots.red,
             'lat': coords[0],
             'lng': coords[1],
-            'infobox': "Worker %d" % i,
+            'infobox': 'Worker %d' % worker_no,
             'type': 'custom',
-            'key': 'start-position-%d' % i,
+            'key': 'start-position-%d' % worker_no,
             'disappear_time': -1
         })
 
