@@ -431,6 +431,7 @@ class Slave(threading.Thread):
         self.cycle = 0
         args = parse_args()
         self.steplimit2 = int(args.step_limit)**2
+        self.seen = 0
 
     def run(self):
         self.cycle = 1
@@ -474,7 +475,7 @@ class Slave(threading.Thread):
         dx = 0
         dy = -1
         session = db.Session()
-        seen = 0
+        self.seen = 0
         for step in range(self.steplimit2):
             add_to_db = []
             self.step = step + 1
@@ -503,7 +504,7 @@ class Slave(threading.Thread):
             for spawn_id in add_to_db:
                 pokemon = pokemons[spawn_id]
                 db.add_sighting(session, spawn_id, pokemon)
-                seen += 1
+                self.seen += 1
             session.commit()
             add_to_db = []
             logger.info(
@@ -511,10 +512,10 @@ class Slave(threading.Thread):
                 ((step + 1) + pos * .25 - .25) / (self.steplimit2) * 100
             )
             # Clear error code and let know that there are Pokemon
-            if self.error_code and seen:
+            if self.error_code and self.seen:
                 self.error_code = None
         session.close()
-        if seen == 0:
+        if self.seen == 0:
             self.error_code = 'NO POKEMON'
         set_location_coords(origin_lat, origin_lon, 0)
 
@@ -523,8 +524,9 @@ class Slave(threading.Thread):
         if self.error_code:
             msg = self.error_code
         else:
-            msg = 'C{cycle}, {progress:.0f}%'.format(
+            msg = 'C{cycle},P{seen},{progress:.0f}%'.format(
                 cycle=self.cycle,
+                seen=self.seen,
                 progress=(self.step / float(self.steplimit2) * 100)
             )
         return '[W{worker_no}: {msg}]'.format(
