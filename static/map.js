@@ -166,7 +166,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     return contentstring;
 }
 
-function gymLabel(team_name, team_id, gym_points) {
+function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
     var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
     var str;
     if (team_id == 0) {
@@ -174,6 +174,10 @@ function gymLabel(team_name, team_id, gym_points) {
             <div>
                 <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
+            </div>
+            <div>
+                <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
+                        target='_blank' title='View in Maps'>Get directions</a>
             </div>
             </center></div>`;
     } else {
@@ -185,6 +189,10 @@ function gymLabel(team_name, team_id, gym_points) {
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
             <div>Prestige: ${gym_points}</div>
+            <div>
+                <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
+                        target='_blank' title='View in Maps'>Get directions</a>
+            </div>
             </center></div>`;
     }
 
@@ -288,7 +296,7 @@ function setupGymMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
+        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude)
     });
 
     addListeners(marker);
@@ -445,7 +453,7 @@ function updateMap() {
                     map_gyms[item.gym_id].marker = setupGymMarker(item);
                 } else { // if it hasn't changed generate new label only (in case prestige has changed)
                     map_gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
-                        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points)
+                        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude)
                     });
                 }
             }
