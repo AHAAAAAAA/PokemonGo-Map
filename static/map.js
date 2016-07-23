@@ -160,16 +160,28 @@ function initSidebar() {
 
 var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
+function pokemonLang(locale) {
+    switch(locale.slice(-2)) {
+        case 'br':
+        case 'de':
+        case 'fr':
+        case 'ru':
+            return locale;
+        default:
+            return 'us';
+    }
+}
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude) {
     disappear_date = new Date(disappear_time)
 
-    var contentstring = `
+    var lang = pokemonLang(document.documentElement.lang),
+        contentstring = `
         <div>
             <b>${name}</b>
             <span> - </span>
             <small>
-                <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
+                <a href='http://www.pokemon.com/${lang}/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
             </small>
         </div>
         <div>
@@ -210,7 +222,8 @@ function gymLabel(team_name, team_id, gym_points) {
 }
 
 function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longitude) {
-    var str;
+    var str,
+        lang = pokemonLang(document.documentElement.lang);
     if (lured) {
         var active_pokemon = idToPokemon[active_pokemon_id];
 
@@ -230,7 +243,7 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
                 Lured Pokémon: ${active_pokemon}
                 <span> - </span>
                 <small>
-                    <a href='http://www.pokemon.com/us/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>
+                    <a href='http://www.pokemon.com/${lang}/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>
                 </small>
             </div>
             <div>
