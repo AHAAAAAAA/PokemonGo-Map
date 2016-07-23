@@ -78,8 +78,6 @@ var pGoStyle=[{"featureType":"landscape.man_made","elementType":"geometry.fill",
 var selectedStyle = 'light';
 
 function initMap() {
-
-
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: center_lat,

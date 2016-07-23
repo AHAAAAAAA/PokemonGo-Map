@@ -127,8 +127,27 @@
 	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
 
 	<script type="text/javascript">
+		function getParameterByName(name, url) {
+		    if (!url) url = window.location.href;
+		    name = name.replace(/[\[\]]/g, "\\$&");
+		    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		        results = regex.exec(url);
+		    if (!results) return null;
+		    if (!results[2]) return '';
+		    return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+	
 		var center_lat = {{lat}};
 		var center_lng = {{lng}};
+	
+		// Add support for URL passed locations.
+	        var latitude = getParameterByName('lat');
+	        var longitude = getParameterByName('long');
+		
+	        if (latitude) {
+		        center_lat = parseFloat(latitude);  // Override default lat/lang if passed via URL. /?lat=42.3152924&long=-83.0367337
+			center_lng = parseFloat(longitude);
+	        }
 	</script>
 
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places"></script>
