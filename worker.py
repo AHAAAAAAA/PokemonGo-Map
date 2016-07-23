@@ -429,6 +429,8 @@ class Slave(threading.Thread):
         local_data.worker_no = worker_no
         self.step = 0
         self.cycle = 0
+        args = parse_args()
+        self.steplimit2 = int(args.step_limit)**2
 
     def run(self):
         self.cycle = 1
@@ -466,25 +468,20 @@ class Slave(threading.Thread):
     def main(self, service, api_endpoint, access_token, profile_response):
         origin_lat, origin_lon = utils.get_start_coords(self.worker_no)
 
-        args = parse_args()
-
-        steplimit = int(args.step_limit)
-
         pos = 1
         x = 0
         y = 0
         dx = 0
         dy = -1
-        steplimit2 = steplimit**2
         session = db.Session()
         seen = 0
-        for step in range(steplimit2):
+        for step in range(self.steplimit2):
             add_to_db = []
             self.step = step + 1
             # Scan location math
             if (
-                -steplimit2 / 2 < x <= steplimit2 / 2 and
-                -steplimit2 / 2 < y <= steplimit2 / 2
+                -self.steplimit2 / 2 < x <= self.steplimit2 / 2 and
+                -self.steplimit2 / 2 < y <= self.steplimit2 / 2
             ):
                 lat = x * 0.0025 + origin_lat
                 lon = y * 0.0025 + origin_lon
@@ -511,7 +508,7 @@ class Slave(threading.Thread):
             add_to_db = []
             logger.info(
                 'Completed: %s%%',
-                ((step + 1) + pos * .25 - .25) / (steplimit2) * 100
+                ((step + 1) + pos * .25 - .25) / (self.steplimit2) * 100
             )
             # Clear error code and let know that there are Pokemon
             if self.error_code and seen:
@@ -526,7 +523,10 @@ class Slave(threading.Thread):
         if self.error_code:
             msg = self.error_code
         else:
-            msg = 'C{cycle}, S{step}'.format(cycle=self.cycle, step=self.step)
+            msg = 'C{cycle}, {progress:.0f}%'.format(
+                cycle=self.cycle,
+                progress=(self.step / float(self.steplimit2) * 100)
+            )
         return '[W{worker_no}: {msg}]'.format(
             worker_no=self.worker_no,
             msg=msg
