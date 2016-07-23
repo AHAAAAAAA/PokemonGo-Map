@@ -3,7 +3,8 @@
 *.db
 *.db-journal
 *.sass-cache
-credentials.json
+config/config.ini
+config/credentials.json
 static/dist/
 node_modules/
 venv/
