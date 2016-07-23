@@ -183,15 +183,15 @@ def parse_map(map_dict, iteration_num, step, step_location):
 
     if pokemons and config['parse_pokemon']:
         log.info("Upserting {} pokemon".format(len(pokemons)))
-        bulk_upsert(Pokemon, pokemons)
+        insert_many(Pokemon, pokemons)
 
     if pokestops and config['parse_pokestops']:
         log.info("Upserting {} pokestops".format(len(pokestops)))
-        bulk_upsert(Pokestop, pokestops)
+        insert_many(Pokestop, pokestops)
 
     if gyms and config['parse_gyms']:
         log.info("Upserting {} gyms".format(len(gyms)))
-        bulk_upsert(Gym, gyms)
+        insert_many(Gym, gyms)
 
     scanned[0] = {
         'scanned_id': str(step_location[0])+','+str(step_location[1]),
@@ -200,9 +200,9 @@ def parse_map(map_dict, iteration_num, step, step_location):
         'last_modified': datetime.utcnow(),
     }
 
-    bulk_upsert(ScannedLocation, scanned)
+    insert_many(ScannedLocation, scanned)
 
-def bulk_upsert(cls, data):
+def insert_many(cls, data):
     num_rows = len(data.values())
     i = 0
     step = 120
