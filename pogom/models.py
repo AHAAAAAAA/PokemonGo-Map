@@ -4,7 +4,8 @@
 import logging
 import os
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
-                   CharField, FloatField, BooleanField, DateTimeField
+                   CharField, FloatField, BooleanField, DateTimeField,\
+                   OperationalError
 from datetime import datetime
 from datetime import timedelta
 from base64 import b64encode
@@ -206,7 +207,12 @@ def bulk_upsert(cls, data):
 
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
-        InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+        try:
+            InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+        except OperationalError as e:
+            log.warn("%s... Retrying", e)
+            continue
+
         i+=step
 
 def create_tables(db):
