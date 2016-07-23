@@ -27,6 +27,9 @@ lng_gap_meters = 86.6
 meters_per_degree = 111111
 lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
 
+## eww global state, refactor this whole file at some point
+stopping = False
+
 def calculate_lng_degrees(lat):
     return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
 
@@ -158,6 +161,8 @@ def search(args, i):
     max_threads = args.num_threads
 
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
+        if stopping:
+            return
         if 'NEXT_LOCATION' in config:
             log.info('New location found. Starting new scan.')
             config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
@@ -176,11 +181,10 @@ def search(args, i):
     if search_threads:
         process_search_threads(search_threads, curr_steps, total_steps)
 
-
 def search_loop(args):
     i = 0
     try:
-        while True:
+        while not stopping:
             log.info("Map iteration: {}".format(i))
             search(args, i)
             log.info("Scanning complete.")
@@ -194,3 +198,14 @@ def search_loop(args):
         log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
         time.sleep(args.scan_delay)
         search_loop(args)
+
+def search_loop_stop():
+    global stopping
+    """
+        stops the searching method after curent operation has completed
+    """
+    stopping = True
+
+def search_loop_start():
+    global stopping
+    stopping = False
