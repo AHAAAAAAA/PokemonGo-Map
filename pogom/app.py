@@ -69,6 +69,7 @@ class Pogom(Flask):
             return 'bad parameters', 400
         else:
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
+            log.info('Changing next location: %s,%s' % (lat, lon))
             return 'ok'
 
     def list_pokemon(self):
