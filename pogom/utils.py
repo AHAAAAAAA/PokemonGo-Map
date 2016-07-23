@@ -10,10 +10,13 @@ import os
 import json
 from datetime import datetime, timedelta
 import ConfigParser
+import platform
 
 from . import config
+
 from exceptions import APIKeyException
 
+DEFAULT_THREADS = 1
 
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
@@ -32,6 +35,18 @@ def parse_config(args):
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
     args.host = Config.get('Misc', 'Host') 
     args.port = Config.get('Misc', 'Port') 
+    
+    return args
+
+def parse_db_config(args):
+    Config = ConfigParser.ConfigParser()
+    Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
+    args.db_type = Config.get('Database','Type')
+    args.db_name = Config.get('Database', 'Database_Name')
+    args.db_user = Config.get('Database', 'Database_User')
+    args.db_pass = Config.get('Database', 'Database_Pass')
+    args.db_host = Config.get('Database', 'Database_Host')
+
     return args
 
 def get_args():
@@ -56,9 +71,11 @@ def get_args():
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
-    parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=5, dest='num_threads')
+    parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=DEFAULT_THREADS, dest='num_threads')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
+
+    args = parse_db_config(args)
 
     if (args.settings):
         args = parse_config(args) 
@@ -70,6 +87,7 @@ def get_args():
 
         if args.password is None:
             args.password = getpass.getpass()
+
 
     return args
 
