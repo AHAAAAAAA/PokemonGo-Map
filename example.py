@@ -810,17 +810,9 @@ def next_loc():
 def update_gps():
 	latitude = request.form['latitude'];
 	longitude = request.form['longitude'];
-#	global origin_lat;
-#	global origin_lon;
-#	origin_lat, origin_lon = latitude, longitude;
 	retrying_set_location(latitude+','+longitude);
 	print("setting location as %s,%s" % (latitude, longitude));
-	#set_location_coords(latitude, longitude, 0);
 	return 'ok';
-	
-def place_position_marker():
-		return None;
-
 
 def get_pokemarkers():
     pokeMarkers = [{
