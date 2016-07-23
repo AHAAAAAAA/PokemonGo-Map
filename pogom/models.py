@@ -94,13 +94,45 @@ class ScannedLocation(BaseModel):
             scans.append(s)
 
         return scans
+        
+class WorkerLocation(BaseModel):
+    center_id = CharField(primary_key=True)
+    latitude = FloatField()
+    longitude = FloatField()
+    num_steps = IntegerField()
+    last_modified = DateTimeField()
 
+    @classmethod
+    def get_recent(cls):
+        query = (WorkerLocation
+                 .select()
+                 .where(WorkerLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15)))
+                 .dicts())
+
+        workers = []
+        for w in query:
+            workers.append(w)
+
+        return workers
+    
+def mark_worker_active(initial_location, num_steps):
+    worker = {}
+    worker[0] = {
+        'center_id': str(initial_location[0])+','+str(initial_location[1]),
+        'latitude': initial_location[0],
+        'longitude': initial_location[1],
+        'num_steps': num_steps,
+        'last_modified': datetime.utcnow(),
+    }
+
+    bulk_upsert(WorkerLocation, worker)
+    
 def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
     pokestops = {}
     gyms = {}
     scanned = {}
-
+    
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         for p in cell.get('wild_pokemons', []):
@@ -171,6 +203,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
     }
 
     bulk_upsert(ScannedLocation, scanned)
+    
 
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
@@ -186,5 +219,5 @@ def bulk_upsert(cls, data):
 
 def create_tables():
     db.connect()
-    db.create_tables([Pokemon, Pokestop, Gym, ScannedLocation], safe=True)
+    db.create_tables([Pokemon, Pokestop, Gym, ScannedLocation, WorkerLocation], safe=True)
     db.close()
