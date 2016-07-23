@@ -43,6 +43,9 @@ def parse_config(args):
     args.location = Config.get('Search_Settings', 'Location')
     args.step_limit = int(Config.get('Search_Settings', 'Steps'))
     args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
+    args.no_pokemon = Config.get('Search_Settings', 'Disable_Pokemon')
+    args.no_pokestops = Config.get('Search_Settings', 'Disable_Pokestops')
+    args.no_gyms = Config.get('Search_Settings', 'Disable_Gyms')
     if Config.get('Misc', 'Google_Maps_API_Key') :
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
     args.host = Config.get('Misc', 'Host') 
@@ -85,6 +88,9 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=DEFAULT_THREADS, dest='num_threads')
+    parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
