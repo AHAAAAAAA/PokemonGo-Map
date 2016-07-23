@@ -147,7 +147,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'disappear_time': d_t
                 }
 
-        if iteration_num > -10000:
+        if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
                 if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops
                         if 'lure_info' in f:
