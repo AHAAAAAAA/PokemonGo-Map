@@ -265,7 +265,7 @@ function initMap() {
     map.setMapTypeId(Store.get('map_style'));
     google.maps.event.addListener(map, 'idle', updateMap);
 
-    marker = createSearchMarker();
+    var marker = createSearchMarker();
 
     addMyLocationButton();
     initSidebar();
