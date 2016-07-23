@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 args = get_args()
 db = None
 
-def init_database(): 
+def init_database():
     global db
     if db is not None:
         return db
@@ -30,9 +30,9 @@ def init_database():
     print args.db_type
     if args.db_type == 'mysql':
         db = MySQLDatabase(
-            args.db_name, 
-            user=args.db_user, 
-            password=args.db_pass, 
+            args.db_name,
+            user=args.db_user,
+            password=args.db_pass,
             host=args.db_host)
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
@@ -227,7 +227,7 @@ def bulk_upsert(cls, data):
         try:
             InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         except OperationalError as e:
-            log.warn("%s... Retrying", e)
+            log.warning("%s... Retrying", e)
             continue
 
         i+=step
