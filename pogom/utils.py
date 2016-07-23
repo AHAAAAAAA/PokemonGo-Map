@@ -9,6 +9,7 @@ import uuid
 import os
 import json
 from datetime import datetime, timedelta
+import ConfigParser
 
 from . import config
 from exceptions import APIKeyException
@@ -38,10 +39,10 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-se', '--settings',action='store_true',default=False)
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username', required=True)
+    parser.add_argument('-u', '--username', help='Username', required=False)
     parser.add_argument('-p', '--password', help='Password', required=False)
-    parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates', required=True)
-    parser.add_argument('-st', '--step-limit', help='Steps', required=True, type=int)
+    parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates', required=False)
+    parser.add_argument('-st', '--step-limit', help='Steps', required=False, type=int)
     parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', required=False, type=int, default=1)
     parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
