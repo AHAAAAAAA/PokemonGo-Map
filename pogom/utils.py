@@ -98,7 +98,6 @@ def insert_mock_data():
                        detect_time=detect_time)
 
     for i in range(num_pokestop):
-
         Pokestop.create(pokestop_id=uuid.uuid4(),
                         enabled=True,
                         latitude=locations[i+num_pokemon][0],
