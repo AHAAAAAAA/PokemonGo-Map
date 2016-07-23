@@ -583,7 +583,7 @@ def get_status_message(workers, count, start_time):
         '',
     ]
     previous = 0
-    for i in range(4, count + 1, 4):
+    for i in range(4, count + 4, 4):
         output.append('\t'.join(messages[previous:i]))
         previous = i
     return '\n'.join(output)
