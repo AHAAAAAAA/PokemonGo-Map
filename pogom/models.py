@@ -2,47 +2,40 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os
-from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
+from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, FloatField, BooleanField, DateTimeField
 from datetime import datetime
 from datetime import timedelta
 from base64 import b64encode
 
-from .utils import get_pokemon_name, load_credentials, get_args
+from .utils import get_pokemon_name, get_args
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
-
-log = logging.getLogger(__name__)
+from playhouse.db_url import connect
+from urlparse import urlparse
+from os import environ
 
 args = get_args()
-db = None
+log = logging.getLogger(__name__)
 
-def init_database(): 
-    global db
-    if db is not None:
-        return db
+if not args.db:
+    # Use SQLite with pogom.db by default.
+    database_url = "sqlite:///pogom.db"
+elif urlparse(args.db).scheme:
+    # Use database URL from command-line when supplied.
+    database_url = args.db
+else:
+    # Use SQLite with filename from command-line when
+    # command-line parameter is no URL.
+    database_url = "sqlite:///{0}".format(args.db)
 
-    print args.db_type
-    if args.db_type == 'mysql':
-        db = MySQLDatabase(
-            args.db_name, 
-            user=args.db_user, 
-            password=args.db_pass, 
-            host=args.db_host)
-        log.info('Connecting to MySQL database on {}.'.format(args.db_host))
-    else:
-        db = SqliteDatabase(args.db)
-        log.info('Connecting to local SQLLite database.')
-
-    return db
-
+log.info("Connecting to database {}".format(database_url))
+db = connect(database_url)
 
 class BaseModel(Model):
     class Meta:
-        database = init_database()
+        database = db
 
     @classmethod
     def get_all(cls):
@@ -52,6 +45,7 @@ class BaseModel(Model):
                 result['latitude'],  result['longitude'] = \
                     transform_from_wgs_to_gcj(result['latitude'],  result['longitude'])
         return results
+
 
 class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
@@ -209,7 +203,9 @@ def bulk_upsert(cls, data):
         InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         i+=step
 
-def create_tables(db):
+
+
+def create_tables():
     db.connect()
     db.create_tables([Pokemon, Pokestop, Gym, ScannedLocation], safe=True)
     db.close()
