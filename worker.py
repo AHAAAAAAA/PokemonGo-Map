@@ -7,10 +7,7 @@ import struct
 import json
 import requests
 import argparse
-import getpass
-import logging
 import threading
-import werkzeug.serving
 import pokemon_pb2
 import time
 import random
@@ -76,6 +73,13 @@ search_thread = None
 workers = {}
 
 local_data = threading.local()
+
+
+class CannotGetProfile(Exception):
+    """As name says, raised when login service is unreachable
+
+    This should make thread sleep for a moment and restart itself.
+    """
 
 
 def memoize(obj):
@@ -216,16 +220,13 @@ def api_req(service, api_endpoint, access_token, *args, **kwargs):
 def get_api_endpoint(service, access_token, api=API_URL):
     profile_response = None
     while not profile_response:
-        profile_response = retrying_get_profile(service, access_token, api,
-                                                None)
+        profile_response = retrying_get_profile(service, access_token, api, None)
         if not hasattr(profile_response, 'api_url'):
-            debug(
-                'retrying_get_profile: get_profile returned no api_url, retrying')
+            debug('retrying_get_profile: get_profile returned no api_url, retrying')
             profile_response = None
             continue
         if not len(profile_response.api_url):
-            debug(
-                'get_api_endpoint: retrying_get_profile returned no-len api_url, retrying')
+            debug('get_api_endpoint: retrying_get_profile returned no-len api_url, retrying')
             profile_response = None
 
     return 'https://%s/rpc' % profile_response.api_url
@@ -233,19 +234,18 @@ def get_api_endpoint(service, access_token, api=API_URL):
 
 def retrying_get_profile(service, access_token, api, useauth, *reqq):
     profile_response = None
+    times_tried = 0
     while not profile_response:
-        profile_response = get_profile(service, access_token, api, useauth,
-                                       *reqq)
-        if not hasattr(profile_response, 'payload'):
-            debug(
-                'retrying_get_profile: get_profile returned no payload, retrying')
+        if times_tried > 5:
+            raise CannotGetProfile
+        profile_response = get_profile(
+            service, access_token, api, useauth, *reqq
+        )
+        if not getattr(profile_response, 'payload'):
+            debug('retrying_get_profile: get_profile returned no or no-len payload, retrying')
             profile_response = None
+            times_tried += 1
             continue
-        if not profile_response.payload:
-            debug(
-                'retrying_get_profile: get_profile returned no-len payload, retrying')
-            profile_response = None
-
     return profile_response
 
 
@@ -453,13 +453,19 @@ def work(worker_no):
     api_session.headers.update({'User-Agent': 'Niantic App'})
     api_session.verify = False
 
-    api_endpoint, access_token, profile_response = login(
-        username=config.ACCOUNTS[worker_no][0],
-        password=config.ACCOUNTS[worker_no][1],
-        service=service,
-    )
-
-    while times_done < 10:
+    try:
+        api_endpoint, access_token, profile_response = login(
+            username=config.ACCOUNTS[worker_no][0],
+            password=config.ACCOUNTS[worker_no][1],
+            service=service,
+        )
+    except CannotGetProfile:
+        # OMG! Sleep for a bit and restart the thread
+        print('[W%d] Could not login - sleeping & retrying' % worker_no)
+        time.sleep(random.randint(5, 10))
+        start_worker(worker_no)
+        return
+    while times_done < 5:
         print('[W%d] Iteration %d' % (worker_no, times_done))
         main(worker_no, service, api_endpoint, access_token, profile_response)
         times_done += 1

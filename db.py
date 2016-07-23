@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.sql import not_
 
 
 try:
@@ -62,6 +63,9 @@ def add_sighting(session, spawn_id, pokemon):
 
 
 def get_sightings(session):
-    return session.query(Sighting) \
-        .filter(Sighting.expire_timestamp > time.time()) \
-        .all()
+    query = session.query(Sighting) \
+        .filter(Sighting.expire_timestamp > time.time())
+    trash_list = getattr(config, 'TRASH_IDS')
+    if trash_list:
+        query = query.filter(not_(Sighting.pokemon_id.in_(config.TRASH_IDS)))
+    return query.all()

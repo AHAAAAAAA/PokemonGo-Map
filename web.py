@@ -1,11 +1,9 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import argparse
 import json
 
 import requests
-import flask
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
@@ -18,23 +16,16 @@ import utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
 with open('credentials.json') as f:
     credentials = json.load(f)
 
 with open('locales/pokemon.en.json') as f:
     pokemon_names = json.load(f)
 
+
 GOOGLEMAPS_KEY = credentials.get('gmaps_key', None)
-
-DEBUG = True
-origin_lat = (app_config.MAP_START[0] + app_config.MAP_END[0]) / 2.0
-origin_lon = (app_config.MAP_START[1] + app_config.MAP_END[1]) / 2.0
-auto_refresh = 60000
-
-
-def debug(message):
-    if DEBUG:
-        print '[-] {}'.format(message)
+AUTO_REFRESH = 45  # refresh map every X s
 
 
 def get_args():
@@ -43,15 +34,18 @@ def get_args():
         '-H',
         '--host',
         help='Set web server listening host',
-        default='127.0.0.1')
+        default='127.0.0.1'
+    )
     parser.add_argument(
         '-P',
         '--port',
         type=int,
         help='Set web server listening port',
-        default=5000)
+        default=5000
+    )
     parser.add_argument(
-        '-d', '--debug', help='Debug Mode', action='store_true')
+        '-d', '--debug', help='Debug Mode', action='store_true'
+    )
     parser.set_defaults(DEBUG=True)
     return parser.parse_args()
 
@@ -67,56 +61,30 @@ app = create_app()
 
 @app.route('/data')
 def data():
-    """ Gets all the PokeMarkers via REST """
+    """Gets all the PokeMarkers via REST"""
     return json.dumps(get_pokemarkers())
-
-
-@app.route('/raw_data')
-def raw_data():
-    """ Gets raw data for pokemons/gyms/pokestops via REST """
-    return flask.jsonify(pokemons=pokemons, gyms=gyms, pokestops=pokestops)
 
 
 @app.route('/config')
 def config():
-    """ Gets the settings for the Google Maps via REST"""
-    center = {
-        'lat': FLOAT_LAT,
-        'lng': FLOAT_LONG,
+    """Gets the settings for the Google Maps via REST"""
+    map_center = utils.get_map_center()
+    return json.dumps({
+        'lat': map_center[0],
+        'lng': map_center[1],
         'zoom': 15,
-        'identifier': "fullmap"
-    }
-    return json.dumps(center)
+        'identifier': 'fullmap'
+    })
 
 
 @app.route('/')
 def fullmap():
     return render_template(
-        'example_fullmap.html',
+        'map.html',
         key=GOOGLEMAPS_KEY,
         fullmap=get_map(),
-        auto_refresh=auto_refresh
+        auto_refresh=AUTO_REFRESH * 1000
     )
-
-
-@app.route('/next_loc')
-def next_loc():
-    global NEXT_LAT, NEXT_LONG
-
-    location_name = flask.request.args.get('name', '')
-    if not location_name:
-        return 'no location_name'
-    # TODO:
-    # coords = guess_coords(location_name)
-    # NEXT_LAT = float(coords[0])
-    # NEXT_LONG = float(coords[1])
-    # print('[+] Saved next location as %s,%s' % (NEXT_LAT, NEXT_LONG))
-    return 'ok'
-
-
-@app.route('/gps')
-def next_loc_gps():
-    return render_template('nextloc_js.html')
 
 
 def get_pokemarkers():
@@ -163,11 +131,12 @@ def get_pokemarkers():
         markers.append({
             'type': 'pokemon',
             'name': name,
-            'key': pokemon.pokemon_id,
+            'key': '{}-{}'.format(pokemon.pokemon_id, pokemon.spawn_id),
             'disappear_time': pokemon.expire_timestamp,
             'icon': 'static/icons/%d.png' % pokemon.pokemon_id,
             'lat': pokemon.lat,
             'lng': pokemon.lon,
+            'pokemon_id': pokemon.pokemon_id,
             'infobox': label
         })
 
@@ -175,12 +144,13 @@ def get_pokemarkers():
 
 
 def get_map():
+    map_center = utils.get_map_center()
     fullmap = Map(
-        identifier="fullmap2",
+        identifier='fullmap2',
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
-        lat=origin_lat,
-        lng=origin_lon,
-        markers=get_pokemarkers(),
+        lat=map_center[0],
+        lng=map_center[1],
+        markers=[],  # will be fetched by browser
         zoom='15',
     )
     return fullmap
