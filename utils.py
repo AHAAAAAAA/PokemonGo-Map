@@ -57,6 +57,6 @@ def get_points_per_worker():
             # Figure out which worker this should go to
             grid_row = int(map_row / float(total_rows) * config.GRID[0])
             grid_col = int(map_col / float(total_columns) * config.GRID[1])
-            worker_no = grid_row * config.GRID[0] + grid_col
+            worker_no = grid_row * config.GRID[1] + grid_col
             points[worker_no].append((lat, lon))
     return points
