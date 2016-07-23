@@ -399,10 +399,10 @@ function clearStaleMarkers() {
 
 function updateMap() {
 
-    loadPokemon = localStorage.showPokemon || true;
-    loadGyms = localStorage.showGyms || true;
-    loadPokestops = true;
-    loadScanned = localStorage.showScanned || false;
+    var loadPokemon = localStorage.showPokemon || true;
+    var loadGyms = localStorage.showGyms || true;
+    var loadPokestops = true;
+    var loadScanned = localStorage.showScanned || false;
 
     $.ajax({
         url: "raw_data",
@@ -445,7 +445,7 @@ function updateMap() {
          if (!(localStorage.showPokemon === 'true')) {
                 return false;
             }  
-            item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
+            var item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
             if(map_lure_pokemons[item2.pokestop_id] == null  && item2.lure_expiration) {
             	//if (item.marker) item.marker.setMap(null);
                 item2.marker = setupPokemonMarker(item2);
