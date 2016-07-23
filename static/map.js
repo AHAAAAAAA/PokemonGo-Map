@@ -354,11 +354,11 @@ function countMarkers() {
 			pkmnCount[map_pokemons[key]['pokemon_id']] += 1;
 		}
 		pkmnTotal++;
-		var pkmnListString = "<table><thead><tr><th>Nom</th><th>Quantité</th><th>%</th></tr></thead><tbody><tr><td>Total</td><td>"+pkmnTotal+"</td></tr>";
+		var pkmnListString = "<table><thead><tr><th>Icon</th><th>Name</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td></td><td>Total</td><td>"+pkmnTotal+"</td></tr>";
 		for(var i=0;i < pkmnCount.length;i++) {
 			if (pkmnCount[i] > 0)
 			{
-				pkmnListString += "<tr><td>" + pkmnName[i] + "</td><td>" + pkmnCount[i] + "</td><td>"+Math.round(pkmnCount[i]*100/pkmnTotal*100)/100+"%</td></tr>";
+				pkmnListString += "<tr><td><img src=\"/static/icons/" + i + ".png\" /></td><td>" + pkmnName[i] + "</td><td>" + pkmnCount[i] + "</td><td>"+Math.round(pkmnCount[i]*100/pkmnTotal*10)/10+"%</td></tr>";
 			}
 		}
 		pkmnListString += "</tbody></table>";
@@ -374,25 +374,25 @@ function countMarkers() {
 			arenaCount[map_gyms[key]['team_id']] += 1;
 		}
 		arenaTotal++;
-		var arenaListString = "<table><th>Couleur</th><th>Quantité</th><th>%</th><tr><td>Total</td><td>"+arenaTotal+"</td></tr>";
+		var arenaListString = "<table><th>Icon</th><th>Team Color</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>"+arenaTotal+"</td></tr>";
 		for(var i=0;i < arenaCount.length;i++) {
 			if (arenaCount[i] > 0)
 			{
 				if(i == 1)
 				{
-					arenaListString += "<tr><td>" + "Bleu" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+					arenaListString += "<tr><td><img src=\"/static/forts/Mystic.png\" /></td><td>" + "Blue" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 				}
 				else if(i == 2)
 				{
-					arenaListString += "<tr><td>" + "Rouge" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+					arenaListString += "<tr><td><img src=\"/static/forts/Valor.png\" /></td><td>" + "Red" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 				}
 				else if(i == 3)
 				{
-					arenaListString += "<tr><td>" + "Jaune" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+					arenaListString += "<tr><td><img src=\"/static/forts/Instinct.png\" /></td><td>" + "Yellow" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 				}
 				else
 				{
-					arenaListString += "<tr><td>" + "Vide" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*100)/100+"%</td></tr>";
+					arenaListString += "<tr><td><img src=\"/static/forts/Uncontested.png\" /></td><td>" + "Clear" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 				}
 			}
 		}
@@ -424,17 +424,17 @@ function countMarkers() {
 			}
 		}
 		pokestopTotal++;
-		var pokestopListString = "<table><th>Type</th><th>Quantité</th><th>%</th><tr><td>Total</td><td>"+pokestopTotal+"</td></tr>";
+		var pokestopListString = "<table><th>Icon</th><th>Status</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>"+pokestopTotal+"</td></tr>";
 		for(var i=0;i < pokestopCount.length;i++) {
 			if (pokestopCount[i] > 0)
 			{
 				if(i == 0)
 				{
-					pokestopListString += "<tr><td>" + "Sans Leure" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*100)/100+"%</td></tr>";
+					pokestopListString += "<tr><td><img src=\"/static/forts/Pstop.png\" /></td><td>" + "Not Lured" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*10)/10+"%</td></tr>";
 				}
 				else if(i == 1)
 				{
-					pokestopListString += "<tr><td>" + "Avec Leure" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*100)/100+"%</td></tr>";
+					pokestopListString += "<tr><td><img src=\"/static/forts/PstopLured.png\" /></td><td>" + "Lured" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*10)/10+"%</td></tr>";
 				}
 			}
 		}
