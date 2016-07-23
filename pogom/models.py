@@ -20,10 +20,14 @@ args = get_args()
 log = logging.getLogger(__name__)
 
 if not args.db:
+    # Use SQLite with pogom.db by default.
     database_url = "sqlite:///pogom.db"
 elif urlparse(args.db).scheme:
+    # Use database URL from command-line when supplied.
     database_url = args.db
 else:
+    # Use SQLite with filename from command-line when
+    # command-line parameter is no URL.
     database_url = "sqlite:///{0}".format(args.db)
 
 log.info("Connecting to database {}".format(database_url))
