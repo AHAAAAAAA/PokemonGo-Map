@@ -55,7 +55,6 @@ SESSION.verify = False
 
 global_password = None
 global_token = None
-access_token = None
 DEBUG = True
 VERBOSE_DEBUG = False  # if you want to write raw request/response to the console
 COORDS_LATITUDE = 0
@@ -67,7 +66,6 @@ NEXT_LAT = 0
 NEXT_LONG = 0
 auto_refresh = 0
 default_step = 0.001
-api_endpoint = None
 pokemons = {}
 gyms = {}
 pokestops = {}
@@ -81,8 +79,11 @@ origin_lat, origin_lon = None, None
 is_ampm_clock = False
 
 # stuff for in-background search thread
-
 search_thread = None
+
+# Login session
+login_session = None
+
 def memoize(obj):
     cache = obj.cache = {}
 
@@ -511,8 +512,11 @@ def get_args():
             vars(namespace)[key] = default_args[key]
         return namespace
 
-@memoize
 def login(args):
+    global login_session
+    if login_session:
+        return login_session
+
     global global_password
     if not global_password:
       if args.password:
@@ -553,7 +557,8 @@ def login(args):
     for curr in profile.profile.currency:
         print '[+] {}: {}'.format(curr.type, curr.amount)
 
-    return api_endpoint, access_token, profile_response
+    login_session = api_endpoint, access_token, profile_response
+    return login_session
 
 def main():
     full_path = os.path.realpath(__file__)
@@ -688,6 +693,10 @@ transform_from_wgs_to_gcj(Location(Fort.Latitude, Fort.Longitude))
                                     pokestops[Fort.FortId] = [Fort.Latitude,
                                                               Fort.Longitude, expire_time]
         except AttributeError:
+            # Reset login session if problems happen
+            global login_session, global_token
+            login_session = None
+            global_token = None
             break
 
     for poke in visible:
