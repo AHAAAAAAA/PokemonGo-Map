@@ -7,7 +7,7 @@ Live visualization of all the pokemon (with option to show gyms and pokestops) i
 #[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact.
 #[Official Website] (https://jz6.github.io/PoGoMap/)#
 
-![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
+![Map](https://i.imgur.com/ZjB9lo0.jpg)
 
 
 ## How to setup
