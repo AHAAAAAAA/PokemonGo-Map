@@ -31,7 +31,7 @@ var map_pokestops = {}
 var map_lure_pokemons = {}
 var map_scanned = {}
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
-var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
+var audio = new Audio('static/sounds/ding.mp3');
 
 //
 // Functions
