@@ -44,12 +44,10 @@ class Pogom(Flask):
             d['scanned'] = ScannedLocation.get_recent()
             
         if request.args.get('location', 'false') == 'true':
-            locations = WorkerLocation.get_all()
-            
+            locations = WorkerLocation.get_recent()
+
             for l in locations:
                 l['total_area_corners'] = calculate_total_area_corners(l['num_steps'], l['latitude'], l['longitude'])
-                # for i, corner in enumerate(calculate_total_area_corners(locations[l]['num_steps'], locations[l]['latitude'], locations[l]['longitude'])):
-                #     locations[l]['total_area_corners'][i] = corner
 
             d['locations'] = locations
             

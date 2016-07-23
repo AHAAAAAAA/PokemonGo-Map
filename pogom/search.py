@@ -29,16 +29,16 @@ def calculate_lng_degrees(lat):
     return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
 
 def calculate_total_area_corners(num_steps, initial_lat, initial_lng ):
-    
+
     lng_move = calculate_lng_degrees(initial_lat) * 2 * (num_steps - 1) + ((50 / math.cos(math.radians(30))) / (meters_per_degree * math.cos(math.radians(initial_lat))))
     lat_move = (math.ceil(num_steps / 2) + num_steps - 1) * float(100) / meters_per_degree
-    
+
     top_lat = initial_lat + lat_move
     bot_lat = initial_lat - lat_move
-    
+
     top_lng_move = calculate_lng_degrees(top_lat) * (num_steps - 1) + ((math.tan(math.radians(30)) * 50) / (meters_per_degree * math.cos(math.radians(top_lat))))
     bot_lng_move = calculate_lng_degrees(bot_lat) * (num_steps - 1) + ((math.tan(math.radians(30)) * 50) / (meters_per_degree * math.cos(math.radians(top_lat))))
-    
+
     return [top_lat, initial_lng - top_lng_move], \
     [top_lat, initial_lng + top_lng_move], \
     [initial_lat, initial_lng + lng_move], \
@@ -167,17 +167,17 @@ def search(args, i):
 
 def search_loop(args):
     i = 0
-    #try:
-    while True:
-        log.info("Map iteration: {}".format(i))
-        search(args, i)
-        log.info("Scanning complete.")
-        if args.scan_delay > 1:
-            log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
-        i += 1
+    try:
+        while True:
+            log.info("Map iteration: {}".format(i))
+            search(args, i)
+            log.info("Scanning complete.")
+            if args.scan_delay > 1:
+                log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
+            i += 1
 
-    # This seems appropriate
-    # except:
-    #     log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
-    #     time.sleep(args.scan_delay)
-    #     search_loop(args)
+    #This seems appropriate
+    except:
+        log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
+        time.sleep(args.scan_delay)
+        search_loop(args)

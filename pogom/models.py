@@ -94,7 +94,7 @@ class ScannedLocation(BaseModel):
             scans.append(s)
 
         return scans
-        
+
 class WorkerLocation(BaseModel):
     center_id = CharField(primary_key=True)
     latitude = FloatField()
@@ -114,7 +114,7 @@ class WorkerLocation(BaseModel):
             workers.append(w)
 
         return workers
-    
+
 def mark_worker_active(initial_location, num_steps):
     worker = {}
     worker[0] = {
@@ -126,7 +126,7 @@ def mark_worker_active(initial_location, num_steps):
     }
 
     bulk_upsert(WorkerLocation, worker)
-    
+
 def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
     pokestops = {}
