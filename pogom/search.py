@@ -10,6 +10,8 @@ from threading import Thread, Semaphore
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
 
+from alarm.notifications import Notifications
+
 from . import config
 from .models import parse_map
 
@@ -17,6 +19,7 @@ log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
+alarms = Notifications()
 
 #Constants for Hex Grid
 #Gap between vertical and horzonal "rows"
@@ -112,7 +115,8 @@ def search_thread(args):
         if response_dict:
             try:
                 sem.acquire()
-                parse_map(response_dict, i, step, step_location)
+                pokemons, pokestops, gyms = parse_map(response_dict, i, step, step_location)
+                alarms.notify_pkmns(pokemons)
             except KeyError:
                 log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
                 failed_consecutive += 1
