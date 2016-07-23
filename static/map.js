@@ -227,14 +227,23 @@ function scannedLabel(last_modified) {
     return contentstring;
 };
 
+// this could use a refactor...
+function calculateSpritePoints(num) {
+    var y = Math.floor(num / 12);
+    var x = (num - 1) % 12;
+
+    return new google.maps.Point(30 * x, 30 * y);
+}
+
 function setupPokemonMarker(item) {
+    var icon = new google.maps.MarkerImage("static/icons-sprite.png", new google.maps.Size(30, 30), calculateSpritePoints(parseInt(item.pokemon_id)));
     var marker = new google.maps.Marker({
         position: {
             lat: item.latitude,
             lng: item.longitude
         },
         map: map,
-        icon: 'static/icons/' + item.pokemon_id + '.png'
+        icon: icon,
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
