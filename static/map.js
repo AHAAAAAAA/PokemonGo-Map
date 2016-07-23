@@ -479,7 +479,7 @@ function readCookie(name) {
     return null;
 }
 
-function sendNotification(title, text, icon, latitude, longitude) {
+function sendNotification(title, text, icon, lat, lng) {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
@@ -492,7 +492,7 @@ function sendNotification(title, text, icon, latitude, longitude) {
         notification.onclick = function () {
             window.focus();
 
-            centerMap(latitude, longitude, 20);
+            centerMap(lat, lng, 20);
         };
     }
 }
