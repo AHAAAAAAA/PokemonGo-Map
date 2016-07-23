@@ -7,8 +7,9 @@ To generate a token for sending yourself notifications using the Pushbullet API,
 
 ## Config File
 Instead of from the command-line, all arguments are read from a `config.json` file. In addition to all of the options laid out [here](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Usage), I've introduced two required fields: `pushbullet`, your Pushbullet API key, and `notify`, a comma-separated list of the Pokemon that you'd like to receive Pushbullet notifications for.
+As an alernative to 'notify', you may also make use of a field called 'do_not_notify'. If the 'do_not_notify' field is present and the 'notify' field is not present, you will be notified for ALL pokemon except the ones in the 'do_not_notify' field.
 
-Here's a sample `config.json`:
+Here's a sample `config.json` using the 'notify' field:
 
 ```
 {
@@ -18,6 +19,20 @@ Here's a sample `config.json`:
   "step_limit": 5,
   "location": "742 Evergreen Terrace, Arlington, VA",
   "notify": "dratini,magnemite,electabuzz,hitmonchan,hitmonlee,chansey,lapras,snorlax,porygon,mew,mewtwo,moltres,zapdos,articuno,ditto,seel,gyarados,cubone",
+  "pushbullet": "o.XyDeiVeYuM5eSv2ssy7AlFGLDl4ajEXj"
+}
+```
+
+Here's a sample `config.json` using the 'do_not_notify' field:
+
+```
+{
+  "auth_service": "google",
+  "username": "myemailuser",
+  "password": "pikachu123",
+  "step_limit": 5,
+  "location": "742 Evergreen Terrace, Arlington, VA",
+  "do_not_notify": "rattata,raticate,pidgey,pidgeotto,venonat,zubat,golbat,magikarp,weedle,kakuna,caterpie,metapod",
   "pushbullet": "o.XyDeiVeYuM5eSv2ssy7AlFGLDl4ajEXj"
 }
 ```
@@ -34,7 +49,7 @@ You'll have to set up notifications where you'd like to receive them. I installe
 ## Screenshots
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/jxmorris12/PokemonGo-Finder/master/screenshots/PhonePushNotif.PNG" height="500">
-<img src="https://raw.githubusercontent.com/jxmorris12/PokemonGo-Finder/master/screenshots/ChromePushNotif.png" width="400">
-<img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
+  <img src="https://raw.githubusercontent.com/jxmorris12/PokemonGo-Finder/master/screenshots/PhonePushNotif.PNG" height="500">
+  <img src="https://raw.githubusercontent.com/jxmorris12/PokemonGo-Finder/master/screenshots/ChromePushNotif.png" width="400">
+  <img src="https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png">
 </p>
