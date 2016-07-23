@@ -394,8 +394,8 @@ function updateMap() {
 
     localStorage.showPokemon = localStorage.showPokemon || true;
     localStorage.showGyms = localStorage.showGyms || true;
-    localStorage.showPokestops = localStorage.showPokestops || true;
-    localStorage.showScanned = localStorage.showScanned || true;
+    localStorage.showPokestops = localStorage.showPokestops || false;
+    localStorage.showScanned = localStorage.showScanned || false;
 
     $.ajax({
         url: "raw_data",
