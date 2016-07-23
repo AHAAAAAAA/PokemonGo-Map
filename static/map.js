@@ -73,6 +73,9 @@ function initMap() {
         },
         zoom: 16,
         fullscreenControl: true,
+        fullscreenControlOptions: {
+                position: google.maps.ControlPosition.LEFT_TOP
+        },
         streetViewControl: false,
 		mapTypeControl: true,
 		mapTypeControlOptions: {
