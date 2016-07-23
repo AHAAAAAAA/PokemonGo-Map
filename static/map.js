@@ -156,6 +156,7 @@ function initSidebar() {
     $('#lured-pokemon-switch').prop('checked', localStorage.showLuredPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
+	$('#hide-switch').prop('checked', localStorage.hidePokemon === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
@@ -437,7 +438,8 @@ function clearStaleMarkers() {
     $.each(map_pokemons, function(key, value) {
 
         if (map_pokemons[key]['disappear_time'] < new Date().getTime() ||
-                excludedPokemon.indexOf(map_pokemons[key]['pokemon_id']) >= 0) {
+                (localStorage.hidePokemon === 'true' &&
+                excludedPokemon.indexOf(map_pokemons[key]['pokemon_id']) >= 0)) {
             map_pokemons[key].marker.setMap(null);
             delete map_pokemons[key];
         }
@@ -485,6 +487,7 @@ function updateMap() {
     var loadGyms = localStorage.showGyms || true;
     var loadPokestops =  localStorage.showPokestops || localStorage.showLuredPokemon || false; //lured mons need pokestop data
     var loadScanned = localStorage.showScanned || false;
+	var hidePokemon = localStorage.hidePokemon || true;
 
     var bounds = map.getBounds();
     var swPoint = bounds.getSouthWest();
@@ -514,7 +517,9 @@ function updateMap() {
               return false; // in case the checkbox was unchecked in the meantime.
           }
           if (!(item.encounter_id in map_pokemons) &&
-                    excludedPokemon.indexOf(item.pokemon_id) < 0) {
+                    ((localStorage.hidePokemon === 'true' &&
+                    excludedPokemon.indexOf(item.pokemon_id) < 0) ||
+                    localStorage.hidePokemon === 'false')) {
               // add marker to map and item to dict
               if (item.marker) item.marker.setMap(null);
               item.marker = setupPokemonMarker(item);
@@ -663,6 +668,11 @@ $('#pokestops-switch').change(function() {
 
 $('#sound-switch').change(function() {
     localStorage["playSound"] = this.checked;
+});
+
+$('#hide-switch').change(function () {
+    localStorage["hidePokemon"] = this.checked;
+    updateMap();
 });
 
 $('#scanned-switch').change(function() {
