@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+$(function () {
     if (!Notification) {
         console.log('could not load notifications');
         return;
