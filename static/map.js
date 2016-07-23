@@ -380,9 +380,18 @@ function setupScannedMarker(item) {
     return marker;
 };
 
+function clearSelection() {
+    if (document.selection ) {
+        document.selection.empty();
+    } else if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+};
+
 function addListeners(marker) {
     marker.addListener('click', function() {
         marker.infoWindow.open(map, marker);
+        clearSelection();
         updateLabelDiffTime();
         marker.persist = true;
     });
@@ -393,6 +402,7 @@ function addListeners(marker) {
 
     marker.addListener('mouseover', function() {
         marker.infoWindow.open(map, marker);
+        clearSelection();
         updateLabelDiffTime();
     });
 
