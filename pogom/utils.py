@@ -11,6 +11,8 @@ import json
 from datetime import datetime, timedelta
 import ConfigParser
 import platform
+import logging
+import shutil
 
 from . import config
 
@@ -18,11 +20,21 @@ from exceptions import APIKeyException
 
 DEFAULT_THREADS = 1
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
+log = logging.getLogger(__name__)
+
 def parse_unicode(bytestring):
     decoded_string = bytestring.decode(sys.getfilesystemencoding())
     return decoded_string
 
+def verify_config_file_exists(filename):
+    fullpath = os.path.join(os.path.dirname(__file__), filename)
+    if os.path.exists(fullpath) is False:
+        log.info("Could not find " + filename + ", copying default")
+        shutil.copy2(fullpath + '.example', fullpath)
+
 def parse_config(args):
+    verify_config_file_exists('../config/config.ini')
     Config = ConfigParser.ConfigParser()
     Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
     args.auth_service = Config.get('Authentication', 'Service')
@@ -39,6 +51,7 @@ def parse_config(args):
     return args
 
 def parse_db_config(args):
+    verify_config_file_exists('../config/config.ini')
     Config = ConfigParser.ConfigParser()
     Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
     args.db_type = Config.get('Database','Type')
@@ -150,6 +163,7 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 def load_credentials(filepath):
+    verify_config_file_exists('../config/credentials.json')
     try:
         with open(filepath+os.path.sep+'/config/credentials.json') as file:
             creds = json.load(file)
