@@ -449,12 +449,11 @@ function sendNotification(title, text, icon) {
 // Pageload time!
 //
 
-var $selectExclude
-  , $selectNotify
-  , idToPokemon = {}
-  , excludedPokemon = []
-  , notifiedPokemon = []
-  ;
+var $selectExclude;
+var $selectNotify;
+var idToPokemon = {};
+var excludedPokemon = [];
+var notifiedPokemon = [];
 
 var map;
 
