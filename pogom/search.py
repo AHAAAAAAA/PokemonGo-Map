@@ -5,7 +5,7 @@ import logging
 import time
 import math
 
-from threading import Thread, Semaphore
+from threading import Thread, BoundedSemaphore
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -110,18 +110,16 @@ def search_thread(args):
     while not response_dict:
         response_dict = send_map_request(api, step_location)
         if response_dict:
-            try:
-                sem.acquire()
-                parse_map(response_dict, i, step, step_location)
-            except KeyError:
-                log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
-                failed_consecutive += 1
-                if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                    log.error('Niantic servers under heavy load. Waiting before trying again')
-                    time.sleep(config['REQ_HEAVY_SLEEP'])
-                    failed_consecutive = 0
-            finally:
-                sem.release()
+            with sem:
+                try:
+                    parse_map(response_dict, i, step, step_location)
+                except KeyError:
+                    log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
+                    failed_consecutive += 1
+                    if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                        log.error('Niantic servers under heavy load. Waiting before trying again')
+                        time.sleep(config['REQ_HEAVY_SLEEP'])
+                        failed_consecutive = 0
         else:
             log.info('Map Download failed. Trying again.')
 
@@ -151,7 +149,7 @@ def search(args, i):
     else:
         login(args, position)
 
-    sem = Semaphore()
+    sem = BoundedSemaphore()
 
     search_threads = []
     curr_steps = 0
