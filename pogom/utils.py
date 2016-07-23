@@ -8,6 +8,7 @@ import re
 import uuid
 import os
 import json
+import requests
 from datetime import datetime, timedelta
 
 from . import config
@@ -33,6 +34,15 @@ def parse_config(args):
     args.port = Config.get('Misc', 'Port') 
     return args
 
+def get_default_loc():
+    url = 'http://freegeoip.net/json'
+    r = requests.get(url)
+    j = json.loads(r.text)
+    lat = str(j['latitude'])
+    lon = str(j['longitude'])
+    print lat + ", " + lon
+    return lat + ", " + lon
+
 def get_args():
     # fuck PEP8
     parser = argparse.ArgumentParser()
@@ -40,7 +50,7 @@ def get_args():
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username', required=True)
     parser.add_argument('-p', '--password', help='Password', required=False)
-    parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates', required=True)
+    parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates', required=False, default=get_default_loc())
     parser.add_argument('-st', '--step-limit', help='Steps', required=True, type=int)
     parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', required=False, type=int, default=1)
     parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
