@@ -571,14 +571,17 @@ def process_step(
         add_to_db.append(poke.SpawnPointId)
 
 
-def get_status_message(workers, count, start_time):
+def get_status_message(workers, count, start_time, points_stats):
     messages = [workers[i].status.ljust(20) for i in range(count)]
     running_for = datetime.now() - start_time
-    random_worker = workers[0]  # all should have the same params
     output = [
         'PokeMiner\trunning for {}'.format(running_for),
-        '{} workers, each visiting {} points per cycle'.format(
-            len(workers), random_worker.count_points
+        '{len} workers, each visiting ~{avg} points per cycle '
+        '(min: {min}, max: {max})'.format(
+            len=len(workers),
+            avg=points_stats['avg'],
+            min=points_stats['min'],
+            max=points_stats['max'],
         ),
         '',
     ]
@@ -609,13 +612,19 @@ def spawn_workers(workers, status_bar=True):
     count = config.GRID[0] * config.GRID[1]
     for worker_no in range(count):
         start_worker(worker_no, points[worker_no])
+    lenghts = [len(p) for p in points]
+    points_stats = {
+        'max': max(lenghts),
+        'min': min(lenghts),
+        'avg': sum(lenghts) / float(len(lenghts)),
+    }
     while True:
         if status_bar:
             if sys.platform == 'win32':
                 _ = os.system('cls')
             else:
                 _ = os.system('clear')
-            print get_status_message(workers, count, start_time)
+            print get_status_message(workers, count, start_time, points_stats)
         time.sleep(0.5)
 
 
