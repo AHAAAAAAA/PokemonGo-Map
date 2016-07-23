@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
 
-var gpsInterval;
+var gpsInterval = false;
 
 var idToPokemon = {};
 
@@ -126,6 +126,10 @@ function initSidebar() {
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
     $('#gps-switch').prop('checked', localStorage.trackGps === 'true');
+    
+    if (localStorage.trackGps === 'true') {
+    	gpsInterval = setInterval(updateGps, 10000);
+    }
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
