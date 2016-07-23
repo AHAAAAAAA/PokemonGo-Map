@@ -15,18 +15,14 @@ class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
         super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
-        self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
-        self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/pokemon", methods=['GET'])(self.list_pokemon_json)
+        self.route('/', methods=['GET'])(self.serve_index)
 
-    def fullmap(self):
-        return render_template('map.html',
-                               lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'],
-                               gmaps_key=config['GMAPS_KEY'],
-                               lang=config['LOCALE'])
+    def serve_index(self):
+        return self.send_static_file('index.html')
 
     def raw_data(self):
         d = {}
@@ -61,7 +57,7 @@ class Pogom(Flask):
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             return 'ok'
 
-    def list_pokemon(self):
+    def list_pokemon_json(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
         pokemon_list = []
         origin_point = LatLng.from_degrees(config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'])
@@ -83,10 +79,7 @@ class Pogom(Flask):
             }
             pokemon_list.append((entry, entry['distance']))
         pokemon_list = [y[0] for y in sorted(pokemon_list, key=lambda x: x[1])]
-        return render_template('mobile_list.html',
-                               pokemon_list=pokemon_list,
-                               origin_lat=config['ORIGINAL_LATITUDE'],
-                               origin_lng=config['ORIGINAL_LONGITUDE'])
+        return jsonify(pokemon_list)
 
 
 class CustomJSONEncoder(JSONEncoder):
