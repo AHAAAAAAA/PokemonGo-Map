@@ -63,7 +63,7 @@ var pGoStyle=[{"featureType":"landscape.man_made","elementType":"geometry.fill",
 
 var selectedStyle = 'light';
 
-function initMap() {
+function initMapHelper(center_lat, center_lng) {
 
 
     map = new google.maps.Map(document.getElementById('map'), {
@@ -116,7 +116,12 @@ function initMap() {
     });
 
     initSidebar();
+    updateMap();
 };
+
+function initMap() {
+  initMapHelper(CONFIG.latitude, CONFIG.longitude);
+}
 
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
@@ -483,7 +488,6 @@ function updateMap() {
 };
 
 window.setInterval(updateMap, 5000);
-updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
