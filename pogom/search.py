@@ -122,6 +122,10 @@ def search_thread(args):
                         failed_consecutive = 0
         else:
             log.info('Map Download failed. Trying again.')
+            failed_consecutive += 1
+            if (failed_consecutive > 5):
+                raise Exception('Too many empty responses')
+            time.sleep(config['REQ_SLEEP'] * (failed_consecutive))
 
     time.sleep(config['REQ_SLEEP'])
 
