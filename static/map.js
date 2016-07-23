@@ -145,19 +145,18 @@ function initSidebar() {
     });
 }
 
-function updateGps() {
-	var updateGPS = function(){
-    	if (navigator.geolocation) {
-    		navigator.geolocation.getCurrentPosition(function(userPosition){
-    			$.post("/next_loc?lat=" + userPosition.coords.latitude + "&lon=" + userPosition.coords.longitude, {}).done(function (data) {
-            $("#next-location").val("");
-            map.setCenter(loc);
-            marker.setPosition(loc);
-	        });
-    		});
-    	}
-    };
-}
+var updateGps = function(){
+  	if (navigator.geolocation) {
+  		navigator.geolocation.getCurrentPosition(function(userPosition){
+  			var loc = new google.maps.LatLng(userPosition.coords.latitude, userPosition.coords.longitude);
+  			$.post("/next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
+          $("#next-location").val("");
+          map.setCenter(loc);
+          marker.setPosition(loc);
+        });
+  		});
+  	}
+  };
 
 var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
@@ -550,7 +549,7 @@ $('#scanned-switch').change(function() {
 $('#gps-switch').change(function() {
 	localStorage["trackGps"] = this.checked;
 	if (this.checked) {
-		gpsInterval = setInterval(updateGps, 5000);
+		gpsInterval = setInterval(updateGps, 10000);
 	} else {
 		clearInterval(gpsInterval);
 	}
