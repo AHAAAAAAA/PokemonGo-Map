@@ -137,6 +137,7 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
+    $('#notifyall-switch').prop('checked', localStorage.notifyAll === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
@@ -287,7 +288,7 @@ function setupPokemonMarker(item) {
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
 
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+    if ((notifiedPokemon.indexOf(item.pokemon_id) > -1) || (localStorage.notifyAll === 'true')) {
         if(localStorage.playSound === 'true'){
           audio.play();
         }
@@ -545,6 +546,10 @@ $('#pokestops-switch').change(function() {
         });
         map_pokestops = {}
     }
+});
+
+$('#notifyall-switch').change(function() {
+    localStorage["notifyAll"] = this.checked;
 });
 
 $('#sound-switch').change(function() {
