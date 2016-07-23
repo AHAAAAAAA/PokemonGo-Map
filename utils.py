@@ -23,7 +23,7 @@ def get_start_coords(worker_no):
 
 
 def get_worker_coords(worker_no):
-    """Returns start and end coords for given worker"""
+    """Returns start and end coords for given worker (i.e. rectangle)"""
     grid = config.GRID
     total_workers = grid[0] * grid[1]
     per_column = total_workers / grid[0]
@@ -39,6 +39,7 @@ def get_worker_coords(worker_no):
 
 
 def float_range(start, end, step):
+    """xrange for floats, also capable of iterating backwards"""
     if start > end:
         while end < start:
             yield start
@@ -55,20 +56,25 @@ def get_worker_grid(worker_no):
     worker_coords = get_worker_coords(worker_no)
     points = []
     lat_gain = getattr(config, 'LAT_GAIN', 0.0015)
+    lon_gain = getattr(config, 'LON_GAIN', 0.0025)
     # Go north!
     for lat in float_range(start_coords[0], worker_coords[0][0], lat_gain):
         # Go east!
-        for lon in float_range(start_coords[1], worker_coords[0][1], 0.0025):
+        for lon in float_range(start_coords[1], worker_coords[0][1], lon_gain):
             points.append((lat, lon))
         # Go west!
-        for lon in float_range(start_coords[1], worker_coords[1][1], 0.0025):
+        for lon in float_range(start_coords[1], worker_coords[1][1], lon_gain):
             points.append((lat, lon))
     # Go south!
-    for lat in float_range(start_coords[0], worker_coords[1][0], lat_gain):
+    for lat in float_range(
+        start_coords[0] + lat_gain,
+        worker_coords[1][0],
+        lat_gain
+    ):
         # Go east!
-        for lon in float_range(start_coords[1], worker_coords[0][1], 0.0025):
+        for lon in float_range(start_coords[1], worker_coords[0][1], lon_gain):
             points.append((lat, lon))
         # Go west!
-        for lon in float_range(start_coords[1], worker_coords[1][1], 0.0025):
+        for lon in float_range(start_coords[1], worker_coords[1][1], lon_gain):
             points.append((lat, lon))
     return points

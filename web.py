@@ -104,16 +104,16 @@ def get_pokemarkers():
             'key': 'start-position-%d' % i,
             'disappear_time': -1
         })
-        for no, point in enumerate(utils.get_worker_grid(i)):
-            markers.append({
-                'icon': getattr(icons.alpha, icon),
-                'lat': point[0],
-                'lng': point[1],
-                'infobox': "Worker %d point %d" % (i, no),
-                'type': 'custom',
-                'key': 'worker-%d-point-%d' % (i, no),
-                'disappear_time': -1
-            })
+        # for no, point in enumerate(utils.get_worker_grid(i)):
+        #     markers.append({
+        #         'icon': getattr(icons.alpha, icon),
+        #         'lat': point[0],
+        #         'lng': point[1],
+        #         'infobox': "Worker %d point %d" % (i, no),
+        #         'type': 'custom',
+        #         'key': 'worker-%d-point-%d' % (i, no),
+        #         'disappear_time': -1
+        #     })
     return markers
 
     session = db.Session()

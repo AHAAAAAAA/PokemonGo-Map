@@ -427,10 +427,10 @@ class Slave(threading.Thread):
         super(Slave, self).__init__(group, target, name)
         self.worker_no = worker_no
         local_data.worker_no = worker_no
+        self.points = utils.get_worker_grid(worker_no)
+        self.count_points = len(self.points)
         self.step = 0
         self.cycle = 0
-        args = parse_args()
-        self.steplimit2 = int(args.step_limit)**2
         self.seen = 0
 
     def run(self):
@@ -467,57 +467,33 @@ class Slave(threading.Thread):
         start_worker(self.worker_no)
 
     def main(self, service, api_endpoint, access_token, profile_response):
-        origin_lat, origin_lon = utils.get_start_coords(self.worker_no)
-
-        pos = 1
-        x = 0
-        y = 0
-        dx = 0
-        dy = -1
         session = db.Session()
         self.seen = 0
-        for step in range(self.steplimit2):
+        for i, point in enumerate(self.points):
+            logger.info('Visiting point %d (%s %s)', i, point[0], point[1])
             add_to_db = []
-            self.step = step + 1
-            # Scan location math
-            if (
-                -self.steplimit2 / 2 < x <= self.steplimit2 / 2 and
-                -self.steplimit2 / 2 < y <= self.steplimit2 / 2
-            ):
-                lat = x * 0.0025 + origin_lat
-                lon = y * 0.0025 + origin_lon
-            if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
-                (dx, dy) = (-dy, dx)
-
-            (x, y) = (x + dx, y + dy)
-
             process_step(
                 service,
                 api_endpoint,
                 access_token,
                 profile_response,
                 add_to_db=add_to_db,
-                lat=lat,
-                lon=lon,
+                lat=point[0],
+                lon=point[1],
             )
-
             for spawn_id in add_to_db:
                 pokemon = pokemons[spawn_id]
                 db.add_sighting(session, spawn_id, pokemon)
                 self.seen += 1
+            logger.info('Point processed, %d Pokemons seen!', len(add_to_db))
             session.commit()
-            add_to_db = []
-            logger.info(
-                'Completed: %s%%',
-                ((step + 1) + pos * .25 - .25) / (self.steplimit2) * 100
-            )
             # Clear error code and let know that there are Pokemon
             if self.error_code and self.seen:
                 self.error_code = None
+            self.step += 1
         session.close()
         if self.seen == 0:
             self.error_code = 'NO POKEMON'
-        set_location_coords(origin_lat, origin_lon, 0)
 
     @property
     def status(self):
@@ -527,7 +503,7 @@ class Slave(threading.Thread):
             msg = 'C{cycle},P{seen},{progress:.0f}%'.format(
                 cycle=self.cycle,
                 seen=self.seen,
-                progress=(self.step / float(self.steplimit2) * 100)
+                progress=(self.step / float(self.count_points) * 100)
             )
         return '[W{worker_no}: {msg}]'.format(
             worker_no=self.worker_no,
@@ -591,9 +567,13 @@ def process_step(
 def get_status_message(workers, count, start_time):
     messages = [workers[i].status.ljust(20) for i in range(count)]
     running_for = datetime.now() - start_time
+    random_worker = workers[0]  # all should have the same params
     output = [
         'PokeMiner\trunning for {}'.format(running_for),
-        ''
+        '{} workers, each visiting {} points per cycle'.format(
+            len(workers), random_worker.count_points
+        ),
+        '',
     ]
     previous = 0
     for i in range(4, count + 1, 4):
@@ -629,15 +609,6 @@ def spawn_workers(workers, status_bar=True):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-st',
-        '--step-limit',
-        help=(
-            'Steps limit - area around worker in which it will look '
-            'for Pokemon'
-        ),
-        required=True
-    )
     parser.add_argument(
         '--no-status-bar',
         dest='status_bar',
