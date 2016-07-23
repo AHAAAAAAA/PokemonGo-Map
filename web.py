@@ -136,6 +136,7 @@ def get_pokemarkers():
             'icon': 'static/icons/%d.png' % pokemon.pokemon_id,
             'lat': pokemon.lat,
             'lng': pokemon.lon,
+            'pokemon_id': pokemon.pokemon_id,
             'infobox': label
         })
 
@@ -149,7 +150,7 @@ def get_map():
         style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;',
         lat=map_center[0],
         lng=map_center[1],
-        markers=get_pokemarkers(),
+        markers=[],  # will be fetched by browser
         zoom='15',
     )
     return fullmap
