@@ -457,7 +457,7 @@ function updateMap() {
 
     var loadPokemon = localStorage.showPokemon || true;
     var loadGyms = localStorage.showGyms || true;
-    var loadPokestops = true;
+    var loadPokestops =  localStorage.showPokestops || false;
     var loadScanned = localStorage.showScanned || false;
 
     var bounds = map.getBounds();
