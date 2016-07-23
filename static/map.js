@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 var $selectExclude = $("#exclude-pokemon");
 var $selectNotify = $("#notify-pokemon");
+var $selectNotifyExclude = $("#notify-exclude");
 
 var idToPokemon = {};
 
@@ -35,10 +36,18 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
         data: pokeList
     });
     $selectNotify.val(JSON.parse(readCookie("remember_select_notify"))).trigger("change");
+
+    JSON.parse(readCookie("remember_select_notify_exclude"));
+    $selectNotifyExclude.select2({
+        placeholder: "Select Pokémon",
+        data: pokeList
+    });
+    $selectNotifyExclude.val(JSON.parse(readCookie("remember_select_notify_exclude"))).trigger("change");
 });
 
 var excludedPokemon = [];
 var notifiedPokemon = [];
+var notifiedExcludePokemon = [];
 
 $selectExclude.on("change", function (e) {
     excludedPokemon = $selectExclude.val().map(Number);
@@ -50,6 +59,12 @@ $selectExclude.on("change", function (e) {
 $selectNotify.on("change", function (e) {
     notifiedPokemon = $selectNotify.val().map(Number);
     document.cookie = 'remember_select_notify='+JSON.stringify(notifiedPokemon)+
+            '; max-age=31536000; path=/';
+});
+
+$selectNotifyExclude.on("change", function (e) {
+    notifiedExcludePokemon = $selectNotifyExclude.val().map(Number);
+    document.cookie = 'remember_select_notify_exclude='+JSON.stringify(notifiedExcludePokemon)+
             '; max-age=31536000; path=/';
 });
 
@@ -267,8 +282,11 @@ function setupPokemonMarker(item) {
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude)
     });
 
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
+    if (notifiedExcludePokemon.length && notifiedExcludePokemon.indexOf(item.pokemon_id) === -1) {
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png');
+    }
+    else if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png');
     }
 
     addListeners(marker);
