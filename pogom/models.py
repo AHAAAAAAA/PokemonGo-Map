@@ -12,10 +12,22 @@ from .utils import get_pokemon_name, get_args
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
+from playhouse.db_url import connect
+from urlparse import urlparse
+from os import environ
+
 args = get_args()
-db = SqliteDatabase(args.db)
 log = logging.getLogger(__name__)
 
+if not args.db:
+    database_url = "sqlite:///pogom.db"
+elif urlparse(args.db).scheme:
+    database_url = args.db
+else:
+    database_url = "sqlite:///{0}".format(args.db)
+
+log.info("Connecting to database {}".format(database_url))
+db = connect(database_url)
 
 class BaseModel(Model):
     class Meta:
