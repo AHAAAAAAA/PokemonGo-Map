@@ -38,6 +38,7 @@ popd
 cd ..
 %PATH2%\Scripts\pip install -r requirements.txt
 %PATH2%\Scripts\pip install -r requirements.txt --upgrade
+cd config
 set /p API= Enter your Google API key here:
 
     (
