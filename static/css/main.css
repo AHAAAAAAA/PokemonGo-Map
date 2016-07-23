@@ -1729,7 +1729,7 @@ button,
     top: 20px;
     overflow: hidden;
     border: none;
-    background: url(../img/cross.png) no-repeat center center;
+    background: url(../images/cross.png) no-repeat center center;
     text-indent: 200%;
     color: transparent;
     outline: none;
