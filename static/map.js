@@ -417,28 +417,15 @@ function clearStaleMarkers() {
     });
 };
 
-
-function clearMarkers() {
-  $.each(map_gyms, function(key, value) {
-      map_gyms[key].marker.setMap(null);
+function clearOutOfBoundsMarkers(markers) {
+  $.each(markers, function(key, value) {
+      if(!map.getBounds().contains(markers[key].marker.getPosition())) {
+        markers[key].marker.setMap(null);
+        delete markers[key];
+      }
   });
-  map_gyms = {}
-
-  $.each(map_pokemons, function(key, value) {
-      map_pokemons[key].marker.setMap(null);
-  });
-  map_pokemons = {}
-
-  $.each(map_pokestops, function(key, value) {
-      map_pokestops[key].marker.setMap(null);
-  });
-  map_pokestops = {}
-
-  $.each(map_scanned, function(key, value) {
-      map_scanned[key].marker.setMap(null);
-  });
-  map_scanned = {}
 }
+
 
 function updateMap() {
 
@@ -470,7 +457,6 @@ function updateMap() {
         },
         dataType: "json"
     }).done(function(result) {
-      clearMarkers();
       $.each(result.pokemons, function(i, item){
           if (!(localStorage.showPokemon === 'true')) {
               return false; // in case the checkbox was unchecked in the meantime.
@@ -559,7 +545,10 @@ function updateMap() {
             }
 
         });
-
+        clearOutOfBoundsMarkers(map_pokemons);
+        clearOutOfBoundsMarkers(map_gyms);
+        clearOutOfBoundsMarkers(map_pokestops);
+        clearOutOfBoundsMarkers(map_scanned);
         clearStaleMarkers();
     });
 };
