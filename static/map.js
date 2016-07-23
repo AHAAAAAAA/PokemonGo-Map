@@ -141,7 +141,11 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
         </div>
         <div>
             Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
+            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span>
+		</div>
+		<div>
+			Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+		</div>
         <div>
             <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
             <a href='javascript:notifyAboutPokemon(${id})'>Notify</a>&nbsp;&nbsp;
@@ -161,6 +165,9 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
                 <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
+			<div>
+				Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+			</div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
@@ -175,6 +182,9 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
             <div>Prestige: ${gym_points}</div>
+			<div>
+				Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+			</div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
@@ -213,6 +223,9 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
                 Lure expires at ${pad(expire_date.getHours())}:${pad(expire_date.getMinutes())}:${pad(expire_date.getSeconds())}
                 <span class='label-countdown' disappears-at='${expire_time}'>(00m00s)</span></div>
             <div>
+			<div>
+				Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+			</div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
@@ -222,6 +235,9 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
             <div>
                 <b>Pokéstop</b>
             </div>
+			<div>
+				Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+			</div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
