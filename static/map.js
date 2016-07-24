@@ -32,7 +32,7 @@ var map_pokestops = {}
 var map_lure_pokemons = {}
 var map_scanned = {}
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
-var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
+var audio = new Audio('static/sounds/ding.mp3');
 
 //
 // Functions
@@ -154,6 +154,7 @@ function createSearchMarker() {
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
+    $('#lured-pokemon-switch').prop('checked', localStorage.showLuredPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#geoloc-switch').prop('checked', localStorage.geoLocate === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
@@ -321,6 +322,7 @@ function setupPokemonMarker(item) {
         }
 
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
     }
 
     addListeners(marker);
@@ -485,7 +487,7 @@ function updateMap() {
 
     var loadPokemon = localStorage.showPokemon || true;
     var loadGyms = localStorage.showGyms || true;
-    var loadPokestops =  localStorage.showPokestops || false;
+    var loadPokestops =  localStorage.showPokestops || localStorage.showLuredPokemon || false; //lured mons need pokestop data
     var loadScanned = localStorage.showScanned || false;
 
     var bounds = map.getBounds();
@@ -501,7 +503,7 @@ function updateMap() {
         type: 'GET',
         data: {
             'pokemon': loadPokemon,
-            'pokestops': loadPokestops,
+            'pokestops': loadPokestops, 
             'gyms': loadGyms,
             'scanned': loadScanned,
             'swLat': swLat,
@@ -528,17 +530,25 @@ function updateMap() {
         	if (!(localStorage.showPokestops === 'true')) {
                 return false;
             }
-            if ((localStorage.showPokestops === 'true') && map_pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
+            if (map_pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
                 // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
                 map_pokestops[item.pokestop_id] = item;
             }
+            else {
+            	item2 = map_pokestops[item.pokestop_id];
+            	if(!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
+            		item.marker.setMap(null);
+                	item.marker = setupPokestopMarker(item);
+                	map_pokestops[item.pokestop_id] = item;
+            	}
+            }
 
 
          });
          $.each(result.pokestops, function(i, item) {
-         if (!(localStorage.showPokemon === 'true')) {
+         if (!(localStorage.showLuredPokemon === 'true')) {
                 return false;
             }
             var item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
@@ -555,7 +565,6 @@ function updateMap() {
                 map_lure_pokemons[item2.pokestop_id] = item2;
 
   		}
-
 
         });
 
@@ -600,6 +609,7 @@ function updateMap() {
 
         });
         clearOutOfBoundsMarkers(map_pokemons);
+        clearOutOfBoundsMarkers(map_lure_pokemons);
         clearOutOfBoundsMarkers(map_gyms);
         clearOutOfBoundsMarkers(map_pokestops);
         clearOutOfBoundsMarkers(map_scanned);
@@ -867,6 +877,18 @@ $(function () {
                 map_pokemons[key].marker.setMap(null);
             });
             map_pokemons = {}
+        }
+    });
+    
+    $('#lured-pokemon-switch').change(function() {
+        localStorage["showLuredPokemon"] = this.checked;
+        if (this.checked) {
+            updateMap();
+        } else {
+            $.each(map_lure_pokemons, function(key, value) {
+                map_lure_pokemons[key].marker.setMap(null);
+            });
+            map_lure_pokemons = {}
         }
     });
 
