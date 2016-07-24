@@ -102,7 +102,7 @@ def login(args, position):
 def search_thread(args):
     i, total_steps, step_location, step, sem = args
 
-    #log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
+    log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
     #log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
     response_dict = {}
@@ -144,16 +144,6 @@ def search(args, i, pos):
     position[0] = float(position[0])
     position[1] = float(position[1])
     position.append(0)
-
-    if api._auth_provider and api._auth_provider._ticket_expire:
-        remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
-
-        if remaining_time > 60:
-            log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
-        else:
-            login(args, position)
-    else:
-        login(args, position)
 
     sem = Semaphore()
 
@@ -200,6 +190,16 @@ def search_loop(args):
     try:
         while True:
             log.info("Map iteration: {}".format(i))
+            if api._auth_provider and api._auth_provider._ticket_expire:
+                remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
+
+                if remaining_time > 60:
+                    log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
+                else:
+                    login(args, (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0))
+            else:
+                login(args, (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0))
+
             for position in positions:
                 location_threads.append(Thread(target=location_thread, name=position, args=(args, i, position )))
 

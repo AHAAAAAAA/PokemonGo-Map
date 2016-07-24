@@ -22,7 +22,6 @@ log = logging.getLogger(__name__)
 search_thread = Thread()
 
 def start_locator_thread(args):
-    log.info(args)
     search_thread = Thread(target=search_loop, args=(args,))
     search_thread.daemon = True
     search_thread.name = 'search_thread'
