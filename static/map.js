@@ -319,6 +319,7 @@ function setupPokemonMarker(item) {
         }
 
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
     }
 
     addListeners(marker);
