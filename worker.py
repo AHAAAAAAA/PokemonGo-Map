@@ -423,14 +423,21 @@ def login(username, password, service):
 
 
 class Slave(threading.Thread):
-    def __init__(self, group=None, target=None, name=None, worker_no=None):
+    def __init__(
+        self,
+        group=None,
+        target=None,
+        name=None,
+        worker_no=None,
+        points=None,
+    ):
         super(Slave, self).__init__(group, target, name)
         self.worker_no = worker_no
         local_data.worker_no = worker_no
+        self.points = points
+        self.count_points = len(self.points)
         self.step = 0
         self.cycle = 0
-        args = parse_args()
-        self.steplimit2 = int(args.step_limit)**2
         self.seen = 0
 
     def run(self):
@@ -453,71 +460,47 @@ class Slave(threading.Thread):
             # OMG! Sleep for a bit and restart the thread
             self.error_code = 'LOGIN FAIL'
             time.sleep(random.randint(5, 10))
-            start_worker(self.worker_no)
+            start_worker(self.worker_no, self.points)
             return
-        while self.cycle < 2:
+        while self.cycle <= 3:
             self.main(service, api_endpoint, access_token, profile_response)
             self.cycle += 1
-            if self.cycle < 2:
+            if self.cycle <= 3:
                 self.error_code = 'SLEEP'
                 time.sleep(random.randint(30, 60))
                 self.error_code = None
         self.error_code = 'RESTART'
         time.sleep(random.randint(30, 60))
-        start_worker(self.worker_no)
+        start_worker(self.worker_no, self.points)
 
     def main(self, service, api_endpoint, access_token, profile_response):
-        origin_lat, origin_lon = utils.get_start_coords(self.worker_no)
-
-        pos = 1
-        x = 0
-        y = 0
-        dx = 0
-        dy = -1
         session = db.Session()
         self.seen = 0
-        for step in range(self.steplimit2):
+        for i, point in enumerate(self.points):
+            logger.info('Visiting point %d (%s %s)', i, point[0], point[1])
             add_to_db = []
-            self.step = step + 1
-            # Scan location math
-            if (
-                -self.steplimit2 / 2 < x <= self.steplimit2 / 2 and
-                -self.steplimit2 / 2 < y <= self.steplimit2 / 2
-            ):
-                lat = x * 0.0025 + origin_lat
-                lon = y * 0.0025 + origin_lon
-            if x == y or x < 0 and x == -y or x > 0 and x == 1 - y:
-                (dx, dy) = (-dy, dx)
-
-            (x, y) = (x + dx, y + dy)
-
             process_step(
                 service,
                 api_endpoint,
                 access_token,
                 profile_response,
                 add_to_db=add_to_db,
-                lat=lat,
-                lon=lon,
+                lat=point[0],
+                lon=point[1],
             )
-
             for spawn_id in add_to_db:
                 pokemon = pokemons[spawn_id]
                 db.add_sighting(session, spawn_id, pokemon)
                 self.seen += 1
+            logger.info('Point processed, %d Pokemons seen!', len(add_to_db))
             session.commit()
-            add_to_db = []
-            logger.info(
-                'Completed: %s%%',
-                ((step + 1) + pos * .25 - .25) / (self.steplimit2) * 100
-            )
             # Clear error code and let know that there are Pokemon
             if self.error_code and self.seen:
                 self.error_code = None
+            self.step += 1
         session.close()
         if self.seen == 0:
             self.error_code = 'NO POKEMON'
-        set_location_coords(origin_lat, origin_lon, 0)
 
     @property
     def status(self):
@@ -527,7 +510,7 @@ class Slave(threading.Thread):
             msg = 'C{cycle},P{seen},{progress:.0f}%'.format(
                 cycle=self.cycle,
                 seen=self.seen,
-                progress=(self.step / float(self.steplimit2) * 100)
+                progress=(self.step / float(self.count_points) * 100)
             )
         return '[W{worker_no}: {msg}]'.format(
             worker_no=self.worker_no,
@@ -588,56 +571,65 @@ def process_step(
         add_to_db.append(poke.SpawnPointId)
 
 
-def get_status_message(workers, count, start_time):
+def get_status_message(workers, count, start_time, points_stats):
     messages = [workers[i].status.ljust(20) for i in range(count)]
     running_for = datetime.now() - start_time
     output = [
         'PokeMiner\trunning for {}'.format(running_for),
-        ''
+        '{len} workers, each visiting ~{avg} points per cycle '
+        '(min: {min}, max: {max})'.format(
+            len=len(workers),
+            avg=points_stats['avg'],
+            min=points_stats['min'],
+            max=points_stats['max'],
+        ),
+        '',
     ]
     previous = 0
-    for i in range(4, count + 1, 4):
+    for i in range(4, count + 4, 4):
         output.append('\t'.join(messages[previous:i]))
         previous = i
     return '\n'.join(output)
 
 
-def start_worker(worker_no):
+def start_worker(worker_no, points):
     # Ok I NEED to global this here
     global workers
     logger.info('Worker (re)starting up!')
-    worker = Slave(name='worker-%d' % worker_no, worker_no=worker_no)
+    worker = Slave(
+        name='worker-%d' % worker_no,
+        worker_no=worker_no,
+        points=points
+    )
     worker.daemon = True
     worker.start()
     workers[worker_no] = worker
 
 
 def spawn_workers(workers, status_bar=True):
+    points = utils.get_points_per_worker()
     start_time = datetime.now()
     count = config.GRID[0] * config.GRID[1]
     for worker_no in range(count):
-        start_worker(worker_no)
+        start_worker(worker_no, points[worker_no])
+    lenghts = [len(p) for p in points]
+    points_stats = {
+        'max': max(lenghts),
+        'min': min(lenghts),
+        'avg': sum(lenghts) / float(len(lenghts)),
+    }
     while True:
         if status_bar:
             if sys.platform == 'win32':
                 _ = os.system('cls')
             else:
                 _ = os.system('clear')
-            print get_status_message(workers, count, start_time)
+            print get_status_message(workers, count, start_time, points_stats)
         time.sleep(0.5)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-st',
-        '--step-limit',
-        help=(
-            'Steps limit - area around worker in which it will look '
-            'for Pokemon'
-        ),
-        required=True
-    )
     parser.add_argument(
         '--no-status-bar',
         dest='status_bar',
@@ -654,11 +646,11 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    logger.setLevel(args.log_level)
     if args.status_bar:
         configure_logger(filename='worker.log')
         logger.info('-' * 30)
         logger.info('Starting up!')
     else:
         configure_logger(filename=None)
+    logger.setLevel(args.log_level)
     spawn_workers(workers, status_bar=args.status_bar)

@@ -51,6 +51,11 @@ DB_ENGINE = 'sqlite:///db.sqlite'  # anything SQLAlchemy accepts
 MAP_START = (12.3456, 14.5)  # top left corner
 MAP_END = (13.4567, 15.321)  # bottom right corner
 GRID = (4, 5)  # row, column
+# LAT_GAIN and LON_GAIN can be configured to tell how big a space between
+# points visited by worker should be. LAT_GAIN should also compensate for
+# differences in distance between degrees as you go north/south.
+LAT_GAIN = 0.0015
+LON_GAIN = 0.0025
 
 ACCOUNTS = [
     # username, password, service (google/ptc)
