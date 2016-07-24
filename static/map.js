@@ -80,14 +80,14 @@ function initMap() {
     });
     map.setOptions({disableDoubleClickZoom: true });
     
-	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
-	map.mapTypes.set('dark_style', style_dark);
+    var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
+    map.mapTypes.set('dark_style', style_dark);
 
-	var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
-	map.mapTypes.set('style_light2', style_light2);
+    var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
+    map.mapTypes.set('style_light2', style_light2);
 
-	var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
-	map.mapTypes.set('style_pgo', style_pgo);
+    var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
+    map.mapTypes.set('style_pgo', style_pgo);
 
     var style_dark_nl = new google.maps.StyledMapType(darkStyleNoLabels, {name: "Dark (No Labels)"});
     map.mapTypes.set('dark_style_nl', style_dark_nl);
