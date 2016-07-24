@@ -255,7 +255,7 @@ map_gyms = {} // Gyms
 map_pokestops = {} // Pokestops
 map_scanned = {} // Pokestops
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
-var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
+// var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
 
 function setupPokemonMarker(item) {
     var marker = new google.maps.Marker({
@@ -273,6 +273,8 @@ function setupPokemonMarker(item) {
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
         if(localStorage.playSound === 'true'){
+          var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/cries/' + item.pokemon_id + '.mp3');
+          // var audio = new Audio('static/sounds/cries/' + item.pokemon_id + '.mp3');
           audio.play();
         }
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
