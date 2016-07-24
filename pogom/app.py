@@ -27,6 +27,7 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/stats", methods=['GET'])(self.get_stats)
 
     def fullmap(self):
         args = get_args()
@@ -120,6 +121,13 @@ class Pogom(Flask):
                                pokemon_list=pokemon_list,
                                origin_lat=config['ORIGINAL_LATITUDE'],
                                origin_lng=config['ORIGINAL_LONGITUDE'])
+
+    def get_stats(self):
+        neLat = request.args.get('neLat', type=float)
+        neLon = request.args.get('neLon', type=float)
+        swLat = request.args.get('swLat', type=float)
+        swLon = request.args.get('swLon', type=float)
+        return jsonify(Pokemon.get_history_by_location(swLat, swLon, neLat, neLon))
 
 
 class CustomJSONEncoder(JSONEncoder):
