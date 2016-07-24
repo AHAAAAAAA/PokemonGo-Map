@@ -462,10 +462,10 @@ class Slave(threading.Thread):
             time.sleep(random.randint(5, 10))
             start_worker(self.worker_no, self.points)
             return
-        while self.cycle < 2:
+        while self.cycle <= 3:
             self.main(service, api_endpoint, access_token, profile_response)
             self.cycle += 1
-            if self.cycle < 2:
+            if self.cycle <= 3:
                 self.error_code = 'SLEEP'
                 time.sleep(random.randint(30, 60))
                 self.error_code = None
