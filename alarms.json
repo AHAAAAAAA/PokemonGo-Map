@@ -1,7 +1,7 @@
 {
 	"alarms":[
 		{
-			"active": "True",
+			"active": "False",
 			"type":"pushbullet",
 			"api_key":""
 		},
@@ -16,8 +16,8 @@
 			"type":"twilio",
 			"account_sid":"",
 			"auth_token":"",
-			"to_number":"+11234567890",
-			"from_number":"+11234567890"
+			"to_number":"+1123456789",
+			"from_number":"+1123456789"
 		}
 	],
 	"pokemon":{
