@@ -160,16 +160,16 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     }
 
     if pokemons:
-        log.info("Upserting {} pokemon".format(len(pokemons)))
+        #log.info("Upserting {} pokemon".format(len(pokemons)))
         bulk_upsert(Pokemon, pokemons)
 
-    if pokestops:
-        log.info("Upserting {} pokestops".format(len(pokestops)))
-        bulk_upsert(Pokestop, pokestops)
+    #if pokestops:
+        #log.info("Upserting {} pokestops".format(len(pokestops)))
+        #bulk_upsert(Pokestop, pokestops)
 
-    if gyms:
-        log.info("Upserting {} gyms".format(len(gyms)))
-        bulk_upsert(Gym, gyms)
+    #if gyms:
+        #log.info("Upserting {} gyms".format(len(gyms)))
+        #bulk_upsert(Gym, gyms)
 
     scanned[0] = {
         'scanned_id': str(step_location[0])+','+str(step_location[1]),

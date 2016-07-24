@@ -102,8 +102,8 @@ def login(args, position):
 def search_thread(args):
     i, total_steps, step_location, step, sem = args
 
-    log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
-    log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
+    #log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
+    #log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
     response_dict = {}
     failed_consecutive = 0
@@ -133,13 +133,17 @@ def process_search_threads(search_threads, curr_steps, total_steps):
     for thread in search_threads:
         curr_steps += 1
         thread.join()
-        log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
+        #log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
     return curr_steps
 
-def search(args, i):
+def search(args, i, pos):
     num_steps = args.step_limit
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
-    position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
+    #position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
+    position = pos.split(' ')
+    position[0] = float(position[0])
+    position[1] = float(position[1])
+    position.append(0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
@@ -177,12 +181,29 @@ def search(args, i):
         process_search_threads(search_threads, curr_steps, total_steps)
 
 
+def location_thread(args, i, position):
+    search(args, i, position)
+
+def process_location_threads(location_threads):
+    for thread in location_threads:
+        thread.start()
+    for thread in location_threads:
+        thread.join()
+
+
 def search_loop(args):
     i = 0
+    positions = ['-6.1924937 106.7965414', '-6.183853 106.831836', '-6.183853 106.831836', '-6.1762377 106.7914468', '-6.1869087 106.7922616']
+    location_threads = []
+
     try:
         while True:
             log.info("Map iteration: {}".format(i))
-            search(args, i)
+            for position in positions:
+                location_threads.append(Thread(target=location_thread, name=position, args=(args, i, position )))
+
+            process_location_threads(location_threads)
+
             log.info("Scanning complete.")
             if args.scan_delay > 1:
                 log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
