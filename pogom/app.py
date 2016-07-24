@@ -53,7 +53,7 @@ class Pogom(Flask):
                 d['pokemons'] = Pokemon.get_active(swLat, swLng, neLat, neLng)
 
         if request.args.get('pokestops', 'false') == 'true':
-            d['pokestops'] = Pokestop.get_all()
+            d['pokestops'] = Pokestop.get_stops(swLat, swLng, neLat, neLng)
 
         if request.args.get('gyms', 'true') == 'true':
             d['gyms'] = Gym.get_all()

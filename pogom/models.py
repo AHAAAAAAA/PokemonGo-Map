@@ -131,6 +131,27 @@ class Pokestop(BaseModel):
     lure_expiration = DateTimeField(null=True)
     active_pokemon_id = IntegerField(null=True)
 
+    @classmethod
+    def get_stops(cls, swLat, swLng, neLat, neLng):
+        if swLat == None or swLng == None or neLat == None or neLng == None:
+            query = (Pokestop
+                 .select()
+                 .dicts())
+        else:
+            query = (Pokestop
+                 .select()
+                 .where((Pokestop.latitude >= swLat) &
+                    (Pokestop.longitude >= swLng) &
+                    (Pokestop.latitude <= neLat) &
+                    (Pokestop.longitude <= neLng))
+                 .dicts())
+
+        pokestops = []
+        for p in query:
+            pokestops.append(p)
+
+        return pokestops
+
 
 class Gym(BaseModel):
     UNCONTESTED = 0
