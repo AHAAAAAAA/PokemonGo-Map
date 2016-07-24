@@ -184,7 +184,7 @@ def report_main():
             'stage2': [sighting_to_marker(s) for s in stage2_sightings],
         },
         'map_center': utils.get_map_center(),
-        'zoom': 12,
+        'zoom': 11,
     }
     icons = {
         'top30': [(r[0], pokemon_names[str(r[0])]) for r in top_pokemon],
