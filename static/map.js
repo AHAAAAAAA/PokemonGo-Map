@@ -78,7 +78,8 @@ function initMap() {
               'style_pgo_nl']
         },
     });
-
+    map.setOptions({disableDoubleClickZoom: true });
+    
 	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
 	map.mapTypes.set('dark_style', style_dark);
 
@@ -112,10 +113,22 @@ function initMap() {
 
     addMyLocationButton();
     initSidebar();
+
+    google.maps.event.addListener(map, 'dblclick', function(e) {
+        var oldLocation = marker.getPosition();
+        changeSearchLocation(e.latLng.lat(), e.latLng.lng())
+            .done(function() {
+                oldLocation = null;
+                marker.setPosition(e.latLng);
+            })
+            .fail(function() {
+                marker.setPosition(oldLocation);
+            });
+    });
+
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
-    
 };
 
 function createSearchMarker() {
