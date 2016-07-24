@@ -91,11 +91,16 @@ function initMap() {
     }
 
     map.setMapTypeId(localStorage['map_style']);
+    google.maps.event.addListener(map, 'idle', updateMap);
 
     marker = createSearchMarker();
 
     addMyLocationButton();
     initSidebar();
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+        updateMap();
+    });
+    
 };
 
 function createSearchMarker() {
@@ -439,12 +444,38 @@ function clearStaleMarkers() {
     });
 };
 
+function clearOutOfBoundsMarkers(markers) {
+  $.each(markers, function(key, value) {
+      var marker = markers[key].marker;
+      if(typeof marker.getPosition === 'function') {
+        if(!map.getBounds().contains(marker.getPosition())) {
+          markers[key].marker.setMap(null);
+          delete markers[key];
+        }
+      } else if(typeof marker.getCenter === 'function') {
+        if(!map.getBounds().contains(marker.getCenter())) {
+          markers[key].marker.setMap(null);
+          delete markers[key];
+        }
+      }
+  });
+}
+
+
 function updateMap() {
 
     var loadPokemon = localStorage.showPokemon || true;
     var loadGyms = localStorage.showGyms || true;
-    var loadPokestops = true;
+    var loadPokestops =  localStorage.showPokestops || false;
     var loadScanned = localStorage.showScanned || false;
+
+    var bounds = map.getBounds();
+    var swPoint = bounds.getSouthWest();
+    var nePoint = bounds.getNorthEast();
+    var swLat = swPoint.lat();
+    var swLng = swPoint.lng();
+    var neLat = nePoint.lat();
+    var neLng = nePoint.lng();
 
     $.ajax({
         url: "raw_data",
@@ -453,7 +484,11 @@ function updateMap() {
             'pokemon': loadPokemon,
             'pokestops': loadPokestops,
             'gyms': loadGyms,
-            'scanned': loadScanned
+            'scanned': loadScanned,
+            'swLat': swLat,
+            'swLng': swLng,
+            'neLat': neLat,
+            'neLng': neLng
         },
         dataType: "json"
     }).done(function(result) {
@@ -562,13 +597,15 @@ function updateMap() {
             }
 
         });
-
+        clearOutOfBoundsMarkers(map_pokemons);
+        clearOutOfBoundsMarkers(map_gyms);
+        clearOutOfBoundsMarkers(map_pokestops);
+        clearOutOfBoundsMarkers(map_scanned);
         clearStaleMarkers();
     });
 };
 
 window.setInterval(updateMap, 5000);
-updateMap();
 
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
@@ -840,9 +877,6 @@ $(function () {
     // run interval timers to regularly update map and timediffs
     window.setInterval(updateLabelDiffTime, 1000);
     window.setInterval(updateMap, 5000);
-
-    // Get this map started!
-    updateMap();
 
     // Seutp UI element interactions
     $('#gyms-switch').change(function() {

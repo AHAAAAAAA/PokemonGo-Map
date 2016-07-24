@@ -41,21 +41,25 @@ class Pogom(Flask):
 
     def raw_data(self):
         d = {}
+        swLat = request.args.get('swLat')
+        swLng = request.args.get('swLng')
+        neLat = request.args.get('neLat')
+        neLng = request.args.get('neLng')
         if request.args.get('pokemon', 'true') == 'true':
             if request.args.get('ids'):
                 ids = [int(x) for x in request.args.get('ids').split(',')]
-                d['pokemons'] = Pokemon.get_active_by_id(ids)
+                d['pokemons'] = Pokemon.get_active_by_id(ids, swLat, swLng, neLat, neLng)
             else:
-                d['pokemons'] = Pokemon.get_active()
+                d['pokemons'] = Pokemon.get_active(swLat, swLng, neLat, neLng)
 
         if request.args.get('pokestops', 'false') == 'true':
-            d['pokestops'] = Pokestop.get_all()
+            d['pokestops'] = Pokestop.get_stops(swLat, swLng, neLat, neLng)
 
         if request.args.get('gyms', 'true') == 'true':
-            d['gyms'] = Gym.get_all()
+            d['gyms'] = Gym.get_gyms(swLat, swLng, neLat, neLng)
 
         if request.args.get('scanned', 'true') == 'true':
-            d['scanned'] = ScannedLocation.get_recent()
+            d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat, neLng)
 
         return jsonify(d)
 
