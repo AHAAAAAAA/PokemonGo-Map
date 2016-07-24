@@ -130,7 +130,7 @@ def insert_mock_data():
 
     detect_time = datetime.now()
 
-    for i in xrange(num_pokemon):
+    for i in range(num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
