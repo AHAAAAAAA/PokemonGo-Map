@@ -61,6 +61,7 @@ function initMap() {
             lng: center_lng
         },
         zoom: 16,
+        disableDoubleClickZoom: true,
         fullscreenControl: true,
         streetViewControl: false,
 		mapTypeControl: true,
@@ -78,7 +79,6 @@ function initMap() {
               'style_pgo_nl']
         },
     });
-    map.setOptions({disableDoubleClickZoom: true });
     
     var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
     map.mapTypes.set('dark_style', style_dark);
