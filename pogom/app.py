@@ -6,6 +6,7 @@ import logging
 
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
+from flask.ext.compress import Compress
 from datetime import datetime
 from s2sphere import *
 from pogom.utils import get_args
@@ -14,10 +15,12 @@ from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
 log = logging.getLogger(__name__)
+compress = Compress()
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
         super(Pogom, self).__init__(import_name, **kwargs)
+        compress.init_app(self)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
