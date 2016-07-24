@@ -851,42 +851,6 @@ $(function () {
     window.setInterval(updateLabelDiffTime, 1000);
     window.setInterval(updateMap, 5000);
 
-<<<<<<< HEAD
-    // Seutp UI element interactions
-    $('#gyms-switch').change(function() {
-        localStorage["showGyms"] = this.checked;
-        if (this.checked) {
-            updateMap();
-        } else {
-            $.each(map_gyms, function(key, value) {
-                map_gyms[key].marker.setMap(null);
-            });
-            map_gyms = {}
-        }
-    });
-
-    $('#pokemon-switch').change(function() {
-        localStorage["showPokemon"] = this.checked;
-        if (this.checked) {
-            updateMap();
-        } else {
-            $.each(map_pokemons, function(key, value) {
-                map_pokemons[key].marker.setMap(null);
-            });
-            map_pokemons = {}
-        }
-    });
-
-    $('#lured-pokemon-switch').change(function() {
-        localStorage["showLuredPokemon"] = this.checked;
-        if (this.checked) {
-            updateMap();
-        } else {
-            $.each(map_lure_pokemons, function(key, value) {
-                map_lure_pokemons[key].marker.setMap(null);
-            });
-            map_lure_pokemons = {}
-=======
     function buildSwitchChangeListener(data, data_type, storageKey) {
         return function () {
             localStorage[storageKey] = this.checked;
@@ -898,7 +862,6 @@ $(function () {
                 });
                 data[data_type] = {}
             }
->>>>>>> upstream/develop
         }
     }
 
