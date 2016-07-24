@@ -157,6 +157,7 @@ function initSidebar() {
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
+    $('#opacity-switch').prop('checked', localStorage.fadePokemons === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -321,6 +322,7 @@ function setupPokemonMarker(item) {
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
 
+    setMarkerOpacity(marker, item.disappear_time);
     addListeners(marker);
     return marker;
 };
@@ -377,6 +379,16 @@ function getColorByDate(value){
     //value from 0 to 1 - Green to Red
     var hue=((1-diff)*120).toString(10);
     return ["hsl(",hue,",100%,50%)"].join("");
+}
+
+function setMarkerOpacity(marker, disappear_time) {
+    if (localStorage.fadePokemons === 'true') {
+        //range opacity: 0.3 to 1.0
+        var percentage = Math.min(Math.abs(new Date(disappear_time) - new Date()), 15 * 60 * 1000) / (15 * 60 * 1000);
+        marker.setOpacity(0.3 + (percentage * 0.7));
+    } else {
+        marker.setOpacity(1);
+    }
 }
 
 function setupScannedMarker(item) {
@@ -941,6 +953,13 @@ $(function () {
 
     $('#sound-switch').change(function() {
         localStorage["playSound"] = this.checked;
+    });
+
+    $('#opacity-switch').change(function() {
+        localStorage["fadePokemons"] = this.checked;
+        $.each(map_pokemons, function(key, value) {
+            setMarkerOpacity(map_pokemons[key].marker, map_pokemons[key]["disappear_time"]);
+        });
     });
 
     $('#scanned-switch').change(function() {
