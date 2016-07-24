@@ -344,7 +344,7 @@ function setupGymMarker(item) {
 };
 
 function setupPokestopMarker(item) {
-    var imagename = !!item.lure_expiration ? "PstopLured" : "Pstop";
+    var imagename = !!item.lure_expiration ? "PstopLured.gif" : "Pstop.png";
     var marker = new google.maps.Marker({
         position: {
             lat: item.latitude,
@@ -354,7 +354,8 @@ function setupPokestopMarker(item) {
         map: map,
         zIndex: 2,
         optimized: false,
-        icon: 'static/forts/' + imagename + '.png',
+        icon: 'static/forts/' + imagename,
+        optimized: false, // allow animated gif
     });
 
 
