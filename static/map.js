@@ -492,6 +492,7 @@ updateMap();
 //------------------------------------------------------------Heatmap--------------------------------------------
 function updateHeatmap() {
 	var heatmapData = [];
+	console.log(notifiedPokemon);
     localStorage.showHeatmap = localStorage.showHeatmap || true;
 
     $.ajax({
@@ -510,13 +511,40 @@ function updateHeatmap() {
             // add marker to map and item to dict
                 
           }
-		  heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
+			if(notifiedPokemon.indexOf(item.pokemon_id) >= 0){
+				heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
+			}
         });
+		
+		var gradient = [
+			'rgba(0, 255, 255, 0)',
+			'rgba(0, 255, 255, 1)',
+			'rgba(0, 191, 255, 1)',
+			'rgba(0, 127, 255, 1)',
+			'rgba(0, 63, 255, 1)',
+			'rgba(0, 0, 255, 1)',
+			'rgba(0, 0, 223, 1)',
+			'rgba(0, 0, 191, 1)',
+			'rgba(0, 0, 159, 1)',
+			'rgba(0, 0, 127, 1)',
+			'rgba(63, 0, 91, 1)',
+			'rgba(127, 0, 63, 1)',
+			'rgba(191, 0, 31, 1)',
+			'rgba(255, 0, 0, 1)'
+		  ]
+
+		
 		heatmap = new google.maps.visualization.HeatmapLayer({
-			data: heatmapData
+			data: heatmapData,
+			gradient: gradient
 		});
 		
+		if(heatmapData.length > 1000){
+			changeIntensity(100);
+		}
+		
 		heatmap.setMap(map);
+		console.log(heatmapData.length);
     });
 	
 	
@@ -525,6 +553,11 @@ function updateHeatmap() {
 function deleteHeatmap() {
 	heatmap.setMap(null);
 }
+
+function changeIntensity(intensity) {
+  heatmap.set('maxIntensity', intensity);
+}
+
 
 
 document.getElementById('gyms-switch').onclick = function() {
