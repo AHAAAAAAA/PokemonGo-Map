@@ -23,8 +23,7 @@ class Pogom(Flask):
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
-        self.route("/mobile", methods=['GET'])(self.list_pokemon_mobile)
-        self.route("/acc", methods=['GET'])(self.list_pokemon_acc)
+        self.route("/mobile", methods=['GET'])(self.list_pokemon)
 
     def fullmap(self):
         args = get_args()
@@ -85,19 +84,8 @@ class Pogom(Flask):
             log.info('Changing next location: %s,%s' % (lat, lon))
             return 'ok'
 
-    def list_pokemon_mobile(self):
-        pokemon_list = self.list_pokemon()
-        # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
-        return render_template('mobile_list.html',
-                               pokemon_list=pokemon_list,
-                               origin_lat=config['ORIGINAL_LATITUDE'],
-                               origin_lng=config['ORIGINAL_LONGITUDE'])
-
-    def list_pokemon_acc(self):
-        pokemon_list = self.list_pokemon()
-        return render_template('acc.html', pokemon_list=pokemon_list)
-
     def list_pokemon(self):
+        # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
         pokemon_list = []
         origin_point = LatLng.from_degrees(config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'])
         for pokemon in Pokemon.get_active():
@@ -118,7 +106,10 @@ class Pogom(Flask):
             }
             pokemon_list.append((entry, entry['distance']))
         pokemon_list = [y[0] for y in sorted(pokemon_list, key=lambda x: x[1])]
-        return pokemon_list
+        return render_template('mobile_list.html',
+                               pokemon_list=pokemon_list,
+                               origin_lat=config['ORIGINAL_LATITUDE'],
+                               origin_lng=config['ORIGINAL_LONGITUDE'])
 
 
 class CustomJSONEncoder(JSONEncoder):

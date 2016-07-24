@@ -1,21 +1,38 @@
-<title>Nearby Pokémon</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body{font-family:sans-serif}
-h2{margin-top:15px;}
-.card {display:block;border:solid 1px #aaa;border-radius:2px;box-shadow:2px 2px 2px #eee;font-family:sans-serif;margin-bottom:8px;text-decoration:none;color:#444}
-.card>div{margin: 15px 0}
-img{float:left}
-h3{margin:0}
-span{color:#777}
-.origin{position:relative;top:20px;padding-bottom:10px}
-</style>
-
-<h2><a href="javascript:location.href=location.href">Nearby Pokémon &#x21bb;</a></h2>
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <title>Pokemon List</title>
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1" name=viewport>
+        <link rel="stylesheet" href="/static/css/mobile.css" type="text/css" />
+    	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    </head>
+    <body>
+        <h1><a href="javascript:location.href=location.href" title="Refresh Nearby Pokemon">Nearby Pokémon &#x21bb;</a></h2>
+        <table cellspacing="0" cellpadding="0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Time Remaining</th>
+                    <th>Direction</th>
+                </tr>
+            </thead>
+            <tbody>
 {% for pokemon in pokemon_list %}
-<a class="card" href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
-<img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png'>
-<div><h3>{{pokemon.distance}}m ({{pokemon.card_dir}})</h3><span>{{pokemon.time_to_disappear}}</span></div>
-</a>
+                <tr class='clickable-row' data-href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
+                    <td><img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png' title="{{pokemon.name}}" /></td>
+                    <td>{{pokemon.time_to_disappear}}</td>
+                    <td>{{pokemon.distance}}m ({{pokemon.card_dir}})</td>
+                </tr>
+                <tr><td colspan=99><!-- spacing --></td></tr>
 {% endfor %}
-<a class="origin" href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>scan location</a>
+            </tbody>
+        </table>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $(".clickable-row").click(function() {
+                    window.document.location = $(this).data("href");
+                });
+            });
+        </script>
+    </body>
+</html>
