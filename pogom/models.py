@@ -4,7 +4,7 @@
 import logging
 import os
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
-                   CharField, FloatField, BooleanField, DateTimeField,\
+                   CharField, DoubleField, BooleanField, DateTimeField,\
                    OperationalError
 from datetime import datetime
 from datetime import timedelta
@@ -61,8 +61,8 @@ class Pokemon(BaseModel):
     encounter_id = CharField(primary_key=True)
     spawnpoint_id = CharField()
     pokemon_id = IntegerField()
-    latitude = FloatField()
-    longitude = FloatField()
+    latitude = DoubleField()
+    longitude = DoubleField()
     disappear_time = DateTimeField()
 
     @classmethod
@@ -153,8 +153,8 @@ class Pokemon(BaseModel):
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True)
     enabled = BooleanField()
-    latitude = FloatField()
-    longitude = FloatField()
+    latitude = DoubleField()
+    longitude = DoubleField()
     last_modified = DateTimeField()
     lure_expiration = DateTimeField(null=True)
     active_pokemon_id = IntegerField(null=True)
@@ -192,8 +192,8 @@ class Gym(BaseModel):
     guard_pokemon_id = IntegerField()
     gym_points = IntegerField()
     enabled = BooleanField()
-    latitude = FloatField()
-    longitude = FloatField()
+    latitude = DoubleField()
+    longitude = DoubleField()
     last_modified = DateTimeField()
 
     @classmethod
@@ -219,8 +219,8 @@ class Gym(BaseModel):
 
 class ScannedLocation(BaseModel):
     scanned_id = CharField(primary_key=True)
-    latitude = FloatField()
-    longitude = FloatField()
+    latitude = DoubleField()
+    longitude = DoubleField()
     last_modified = DateTimeField()
 
     @classmethod
