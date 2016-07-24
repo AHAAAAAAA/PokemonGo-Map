@@ -30,10 +30,10 @@ Here it is in action:
 
 ## Running
 
-The only parameter worker accepts is *step limit*, just as in `example.py`.
+To run the worker:
 
 ```
-python worker.py -st 8
+python worker.py
 ```
 
 To run interface:
