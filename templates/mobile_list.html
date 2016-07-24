@@ -13,7 +13,8 @@ span{color:#777}
 
 <h2><a href="javascript:location.href=location.href">Nearby Pokémon &#x21bb;</a></h2>
 {% for pokemon in pokemon_list %}
-<a class="card" href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
+<a class="card" href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'
+   title='#{{loop.index}}; {{pokemon.name}}; distance {{pokemon.distance}}m ({{pokemon.card_dir}}); leaves in {{pokemon.time_to_disappear}}'>
 <img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png'>
 <div><h3>{{pokemon.distance}}m ({{pokemon.card_dir}})</h3><span>{{pokemon.time_to_disappear}}</span></div>
 </a>
