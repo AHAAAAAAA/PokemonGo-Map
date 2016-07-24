@@ -71,7 +71,7 @@ function initMap() {
           mapTypeIds: [
               google.maps.MapTypeId.ROADMAP,
               google.maps.MapTypeId.SATELLITE,
-			  'nolabels_style',
+              'nolabels_style',
               'dark_style',
               'style_light2',
               'style_pgo',
