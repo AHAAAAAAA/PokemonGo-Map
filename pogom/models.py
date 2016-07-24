@@ -58,6 +58,20 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    def get_all_p(cls):
+        query = (Pokemon
+                 .select()
+                 .dicts())
+        
+        pokemons = []
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            if args.china:
+                p['latitude'], p['longitude'] = \
+                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
+            pokemons.append(p)
+
+        return pokemons
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True)

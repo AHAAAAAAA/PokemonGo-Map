@@ -14,6 +14,8 @@ var $selectNotify = $("#notify-pokemon");
 
 var idToPokemon = {};
 
+var heatmap;
+
 $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").done(function(data) {
     var pokeList = []
 
@@ -116,6 +118,7 @@ function initMap() {
     });
 
     initSidebar();
+
 };
 
 function initSidebar() {
@@ -123,6 +126,7 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
+	$('#heatmap-switch').prop('checked', localStorage.showHeatmap === 'false');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
@@ -485,6 +489,44 @@ function updateMap() {
 window.setInterval(updateMap, 5000);
 updateMap();
 
+//------------------------------------------------------------Heatmap--------------------------------------------
+function updateHeatmap() {
+	var heatmapData = [];
+    localStorage.showHeatmap = localStorage.showHeatmap || true;
+
+    $.ajax({
+        url: "raw_pokemon",
+        type: 'GET',
+        data: {
+        },
+        dataType: "json"
+    }).done(function(result) {
+      $.each(result.pokemons, function(i, item){
+          if (!localStorage.showHeatmap) {
+              return false; // in case the checkbox was unchecked in the meantime.
+          }
+          if (!(item.encounter_id in map_pokemons) &&
+                    excludedPokemon.indexOf(item.pokemon_id) < 0) {
+            // add marker to map and item to dict
+                
+          }
+		  heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
+        });
+		heatmap = new google.maps.visualization.HeatmapLayer({
+			data: heatmapData
+		});
+		
+		heatmap.setMap(map);
+    });
+	
+	
+};
+
+function deleteHeatmap() {
+	heatmap.setMap(null);
+}
+
+
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
     if (this.checked) {
@@ -526,6 +568,7 @@ $('#sound-switch').change(function() {
 });
 
 $('#scanned-switch').change(function() {
+	console.log('changed Scanned');
     localStorage["showScanned"] = this.checked;
     if (this.checked) {
         updateMap();
@@ -534,6 +577,16 @@ $('#scanned-switch').change(function() {
             map_scanned[key].marker.setMap(null);
         });
         map_scanned = {}
+    }
+});
+
+$('#heatmap-switch').change(function() {
+	console.log('changed Heatmap');
+    localStorage["showHeatmap"] = this.checked;
+    if (this.checked) {
+        updateHeatmap();
+    } else {
+		deleteHeatmap();
     }
 });
 

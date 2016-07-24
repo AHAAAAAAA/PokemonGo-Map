@@ -90,6 +90,16 @@
 					</label>
 				</div>
 			</div>
+			<div class="form-control switch-container">
+				<h3>Heatmap</h3>
+				<div class="onoffswitch">
+					<input id="heatmap-switch" type="checkbox" name="heatmap-switch" class="onoffswitch-checkbox"/>
+					<label class="onoffswitch-label" for="heatmap-switch">
+						<span class="switch-label" data-on="On" data-off="Off"></span>
+						<span class="switch-handle"></span>
+					</label>
+				</div>
+			</div>
 			<div class="form-control">
 				<label for="exclude-pokemon">
 					<h3>Hide common Pokémon</h3>
@@ -142,7 +152,7 @@
 	</script>
 
 
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places,visualization"></script>
 	<script type="text/javascript" src="static/map.js"></script>
 	</body>
 </html>
