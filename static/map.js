@@ -255,7 +255,7 @@ map_gyms = {} // Gyms
 map_pokestops = {} // Pokestops
 map_scanned = {} // Pokestops
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
-var audio = new Audio('https://github.com/AHAAAAAAA/PokemonGo-Map/raw/develop/static/sounds/ding.mp3');
+var audio = new Audio('static/sounds/ding.mp3');
 
 function setupPokemonMarker(item) {
     var marker = new google.maps.Marker({
