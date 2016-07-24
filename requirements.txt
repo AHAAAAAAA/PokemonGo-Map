@@ -15,3 +15,5 @@ gpsoauth==0.3.0
 protobuf-to-dict==0.1.0
 flask-cors==2.1.2
 pushbullet.py==0.10.0
+slacker==0.9.24
+twilio==5.4.0

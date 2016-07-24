@@ -1,7 +1,7 @@
 {
 	"alarms":[
 		{
-			"active": "False",
+			"active": "True",
 			"type":"pushbullet",
 			"api_key":""
 		},
@@ -10,6 +10,14 @@
 			"type":"slack",
 			"api_key":"",
 			"channel":"#general"
+		},
+		{
+			"active": "False",
+			"type":"twilio",
+			"account_sid":"",
+			"auth_token":"",
+			"to_number":"+11234567890",
+			"from_number":"+11234567890"
 		}
 	],
 	"pokemon":{
@@ -28,7 +36,7 @@
 		"Weedle":"False",
 		"Kakuna":"False",
 		"Beedrill":"False",
-		"Pidgey":"True",
+		"Pidgey":"False",
 		"Pidgeotto":"False",
 		"Pidgeot":"False",
 		"Rattata":"False",

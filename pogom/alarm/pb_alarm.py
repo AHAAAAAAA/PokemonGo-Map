@@ -10,7 +10,7 @@ class PB_Alarm(Alarm):
 	def __init__(self, api_key):
 		self.client = PushBullet(api_key) 
 		log.info("PB_Alarm intialized.")
-		push = self.client.push_note("PokeAlarm activated!", "We will alert you about pokemon")
+		push = self.client.push_note("PokeAlarm activated!", "We will alert you about pokemon.")
 		
 	def pokemon_alert(self, pokemon):
 		notification_text = "A wild " + pokemon['name'].title() + " has appeared!"

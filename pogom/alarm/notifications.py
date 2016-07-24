@@ -7,6 +7,7 @@ log = logging.getLogger(__name__)
 
 from pb_alarm import PB_Alarm
 from slack_alarm import Slack_Alarm
+from twilio_alarm import Twilio_Alarm
 from ..utils import get_pokemon_name
 
 class Notifications:
@@ -25,6 +26,8 @@ class Notifications:
 						self.alarms.append(PB_Alarm(alarm['api_key']))
 					if alarm['type'] == 'slack' :
 						self.alarms.append(Slack_Alarm(alarm['api_key'], alarm['channel']))
+					if alarm['type'] == 'twilio' :
+						self.alarms.append(Twilio_Alarm(alarm['account_sid'], alarm['auth_token'], alarm['to_number'], alarm['from_number']))
 				else:
 					log.info("Invalid alarm type specified: " + alarm['type'])
 			
