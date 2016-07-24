@@ -388,20 +388,21 @@ function getTypeSpan(type) {
   return `<span style='padding: 2px 5px; text-transform: uppercase; color: white; margin-right: 2px; border-radius: 4px; font-size: 0.8em; vertical-align: text-bottom; background-color: ${type['color']}'>${type['type']}</span>`;
 }
 
-function pokemonLabel(name, rarity, types, disappear_time, id, latitude, longitude, encounter_id) {
-  var disappear_date = new Date(disappear_time);
-  var rarity_display = rarity ? '(' + rarity + ')' : "";
+function pokemonLabel(pokemon) {
+  var pokemon_info = idToPokemon[pokemon.pokemon_id]
+  var disappear_date = new Date(pokemon.disappear_time);
+  var rarity_display = pokemon_info.rarity ? '(' + pokemon_info.rarity + ')' : "";
   var types_display = "";
-  $.each(types, function(index, type) {
+  $.each(pokemon_info.types, function(index, type) {
     types_display += getTypeSpan(type);
   });
 
   var contentstring = `
     <div>
-      <b>${name}</b>
+      <b>${pokemon_info.name}</b>
       <span> - </span>
       <small>
-        <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
+        <a href='http://www.pokemon.com/us/pokedex/${pokemon.pokemon_id}' target='_blank' title='View in Pokedex'>#${pokemon.pokemon_id}</a>
       </small>
       <span> ${rarity_display}</span>
       <span> - </span>
@@ -409,16 +410,16 @@ function pokemonLabel(name, rarity, types, disappear_time, id, latitude, longitu
     </div>
     <div>
       Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-      <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span>
+      <span class='label-countdown' disappears-at='${pokemon_info.disappear_time}'>(00m00s)</span>
     </div>
     <div>
-      Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+      Location: ${pokemon.latitude.toFixed(6)}, ${pokemon.longitude.toFixed(7)}
     </div>
     <div>
-      <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
-      <a href='javascript:notifyAboutPokemon(${id})'>Notify</a>&nbsp;&nbsp;
-      <a href='javascript:removePokemonMarker("${encounter_id}")'>Remove</a>&nbsp;&nbsp;
-      <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}' target='_blank' title='View in Maps'>Get directions</a>
+      <a href='javascript:excludePokemon(${pokemon.pokemon_id})'>Exclude</a>&nbsp;&nbsp;
+      <a href='javascript:notifyAboutPokemon(${pokemon.pokemon_id})'>Notify</a>&nbsp;&nbsp;
+      <a href='javascript:removePokemonMarker("${pokemon.encounter_id}")'>Remove</a>&nbsp;&nbsp;
+      <a href='https://www.google.com/maps/dir/Current+Location/${pokemon.latitude},${pokemon.longitude}' target='_blank' title='View in Maps'>Get directions</a>
     </div>`;
   return contentstring;
 }
@@ -595,7 +596,7 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
-    content: pokemonLabel(item.pokemon_name, item.pokemon_rarity, item.pokemon_types, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
+    content: pokemonLabel(item),
     disableAutoPan: true
   });
 
@@ -604,7 +605,7 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
       if (Store.get('playSound')) {
         audio.play();
       }
-      sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
+      sendNotification('A wild ' + idToPokemon[item.pokemon_id].name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
     if (marker.animationDisabled != true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
