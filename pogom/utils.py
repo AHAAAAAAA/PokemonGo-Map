@@ -180,19 +180,22 @@ def insert_mock_data():
                    gym_points=1000
                    )
 
-
-def get_pokemon_name(pokemon_id):
-    if not hasattr(get_pokemon_name, 'names'):
+def get_pokemon_data(pokemon_id):
+    if not hasattr(get_pokemon_data, 'data'):
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
             'pokemon.{}.json'.format(config['LOCALE']))
 
         with open(file_path, 'r') as f:
-            get_pokemon_name.names = json.loads(f.read())
+            get_pokemon_data.data = json.loads(f.read())
+    return get_pokemon_data.data
 
-    return get_pokemon_name.names[str(pokemon_id)]
+def get_pokemon_name(pokemon_id):
+    return get_pokemon_data(pokemon_id)[str(pokemon_id)]['name']
 
+def get_pokemon_rarity(pokemon_id):
+    return get_pokemon_data(pokemon_id)[str(pokemon_id)]['rarity']
 
 def send_to_webhook(message_type, message):
     args = get_args()

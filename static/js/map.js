@@ -362,8 +362,9 @@ function pad(number) {
   return number <= 99 ? ("0" + number).slice(-2) : number;
 }
 
-function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_id) {
+function pokemonLabel(name, rarity, disappear_time, id, latitude, longitude, encounter_id) {
   var disappear_date = new Date(disappear_time)
+  var rarity_display = rarity ? '(' + rarity + ')' : "";
 
   var contentstring = `
     <div>
@@ -372,6 +373,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
       <small>
         <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
       </small>
+      <span> ${rarity_display}</span>
     </div>
     <div>
       Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
@@ -443,7 +445,9 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
 function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longitude) {
   var str;
   if (lured) {
-    var active_pokemon = idToPokemon[active_pokemon_id];
+    var active_pokemon_name = active_pokemon_id in idToPokemon ? idToPokemon[active_pokemon_id]['name'] : "";
+    var active_pokemon_rarity = active_pokemon_id in idToPokemon ? idToPokemon[active_pokemon_id]['rarity'] : "";
+    var rarity_display = active_pokemon_rarity ? '(' + active_pokemon_rarity + ')' : "";
 
     var last_modified_date = new Date(last_modified);
     var current_date = new Date();
@@ -458,11 +462,12 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
         <b>Lured Pokéstop</b>
       </div>
       <div>
-        Lured Pokémon: ${active_pokemon}
+        Lured Pokémon: ${active_pokemon_name}
         <span> - </span>
         <small>
           <a href='http://www.pokemon.com/us/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>
         </small>
+        <span> ${rarity_display}</span>
       </div>
       <div>
         Lure expires at ${pad(expire_date.getHours())}:${pad(expire_date.getMinutes())}:${pad(expire_date.getSeconds())}
@@ -552,7 +557,7 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
-    content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
+    content: pokemonLabel(item.pokemon_name, item.pokemon_rarity, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
     disableAutoPan: true
   });
 
@@ -821,7 +826,8 @@ function processLuredPokemon(i, item) {
     pokemon_id: item.active_pokemon_id,
     latitude: item.latitude + 0.00005,
     longitude: item.longitude + 0.00005,
-    pokemon_name: idToPokemon[item.active_pokemon_id],
+    pokemon_name: item.active_pokemon_id in idToPokemon ? idToPokemon[item.active_pokemon_id]['name'] : null,
+    pokemon_rarity: item.active_pokemon_id in idToPokemon ? idToPokemon[item.active_pokemon_id]['rarity'] : null,
     disappear_time: item.lure_expiration
   };
 
@@ -1129,8 +1135,9 @@ $(function() {
       }
       pokeList.push({
         id: key,
-        text: value + ' - #' + key
+        text: value['name'] + ' - #' + key
       });
+      idToPokemon[key] = value;
     });
 
     // setup the filter lists
@@ -1182,7 +1189,7 @@ $(function() {
       });
     }
   }, 1000);
-  
+
   //Wipe off/restore map icons when switches are toggled
   function buildSwitchChangeListener(data, data_type, storageKey) {
     return function () {
