@@ -1,0 +1,34 @@
+table {
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+td, th {
+    padding: 3px 7px;
+}
+
+tr {
+    margin: 10px;
+}
+
+td {
+    background: #FAFAFA;
+    text-align: center;
+}
+
+tr.clickable-row td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+tr.clickable-row td:first-child {
+    border-bottom-left-radius: 7px;
+    border-top-left-radius: 7px;
+    border-left: 1px solid black;
+}
+
+tr.clickable-row td:last-child {
+    border-bottom-right-radius: 7px;
+    border-top-right-radius: 7px;
+    border-right: 1px solid black;
+}
