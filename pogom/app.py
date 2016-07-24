@@ -27,16 +27,16 @@ class Pogom(Flask):
 
     def fullmap(self):
         args = get_args()
-        dis = "inline"
+        display = "inline"
         if args.fixed_location:
-            dis = "none"
+            display = "none"
         
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
-                               is_fixed=dis
+                               is_fixed=display
                                )
 
     def raw_data(self):
@@ -71,6 +71,9 @@ class Pogom(Flask):
         return jsonify(d)
 
     def next_loc(self):
+        args = get_args()
+        if args.fixed_location:
+            return 'Location searching is turned off', 403
        #part of query string
         if request.args:
             lat = request.args.get('lat', type=float)
