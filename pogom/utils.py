@@ -101,16 +101,18 @@ def get_args():
     if (args.settings):
         args = parse_config(args) 
     else:
-        if (args.username is None or args.location is None or args.step_limit is None):
+        if args.location is None or ((not args.only_server) and (args.username is None or args.step_limit is None)):
             parser.print_usage()
-            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
+            if args.only_server:
+                print sys.argv[0] + ': error: argument -l/--location required'
+            else:
+                print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
             sys.exit(1);
 
-        if config["PASSWORD"] is None and args.password is None:
+        if not args.only_server and config["PASSWORD"] is None and args.password is None:
             config["PASSWORD"] = args.password = getpass.getpass()
         elif args.password is None:
             args.password = config["PASSWORD"]
-
 
     return args
 
