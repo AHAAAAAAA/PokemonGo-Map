@@ -1,36 +1,21 @@
-<!DOCTYPE html>
-<html lang=en>
-    <head>
-        <title>Pokemon List</title>
-        <meta content="width=device-width,initial-scale=1,maximum-scale=1" name=viewport>
-    </head>
-    <body>
-        <h1>Pokemon List</h1>
+<title>Nearby Pokémon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:sans-serif}
+h2{margin-top:15px;}
+.card {display:block;border:solid 1px #aaa;border-radius:2px;box-shadow:2px 2px 2px #eee;font-family:sans-serif;margin-bottom:8px;text-decoration:none;color:#444}
+.card>div{margin: 15px 0}
+img{float:left}
+h3{margin:0}
+span{color:#777}
+.origin{position:relative;top:20px;padding-bottom:10px}
+</style>
 
-        <link rel="stylesheet" href="/static/css/mobile.css" type="text/css" />
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Time Remaining</th>
-                    <th>Direction from Origin</th>
-                    <th>Map Link</th>
-                </tr>
-            </thead>
-            <tbody>
+<h2><a href="javascript:location.href=location.href">Nearby Pokémon &#x21bb;</a></h2>
 {% for pokemon in pokemon_list %}
-                <tr>
-                    <td><img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png' alt="{{pokemon.name}}" /></td>
-                    <td>{{pokemon.time_to_disappear}}</td>
-                    <td>{{pokemon.distance}}m ({{pokemon.card_dir}})</td>
-                    <td><a href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>Open Map</td>
-                </tr>
+<a class="card" href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
+<img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png'>
+<div><h3>{{pokemon.distance}}m ({{pokemon.card_dir}})</h3><span>{{pokemon.time_to_disappear}}</span></div>
+</a>
 {% endfor %}
-            </tbody>
-        </table>
-
-        <a href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>open map @ scan origin</a>
-
-    </body>
-</html>
+<a class="origin" href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>scan location</a>

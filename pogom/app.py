@@ -2,14 +2,18 @@
 # -*- coding: utf-8 -*-
 
 import calendar
+import logging
+
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from datetime import datetime
 from s2sphere import *
+from pogom.utils import get_args
 
 from . import config
-from .models import Pokemon, Gym, Pokestop
+from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
+log = logging.getLogger(__name__)
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
@@ -19,25 +23,40 @@ class Pogom(Flask):
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
-        self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/mobile", methods=['GET'])(self.list_pokemon_mobile)
+        self.route("/acc", methods=['GET'])(self.list_pokemon_acc)
 
     def fullmap(self):
+        args = get_args()
+        dis = "inline"
+        if args.fixed_location:
+            dis = "none"
+        
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
-                               lang=config['LOCALE'])
+                               lang=config['LOCALE'],
+                               is_fixed=dis
+                               )
 
     def raw_data(self):
         d = {}
         if request.args.get('pokemon', 'true') == 'true':
-            d['pokemons'] = Pokemon.get_active()
+            if request.args.get('ids'):
+                ids = [int(x) for x in request.args.get('ids').split(',')]
+                d['pokemons'] = Pokemon.get_active_by_id(ids)
+            else:
+                d['pokemons'] = Pokemon.get_active()
 
         if request.args.get('pokestops', 'false') == 'true':
             d['pokestops'] = Pokestop.get_all()
 
         if request.args.get('gyms', 'true') == 'true':
             d['gyms'] = Gym.get_all()
+
+        if request.args.get('scanned', 'true') == 'true':
+            d['scanned'] = ScannedLocation.get_recent()
 
         return jsonify(d)
 
@@ -49,17 +68,36 @@ class Pogom(Flask):
         return jsonify(d)
 
     def next_loc(self):
-        lat = request.args.get('lat', type=float)
-        lon = request.args.get('lon', type=float)
+       #part of query string
+        if request.args:
+            lat = request.args.get('lat', type=float)
+            lon = request.args.get('lon', type=float)
+        #from post requests
+        if request.form:
+            lat = request.form.get('lat', type=float)
+            lon = request.form.get('lon', type=float)
+
         if not (lat and lon):
-            print('[-] Invalid next location: %s,%s' % (lat, lon))
+            log.warning('Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
+            log.info('Changing next location: %s,%s' % (lat, lon))
             return 'ok'
 
-    def list_pokemon(self):
+    def list_pokemon_mobile(self):
+        pokemon_list = self.list_pokemon()
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
+        return render_template('mobile_list.html',
+                               pokemon_list=pokemon_list,
+                               origin_lat=config['ORIGINAL_LATITUDE'],
+                               origin_lng=config['ORIGINAL_LONGITUDE'])
+
+    def list_pokemon_acc(self):
+        pokemon_list = self.list_pokemon()
+        return render_template('acc.html', pokemon_list=pokemon_list)
+
+    def list_pokemon(self):
         pokemon_list = []
         origin_point = LatLng.from_degrees(config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'])
         for pokemon in Pokemon.get_active():
@@ -80,10 +118,7 @@ class Pogom(Flask):
             }
             pokemon_list.append((entry, entry['distance']))
         pokemon_list = [y[0] for y in sorted(pokemon_list, key=lambda x: x[1])]
-        return render_template('mobile_list.html',
-                               pokemon_list=pokemon_list,
-                               origin_lat=config['ORIGINAL_LATITUDE'],
-                               origin_lng=config['ORIGINAL_LONGITUDE'])
+        return pokemon_list
 
 
 class CustomJSONEncoder(JSONEncoder):
