@@ -39,6 +39,7 @@
 		<header id="header">
 			<a href="#nav">Filter</a>
 			<h1><a href="#">Pokémon Go Map</a></h1>
+      <h1><button type="button" class="js-geolocation">Update Location Now</button></h1>
 		</header>
 
 		<!-- Nav -->
@@ -115,7 +116,21 @@
 			<!-- <button id="trigger-overlay">Test overlay</button> -->
 		</nav>
 
-		<div id="map"></div>
+    <div class="js-login-container"><form class="js-login-form">
+        <br>
+        <br>
+        <br>
+        <label>Username</label><input type="text" class="js-username" />
+        <label>Password</label><input type="password" class="js-password" />
+        <label>Login Type</label><select class="js-provider">
+          <option value="ptc" selected=selected>Pokémon Trainer Club</option>
+          <option value="google">Google</option>
+        </select>
+        <br>
+        <button type="submit">Login</button>
+    </form></div>
+
+		<div id="map" class="js-map"></div>
 
 		<div class="overlay overlay-contentscale">
 			<button type="button" class="overlay-close">Close</button>
