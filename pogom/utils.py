@@ -65,6 +65,15 @@ def parse_db_config(args):
 
     return args
 
+def cache_args(function):
+    to_return = {}
+    def decorator(*args):
+        if args not in to_return:
+            to_return[args] = function()
+        return to_return[args]
+    return decorator
+
+@cache_args
 def get_args():
     # fuck PEP8
     parser = argparse.ArgumentParser()
