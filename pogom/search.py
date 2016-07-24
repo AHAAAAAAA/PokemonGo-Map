@@ -200,7 +200,7 @@ def search_loop(args):
 def search_loop_stop():
     global stopping
     """
-        stops the searching method after curent operation has completed
+        stops the searching method after currrent operation has completed
     """
     stopping = True
 
