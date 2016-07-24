@@ -315,7 +315,7 @@ function setupPokemonMarker(item) {
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
         if (localStorage.playSound === 'true') {
-          new Audio(audio_base_url + item.pokemon_id).play();
+          new Audio(audio_base_url + item.pokemon_id + '.mp3').play();
         }
 
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', item.pokemon_id, item.latitude, item.longitude);
