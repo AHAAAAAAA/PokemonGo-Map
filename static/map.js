@@ -31,7 +31,7 @@ var map_pokestops = {}
 var map_lure_pokemons = {}
 var map_scanned = {}
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
-var audio = new Audio('static/sounds/ding.mp3');
+var audio_base_url = 'static/sounds/cries/';
 
 //
 // Functions
@@ -315,10 +315,10 @@ function setupPokemonMarker(item) {
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
         if (localStorage.playSound === 'true') {
-          audio.play();
+          new Audio(audio_base_url + item.pokemon_id + '.mp3').play();
         }
 
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', item.pokemon_id, item.latitude, item.longitude);
     }
 
     addListeners(marker);
@@ -703,14 +703,14 @@ var updateLabelDiffTime = function() {
     });
 };
 
-function sendNotification(title, text, icon, lat, lng) {
+function sendNotification(title, text, pokemon_id, lat, lng) {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
         var notification = new Notification(title, {
-            icon: icon,
+            icon: 'static/icons/' + pokemon_id + '.png',
             body: text,
-            sound: 'sounds/ding.mp3'
+            sound: audio_base_url + pokemon_id + '.mp3'
         });
 
         notification.onclick = function () {
