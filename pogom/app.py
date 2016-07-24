@@ -8,14 +8,23 @@ from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
+from dateutil import parser
 from s2sphere import *
-from pogom.utils import get_args
+from pogom.utils import get_args, get_pokemon_name
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
+args = get_args()
 log = logging.getLogger(__name__)
 compress = Compress()
+
+from datetime import datetime, tzinfo, timedelta
+class simple_utc(tzinfo):
+    def tzname(self):
+        return "UTC"
+    def utcoffset(self, dt):
+        return timedelta(0)
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
@@ -43,26 +52,93 @@ class Pogom(Flask):
                                )
 
     def raw_data(self):
+        now = datetime.utcnow()
         d = {}
         swLat = request.args.get('swLat')
         swLng = request.args.get('swLng')
         neLat = request.args.get('neLat')
         neLng = request.args.get('neLng')
+        lastUpdate = request.args.get('lastUpdate')
+
+        if lastUpdate:
+            lastUpdate = parser.parse(lastUpdate)
+
+        d['updateTime'] = now.replace(tzinfo=simple_utc()).isoformat()
+
         if request.args.get('pokemon', 'true') == 'true':
+            pokemons = (Pokemon.select()
+                .where(Pokemon.disappear_time > now))
+
+            if swLat != None and swLng != None and neLat != None and neLng != None:
+                pokemons = pokemons.where(Pokemon.inArea(swLat, swLng, neLat, neLng))
+
             if request.args.get('ids'):
                 ids = [int(x) for x in request.args.get('ids').split(',')]
-                d['pokemons'] = Pokemon.get_active_by_id(ids, swLat, swLng, neLat, neLng)
-            else:
-                d['pokemons'] = Pokemon.get_active(swLat, swLng, neLat, neLng)
+                pokemons = pokemons.where(Pokemon.isPokemonIdIn(ids))
+            
+            if lastUpdate:
+                pokemons = pokemons.where(Pokemon.wasModifiedSince(lastUpdate))
+
+            query = pokemons.dicts()
+
+            pokemons = []
+            for p in query:
+                p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+                if args.china:
+                    p['latitude'], p['longitude'] = \
+                        transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
+                pokemons.append(p)
+            d['pokemons'] = pokemons
 
         if request.args.get('pokestops', 'false') == 'true':
-            d['pokestops'] = Pokestop.get_stops(swLat, swLng, neLat, neLng)
+            pokestops = Pokestop.select()
+
+            if swLat != None and swLng != None and neLat != None and neLng != None:
+                pokestops = pokestops.where(Pokestop.inArea(swLat, swLng, neLat, neLng))
+
+            if lastUpdate:
+                pokestops = pokestops.where(Pokestop.wasModifiedSince(lastUpdate))
+
+            query = pokestops.dicts()
+
+            pokestops = []
+            for p in query:
+                pokestops.append(p)
+            d['pokestops'] = pokestops
 
         if request.args.get('gyms', 'true') == 'true':
-            d['gyms'] = Gym.get_gyms(swLat, swLng, neLat, neLng)
+            gyms = Gym.select()
+
+            if swLat != None and swLng != None and neLat != None and neLng != None:
+                gyms = gyms.where(Gym.inArea(swLat, swLng, neLat, neLng))
+
+            if lastUpdate:
+                gyms = gyms.where(Gym.wasModifiedSince(lastUpdate))
+
+            query = gyms.dicts()
+
+            gyms = []
+            for g in query:
+                gyms.append(g)
 
         if request.args.get('scanned', 'true') == 'true':
-            d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat, neLng)
+
+            scanned = ScannedLocation.select()
+            scanned = scanned.where(ScannedLocation.isRecent())
+
+            if swLat != None and swLng != None and neLat != None and neLng != None:
+                scanned = scanned.where(ScannedLocation.inArea(swLat, swLng, neLat, neLng))
+
+            if lastUpdate:
+                scanned = scanned.where(ScannedLocation.wasModifiedSince(lastUpdate))
+
+            query = scanned.dicts()
+
+
+            scans = []
+            for s in query:
+                scans.append(s)
+            d['scanned'] = scans
 
         return jsonify(d)
 

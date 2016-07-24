@@ -14,6 +14,7 @@ from . import config
 from .utils import get_pokemon_name, get_args
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
+from playhouse.hybrid import hybrid_property, hybrid_method
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 
@@ -64,6 +65,7 @@ class Pokemon(BaseModel):
     latitude = DoubleField()
     longitude = DoubleField()
     disappear_time = DateTimeField()
+    last_modified = DateTimeField()
 
     @classmethod
     def get_active(cls, swLat, swLng, neLat, neLng):
@@ -92,35 +94,26 @@ class Pokemon(BaseModel):
 
         return pokemons
 
-    @classmethod
-    def get_active_by_id(cls, ids, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
-            query = (Pokemon
-                     .select()
-                     .where((Pokemon.pokemon_id << ids) &
-                            (Pokemon.disappear_time > datetime.utcnow()))
-                     .dicts())
-        else:
-            query = (Pokemon
-                     .select()
-                     .where((Pokemon.pokemon_id << ids) &
-                            (Pokemon.disappear_time > datetime.utcnow()) &
-                            (Pokemon.latitude >= swLat) &
-                            (Pokemon.longitude >= swLng) &
-                            (Pokemon.latitude <= neLat) &
-                            (Pokemon.longitude <= neLng))
-                     .dicts())
+    @hybrid_property
+    def isActive(self):
+        return self.disappear_time > datetime.utcnow()
 
-        pokemons = []
-        for p in query:
-            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
-            if args.china:
-                p['latitude'], p['longitude'] = \
-                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
-            pokemons.append(p)
+    @hybrid_method
+    def inArea(self, swLat, swLng, neLat, neLng):
+        return (
+            (self.latitude >= swLat) &
+            (self.longitude >= swLng) &
+            (self.latitude <= neLat) &
+            (self.longitude <= neLng)
+        )
 
-        return pokemons
+    @hybrid_method
+    def isPokemonIdIn(self, ids):
+        return self.pokemon_id << ids
 
+    @hybrid_method
+    def wasModifiedSince(self, date):
+        return self.last_modified >= date
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True)
@@ -131,30 +124,18 @@ class Pokestop(BaseModel):
     lure_expiration = DateTimeField(null=True)
     active_pokemon_id = IntegerField(null=True)
 
-    @classmethod
-    def get_stops(cls, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
-            query = (Pokestop
-                 .select()
-                 .dicts())
-        else:
-            query = (Pokestop
-                 .select()
-                 .where((Pokestop.latitude >= swLat) &
-                    (Pokestop.longitude >= swLng) &
-                    (Pokestop.latitude <= neLat) &
-                    (Pokestop.longitude <= neLng))
-                 .dicts())
+    @hybrid_method
+    def inArea(self, swLat, swLng, neLat, neLng):
+        return (
+            (self.latitude >= swLat) &
+            (self.longitude >= swLng) &
+            (self.latitude <= neLat) &
+            (self.longitude <= neLng)
+        )
 
-        pokestops = []
-        for p in query:
-            if args.china:
-                p['latitude'], p['longitude'] = \
-                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
-            pokestops.append(p)
-
-        return pokestops
-
+    @hybrid_method
+    def wasModifiedSince(self, date):
+        return self.last_modified >= date
 
 class Gym(BaseModel):
     UNCONTESTED = 0
@@ -171,26 +152,18 @@ class Gym(BaseModel):
     longitude = DoubleField()
     last_modified = DateTimeField()
 
-    @classmethod
-    def get_gyms(cls, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
-            query = (Gym
-                 .select()
-                 .dicts())
-        else:
-            query = (Gym
-                 .select()
-                 .where((Gym.latitude >= swLat) &
-                    (Gym.longitude >= swLng) &
-                    (Gym.latitude <= neLat) &
-                    (Gym.longitude <= neLng))
-                 .dicts())
+    @hybrid_method
+    def inArea(self, swLat, swLng, neLat, neLng):
+        return (
+            (self.latitude >= swLat) &
+            (self.longitude >= swLng) &
+            (self.latitude <= neLat) &
+            (self.longitude <= neLng)
+        )
 
-        gyms = []
-        for g in query:
-            gyms.append(g)
-
-        return gyms
+    @hybrid_method
+    def wasModifiedSince(self, date):
+        return self.last_modified >= date
 
 class ScannedLocation(BaseModel):
     scanned_id = CharField(primary_key=True)
@@ -198,22 +171,22 @@ class ScannedLocation(BaseModel):
     longitude = DoubleField()
     last_modified = DateTimeField()
 
-    @classmethod
-    def get_recent(cls, swLat, swLng, neLat, neLng):
-        query = (ScannedLocation
-                 .select()
-                 .where((ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15))) &
-                    (ScannedLocation.latitude >= swLat) &
-                    (ScannedLocation.longitude >= swLng) &
-                    (ScannedLocation.latitude <= neLat) &
-                    (ScannedLocation.longitude <= neLng))
-                 .dicts())
+    @hybrid_method
+    def inArea(self, swLat, swLng, neLat, neLng):
+        return (
+            (self.latitude >= swLat) &
+            (self.longitude >= swLng) &
+            (self.latitude <= neLat) &
+            (self.longitude <= neLng)
+        )
 
-        scans = []
-        for s in query:
-            scans.append(s)
+    @hybrid_method
+    def wasModifiedSince(self, date):
+        return self.last_modified >= date
 
-        return scans
+    @hybrid_method
+    def isRecent(self):
+        return self.last_modified >= (datetime.utcnow() - timedelta(minutes=15))
 
 def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
@@ -235,7 +208,8 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': d_t
+                    'disappear_time': d_t,
+                    'last_modified': datetime.utcnow()
                 }
 
         if iteration_num > 0 or step > 50:

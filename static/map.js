@@ -702,6 +702,8 @@ function clearOutOfBoundsMarkers(markers) {
   });
 }
 
+var lastUpdateTime = null;
+var lastUpdateParameters = {};
 function loadRawData() {
     var loadPokemon = Store.get('showPokemon');
     var loadGyms = Store.get('showGyms');
@@ -716,6 +718,22 @@ function loadRawData() {
     var neLat = nePoint.lat();
     var neLng = nePoint.lng();
 
+    var updateParameters = {
+        pokemon: loadPokemon,
+        gyms: loadGyms,
+        pokestops: loadPokestops,
+        scanned: loadScanned,
+        swLat: swLat,
+        swLng: swLng,
+        neLat: neLat,
+        neLng: neLng
+    };
+
+    if (JSON.stringify(updateParameters) !== JSON.stringify(lastUpdateParameters)) {
+        lastUpdateTime = null;
+        lastUpdateParameters = updateParameters;
+    }
+
     return $.ajax({
         url: "raw_data",
         type: 'GET',
@@ -727,7 +745,8 @@ function loadRawData() {
             'swLat': swLat,
             'swLng': swLng,
             'neLat': neLat,
-            'neLng': neLng
+            'neLng': neLng,
+            'lastUpdate': lastUpdateTime ? lastUpdateTime.toISOString() : null
         },
         dataType: "json",
         beforeSend: function() {
@@ -737,7 +756,7 @@ function loadRawData() {
                 rawDataIsLoading = true;
             }
         },
-        complete: function() {
+        complete: function(result) {
             rawDataIsLoading = false;
         }
     })
@@ -856,6 +875,7 @@ function processScanned(i, item) {
 function updateMap() {
 
     loadRawData().done(function (result) {
+        lastUpdateTime = new Date(Date.parse(result.updateTime));
         $.each(result.pokemons, processPokemons);
         $.each(result.pokestops, processPokestops);
         $.each(result.pokestops, processLuredPokemon);
