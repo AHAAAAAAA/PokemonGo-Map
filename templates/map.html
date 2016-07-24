@@ -55,7 +55,8 @@
         var markers = window.markers = [];
         var markerCache = window.markerCache = {};
         // Adds a marker to the map and push to the array.
-        function addMarker(options = {}) {
+        function addMarker(options) {
+            options = typeof options !== 'undefined' ? options : {};
             var default_options = {map: map}
             for(var prop in options){
                 if(options.hasOwnProperty(prop)){
@@ -68,7 +69,8 @@
         }
 
         // Sets the map on all markers in the array.
-        function setMapOnAll(map, length = null) {
+        function setMapOnAll(map, length) {
+            length = typeof length !== 'undefined' ? length : null;
             var lastIndex = markers.length -1;
             if(length != null){
                 lastIndex = length;
