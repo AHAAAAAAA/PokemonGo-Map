@@ -56,6 +56,20 @@
 				margin-left: 0.5em;
 			}
 
+			&[href="#stats"] {
+				-webkit-tap-highlight-color: rgba(0,0,0,0);
+
+				&:before {
+					margin: 0 0.5em 0 0;
+				}
+			}
+
+			& + a[href="#stats"]:last-child {
+				border-left: solid 1px _palette(accent2, border);
+				padding-left: 1.25em;
+				margin-left: 0.5em;
+			}
+
 			&:last-child {
 				padding-right: 1.25em;
 			}
@@ -64,6 +78,11 @@
 				padding: 0 0.5em;
 
 				& + a[href="#nav"]:last-child {
+					padding-left: 1em;
+					margin-left: 0.25em;
+				}
+				
+				& + a[href="#stats"]:last-child {
 					padding-left: 1em;
 					margin-left: 0.25em;
 				}

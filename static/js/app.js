@@ -33,15 +33,26 @@
 	var	$nav = document.querySelector('#nav'),
 		$navToggle = document.querySelector('a[href="#nav"]'),
 		$navClose;
-
+		
+	// Stats.
+	var	$stats = document.querySelector('#stats'),
+		$statsToggle = document.querySelector('a[href="#stats"]'),
+		$statsClose;
+	
 	// Event: Prevent clicks/taps inside the nav from bubbling.
 	addEventsListener($nav, 'click touchend', function(event) {
+		event.stopPropagation();
+	});
+	
+	// Event: Prevent clicks/taps inside the stats from bubbling.
+	addEventsListener($stats, 'click touchend', function(event) {
 		event.stopPropagation();
 	});
 
 	// Event: Hide nav on body click/tap.
 	addEventsListener($body, 'click touchend', function(event) {
 		$nav.classList.remove('visible');
+		$stats.classList.remove('visible');
 	});
 
 	// Toggle.
@@ -52,20 +63,34 @@
 		event.stopPropagation();
 		$nav.classList.toggle('visible');
 	});
+	
+	// Event: Toggle stats on click.
+	$statsToggle.addEventListener('click', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		$stats.classList.toggle('visible');
+	});
 
 	// Close.
 
-	// Create element.
+	// Create elements.
 	$navClose = document.createElement('a');
 	$navClose.href = '#';
 	$navClose.className = 'close';
 	$navClose.tabIndex = 0;
 	$nav.appendChild($navClose);
+	
+	$statsClose = document.createElement('a');
+	$statsClose.href = '#';
+	$statsClose.className = 'close';
+	$statsClose.tabIndex = 0;
+	$stats.appendChild($statsClose);
 
 	// Event: Hide on ESC.
 	window.addEventListener('keydown', function(event) {
 		if (event.keyCode == 27)
 			$nav.classList.remove('visible');
+			$stats.classList.remove('visible');
 	});
 
 	// Event: Hide nav on click.
@@ -73,6 +98,13 @@
 		event.preventDefault();
 		event.stopPropagation();
 		$nav.classList.remove('visible');
+	});
+	
+	// Event: Hide stats on click.
+	$statsClose.addEventListener('click', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		$stats.classList.remove('visible');
 	});
 
 })();

@@ -627,6 +627,10 @@ document.getElementById('gyms-switch').onclick = function() {
             map_gyms[key].marker.setMap(null);
         });
         map_gyms = {}
+		if(localStorage.showStats == "true")
+		{
+			countMarkers();
+		}
     }
 };
 
@@ -639,11 +643,15 @@ $('#pokemon-switch').change(function() {
             map_pokemons[key].marker.setMap(null);
         });
         map_pokemons = {}
+		if(localStorage.showStats == "true")
+		{
+			countMarkers();
+		}
     }
 });
 
 $('#lured-pokemon-switch').change(function() {
-    localStorage["showPokemon"] = this.checked;
+    localStorage["showLuredPokemon"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
@@ -651,6 +659,10 @@ $('#lured-pokemon-switch').change(function() {
             map_lure_pokemons[key].marker.setMap(null);
         });
         map_lure_pokemons = {}
+		if(localStorage.showStats == "true")
+		{
+			countMarkers();
+		}
     }
 });
 
@@ -663,6 +675,10 @@ $('#pokestops-switch').change(function() {
             map_pokestops[key].marker.setMap(null);
         });
         map_pokestops = {}
+		if(localStorage.showStats == "true")
+		{
+			countMarkers();
+		}
     }
 });
 

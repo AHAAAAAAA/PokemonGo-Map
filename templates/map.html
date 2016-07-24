@@ -40,6 +40,7 @@
 		<header id="header">
 			<a href="#nav">Options</a>
 			<h1><a href="#">Pokémon Go Map</a></h1>
+			<a href="#stats" id="statsToggle" class="statsNav" style="float: right;">Stats</a>
 		</header>
 
 		<!-- Nav -->
@@ -136,9 +137,11 @@
 					</label>
 				</div>
 			</div>
-		
+			
+			<!-- <button id="trigger-overlay">Test overlay</button> -->
+		</nav>
+		<nav id="stats">
 			<div class="switch-container">
-				<h3 id="stats-label"></h3>
 				<div class="switch-container">
 					<center><h1 id="stats-pkmn-label"></h1></center>
 				</div>
@@ -150,10 +153,8 @@
 				<div class="switch-container">
 					<center><h1 id="stats-pkstop-label"></h1></center>
 				</div>
+				<div id="pokestopList" style="color: black;"></div>
 			</div>
-			<div id="pokestopList" style="color: black;"></div>
-			
-			<!-- <button id="trigger-overlay">Test overlay</button> -->
 		</nav>
 
 		<div id="map"></div>
