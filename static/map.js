@@ -479,6 +479,10 @@ function updateMap() {
 };
 
 function updateLabelDiffTime() {
+    $.each(map_pokemons, function(key, value) {
+        setMarkerOpacity(map_pokemons[key].marker, map_pokemons[key]["disappear_time"]);
+    });
+    
     $('.label-countdown').each(function(index, element) {
         var disappearsAt = new Date(parseInt(element.getAttribute("disappears-at")));
         var now = new Date();
