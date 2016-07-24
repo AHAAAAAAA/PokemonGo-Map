@@ -481,6 +481,10 @@ function clearOutOfBoundsMarkers(markers) {
 
 function updateMap() {
 
+    if (window.mapUpdating)
+      return;
+    window.mapUpdating = true;
+
     var loadPokemon = localStorage.showPokemon || true;
     var loadGyms = localStorage.showGyms || true;
     var loadPokestops =  localStorage.showPokestops || localStorage.showLuredPokemon || false; //lured mons need pokestop data
@@ -508,6 +512,8 @@ function updateMap() {
             'neLng': neLng
         },
         dataType: "json"
+    }).always(function() {
+      window.mapUpdating = false;
     }).done(function(result) {
       $.each(result.pokemons, function(i, item){
           if (!(localStorage.showPokemon === 'true')) {
