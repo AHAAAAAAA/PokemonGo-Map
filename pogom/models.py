@@ -75,6 +75,9 @@ class Pokemon(BaseModel):
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            if args.china:
+                p['latitude'], p['longitude'] = \
+                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             pokemons.append(p)
 
         return pokemons
@@ -90,6 +93,9 @@ class Pokemon(BaseModel):
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            if args.china:
+                p['latitude'], p['longitude'] = \
+                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             pokemons.append(p)
 
         return pokemons
