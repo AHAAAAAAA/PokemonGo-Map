@@ -1,3 +1,5 @@
+from datetime import datetime
+import json
 import time
 
 from sqlalchemy.orm import sessionmaker
@@ -5,6 +7,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.sql import not_
+
+
+with open('locales/pokemon.en.json') as f:
+    pokemon_names = json.load(f)
 
 
 try:
@@ -69,3 +75,88 @@ def get_sightings(session):
     if trash_list:
         query = query.filter(not_(Sighting.pokemon_id.in_(config.TRASH_IDS)))
     return query.all()
+
+
+def get_session_stats(session):
+    min_max_query = session.execute('''
+        SELECT
+            MIN(expire_timestamp) ts_min,
+            MAX(expire_timestamp) ts_max,
+            COUNT(*)
+        FROM `sightings`;
+    ''')
+    min_max_result = min_max_query.first()
+    per_hour_query = session.execute('''
+        SELECT CAST(AVG(how_many) AS SIGNED) FROM (
+            SELECT
+               CAST((expire_timestamp / 3600) AS SIGNED) ts_date,
+               COUNT(*) how_many
+            FROM `sightings`
+            GROUP BY ts_date ORDER BY ts_date
+        ) t
+    ''')
+    per_hour_result = per_hour_query.first()
+    # Convert to datetime
+    return {
+        'start': datetime.fromtimestamp(min_max_result[0]),
+        'end': datetime.fromtimestamp(min_max_result[1]),
+        'count': min_max_result[2],
+        'length_hours': (min_max_result[1] - min_max_result[0]) // 3600,
+        'per_hour': per_hour_result[0],
+    }
+
+
+def get_punch_card(session):
+    query = session.execute('''
+        SELECT
+            CAST((expire_timestamp / 300) AS SIGNED) ts_date,
+            COUNT(*) how_many
+        FROM `sightings`
+        GROUP BY ts_date ORDER BY ts_date
+    ''')
+    results = [(i, r[1]) for (i, r) in enumerate(query.fetchall())]
+    return results
+
+
+def get_top_pokemon(session, count=30, order='DESC'):
+    query = session.execute('''
+        SELECT
+            pokemon_id,
+            COUNT(*) how_many
+        FROM sightings
+        GROUP BY pokemon_id
+        ORDER BY how_many {order}
+        LIMIT {count}
+    '''.format(order=order, count=count))
+    return query.fetchall()
+
+
+def get_stage2_pokemon(session):
+    result = []
+    for pokemon_id in config.STAGE2:
+        count = session.query(Sighting) \
+            .filter(Sighting.pokemon_id == pokemon_id) \
+            .count()
+        if count > 0:
+            result.append((pokemon_id, count))
+    return result
+
+
+def get_nonexistent_pokemon(session):
+    result = []
+    query = session.execute('''
+        SELECT DISTINCT pokemon_id FROM sightings
+    ''')
+    db_ids = [r[0] for r in query.fetchall()]
+    for pokemon_id in range(1, 152):
+        if pokemon_id not in db_ids:
+            result.append(pokemon_id)
+    return result
+
+
+def get_all_sightings(session, pokemon_ids):
+    # TODO: rename this and get_sightings
+    query = session.query(Sighting) \
+        .filter(Sighting.pokemon_id.in_(pokemon_ids)) \
+        .all()
+    return query
