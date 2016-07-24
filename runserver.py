@@ -115,8 +115,11 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
 
     if args.no_server:
-        while not search_thread.isAlive():
-            time.sleep(1)
-        search_thread.join()
+        while True:
+            try:
+                time.sleep(1)
+            except:
+                control.stop()
+                break
     else:
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
