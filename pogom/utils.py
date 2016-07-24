@@ -47,10 +47,10 @@ def parse_config(args):
     args.no_pokestops = Config.getboolean('Search_Settings', 'Disable_Pokestops')
     args.no_gyms = Config.getboolean('Search_Settings', 'Disable_Gyms')
     if Config.get('Misc', 'Google_Maps_API_Key') :
-        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
-    args.host = Config.get('Misc', 'Host') 
-    args.port = Config.get('Misc', 'Port') 
-    
+        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
+    args.host = Config.get('Misc', 'Host')
+    args.port = Config.get('Misc', 'Port')
+
     return args
 
 def parse_db_config(args):
@@ -90,16 +90,20 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=DEFAULT_THREADS, dest='num_threads')
-    parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
-    parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
-    parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False, dest='no_pokemon')
+    parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False, dest='no_gyms')
+    parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False, dest='no_pokestops')
+    parser.add_argument('-ss', '--show-scanned', help='Show the scanned area', action='store_true', default=False, dest='show_scanned')
+    parser.add_argument('-ps', '--play-sound', help='Play a sound on notifications', action='store_true', default=False, dest='play_sound')
+    parser.add_argument('-E', '--exclude', help='A Pokemon id to exclude', required=False, type=int, nargs='*', dest='exclude_pokemon')
+    parser.add_argument('-N', '--notify', help='A Pokemon id to send a notification of on spawn', required=False, type=int, nargs='*', dest='notify_pokemon')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
     args = parse_db_config(args)
 
     if (args.settings):
-        args = parse_config(args) 
+        args = parse_config(args)
     else:
         if (args.username is None or args.location is None or args.step_limit is None):
             parser.print_usage()

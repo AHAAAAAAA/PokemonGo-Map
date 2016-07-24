@@ -46,15 +46,33 @@ class Pogom(Flask):
     def vanillamap(self):
         args = get_args()
         display = "inline"
+        exclude = []
+        notify = []
+
         if args.fixed_location:
             display = "none"
+
+        if args.exclude_pokemon:
+            exclude = args.exclude_pokemon
+
+        if args.notify_pokemon:
+            notify = args.notify_pokemon
+
+        print(notify)
 
         return render_template('map_vanilla.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
-                               is_fixed=display
+                               is_fixed=display,
+                               inc=notify,
+                               exc=exclude,
+                               show_pokemon=not args.no_pokemon,
+                               show_gyms=not args.no_gyms,
+                               show_pokestops=not args.no_pokestops,
+                               show_scanned=args.show_scanned,
+                               play_sound=args.play_sound
                                )
 
     def raw_data(self):

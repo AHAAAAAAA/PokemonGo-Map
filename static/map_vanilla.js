@@ -96,7 +96,6 @@ function initMap() {
     marker = createSearchMarker();
 
     addMyLocationButton();
-    initSidebar();
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
