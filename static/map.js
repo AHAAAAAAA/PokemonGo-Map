@@ -115,7 +115,7 @@ function initMap() {
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
-    
+
 };
 
 function createSearchMarker() {
@@ -544,27 +544,40 @@ function updateMap() {
 
 
          });
+
          $.each(result.pokestops, function(i, item) {
          if (!(localStorage.showLuredPokemon === 'true')) {
                 return false;
             }
-            var item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
-            if(map_lure_pokemons[item2.pokestop_id] == null  && item2.lure_expiration) {
-            	//if (item.marker) item.marker.setMap(null);
-                item2.marker = setupPokemonMarker(item2);
-  		map_lure_pokemons[item2.pokestop_id] = item2;
 
-  		}
-            if(map_lure_pokemons[item.pokestop_id] != null  && item2.lure_expiration && item2.active_pokemon_id != map_lure_pokemons[item2.pokestop_id].active_pokemon_id) {
-            	//if (item.marker) item.marker.setMap(null);
-            	map_lure_pokemons[item2.pokestop_id].marker.setMap(null);
-            	item2.marker = setupPokemonMarker(item2);
-                map_lure_pokemons[item2.pokestop_id] = item2;
+            var last_modified_date = new Date(item.last_modified);
+            var current_date = new Date();
 
-  		}
+            var time_until_expire = current_date.getTime() - last_modified_date.getTime();
+
+            var expire_date = new Date(current_date.getTime() + time_until_expire);
+            var expire_time = expire_date.getTime();
+
+            var lured_pokemon = {
+                pokestop_id: item.pokestop_id,
+                pokemon_id: item.active_pokemon_id,
+                latitude: item.latitude + 0.00005,
+                longitude: item.longitude + 0.00005,
+                pokemon_name: idToPokemon[item.active_pokemon_id],
+                disappear_time: expire_time
+            };
+
+            if (map_lure_pokemons[lured_pokemon.pokestop_id] == null) {
+                lured_pokemon.marker = setupPokemonMarker(lured_pokemon);
+                map_lure_pokemons[lured_pokemon.pokestop_id] = lured_pokemon;
+            } else if (lured_pokemon.active_pokemon_id !== map_lure_pokemons[lured_pokemon.pokestop_id].active_pokemon_id) {
+                map_lure_pokemons[lured_pokemon.pokestop_id].marker.setMap(null);
+
+                lured_pokemon.marker = setupPokemonMarker(lured_pokemon);
+                map_lure_pokemons[lured_pokemon.pokestop_id] = lured_pokemon;
+            }
 
         });
-
 
         $.each(result.gyms, function(i, item){
             if (!(localStorage.showGyms === 'true')) {
@@ -852,9 +865,10 @@ $(function () {
     $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
         var pokeList = []
 
+        idToPokemon = data;
+
         $.each(data, function(key, value) {
             pokeList.push( { id: key, text: value } );
-            idToPokemon[key] = value;
         });
 
         // setup the filter lists
