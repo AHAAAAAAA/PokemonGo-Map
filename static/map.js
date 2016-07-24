@@ -699,8 +699,8 @@ $('#pokemon-icons').change(function() {
 
 function redrawPokemon(pokemon_list) {
     $.each(pokemon_list, function(key, value) {
-        let item =  pokemon_list[key];
-        let new_marker = setupPokemonMarker(item);
+        var item =  pokemon_list[key];
+        var new_marker = setupPokemonMarker(item);
         item.marker.setMap(null);
         pokemon_list[key].marker = new_marker;
     });
