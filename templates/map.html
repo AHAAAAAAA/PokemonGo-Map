@@ -1,9 +1,9 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="{{lang}}">
 	<head>
+		<meta charset="utf-8">
 		<title>Pokémon Go Map</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<meta name="apple-mobile-web-app-title" content="PokeMap">
@@ -30,7 +30,7 @@
 		<!-- retina iPhone 6 iOS 7 -->
 		<link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
 
-		<link rel="stylesheet" href="static/dist/css/app.min.css" />
+		<link rel="stylesheet" href="static/dist/css/app.min.css">
 		<script src="static/js/vendor/modernizr.custom.js"></script>
 	</head>
 	<body id="top">
@@ -47,35 +47,45 @@
 			<div class="form-control" style="display:{{is_fixed}}" >
 				<label for="next-location">
 					<h3>Change your location</h3>
-					<input id="next-location" type="text" name="next-location" placeholder="Change your location" />
+					<input id="next-location" type="text" name="next-location" placeholder="Change your location">
 				</label>
 				<hr width="100%">
 			</div>
 			<p>Select markers to be visible on map.</p>
 			<div class="form-control switch-container">
-				<h3>Pokémon</h3>
+				<h3>Wild Pokémon</h3>
 				<div class="onoffswitch">
-					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked/>
+					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="pokemon-switch">
-	        	<span class="switch-label" data-on="On" data-off="Off"></span>
-	        	<span class="switch-handle"></span>
-	        </label>
+	        				<span class="switch-label" data-on="On" data-off="Off"></span>
+	        				<span class="switch-handle"></span>
+				        </label>
+				</div>
+			</div>
+			<div class="form-control switch-container">
+				<h3>Lured Pokemon</h3>
+				<div class="onoffswitch">
+					<input id="lured-pokemon-switch" type="checkbox" name="lured-pokemon-switch" class="onoffswitch-checkbox" checked/>
+					<label class="onoffswitch-label" for="lured-pokemon-switch">
+						<span class="switch-label" data-on="On" data-off="Off"></span>
+						<span class="switch-handle"></span>
+					</label>
 				</div>
 			</div>
 			<div class="form-control switch-container">
 				<h3>Gyms</h3>
 				<div class="onoffswitch">
-					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked/>
+					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="gyms-switch">
-	        	<span class="switch-label" data-on="On" data-off="Off"></span>
-	        	<span class="switch-handle"></span>
-	        </label>
+	        				<span class="switch-label" data-on="On" data-off="Off"></span>
+	        				<span class="switch-handle"></span>
+	        			</label>
 				</div>
 			</div>
 			<div class="form-control switch-container">
 				<h3>Pokéstops</h3>
 				<div class="onoffswitch">
-					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked/>
+					<input id="pokestops-switch" type="checkbox" name="pokestops-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="pokestops-switch">
 						<span class="switch-label" data-on="On" data-off="Off"></span>
 						<span class="switch-handle"></span>
@@ -85,7 +95,7 @@
 			<div class="form-control switch-container">
 				<h3>Scanned Locations</h3>
 				<div class="onoffswitch">
-					<input id="scanned-switch" type="checkbox" name="scanned-switch" class="onoffswitch-checkbox"/>
+					<input id="scanned-switch" type="checkbox" name="scanned-switch" class="onoffswitch-checkbox">
 					<label class="onoffswitch-label" for="scanned-switch">
 						<span class="switch-label" data-on="On" data-off="Off"></span>
 						<span class="switch-handle"></span>
@@ -96,8 +106,8 @@
 			<div class="form-control">
 				<label for="exclude-pokemon">
 					<h3>Hide common Pokémon</h3>
-      		<select id="exclude-pokemon" multiple="multiple"></select>
-    		</label>
+      					<select id="exclude-pokemon" multiple="multiple"></select>
+    				</label>
 			</div>
 			<div class="form-control">
 				<label for="notify-pokemon">
@@ -108,7 +118,7 @@
 			<div class="form-control switch-container">
 				<h3>Notify with sound</h3>
 				<div class="onoffswitch">
-					<input id="sound-switch" type="checkbox" name="sound-switch" class="onoffswitch-checkbox" checked/>
+					<input id="sound-switch" type="checkbox" name="sound-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="sound-switch">
 						<span class="switch-label" data-on="On" data-off="Off"></span>
 						<span class="switch-handle"></span>
@@ -121,19 +131,19 @@
 	</div>
 
 	<!-- Scripts -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
-	<script type="text/javascript" src="static/dist/js/app.min.js"></script>
-	<script type="text/javascript" src="static/js/vendor/classie.js"></script>
+	<script src="static/dist/js/app.min.js"></script>
+	<script src="static/js/vendor/classie.js"></script>
 
-	<script type="text/javascript">
+	<script>
 		var center_lat = {{lat}};
 		var center_lng = {{lng}};
 	</script>
 
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places"></script>
-	<script type="text/javascript" src="static/map.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places"></script>
+	<script src="static/map.js"></script>
 	</body>
 </html>
