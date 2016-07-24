@@ -302,6 +302,8 @@ def bulk_upsert(cls, data):
         except OperationalError as e:
             log.warning("%s... Retrying", e)
             continue
+        finally:
+            db.close()
 
         i+=step
 
