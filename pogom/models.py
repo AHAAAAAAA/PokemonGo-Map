@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import json
+import os
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, FloatField, BooleanField, DateTimeField
 from datetime import datetime
@@ -11,6 +13,8 @@ from base64 import b64encode
 from .utils import get_pokemon_name, get_args
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
+
+
 
 args = get_args()
 db = SqliteDatabase(args.db)
@@ -58,11 +62,12 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    @classmethod
     def get_all_p(cls):
         query = (Pokemon
                  .select()
                  .dicts())
-        
+
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
@@ -71,6 +76,28 @@ class Pokemon(BaseModel):
                     transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             pokemons.append(p)
 
+        return pokemons
+
+    @classmethod
+    def get_p_by_type(cls,type):
+
+        with open(os.path.join('static','locales,"type.eng.json")) as data_file:
+            id_to_type = json.load(data_file)
+        for id in id_to_type:
+            if type in id_to_type.type:
+                ids_of_type.append(id)
+
+
+        query = (Pokemon
+                 .select()
+                 .where(Pokemon.pokemon_id.in_(ids_of_type))
+                 .dicts())
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            if args.china:
+                p['latitude'], p['longitude'] = \
+                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
+            pokemons.append(p)
         return pokemons
 
 class Pokestop(BaseModel):
