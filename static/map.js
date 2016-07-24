@@ -317,7 +317,7 @@ function createSearchMarker() {
                         marker.setPosition(e.latLng);
                     });
             }
-        }, 3000);
+        }, 1000);
     });
     google.maps.event.addListener(map, 'mouseup', function(e) { 
         longpress = false;
