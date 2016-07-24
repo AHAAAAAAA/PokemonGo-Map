@@ -137,6 +137,7 @@ function createSearchMarker() {
     });
 
     google.maps.event.addListener(marker, 'dragend', function() {
+        var newLocation = marker.getPosition();
         changeLocation(newLocation, 
             function() {
                 oldLocation = null;
