@@ -589,8 +589,6 @@ function updateMap() {
     });
 };
 
-window.setInterval(updateMap, 5000);
-
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
     if (this.checked) {
