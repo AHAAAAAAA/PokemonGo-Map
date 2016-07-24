@@ -22,16 +22,19 @@ log = logging.getLogger(__name__)
 
 class SearchControl():
     def __init__(self):
-        self.state = 'searching'
+        if args.search_control:
+            self.state = 'searching'
+        else:
+            self.state = 'disabled'
         return
     def start(self):
-        if self.state == 'searching':
+        if self.state == 'searching' or self.state == 'disabled':
             return
         log.info('Start')
         start_locator_thread()
         self.state = 'searching'
     def stop(self):
-        if self.state == 'idle':
+        if self.state == 'idle' or self.state == 'disabled':
             return
         log.info('Stop')
         search_loop_stop()

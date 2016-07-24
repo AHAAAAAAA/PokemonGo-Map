@@ -86,6 +86,11 @@ def get_args():
     parser.add_argument('-ns', '--no-server', help='No-Server Mode. Starts the searcher but not the Webserver.', action='store_true', default=False, dest='no_server')
     parser.add_argument('-os', '--only-server', help='Server-Only Mode. Starts only the Webserver without the searcher.', action='store_true', default=False, dest='only_server')
     parser.add_argument('-fl', '--fixed-location', help='Hides the search bar for use in shared maps.', action='store_true', default=False, dest='fixed_location')
+    
+    parser.add_argument('-sc', '--search-control', help='Shows search control in sidebar', action='store_true',  dest='search_control')
+    parser.add_argument('-nsc','--no-search-control', help='Disables search control', action='store_false', dest='search_control')
+    parser.set_defaults(search_control=True)
+
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
