@@ -6,6 +6,7 @@ from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from datetime import datetime
 from s2sphere import *
+import os
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
