@@ -21,6 +21,9 @@ For instructions on how to setup and run the tool, please refer to the project [
 
 There is an [Android port](https://github.com/omkarmoghe/Pokemap) in the works. All Android related prs and issues please refer to this [repo](https://github.com/omkarmoghe/Pokemap).
 
+## iOS Version
+
+There is an [iOS port](https://github.com/istornz/iPokeGo) in the works. All iOS related prs and issues please refer to this [repo](https://github.com/istornz/iPokeGo).
 
 ## Warnings
 
