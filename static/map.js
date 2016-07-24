@@ -136,11 +136,11 @@ function createSearchMarker() {
 }
 
 function initSidebar() {
-    $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
-    $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
-    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
-    $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
-    $('#sound-switch').prop('checked', localStorage.playSound === 'true');
+    $('#gyms-switch').prop('checked', localStorage['showGyms'] === 'true');
+    $('#pokemon-switch').prop('checked', localStorage['showPokemon'] === 'true');
+    $('#pokestops-switch').prop('checked', localStorage['showPokestops'] === 'true');
+    $('#scanned-switch').prop('checked', localStorage['showScanned'] === 'true');
+    $('#sound-switch').prop('checked', localStorage['playSound'] === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -298,7 +298,7 @@ function setupPokemonMarker(item) {
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        if (localStorage.playSound === 'true') {
+        if (localStorage['playSound'] === 'true') {
           audio.play();
         }
         
@@ -465,10 +465,10 @@ function clearOutOfBoundsMarkers(markers) {
 
 function updateMap() {
 
-    var loadPokemon = localStorage.showPokemon || true;
-    var loadGyms = localStorage.showGyms || true;
-    var loadPokestops =  localStorage.showPokestops || false;
-    var loadScanned = localStorage.showScanned || false;
+    var loadPokemon = localStorage['showPokemon'] || true;
+    var loadGyms = localStorage['showGyms'] || true;
+    var loadPokestops =  localStorage['showPokestops'] || false;
+    var loadScanned = localStorage['showScanned'] || false;
 
     var bounds = map.getBounds();
     var swPoint = bounds.getSouthWest();
@@ -494,7 +494,7 @@ function updateMap() {
         dataType: "json"
     }).done(function(result) {
       $.each(result.pokemons, function(i, item){
-          if (!(localStorage.showPokemon === 'true')) {
+          if (!(localStorage['showPokemon'] === 'true')) {
               return false; // in case the checkbox was unchecked in the meantime.
           }
           if (!(item.encounter_id in map_pokemons) &&
@@ -507,10 +507,10 @@ function updateMap() {
         });
 
         $.each(result.pokestops, function(i, item) {
-        	if (!(localStorage.showPokestops === 'true')) {
+        	if (!(localStorage['showPokestops'] === 'true')) {
                 return false;
             } 
-            if ((localStorage.showPokestops === 'true') && map_pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
+            if ((localStorage['showPokestops'] === 'true') && map_pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
                 // add marker to map and item to dict
                 if (item.marker) item.marker.setMap(null);
                 item.marker = setupPokestopMarker(item);
@@ -520,7 +520,7 @@ function updateMap() {
             
          });
          $.each(result.pokestops, function(i, item) { 
-         if (!(localStorage.showPokemon === 'true')) {
+         if (!(localStorage['showPokemon'] === 'true')) {
                 return false;
             }  
             var item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
@@ -543,7 +543,7 @@ function updateMap() {
 
 
         $.each(result.gyms, function(i, item){
-            if (!(localStorage.showGyms === 'true')) {
+            if (!(localStorage['showGyms'] === 'true')) {
                 return false; // in case the checkbox was unchecked in the meantime.
             }
 
@@ -567,7 +567,7 @@ function updateMap() {
         });
 
         $.each(result.scanned, function(i, item) {
-            if (!localStorage.showScanned) {
+            if (!localStorage['showScanned']) {
                 return false;
             }
 
