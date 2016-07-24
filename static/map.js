@@ -865,7 +865,7 @@ $(function () {
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
     $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
-    $('#lured-pokemon-switch').change(buildSwitchChangeListener(map_data, "lure_pokemons", "showPokemon"));
+    $('#lured-pokemon-switch').change(buildSwitchChangeListener(map_data, "lure_pokemons", "showLuredPokemon"));
     $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
