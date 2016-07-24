@@ -98,7 +98,7 @@ class Pogom(Flask):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
         pokemon_list = []
         origin_point = LatLng.from_degrees(config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'])
-        for pokemon in Pokemon.get_active():
+        for pokemon in Pokemon.get_active(None, None, None, None):
             pokemon_point = LatLng.from_degrees(pokemon['latitude'], pokemon['longitude'])
             diff = pokemon_point - origin_point
             diff_lat = diff.lat().degrees
