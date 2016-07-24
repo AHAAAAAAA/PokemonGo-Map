@@ -149,5 +149,5 @@
     "148":{"name":"Dragonair","type":["dragon"]},
     "149":{"name":"Dragonite","type":["dragon","flying"]},
     "150":{"name":"Mewto","type":["psychic"]},
-    "151":{"name":"Mew","type":["psychic"]},
+    "151":{"name":"Mew","type":["psychic"]}
 }
