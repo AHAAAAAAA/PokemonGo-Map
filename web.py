@@ -4,7 +4,7 @@ import argparse
 import json
 
 import requests
-from flask import Flask, render_template
+from flask import Flask, request, render_template
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 from flask_googlemaps import icons
@@ -154,6 +154,82 @@ def get_map():
         zoom='15',
     )
     return fullmap
+
+
+@app.route('/report')
+def report_main():
+    session = db.Session()
+    top_pokemon = db.get_top_pokemon(session)
+    bottom_pokemon = db.get_top_pokemon(session, order='ASC')
+    bottom_sightings = db.get_all_sightings(
+        session, [r[0] for r in bottom_pokemon]
+    )
+    stage2_pokemon = db.get_stage2_pokemon(session)
+    stage2_sightings = db.get_all_sightings(
+        session, [r[0] for r in stage2_pokemon]
+    )
+    js_data = {
+        'charts_data': {
+            'punchcard': db.get_punch_card(session),
+            'top30': [(pokemon_names[str(r[0])], r[1]) for r in top_pokemon],
+            'bottom30': [
+                (pokemon_names[str(r[0])], r[1]) for r in bottom_pokemon
+            ],
+            'stage2': [
+                (pokemon_names[str(r[0])], r[1]) for r in stage2_pokemon
+            ],
+        },
+        'maps_data': {
+            'bottom30': [sighting_to_marker(s) for s in bottom_sightings],
+            'stage2': [sighting_to_marker(s) for s in stage2_sightings],
+        },
+        'map_center': utils.get_map_center(),
+        'zoom': 13,
+    }
+    icons = {
+        'top30': [(r[0], pokemon_names[str(r[0])]) for r in top_pokemon],
+        'bottom30': [(r[0], pokemon_names[str(r[0])]) for r in bottom_pokemon],
+        'stage2': [(r[0], pokemon_names[str(r[0])]) for r in stage2_pokemon],
+        'nonexistent': [
+            (r, pokemon_names[str(r)])
+            for r in db.get_nonexistent_pokemon(session)
+        ]
+    }
+    session_stats = db.get_session_stats(session)
+    session.close()
+    return render_template(
+        'report.html',
+        current_date=datetime.now(),
+        city=u'Wrocław',
+        area=96,
+        total_spawn_count=session_stats['count'],
+        spawns_per_hour=session_stats['per_hour'],
+        session_start=session_stats['start'],
+        session_end=session_stats['end'],
+        session_length_hours=int(session_stats['length_hours']),
+        js_data=js_data,
+        icons=icons,
+    )
+
+
+def sighting_to_marker(sighting):
+    return {
+        'icon': '/static/icons/{}.png'.format(sighting.pokemon_id),
+        'lat': sighting.lat,
+        'lon': sighting.lon,
+    }
+
+
+@app.route('/report/heatmap')
+def report_heatmap():
+    session = db.Session()
+    points = session.query(db.Sighting.lat, db.Sighting.lon)
+    pokemon_id = request.args.get('id')
+    if pokemon_id:
+        points = points.filter(db.Sighting.pokemon_id == int(pokemon_id))
+    points = points.all()
+    session.close()
+    return json.dumps(points)
 
 
 if __name__ == '__main__':

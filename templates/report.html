@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokeminer Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <style>
+        .map {
+            height: 1000px;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        var backendData = {{ js_data|tojson }};
+
+        function drawCharts () {
+            drawHoursPunchcardChart(backendData.charts_data.punchcard);
+            drawPokemonChart(backendData.charts_data.top30, 'top30chart');
+            drawPokemonChart(backendData.charts_data.bottom30, 'bottom30chart');
+            drawPokemonChart(backendData.charts_data.stage2, 'stage2chart');
+        }
+
+        function drawPokemonChart (data, elemId) {
+            if (!data.length) {
+                return;
+            }
+            var combinedData = google.visualization.arrayToDataTable([
+                ['Pokemon', 'Spawns seen'],
+            ].concat(data));
+            var chart = new google.visualization.BarChart(document.getElementById(elemId));
+            chart.draw(combinedData, {
+                height: 1000,
+                chartArea: {width: '70%', height: '80%'},
+            });
+        }
+
+        function drawHoursPunchcardChart (data) {
+            var combinedData = google.visualization.arrayToDataTable([
+                ['Time', 'Spawns seen'],
+            ].concat(data));
+            var chart = new google.visualization.LineChart(document.getElementById('hourspunchardchart'));
+            chart.draw(combinedData, {
+                height: 300,
+                chartArea: {width: '70%', height: '80%'},
+                curveType: 'function',
+                legend: {position: 'none'}
+            });
+        }
+
+        var maps = {heat: null, bottom30: null, stage2: null};
+
+        function initMaps() {
+            Object.keys(maps).forEach(function (key) {
+                maps[key] = new google.maps.Map(document.getElementById(key + 'map'), {
+                    zoom: backendData.zoom,
+                    center: {lat: backendData.map_center[0], lng: backendData.map_center[1]},
+                    disableDefaultUI: true,
+                });
+                // Add markers
+                if (typeof backendData.maps_data[key] !== 'undefined') {
+                    backendData.maps_data[key].forEach(function (item) {
+                        new google.maps.Marker({
+                            position: new google.maps.LatLng(item.lat, item.lon),
+                            icon: item['icon'],
+                            map: maps[key],
+                        });
+                    });
+                }
+            });
+        }
+
+        function displayHeatmap (points) {
+            var layer = new google.maps.visualization.HeatmapLayer({
+              data: points
+            });
+            layer.setMap(maps.heat);
+        }
+
+        $(function () {
+            var heatmapPoints;
+            $.get('/report/heatmap').done(function (result) {
+                heatmapPoints = JSON.parse(result).map(function (elem) {
+                    return new google.maps.LatLng(elem[0], elem[1]);
+                });
+            });
+            $('#displayHeatmap').on('click', function () {
+                displayHeatmap(heatmapPoints);
+                $(this).parent().remove();
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Pokeminer Report</h1>
+        <h4>Generated on {{ current_date.strftime('%Y-%m-%d %H:%M:%S') }}</h4>
+
+        <p><b>Disclaimer:</b> data may be incomplete due to various issues that might have happened (bugs, unstable servers, bugs on the servers etc.). If there is data about a sighting of a Pokemon in given location at particular time, almost certainly such spawning happened. On the other hand, there is no guarantee that Pokeminer database contains <i>all</i> spawnings, so there might be wild Pokemon not contained in this report. Your mileage may vary.</p>
+
+        <p>This report contains statistics about data gathered during mining session for the city of {{ city }}.</p>
+
+        <p>During that session, <b> {{ total_spawn_count }}</b> Pokemon have been seen on an area of about <b>{{ area }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>. There were {{ spawns_per_hour }} spawns per hour on average.</p>
+
+        <p>Below chart shows number of spawns seen per 5 minutes blocks:</p>
+
+        <div id="hourspunchardchart"></div>
+
+        <h3>Heatmap</h3>
+
+        <p>All noticed spawn locations. The redder the point is, more Pokemon spawn there.</p>
+
+        <p><button id="displayHeatmap">Display heatmap</button> (will slow down browser!)</p>
+
+        <div id="heatmap" class="map"></div>
+
+        <h3>Most &amp; least frequently spawning species</h2>
+
+        <p><b>Top 30</b> that spawned the most number of times during above period:</p>
+
+        <div class="text-center">
+            {% for icon in icons.top30 %}
+                <img src="../static/larger-icons/{{ icon[0] }}.png" title="#{{ icon[0] }} {{ icon[1] }}">
+                {% if loop.index > 0 and loop.index % 10 == 0 %}
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div id="top30chart"></div>
+
+        <p><b>Bottom 30</b> that spawned the least number of times during above period, and all of their spawning places:</p>
+
+        <div class="text-center">
+            {% for icon in icons.bottom30 %}
+                <img src="../static/larger-icons/{{ icon[0] }}.png" title="#{{ icon[0] }} {{ icon[1] }}">
+                {% if loop.index > 0 and loop.index % 10 == 0 %}
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div id="bottom30chart"></div>
+
+        <div id="bottom30map" class="map"></div>
+
+        <h3>Evolutions and rare Pokemon</h3>
+
+        <p><b>Stage 2 evolutions</b> and Pokemon subjectively considered "rare" by author of this report, together with their spawning places:</p>
+
+        <div class="text-center">
+            {% for icon in icons.stage2 %}
+                <img src="../static/larger-icons/{{ icon[0] }}.png" title="#{{ icon[0] }} {{ icon[1] }}">
+                {% if loop.index > 0 and loop.index % 10 == 0 %}
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div id="stage2chart"></div>
+
+        <div id="stage2map" class="map"></div>
+
+        <h3>Nonexistent species</h3>
+
+        <p>Those Pokemon didn't spawn during data gathering period:</p>
+
+        <div class="text-center">
+            {% for icon in icons.nonexistent %}
+                <img src="../static/larger-icons/{{ icon[0] }}.png" title="#{{ icon[0] }} {{ icon[1] }}">
+                {% if loop.index > 0 and loop.index % 10 == 0 %}
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <h2>Footnotes</h2>
+
+        <p>This report was generated using pokeminer, a tool for gathering data about Pokemon Go.</p>
+
+        <p>Visit <a href="https://github.com/modrzew/pokeminer">https://github.com/modrzew/pokeminer</a> for more info.</p>
+
+        <p>This report is available under Creative Commons CC-BY-4.0 license: <a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a>.</p>
+    </div>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAy8rKI_g-dgYf9f7tMOafbNypeaJJvVeA&amp;libraries=visualization&amp;callback=initMaps">
+    </script>
+</body>
+</html>
