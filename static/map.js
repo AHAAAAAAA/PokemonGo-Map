@@ -510,16 +510,16 @@ function loadRawData() {
             'neLng': neLng
         },
         dataType: "json",
-		beforeSend: function() {
-		    if (rawDataIsLoading) {
-		        return false;
-		    } else {
-		        rawDataIsLoading = true;
-		    }
-		},
-		complete: function() {
-		    rawDataIsLoading = false;
-		}
+        beforeSend: function() {
+            if (rawDataIsLoading) {
+                return false;
+            } else {
+                rawDataIsLoading = true;
+            }
+        },
+        complete: function() {
+            rawDataIsLoading = false;
+        }
     })
 }
 
