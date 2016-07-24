@@ -36,21 +36,15 @@ body {
 
 /* Box Model */
 *, *:before, *:after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
 /* Grid */
 .row {
   border-bottom: solid 1px transparent;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
 .row > * {
   float: left;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
 .row:after, .row:before {
@@ -1060,13 +1054,9 @@ body {
 body {
   background: #fff; }
   body.is-loading *, body.is-loading *:before, body.is-loading *:after {
-    -moz-animation: none !important;
     -webkit-animation: none !important;
-    -ms-animation: none !important;
     animation: none !important;
-    -moz-transition: none !important;
     -webkit-transition: none !important;
-    -ms-transition: none !important;
     transition: none !important; }
 
 /* Type */
@@ -1256,15 +1246,15 @@ textarea {
   color: #bbb !important;
   opacity: 1.0; }
 
-:-moz-placeholder {
-  color: #bbb !important;
-  opacity: 1.0; }
-
 ::-moz-placeholder {
   color: #bbb !important;
   opacity: 1.0; }
 
 :-ms-input-placeholder {
+  color: #bbb !important;
+  opacity: 1.0; }
+
+::placeholder {
   color: #bbb !important;
   opacity: 1.0; }
 
@@ -1301,8 +1291,9 @@ textarea {
   width: 50px;
   float: right;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; }
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; }
   .onoffswitch .onoffswitch-checkbox {
     display: none; }
   .onoffswitch .onoffswitch-label {
@@ -1315,6 +1306,7 @@ textarea {
     border: 2px solid #CCCCCC;
     border-radius: 20px;
     background-color: #FFFFFF;
+    -webkit-transition: background-color 0.3s ease-in;
     transition: background-color 0.3s ease-in; }
   .onoffswitch .onoffswitch-label:before {
     content: "";
@@ -1328,6 +1320,7 @@ textarea {
     right: 30px;
     border: 2px solid #CCCCCC;
     border-radius: 20px;
+    -webkit-transition: all 0.3s ease-in 0s;
     transition: all 0.3s ease-in 0s; }
 
 .onoffswitch-checkbox:checked + .onoffswitch-label {
@@ -1568,9 +1561,7 @@ button,
   -webkit-appearance: none;
   -ms-appearance: none;
   appearance: none;
-  -moz-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  -ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   background-color: #5a5a5a;
   border-radius: 4px;
@@ -1736,9 +1727,7 @@ body {
     #header > h1 a {
       font-size: 1.25em; }
   #header > a {
-    -moz-transition: color 0.2s ease-in-out;
     -webkit-transition: color 0.2s ease-in-out;
-    -ms-transition: color 0.2s ease-in-out;
     transition: color 0.2s ease-in-out;
     display: inline-block;
     padding: 0 0.75em;
@@ -1791,14 +1780,13 @@ body {
 
 /* Nav */
 #nav {
-  -moz-transform: translateX(-18em);
   -webkit-transform: translateX(-18em);
-  -ms-transform: translateX(-18em);
   transform: translateX(-18em);
-  -moz-transition: -moz-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -webkit-transition: -webkit-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
-  -ms-transition: -ms-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  -webkit-transition: box-shadow 0.5s ease, visibility 0.5s, -webkit-transform 0.5s ease;
+  transition: box-shadow 0.5s ease, visibility 0.5s, -webkit-transform 0.5s ease;
   transition: transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  transition: transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s, -webkit-transform 0.5s ease;
   -webkit-overflow-scrolling: touch;
   background: #F8F8F8;
   box-shadow: none;
@@ -1841,9 +1829,7 @@ body {
           border-top: 0 !important; }
   #nav .close {
     text-decoration: none;
-    -moz-transition: color 0.2s ease-in-out;
     -webkit-transition: color 0.2s ease-in-out;
-    -ms-transition: color 0.2s ease-in-out;
     transition: color 0.2s ease-in-out;
     -webkit-tap-highlight-color: transparent;
     border: 0;
@@ -1876,9 +1862,7 @@ body {
         height: 4em;
         line-height: 4em; } }
   #nav.visible {
-    -moz-transform: translateX(0);
     -webkit-transform: translateX(0);
-    -ms-transform: translateX(0);
     transform: translateX(0);
     box-shadow: 0 0 1.5em 0 rgba(0, 0, 0, 0.2);
     visibility: visible; }
