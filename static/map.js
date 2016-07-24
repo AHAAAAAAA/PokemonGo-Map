@@ -447,9 +447,17 @@ function clearStaleMarkers() {
 
 function clearOutOfBoundsMarkers(markers) {
   $.each(markers, function(key, value) {
-      if(!map.getBounds().contains(markers[key].marker.getPosition())) {
-        markers[key].marker.setMap(null);
-        delete markers[key];
+      var marker = markers[key].marker;
+      if(typeof marker.getPosition === 'function') {
+        if(!map.getBounds().contains(marker.getPosition())) {
+          markers[key].marker.setMap(null);
+          delete markers[key];
+        }
+      } else if(typeof marker.getCenter === 'function') {
+        if(!map.getBounds().contains(marker.getCenter())) {
+          markers[key].marker.setMap(null);
+          delete markers[key];
+        }
       }
   });
 }
