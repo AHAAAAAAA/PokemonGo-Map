@@ -62,7 +62,7 @@ def parse_db_config(args):
     args.db_user = Config.get('Database', 'Database_User')
     args.db_pass = Config.get('Database', 'Database_Pass')
     args.db_host = Config.get('Database', 'Database_Host')
-    args.db_port = Config.get('Database', 'Database_Port')
+    args.db_port = int(Config.get('Database', 'Database_Port'))
 
     return args
 
