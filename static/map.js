@@ -64,8 +64,8 @@ function initMap() {
         disableDoubleClickZoom: true,
         fullscreenControl: true,
         streetViewControl: false,
-		mapTypeControl: true,
-		mapTypeControlOptions: {
+        mapTypeControl: true,
+        mapTypeControlOptions: {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
