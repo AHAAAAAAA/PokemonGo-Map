@@ -33,7 +33,8 @@ def init_database():
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
-            host=args.db_host)
+            host=args.db_host,
+            port=int(args.db_port))
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)
