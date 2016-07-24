@@ -129,6 +129,8 @@ def get_top_pokemon(session, count=30, order='DESC'):
 
 def get_stage2_pokemon(session):
     result = []
+    if not hasattr(config, 'STAGE2'):
+        return []
     for pokemon_id in config.STAGE2:
         count = session.query(Sighting) \
             .filter(Sighting.pokemon_id == pokemon_id) \
