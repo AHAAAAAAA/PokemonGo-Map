@@ -479,6 +479,8 @@ function clearOutOfBoundsMarkers(markers) {
 }
 
 
+var lastUpdateTime = null;
+var lastUpdateParameters = {};
 function updateMap() {
 
     var loadPokemon = localStorage.showPokemon || true;
@@ -494,6 +496,22 @@ function updateMap() {
     var neLat = nePoint.lat();
     var neLng = nePoint.lng();
 
+    var updateParameters = {
+        pokemon: loadPokemon,
+        gyms: loadGyms,
+        pokestops: loadPokestops,
+        scanned: loadScanned,
+        swLat: swLat,
+        swLng: swLng,
+        neLat: neLat,
+        neLng: neLng
+    };
+
+    if (JSON.stringify(updateParameters) !== JSON.stringify(lastUpdateParameters)) {
+        lastUpdateTime = null;
+        lastUpdateParameters = updateParameters;
+    }
+
     $.ajax({
         url: "raw_data",
         type: 'GET',
@@ -505,10 +523,16 @@ function updateMap() {
             'swLat': swLat,
             'swLng': swLng,
             'neLat': neLat,
-            'neLng': neLng
+            'neLng': neLng,
+            'lastUpdate': lastUpdateTime ? lastUpdateTime.toISOString() : null
         },
         dataType: "json"
     }).done(function(result) {
+        lastUpdateTime = new Date(Date.parse(result.updateTime));
+
+        console.log('Got',(result.pokemons||[]).length,'pokemons,',(result.pokestops||[]).length,'pokestops,',(result.gyms||[]).length,'gyms,',(result.scanned||[]).length,'scans');
+
+
       $.each(result.pokemons, function(i, item){
           if (!(localStorage.showPokemon === 'true')) {
               return false; // in case the checkbox was unchecked in the meantime.
@@ -535,7 +559,7 @@ function updateMap() {
             else {
             	item2 = map_pokestops[item.pokestop_id];
             	if(!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            		item.marker.setMap(null);
+            		if (item.marker) item.marker.setMap(null);
                 	item.marker = setupPokestopMarker(item);
                 	map_pokestops[item.pokestop_id] = item;
             	}
