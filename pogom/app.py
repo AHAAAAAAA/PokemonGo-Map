@@ -23,6 +23,7 @@ class Pogom(Flask):
         compress.init_app(self)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
+        self.route("/vanilla", methods=['GET'])(self.vanillamap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
@@ -33,8 +34,22 @@ class Pogom(Flask):
         display = "inline"
         if args.fixed_location:
             display = "none"
-        
+
         return render_template('map.html',
+                               lat=config['ORIGINAL_LATITUDE'],
+                               lng=config['ORIGINAL_LONGITUDE'],
+                               gmaps_key=config['GMAPS_KEY'],
+                               lang=config['LOCALE'],
+                               is_fixed=display
+                               )
+
+    def vanillamap(self):
+        args = get_args()
+        display = "inline"
+        if args.fixed_location:
+            display = "none"
+
+        return render_template('map_vanilla.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
