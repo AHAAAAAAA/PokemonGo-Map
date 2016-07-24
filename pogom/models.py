@@ -3,7 +3,7 @@
 
 import logging
 import os
-from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
+from lib.peewee import Model, MySQLDatabase, SqliteDatabase, PostgresqlDatabase, InsertQuery, IntegerField,\
                    CharField, FloatField, BooleanField, DateTimeField,\
                    OperationalError
 from datetime import datetime
@@ -35,6 +35,13 @@ def init_database():
             password=args.db_pass,
             host=args.db_host)
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
+    elif args.db_type == 'postgresql':
+        db = PostgresqlDatabase(
+            args.db_name, 
+            user=args.db_user, 
+            password=args.db_pass, 
+            host=args.db_host)
+        log.info('Connecting to PostgreSQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)
         log.info('Connecting to local SQLLite database.')
@@ -293,7 +300,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
-    step = 120
+    step = 1 if args.db_type == 'postgresql' else 120
 
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
