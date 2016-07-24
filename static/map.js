@@ -156,7 +156,7 @@ function initSidebar() {
     $('#lured-pokemon-switch').prop('checked', localStorage.showLuredPokemon === 'true');
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
-	$('#hide-switch').prop('checked', localStorage.hidePokemon === 'true');
+    $('#hide-switch').prop('checked', localStorage.hidePokemon === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
@@ -487,7 +487,7 @@ function updateMap() {
     var loadGyms = localStorage.showGyms || true;
     var loadPokestops =  localStorage.showPokestops || localStorage.showLuredPokemon || false; //lured mons need pokestop data
     var loadScanned = localStorage.showScanned || false;
-	var hidePokemon = localStorage.hidePokemon || true;
+    var hidePokemon = localStorage.hidePokemon || true;
 
     var bounds = map.getBounds();
     var swPoint = bounds.getSouthWest();
@@ -670,8 +670,8 @@ $('#sound-switch').change(function() {
     localStorage["playSound"] = this.checked;
 });
 
-$('#hide-switch').change(function () {
-    localStorage["hidePokemon"] = this.checked;
+$('#hide-switch').change(function() {
+    localStorage['hidePokemon'] = this.checked;
     updateMap();
 });
 
