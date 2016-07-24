@@ -447,9 +447,11 @@ function updateMap() {
          });
 
          $.each(result.pokestops, function(i, item) {
-            if (!(localStorage.showPokemon === 'true') && item.lure_expiration) {
+            if (!(localStorage.showPokemon === 'true') || !item.lure_expiration) {
                 return false;
             }
+
+            console.log(item.lure_expiration)
 
             var last_modified_date = new Date(item.last_modified);
             var current_date = new Date();
@@ -479,7 +481,7 @@ function updateMap() {
             }
         });
 
-        $.each(result.gyms, function(i, item){
+        $.each(result.gyms, function(i, item) {
             if (!(localStorage.showGyms === 'true')) {
                 return false; // in case the checkbox was unchecked in the meantime.
             }
