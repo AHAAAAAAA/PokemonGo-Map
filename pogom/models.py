@@ -15,7 +15,7 @@ from .utils import get_pokemon_name, load_credentials, get_args
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)14s] [%(levelname)7s] %(message)s')
 
 log = logging.getLogger(__name__)
 

@@ -20,7 +20,7 @@ from exceptions import APIKeyException
 
 DEFAULT_THREADS = 1
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)14s] [%(levelname)7s] %(message)s')
 log = logging.getLogger(__name__)
 
 def parse_unicode(bytestring):
