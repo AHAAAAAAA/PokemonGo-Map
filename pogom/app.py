@@ -30,17 +30,20 @@ class Pogom(Flask):
 
     def fullmap(self):
         args = get_args()
-        display = "inline"
+        display_location = "inline"
+        display_settings = "inline"
         if args.fixed_location:
-            display = "none"
-        
+            display_location = "none"
+        if args.fixed_settings:
+            display_settings = "none"
+
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
-                               is_fixed=display
-                               )
+                               is_fixed_location=display_location,
+                               is_fixed_settings=display_settings)
 
     def raw_data(self):
         d = {}
