@@ -6,6 +6,7 @@ import time
 import math
 
 from threading import Thread, Lock
+from queue import Queue
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -26,6 +27,8 @@ lng_gap_meters = 86.6
 #111111m is approx 1 degree Lat, which is close enough for this
 meters_per_degree = 111111
 lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
+
+search_queue = Queue(config['SEARCH_QUEUE_DEPTH'])
 
 def calculate_lng_degrees(lat):
     return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
@@ -98,32 +101,39 @@ def login(args, position):
 
     log.info('Login to Pokemon Go successful.')
 
+def create_search_threads(num) :
+    search_threads = []
+    for i in range(num):
+        t = Thread(target=search_thread, name='search_thread {}'.format(i), args=( search_queue,))
+        t.daemon = True
+        t.start()
+        search_threads.append(t)
 
 def search_thread(args):
-    i, total_steps, step_location, step, lock = args
+    queue = args
+    while True:
+        i, total_steps, step_location, step, lock = queue.get()
+        log.info("Search queue depth is: " + str(queue.qsize()))
+        response_dict = {}
+        failed_consecutive = 0
+        while not response_dict:
+            response_dict = send_map_request(api, step_location)
+            if response_dict:
+                with lock:
+                    try:
+                        parse_map(response_dict, i, step, step_location)
+                    except KeyError:
+                        log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
+                        failed_consecutive += 1
+                        if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                            log.error('Niantic servers under heavy load. Waiting before trying again')
+                            time.sleep(config['REQ_HEAVY_SLEEP'])
+                            failed_consecutive = 0
+                        response_dict = {}
+            else:
+                log.info('Map Download failed. Trying again.')
 
-    log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
-    log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
-
-    response_dict = {}
-    failed_consecutive = 0
-    while not response_dict:
-        response_dict = send_map_request(api, step_location)
-        if response_dict:
-            with lock:
-                try:
-                    parse_map(response_dict, i, step, step_location)
-                except KeyError:
-                    log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
-                    failed_consecutive += 1
-                    if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                        log.error('Niantic servers under heavy load. Waiting before trying again')
-                        time.sleep(config['REQ_HEAVY_SLEEP'])
-                        failed_consecutive = 0
-        else:
-            log.info('Map Download failed. Trying again.')
-
-    time.sleep(config['REQ_SLEEP'])
+        time.sleep(config['REQ_SLEEP'])
 
 def process_search_threads(search_threads, curr_steps, total_steps):
     for thread in search_threads:
@@ -164,16 +174,8 @@ def search(args, i):
             search(args, i)
             return
 
-        search_args = (i, total_steps, step_location, step, lock)
-        search_threads.append(Thread(target=search_thread, name='search_step_thread {}'.format(step), args=(search_args, )))
-
-        if step % max_threads == 0:
-            curr_steps = process_search_threads(search_threads, curr_steps, total_steps)
-            search_threads = []
-
-    if search_threads:
-        process_search_threads(search_threads, curr_steps, total_steps)
-
+        search_args = ( i, total_steps, step_location, step, lock)
+        search_queue.put(search_args)
 
 def search_loop(args):
     i = 0
