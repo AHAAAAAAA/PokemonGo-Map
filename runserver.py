@@ -13,6 +13,10 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.search import search_loop, search_loop_stop, search_loop_start
 from pogom.utils import get_args, insert_mock_data, load_credentials
+<<<<<<< HEAD
+=======
+from pogom.search import search_loop, create_search_threads
+>>>>>>> d4a5d169941f37f63ffdc07301f055569ab49748
 from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
@@ -95,6 +99,7 @@ if __name__ == '__main__':
     config['CHINA'] = args.china
 
     if not args.only_server:
+        create_search_threads(args.num_threads)
         if not args.mock:
             start_locator_thread()
         else:
