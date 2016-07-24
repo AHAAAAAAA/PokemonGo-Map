@@ -465,8 +465,7 @@ function clearStaleMarkers() {
     
     $.each(map_pokestops, function(key, value) {
 
-        if (!!!map_pokestops[key]['dead'] && !!map_pokestops[key]['lure_expiration'] && map_pokestops[key]['lure_expiration'] < new Date().getTime()) {
-            	console.log("Clearing lure #" +map_pokestops[key].pokestop_id);
+        if (!map_pokestops[key]['dead'] && !!map_pokestops[key]['lure_expiration'] && map_pokestops[key]['lure_expiration'] < new Date().getTime()) {
 	        map_pokestops[key].marker.setMap(null);
 	        map_pokestops[key]['dead'] = true;
             	map_pokestops[key].marker = setupPokestopMarker(map_pokestops[key]);
@@ -557,7 +556,6 @@ function updateMap() {
             	item2 = map_pokestops[item.pokestop_id];
             	if(!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
             		if(item.marker)item.marker.setMap(null);
-            		console.log("Replacing lure #" +item.pokestop_id);
                 	item.marker = setupPokestopMarker(item);
                 	map_pokestops[item.pokestop_id] = item;
             	}
