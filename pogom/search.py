@@ -192,4 +192,5 @@ def search_loop(args):
 
 def fake_search_loop(args):
     while True:
+        log.info('Fake search loop running...')
         time.sleep(10)

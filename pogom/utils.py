@@ -117,6 +117,9 @@ def insert_mock_data():
     num_pokestop = 6
     num_gym = 6
 
+    log.info('Creating fake: {} pokemon, {} pokestops, {} gyms'.format(
+        num_pokemon, num_pokestop, num_gym))
+
     from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
