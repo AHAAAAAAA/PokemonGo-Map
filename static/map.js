@@ -121,8 +121,8 @@ function initMap() {
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'false');
     $('#pokemon-switch').prop('checked', localStorage.showPokemon === 'true');
-    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'false');
-    $('#scanned-switch').prop('checked', localStorage.showScanned === 'false');
+    $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
+    $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
 
     var browserLocationButton = $(document.getElementById('browser-location'));
     var browserLocationButtonDefaultText = browserLocationButton.text();
