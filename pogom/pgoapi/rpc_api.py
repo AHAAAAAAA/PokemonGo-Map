@@ -77,7 +77,7 @@ class RpcApi:
     
         if not self._auth_provider or self._auth_provider.is_login() is False:
             raise NotLoggedInException()
-    
+
         request_proto = self._build_main_request(subrequests, player_position)
         response = self._make_rpc(endpoint, request_proto)
         
