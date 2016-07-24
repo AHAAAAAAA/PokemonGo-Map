@@ -648,11 +648,6 @@ function updateMap() {
 };
 
 
-$('#pokemon-icons').change(function() {
-    localStorage["pokemonIcons"] = this.value;
-    redrawPokemon(map_pokemons);
-    redrawPokemon(map_lure_pokemons);
-});
 
 function redrawPokemon(pokemon_list) {
     $.each(pokemon_list, function(key, value) {
@@ -899,6 +894,12 @@ $(function () {
 
     $('#sound-switch').change(function() {
         localStorage["playSound"] = this.checked;
+    });
+
+    $('#pokemon-icons').change(function() {
+        localStorage["pokemonIcons"] = this.value;
+        redrawPokemon(map_data.pokemons);
+        redrawPokemon(map_data.lure_pokemons);
     });
 
 });
