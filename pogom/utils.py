@@ -43,14 +43,14 @@ def parse_config(args):
     args.location = Config.get('Search_Settings', 'Location')
     args.step_limit = int(Config.get('Search_Settings', 'Steps'))
     args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
-    args.no_pokemon = Config.get('Search_Settings', 'Disable_Pokemon')
-    args.no_pokestops = Config.get('Search_Settings', 'Disable_Pokestops')
-    args.no_gyms = Config.get('Search_Settings', 'Disable_Gyms')
+    args.no_pokemon = Config.getboolean('Search_Settings', 'Disable_Pokemon')
+    args.no_pokestops = Config.getboolean('Search_Settings', 'Disable_Pokestops')
+    args.no_gyms = Config.getboolean('Search_Settings', 'Disable_Gyms')
     if Config.get('Misc', 'Google_Maps_API_Key') :
-        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
-    args.host = Config.get('Misc', 'Host') 
-    args.port = Config.get('Misc', 'Port') 
-    
+        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
+    args.host = Config.get('Misc', 'Host')
+    args.port = Config.get('Misc', 'Port')
+
     return args
 
 def parse_db_config(args):
@@ -99,17 +99,23 @@ def get_args():
     args = parse_db_config(args)
 
     if (args.settings):
-        args = parse_config(args) 
+        args = parse_config(args)
     else:
-        if (args.username is None or args.location is None or args.step_limit is None):
-            parser.print_usage()
-            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
-            sys.exit(1);
+        if args.only_server:
+            if args.location is None:
+                parser.print_usage()
+                print sys.argv[0] + ': error: arguments -l/--location is required'
+                sys.exit(1);
+        else:
+            if (args.username is None or args.location is None or args.step_limit is None):
+                parser.print_usage()
+                print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
+                sys.exit(1);
 
-        if config["PASSWORD"] is None and args.password is None:
-            config["PASSWORD"] = args.password = getpass.getpass()
-        elif args.password is None:
-            args.password = config["PASSWORD"]
+            if config["PASSWORD"] is None and args.password is None:
+                config["PASSWORD"] = args.password = getpass.getpass()
+            elif args.password is None:
+                args.password = config["PASSWORD"]
 
 
     return args
