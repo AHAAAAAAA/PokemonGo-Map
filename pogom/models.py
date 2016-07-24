@@ -6,7 +6,7 @@ import os
 import calendar
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
-                   DateTimeField, OperationalError, create_model_tables
+                   DateTimeField, OperationalError, create_model_tables, fn
 from playhouse.flask_utils import FlaskDB
 from playhouse.pool import PooledMySQLDatabase
 from playhouse.shortcuts import RetryOperationalError
@@ -135,6 +135,25 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    @classmethod
+    def get_seen(cls, timediff):
+        if timediff == 0:
+            query = (Pokemon
+                     .select(Pokemon.pokemon_id, fn.COUNT(Pokemon.pokemon_id).alias('count'))
+                     .group_by(Pokemon.pokemon_id)
+                     .dicts())
+        else:
+            query = (Pokemon
+                     .select(Pokemon.pokemon_id, fn.COUNT(Pokemon.pokemon_id).alias('count'))
+                     .where(Pokemon.disappear_time > datetime.utcnow() - timediff)
+                     .group_by(Pokemon.pokemon_id)
+                     .dicts())
+        pokemons = []
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemons.append(p)
+
+        return pokemons
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True, max_length=50)
