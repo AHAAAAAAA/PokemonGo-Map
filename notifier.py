@@ -39,8 +39,15 @@ def init():
 def _str(s):
   return s.encode('utf-8').strip()
 
+  
+
+  
+  
 # Notify user for discovered Pokemon
 def pokemon_found(pokemon):
+    #pushbulley channel 
+    # Or retrieve a channel by its channel_tag. Note that an InvalidKeyError is raised if the channel_tag does not exist
+    my_channel = pushbullet_client.get_channel('CHANNELNAME HERE')  
     # get name
     pokename = _str(pokemon["name"]).lower()
     # check array
@@ -57,11 +64,11 @@ def pokemon_found(pokemon):
     latLon = '{},{}'.format(repr(pokemon["lat"]), repr(pokemon["lng"]))
     google_maps_link = 'http://maps.google.com/maps/place/{}/@{},{}z'.format(latLon, latLon, 20)
 
-    notification_text = "Pokemon Finder found " + _str(pokemon["name"]) + "!"
+    notification_text = "Pokemon Found " + _str(pokemon["name"]) + "!"
     disappear_time = str(datetime.fromtimestamp(pokemon["disappear_time"]).strftime("%I:%M%p").lstrip('0'))+")"
-    location_text = _str(pokemon["name"]) + " will be available until " + disappear_time + "."
-
-    push = pushbullet_client.push_link(notification_text, google_maps_link, body=location_text)
+    location_text = "Location : " + google_maps_link + ". " + _str(pokemon["name"]) + " Available till " + disappear_time + "."
+    push = pushbullet_client.push_link(notification_text, google_maps_link, body=location_text, channel=my_channel)
+    #push = pushbullet_client.push_link(notification_text, google_maps_link, body=location_text)
 
 
 
