@@ -1,0 +1,32 @@
+#Provide Pokemon Go Credentials here. This section must be filled out!
+
+[Authentication]
+# ptc or google
+Service: ptc
+Username: 
+Password: 
+
+[Database]
+# Possible values: sqlite, mysql
+Type: sqlite
+# The following are only required if it's not sqlite
+Database_Name: 
+Database_User: 
+Database_Pass: 
+Database_Host: 
+
+[Search_Settings]
+Steps: 12
+Location: 
+#Time delay before beginning new scan
+Scan_delay: 1
+# Disable Map elements
+disable_pokemon: false
+disable_pokestops: false
+disable_gyms: false
+
+[Misc]
+#you need a google maps api key to run this!
+Google_Maps_API_Key :
+Host: 127.0.0.1
+Port: 5000
