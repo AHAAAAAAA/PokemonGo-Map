@@ -468,7 +468,10 @@ function clearStaleMarkers() {
         if (!map_pokestops[key]['dead'] && !!map_pokestops[key]['lure_expiration'] && map_pokestops[key]['lure_expiration'] < new Date().getTime()) {
 	        map_pokestops[key].marker.setMap(null);
 	        map_pokestops[key]['dead'] = true;
-            	map_pokestops[key].marker = setupPokestopMarker(map_pokestops[key]);
+	        if (!(localStorage.showPokestops === 'true')) {
+                	map_pokestops[key].marker = setupPokestopMarker(map_pokestops[key]);
+            	}
+            	
             }
     });
 
