@@ -6,7 +6,7 @@ import logging
 
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
-from flask.ext.compress import Compress
+from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
 from pogom.utils import get_args
