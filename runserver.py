@@ -77,8 +77,9 @@ if __name__ == '__main__':
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
-    # Gather the pokemons!
-    search_thread = start_locator_thread(args)
+    if not args.only_server:
+        # Gather the pokemons!
+        search_thread = start_locator_thread(args)
 
     app = Pogom(__name__)
 
