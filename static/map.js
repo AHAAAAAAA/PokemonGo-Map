@@ -31,7 +31,7 @@ var map_pokestops = {}
 var map_lure_pokemons = {}
 var map_scanned = {}
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
-var audio = new Audio('static/sounds/ding.mp3');
+var audio_base_url = 'static/sounds/cries/';
 
 //
 // Functions
@@ -315,7 +315,7 @@ function setupPokemonMarker(item) {
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
         if (localStorage.playSound === 'true') {
-          audio.play();
+          new Audio(audio_base_url + item.pokemon_id).play();
         }
 
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
