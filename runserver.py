@@ -11,17 +11,41 @@ from flask_cors import CORS, cross_origin
 
 from pogom import config
 from pogom.app import Pogom
+from pogom.search import search_loop, search_loop_stop, search_loop_start, create_search_threads
 from pogom.utils import get_args, insert_mock_data, load_credentials
-from pogom.search import search_loop, create_search_threads
 from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
-search_thread = Thread()
 
-def start_locator_thread(args):
+class SearchControl():
+    def __init__(self):
+        if args.search_control:
+            self.state = 'searching'
+        else:
+            self.state = 'disabled'
+        return
+    def start(self):
+        if self.state == 'searching' or self.state == 'disabled':
+            return
+        log.info('Start')
+        start_locator_thread()
+        self.state = 'searching'
+    def stop(self):
+        if self.state == 'idle' or self.state == 'disabled':
+            return
+        log.info('Stop')
+        search_loop_stop()
+        self.state = 'idle'
+    def status(self):
+        return self.state
+
+def start_locator_thread():
+    global args
+    global search_thread
+    search_loop_start()
     search_thread = Thread(target=search_loop, args=(args,))
     search_thread.daemon = True
     search_thread.name = 'search_thread'
@@ -73,12 +97,15 @@ if __name__ == '__main__':
     if not args.only_server:
         create_search_threads(args.num_threads)
         if not args.mock:
-            start_locator_thread(args)
+            start_locator_thread()
         else:
             insert_mock_data()
 
     app = Pogom(__name__)
 
+    control = SearchControl()
+    app.set_search_control(control)
+    
     if args.cors:
         CORS(app);
 
@@ -89,8 +116,11 @@ if __name__ == '__main__':
         config['GMAPS_KEY'] = load_credentials(os.path.dirname(os.path.realpath(__file__)))['gmaps_key']
 
     if args.no_server:
-        while not search_thread.isAlive():
-            time.sleep(1)
-        search_thread.join()
+        while True:
+            try:
+                time.sleep(1)
+            except:
+                control.stop()
+                break
     else:
         app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)

@@ -27,6 +27,24 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/search_control", methods=['GET'])(self.search_control_status)
+        self.route("/search_control", methods=['POST'])(self.search_control)
+    
+    def set_search_control(self, control):
+        self.control = control
+    
+    def search_control_status(self):
+        return jsonify({'status': self.control.status()})
+
+    def search_control(self):
+        action = request.args.get('action','none')
+        if action == 'stop':
+            self.control.stop()
+        elif action == 'start':
+            self.control.start()
+        else:
+            return jsonify({'message':'invalid use of api'})
+        return self.search_control_status()
 
     def fullmap(self):
         args = get_args()
@@ -39,7 +57,8 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
-                               is_fixed=display
+                               is_fixed=display,
+                               has_search_control="block" if args.search_control else "none"
                                )
 
     def raw_data(self):
