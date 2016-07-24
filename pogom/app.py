@@ -28,7 +28,7 @@ class Pogom(Flask):
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
         self.route("/stats", methods=['GET'])(self.get_stats)
-        self.route("/rarity", methods=['GET'])(self.get_history)
+        self.route("/rarity", methods=['GET'])(self.get_rarity)
 
     def fullmap(self):
         args = get_args()
@@ -44,8 +44,12 @@ class Pogom(Flask):
                                is_fixed=display
                                )
 
-    def get_history(self):
-        pokemons = Pokemon.get_history_by_location(None, None, None, None)
+    def get_rarity(self):
+        swLat = request.args.get('swLat')
+        swLng = request.args.get('swLng')
+        neLat = request.args.get('neLat')
+        neLng = request.args.get('neLng')
+        pokemons = Pokemon.get_history_by_location(swLat, swLng, neLat, neLng)
         class P:
             def __init__(self, p_id, percentage):
                 self.p_id = p_id

@@ -134,7 +134,7 @@ class Pokemon(BaseModel):
                             (Pokemon.longitude >= swLng) &
                             (Pokemon.latitude <= neLat) &
                             (Pokemon.longitude <= neLng))
-                     .tuples()) 
+                     .dicts()) 
         pokemons = {}
         query_result = list(query)
         if len(query_result) == 0:
