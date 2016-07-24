@@ -70,10 +70,11 @@ if __name__ == '__main__':
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
-    if not args.mock:
-        start_locator_thread(args)
-    else:
-        insert_mock_data()
+    if not args.only_server:
+        if not args.mock:
+            start_locator_thread(args)
+        else:
+            insert_mock_data()
 
     app = Pogom(__name__)
 
