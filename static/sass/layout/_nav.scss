@@ -59,6 +59,11 @@
 				}
 			}
 		}
+  
+    .form-control > select {
+      float: right;
+      font-size: 18px;
+    }
 
 		.close {
 			@include icon('\f00d');

@@ -32,6 +32,10 @@ var map_lure_pokemons = {}
 var map_scanned = {}
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('static/sounds/ding.mp3');
+var pokemon_sprites = {
+    default: {columns: 12, width: 30, height: 30, filename: 'static/icons-sprite.png', name: 'Small'},
+    large:   {columns: 7,  width: 65, height: 65, filename: 'static/icons-large-sprite.png', name: 'Large'}
+};
 
 //
 // Functions
@@ -170,6 +174,12 @@ function initSidebar() {
         var loc = places[0].geometry.location;
         changeLocation(loc.lat(), loc.lng());
     });
+
+    var icons = $('#pokemon-icons');
+    $.each(pokemon_sprites, function(key, value) {
+        icons.append($('<option></option>').attr("value", key).text(value.name));
+    });
+    icons.val(localStorage.pokemonIcons || 'default');
 }
 
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
@@ -288,16 +298,19 @@ function scannedLabel(last_modified) {
     return contentstring;
 };
 
-// this could use a refactor...
-function calculateSpritePoints(num) {
-    var y = Math.floor((num - 1) / 12);
-    var x = (num - 1) % 12;
 
-    return new google.maps.Point(30 * x, 30 * y);
+function getGoogleSprite(index, sprite_set) {
+    var sprite = pokemon_sprites[sprite_set] || pokemon_sprites['default'];
+    var size = new google.maps.Size(sprite.width, sprite.height);
+    var offset = new google.maps.Point(
+        (index % sprite.columns) * sprite.width,
+        Math.floor(index / sprite.columns) * sprite.height);
+    return new google.maps.MarkerImage(sprite.filename, size, offset);
 }
 
 function setupPokemonMarker(item) {
-    var icon = new google.maps.MarkerImage("static/icons-sprite.png", new google.maps.Size(30, 30), calculateSpritePoints(parseInt(item.pokemon_id)));
+    var pokemon_index = item.pokemon_id - 1;
+    var icon = getGoogleSprite(pokemon_index, localStorage.pokemonIcons || 'default');
     var marker = new google.maps.Marker({
         position: {
             lat: item.latitude,
@@ -677,6 +690,21 @@ $('#scanned-switch').change(function() {
         map_scanned = {}
     }
 });
+
+$('#pokemon-icons').change(function() {
+    localStorage["pokemonIcons"] = this.value;
+    redrawPokemon(map_pokemons);
+    redrawPokemon(map_lure_pokemons);
+});
+
+function redrawPokemon(pokemon_list) {
+    $.each(pokemon_list, function(key, value) {
+        let item =  pokemon_list[key];
+        let new_marker = setupPokemonMarker(item);
+        item.marker.setMap(null);
+        pokemon_list[key].marker = new_marker;
+    });
+};
 
 var updateLabelDiffTime = function() {
     $('.label-countdown').each(function(index, element) {
