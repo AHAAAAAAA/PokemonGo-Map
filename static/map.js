@@ -822,7 +822,7 @@ function changeLocation(location, successCallback, failCallback) {
         promise.done(successCallback);
     }
     if (failCallback) {
-        promise.fai(failCallback);
+        promise.fail(failCallback);
     }
 }
 
