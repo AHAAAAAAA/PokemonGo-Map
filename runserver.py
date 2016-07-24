@@ -45,6 +45,7 @@ class SearchControl():
 
 def start_locator_thread():
     global args
+    global search_thread
     search_loop_start()
     search_thread = Thread(target=search_loop, args=(args,))
     search_thread.daemon = True
