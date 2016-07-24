@@ -511,14 +511,14 @@ function loadRawData() {
         },
         dataType: "json",
 		beforeSend: function() {
-			if (rawDataIsLoading) {
-				return false;
-			} else {
-				rawDataIsLoading = true;
-			}
+		    if (rawDataIsLoading) {
+		        return false;
+		    } else {
+		        rawDataIsLoading = true;
+		    }
 		},
 		complete: function() {
-			rawDataIsLoading = false;
+		    rawDataIsLoading = false;
 		}
     })
 }
