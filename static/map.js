@@ -115,7 +115,6 @@ function initMap() {
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
-
 };
 
 function createSearchMarker() {
