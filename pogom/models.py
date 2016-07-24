@@ -168,6 +168,27 @@ class Gym(BaseModel):
     longitude = FloatField()
     last_modified = DateTimeField()
 
+    @classmethod
+    def get_gyms(cls, swLat, swLng, neLat, neLng):
+        if swLat == None or swLng == None or neLat == None or neLng == None:
+            query = (Gym
+                 .select()
+                 .dicts())
+        else:
+            query = (Gym
+                 .select()
+                 .where((Gym.latitude >= swLat) &
+                    (Gym.longitude >= swLng) &
+                    (Gym.latitude <= neLat) &
+                    (Gym.longitude <= neLng))
+                 .dicts())
+
+        gyms = []
+        for g in query:
+            gyms.append(g)
+
+        return gyms
+
 class ScannedLocation(BaseModel):
     scanned_id = CharField(primary_key=True)
     latitude = FloatField()
