@@ -101,6 +101,8 @@
         <h1>Pokeminer Report</h1>
         <h4>Generated on {{ current_date.strftime('%Y-%m-%d %H:%M:%S') }}</h4>
 
+        <p><b>Disclaimer:</b> data may be incomplete due to various issues that might have happened (bugs, unstable servers, bugs on the servers etc.). If there is data about a sighting of a Pokemon in given location at particular time, almost certainly such spawning happened. On the other hand, there is no guarantee that Pokeminer database contains <i>all</i> spawnings, so there might be wild Pokemon not contained in this report. Your mileage may vary.</p>
+
         <p>This report contains statistics about data gathered during mining session for the city of {{ city }}.</p>
 
         <p>During that session, <b> {{ total_spawn_count }}</b> Pokemon have been seen on an area of about <b>{{ area }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>. There were {{ spawns_per_hour }} spawns per hour on average.</p>
@@ -117,9 +119,9 @@
 
         <div id="heatmap" class="map"></div>
 
-        <h3>Most &amp; least frequent species</h2>
+        <h3>Most &amp; least frequently spawning species</h2>
 
-        <p><b>Top 30 </b> that spawned the most number of times during above period:</p>
+        <p><b>Top 30</b> that spawned the most number of times during above period:</p>
 
         <div class="text-center">
             {% for icon in icons.top30 %}
@@ -149,7 +151,7 @@
 
         <h3>Evolutions and rare Pokemon</h3>
 
-        <p><b>Stage 2 evolutions</b> and Pokemon considered "rare", together with their spawning places:</p>
+        <p><b>Stage 2 evolutions</b> and Pokemon subjectively considered "rare" by author of this report, together with their spawning places:</p>
 
         <div class="text-center">
             {% for icon in icons.stage2 %}
