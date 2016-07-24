@@ -105,6 +105,7 @@ def create_search_threads(num) :
     search_threads = []
     for i in range(num):
         t = Thread(target=search_thread, name='search_thread {}'.format(i), args=( search_queue,))
+        t.daemon = True
         t.start()
         search_threads.append(t)
 
