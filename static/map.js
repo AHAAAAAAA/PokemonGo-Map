@@ -231,7 +231,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
     return str;
 }
 
-function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longitude) {
+function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longitude, dead) {
     var str;
     if (lured) {
         var active_pokemon = idToPokemon[active_pokemon_id];
@@ -243,18 +243,26 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
 
         var expire_date = new Date(current_date.getTime() + time_until_expire);
         var expire_time = expire_date.getTime();
-
-        str = `
-            <div>
-                <b>Lured Pokéstop</b>
-            </div>
-            <div>
+	
+	var waitText;
+	if(dead) {
+		waitText = "<div>Lured Pokemon: Waiting for scan...</div>";
+	}
+	else {
+		waitText = `<div>
                 Lured Pokémon: ${active_pokemon}
                 <span> - </span>
                 <small>
                     <a href='http://www.pokemon.com/us/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>
                 </small>
+            </div>`
+	}
+	
+        str = `
+            <div>
+                <b>Lured Pokéstop</b>
             </div>
+            ` + waitText + `
             <div>
                 Lure expires at ${pad(expire_date.getHours())}:${pad(expire_date.getMinutes())}:${pad(expire_date.getSeconds())}
                 <span class='label-countdown' disappears-at='${expire_time}'>(00m00s)</span></div>
@@ -356,10 +364,13 @@ function setupPokestopMarker(item) {
         optimized: false,
         icon: 'static/forts/' + imagename + '.png',
     });
-
-
+    current_time = (new Date()).getTime();
+    var dead = false;
+    if((new Date(item.lure_expiration)).getTime() < current_time) {
+    	dead = true;
+    }
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude +.003, item.longitude+ .003)
+        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude +.003, item.longitude+ .003, dead)
     });
 
     addListeners(marker);
@@ -451,6 +462,16 @@ function clearStaleMarkers() {
             delete map_lure_pokemons[key];
         }
     });
+    
+    $.each(map_pokestops, function(key, value) {
+
+        if (!!!map_pokestops[key]['dead'] && !!map_pokestops[key]['lure_expiration'] && map_pokestops[key]['lure_expiration'] < new Date().getTime()) {
+            	console.log("Clearing lure #" +map_pokestops[key].pokestop_id);
+	        map_pokestops[key].marker.setMap(null);
+	        map_pokestops[key]['dead'] = true;
+            	map_pokestops[key].marker = setupPokestopMarker(map_pokestops[key]);
+            }
+    });
 
     $.each(map_scanned, function(key, value) {
         //If older than 15mins remove
@@ -535,7 +556,8 @@ function updateMap() {
             else {
             	item2 = map_pokestops[item.pokestop_id];
             	if(!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            		item.marker.setMap(null);
+            		if(item.marker)item.marker.setMap(null);
+            		console.log("Replacing lure #" +item.pokestop_id);
                 	item.marker = setupPokestopMarker(item);
                 	map_pokestops[item.pokestop_id] = item;
             	}
@@ -638,7 +660,7 @@ $('#pokemon-switch').change(function() {
 });
 
 $('#lured-pokemon-switch').change(function() {
-    localStorage["showPokemon"] = this.checked;
+    localStorage["showLuredPokemon"] = this.checked;
     if (this.checked) {
         updateMap();
     } else {
