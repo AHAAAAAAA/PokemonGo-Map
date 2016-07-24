@@ -297,7 +297,7 @@ function calculateSpritePoints(num) {
 }
 
 function setupPokemonMarker(item) {
-    var icon = new google.maps.MarkerImage("static/icons-sprite.png", new google.maps.Size(30, 30), calculateSpritePoints(parseInt(item.pokemon_id)));
+    var icon = new google.maps.MarkerImage("static/icons-sprite@2x.png", new google.maps.Size(30, 30), calculateSpritePoints(parseInt(item.pokemon_id)), new google.maps.Point(15, 15), new google.maps.Size(360, 390));
     var marker = new google.maps.Marker({
         position: {
             lat: item.latitude,
