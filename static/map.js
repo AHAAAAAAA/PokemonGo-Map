@@ -322,7 +322,7 @@ function createSearchMarker() {
     google.maps.event.addListener(map, 'mouseup', function(e) { 
         longpress = false;
     });
-    google.maps.event.addListener(map, 'dragstart', function(e) { 
+    google.maps.event.addListener(map, 'drag', function(e) { 
         longpress = false;
     });
 
