@@ -107,6 +107,7 @@ function initMapHelper(center_lat, center_lng) {
     map.setMapTypeId(localStorage['map_style']);
 
     marker = new google.maps.Marker({
+        draggable: true,
         position: {
             lat: center_lat,
             lng: center_lng
@@ -115,12 +116,32 @@ function initMapHelper(center_lat, center_lng) {
         animation: google.maps.Animation.DROP
     });
 
+    google.maps.event.addListener(marker, "dragend", function (event) {
+      var lat = event.latLng.lat();
+      var lng = event.latLng.lng();
+
+      CONFIG.latitude = lat;
+      CONFIG.longitude = lng;
+      updateMap();
+    });
+
+    CONFIG.marker = marker;
+
     initSidebar();
     updateMap();
+    window.setInterval(updateMap, 5000);
 };
 
 function initMap() {
+  if (CONFIG.requireLogin && !CONFIG.accessToken) {
+    return;
+  }
+
   initMapHelper(CONFIG.latitude, CONFIG.longitude);
+
+  if (localStorage.geoIsAllowed) {
+    updateGeolocation();
+  }
 }
 
 function initSidebar() {
@@ -140,6 +161,8 @@ function initSidebar() {
         }
 
         var loc = places[0].geometry.location;
+        CONFIG.latitude = loc.lat();
+        CONFIG.longitude = loc.lng();
         $.post("next_loc?lat=" + loc.lat() + "&lon=" + loc.lng(), {}).done(function (data) {
             $("#next-location").val("");
             map.setCenter(loc);
@@ -409,12 +432,17 @@ function updateMap() {
 
     $.ajax({
         url: "raw_data",
-        type: 'GET',
+        method: 'GET',
         data: {
+            'latitude': CONFIG.latitude,
+            'longitude': CONFIG.longitude,
             'pokemon': localStorage.showPokemon,
             'pokestops': localStorage.showPokestops,
             'gyms': localStorage.showGyms,
             'scanned': localStorage.showScanned
+        },
+        headers: {
+          'Authorization': 'Bearer ' + CONFIG.accessToken
         },
         dataType: "json"
     }).done(function(result) {
@@ -486,8 +514,6 @@ function updateMap() {
         clearStaleMarkers();
     });
 };
-
-window.setInterval(updateMap, 5000);
 
 document.getElementById('gyms-switch').onclick = function() {
     localStorage["showGyms"] = this.checked;
@@ -584,3 +610,90 @@ function sendNotification(title, text, icon) {
         };
     }
 }
+
+function logout() {
+  CONFIG.accessToken = null;
+  localStorage.removeItem('accessToken');
+  //clearInterval(CONFIG.updateMapInterval);
+  $('.js-map').hide();
+  $('.js-geolocation').hide();
+  $('.js-login-container').show();
+}
+
+function updateGeolocation() {
+  function updatePos(position) {
+    localStorage.geoIsAllowed = 'true';
+
+    CONFIG.latitude = position.coords.latitude;
+    CONFIG.longitude = position.coords.longitude;
+    CONFIG.marker.setPosition(new google.maps.LatLng(CONFIG.latitude, CONFIG.longitude));
+    // http://stackoverflow.com/questions/10917648/google-maps-api-v3-recenter-the-map-to-a-marker
+    map.setCenter(marker.getPosition());
+    updateMap();
+  }
+
+  window.navigator.geolocation.getCurrentPosition(updatePos);
+
+  if (!CONFIG.watchGeo) {
+    CONFIG.watchGeo = navigator.geolocation.watchPosition(updatePos);
+  }
+}
+
+$(function () {
+  'use strict';
+
+  if (!CONFIG.requireLogin) {
+    $('.js-login-container').hide();
+    return;
+  }
+
+  $('.js-map').hide();
+  $('.js-geolocation').hide();
+
+  $('body').on('click', '.js-geolocation', function (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    updateGeolocation();
+  });
+
+  $('body').on('submit', 'form.js-login-form', function (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    $.ajax({
+        url: "/api/com.pokemon.go/login",
+        method: 'POST',
+        data: JSON.stringify({
+          username: $('.js-login-container .js-username').val()
+        , password: $('.js-login-container .js-password').val()
+        , provider: $('.js-login-container .js-provider').val() || 'ptc'
+        }),
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        dataType: "json"
+    }).then(function (result) {
+        console.log('DEBUG Login Result:');
+        console.log(result);
+
+        result.accessToken = result.accessToken || result.access_token;
+
+        if (!result.accessToken) {
+          // TODO show 'bad credentials'
+          $('.js-login-container .js-password').val('');
+          return;
+        }
+
+        CONFIG.accessToken = result.accessToken;
+        localStorage.setItem('accessToken', result.accessToken);
+
+        $('.js-map').show();
+        $('.js-geolocation').show();
+        $('.js-login-container').hide();
+        if (!map) {
+          initMap();
+        }
+    });
+  });
+});
