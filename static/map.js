@@ -306,6 +306,25 @@ function createSearchMarker() {
                 }
             });
     });
+    
+    var longpress = false;
+    google.maps.event.addListener(map, 'mousedown', function(e) { 
+        longpress = true;
+        setTimeout(function() {
+            if(longpress === true) {
+                changeSearchLocation(e.latLng.lat(), e.latLng.lng())
+                    .done(function() {
+                        marker.setPosition(e.latLng);
+                    });
+            }
+        }, 3000);
+    });
+    google.maps.event.addListener(map, 'mouseup', function(e) { 
+        longpress = false;
+    });
+    google.maps.event.addListener(map, 'dragstart', function(e) { 
+        longpress = false;
+    });
 
     return marker;
 }
