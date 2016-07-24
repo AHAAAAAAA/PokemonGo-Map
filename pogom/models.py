@@ -27,7 +27,6 @@ def init_database():
     if db is not None:
         return db
 
-    print args.db_type
     if args.db_type == 'mysql':
         db = MySQLDatabase(
             args.db_name,
