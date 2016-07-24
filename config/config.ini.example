@@ -7,7 +7,7 @@ Username:
 Password: 
 
 [Database]
-# Possible values: sqlite, mysql
+# Possible values: sqlite, mysql, postgresql
 Type: sqlite
 # The following are only required if it's not sqlite
 Database_Name: 

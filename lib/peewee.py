@@ -1847,7 +1847,7 @@ class QueryCompiler(object):
         meta = model._meta
         alias_map = self.alias_map_class()
         alias_map.add(model, model._meta.db_table)
-        if query._upsert:
+        if query._upsert and type(meta.database) is not PostgresqlDatabase:
             statement = meta.database.upsert_sql
         elif query._on_conflict:
             statement = 'INSERT OR %s INTO' % query._on_conflict
@@ -1890,6 +1890,21 @@ class QueryCompiler(object):
                 clauses.append(query.database.default_insert_clause(
                     query.model_class))
 
+        if query._upsert and type(meta.database) is PostgresqlDatabase:
+            update = []
+            for field in fields:
+                if not field.primary_key:
+                    update.append(Expression(
+                        field.as_entity(with_table=False),
+                        OP.EQ,
+                        SQL('EXCLUDED.' + field.db_column),
+                        flat=True))  # No outer parens, no table alias.
+            if update:
+                clauses.append(SQL('ON CONFLICT (%s) DO UPDATE SET' % meta.primary_key.name))
+                clauses.append(CommaClause(*update))
+            else:
+                clauses.append(SQL('ON CONFLICT (%s) DO NOTHING' % meta.primary_key.name))
+
         if query.is_insert_returning:
             clauses.extend([
                 SQL('RETURNING'),
@@ -1900,7 +1915,6 @@ class QueryCompiler(object):
             returning_clause = Clause(*query._returning)
             returning_clause.glue = ', '
             clauses.extend([SQL('RETURNING'), returning_clause])
-
 
         return self.build_query(clauses, alias_map)
 
