@@ -43,9 +43,9 @@ def parse_config(args):
     args.location = Config.get('Search_Settings', 'Location')
     args.step_limit = int(Config.get('Search_Settings', 'Steps'))
     args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
-    args.no_pokemon = Config.get('Search_Settings', 'Disable_Pokemon')
-    args.no_pokestops = Config.get('Search_Settings', 'Disable_Pokestops')
-    args.no_gyms = Config.get('Search_Settings', 'Disable_Gyms')
+    args.no_pokemon = Config.getboolean('Search_Settings', 'Disable_Pokemon')
+    args.no_pokestops = Config.getboolean('Search_Settings', 'Disable_Pokestops')
+    args.no_gyms = Config.getboolean('Search_Settings', 'Disable_Gyms')
     if Config.get('Misc', 'Google_Maps_API_Key') :
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
     args.host = Config.get('Misc', 'Host') 
