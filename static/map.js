@@ -548,20 +548,19 @@ function updateMap() {
                 return false;
             }
             var item2 = {pokestop_id: item.pokestop_id, lure_expiration: item.lure_expiration, pokemon_id: item.active_pokemon_id, latitude: item.latitude+ 0.00005, longitude: item.longitude + 0.00005, pokemon_name: idToPokemon[item.active_pokemon_id], disappear_time: item.lure_expiration}
-            if(map_lure_pokemons[item2.pokestop_id] == null  && !!item2.lure_expiration) {
+            if(map_lure_pokemons[item2.pokestop_id] == null  && item2.lure_expiration) {
             	//if (item.marker) item.marker.setMap(null);
                 item2.marker = setupPokemonMarker(item2);
   		map_lure_pokemons[item2.pokestop_id] = item2;
 
   		}
-            if(map_lure_pokemons[item.pokestop_id] != null  && (!!item2.lure_expiration != !!map_lure_pokemons[item.pokestop_id].lure_expiration || item2.active_pokemon_id != map_lure_pokemons[item2.pokestop_id].active_pokemon_id)) {
+            if(map_lure_pokemons[item.pokestop_id] != null  && item2.lure_expiration && item2.active_pokemon_id != map_lure_pokemons[item2.pokestop_id].active_pokemon_id) {
             	//if (item.marker) item.marker.setMap(null);
             	map_lure_pokemons[item2.pokestop_id].marker.setMap(null);
             	item2.marker = setupPokemonMarker(item2);
                 map_lure_pokemons[item2.pokestop_id] = item2;
 
   		}
-
 
         });
 
