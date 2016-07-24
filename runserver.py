@@ -40,7 +40,6 @@ class SearchControl():
         search_loop_stop()
         self.state = 'idle'
     def status(self):
-        log.info('Status')
         return self.state
 
 def start_locator_thread():
