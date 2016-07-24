@@ -7,7 +7,7 @@
 
     <style>
         .map {
-            height: 1200px;
+            height: 1000px;
         }
     </style>
 
@@ -35,7 +35,8 @@
             ].concat(data));
             var chart = new google.visualization.BarChart(document.getElementById(elemId));
             chart.draw(combinedData, {
-                height: 1000
+                height: 1000,
+                chartArea: {width: '70%', height: '80%'},
             });
         }
 
@@ -46,6 +47,7 @@
             var chart = new google.visualization.LineChart(document.getElementById('hourspunchardchart'));
             chart.draw(combinedData, {
                 height: 300,
+                chartArea: {width: '70%', height: '80%'},
                 curveType: 'function',
                 legend: {position: 'none'}
             });
