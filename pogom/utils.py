@@ -152,7 +152,8 @@ def insert_mock_data():
                         longitude=locations[i+num_pokemon][1],
                         last_modified=datetime.now(),
                         #Every other pokestop be lured
-                        lure_expiration=disappear_time if (i % 2 == 0) else None
+                        lure_expiration=disappear_time if (i % 2 == 0) else None,
+                        active_pokemon_id=i
                         )
 
     for i in range(num_gym):
