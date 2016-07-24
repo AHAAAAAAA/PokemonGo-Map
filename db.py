@@ -86,23 +86,14 @@ def get_session_stats(session):
         FROM `sightings`;
     ''')
     min_max_result = min_max_query.first()
-    per_hour_query = session.execute('''
-        SELECT CAST(AVG(how_many) AS SIGNED) FROM (
-            SELECT
-               CAST((expire_timestamp / 3600) AS SIGNED) ts_date,
-               COUNT(*) how_many
-            FROM `sightings`
-            GROUP BY ts_date ORDER BY ts_date
-        ) t
-    ''')
-    per_hour_result = per_hour_query.first()
+    length_hours = (min_max_result[1] - min_max_result[0]) // 3600
     # Convert to datetime
     return {
         'start': datetime.fromtimestamp(min_max_result[0]),
         'end': datetime.fromtimestamp(min_max_result[1]),
         'count': min_max_result[2],
-        'length_hours': (min_max_result[1] - min_max_result[0]) // 3600,
-        'per_hour': per_hour_result[0],
+        'length_hours': length_hours,
+        'per_hour': min_max_result[2] / length_hours,
     }
 
 
@@ -114,8 +105,13 @@ def get_punch_card(session):
         FROM `sightings`
         GROUP BY ts_date ORDER BY ts_date
     ''')
-    results = [(i, r[1]) for (i, r) in enumerate(query.fetchall())]
-    return results
+    results = query.fetchall()
+    results_dict = {r[0]: r[1] for r in results}
+    filled = []
+    for row_no, i in enumerate(range(int(results[0][0]), int(results[-1][0]))):
+        item = results_dict.get(i)
+        filled.append((row_no, item if item else 0))
+    return filled
 
 
 def get_top_pokemon(session, count=30, order='DESC'):
