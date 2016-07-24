@@ -15,18 +15,22 @@ class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
         super(Pogom, self).__init__(import_name, **kwargs)
         self.json_encoder = CustomJSONEncoder
-        self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/config.js", methods=['GET'])(self.configjs)
+        self.route("/", methods=['GET'])(self.fullmap)
 
-    def fullmap(self):
-        return render_template('map.html',
+    def configjs(self):
+        return render_template('config.js',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'])
+
+    def fullmap(self):
+        return self.send_static_file('index.html')
 
     def raw_data(self):
         d = {}
