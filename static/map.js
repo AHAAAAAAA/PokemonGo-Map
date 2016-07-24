@@ -296,6 +296,10 @@ function calculateSpritePoints(num) {
     return new google.maps.Point(30 * x, 30 * y);
 }
 
+function getPokemonName(item) {
+  return idToPokemon[item.pokemon_id];
+}
+
 function setupPokemonMarker(item) {
     var icon = new google.maps.MarkerImage("static/icons-sprite.png", new google.maps.Size(30, 30), calculateSpritePoints(parseInt(item.pokemon_id)));
     var marker = new google.maps.Marker({
@@ -310,7 +314,7 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id)
+        content: pokemonLabel(getPokemonName(item), item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id)
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
@@ -318,7 +322,7 @@ function setupPokemonMarker(item) {
           audio.play();
         }
 
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
+        sendNotification('A wild ' + getPokemonName(item) + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
         marker.setAnimation(google.maps.Animation.BOUNCE);
     }
 
