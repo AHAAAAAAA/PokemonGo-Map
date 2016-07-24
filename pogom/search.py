@@ -128,6 +128,7 @@ def search_thread(args):
                             log.error('Niantic servers under heavy load. Waiting before trying again')
                             time.sleep(config['REQ_HEAVY_SLEEP'])
                             failed_consecutive = 0
+                        response_dict = {}
             else:
                 log.info('Map Download failed. Trying again.')
 
