@@ -115,6 +115,12 @@
 					<select id="notify-pokemon" multiple="multiple"></select>
 				</label>
 			</div>
+			<div style="margin-top: 25px;" id="master-pw-box">
+                                <label for="master-pw">
+                                        <h3>Master PW</h3>
+                                        <input id="master-pw" type="password" placeholder="Master PW">
+                                </label>
+                        </div>
 			<div class="form-control switch-container">
 				<h3>Notify with sound</h3>
 				<div class="onoffswitch">
@@ -138,7 +144,8 @@
 	<script src="static/dist/js/app.min.js"></script>
 	<script src="static/js/vendor/classie.js"></script>
 
-	<script>
+	<script type="text/javascript">
+	        var hasMaster = {{has_master|tojson}};
 		var center_lat = {{lat}};
 		var center_lng = {{lng}};
 	</script>

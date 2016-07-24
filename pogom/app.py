@@ -39,6 +39,7 @@ class Pogom(Flask):
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
+                               has_master=(config['MASTER'] is not None),
                                is_fixed=display
                                )
 
@@ -74,25 +75,26 @@ class Pogom(Flask):
         return jsonify(d)
 
     def next_loc(self):
-        args = get_args()
-        if args.fixed_location:
-            return 'Location searching is turned off', 403
-       #part of query string
-        if request.args:
-            lat = request.args.get('lat', type=float)
-            lon = request.args.get('lon', type=float)
-        #from post requests
-        if request.form:
-            lat = request.form.get('lat', type=float)
-            lon = request.form.get('lon', type=float)
-
-        if not (lat and lon):
-            log.warning('Invalid next location: %s,%s' % (lat, lon))
-            return 'bad parameters', 400
+        if (config['MASTER'] is None or config['MASTER']==request.args.get('master')):
+            args = get_args()
+            if args.fixed_location:
+                return 'Location searching is turned off', 403
+            # part of query string
+            if request.args:
+                lat = request.args.get('lat', type=float)
+                lon = request.args.get('lon', type=float)
+            # form post
+            if request.form:
+                lat = request.form.get('lat', type=float)
+                lon = request.form.get('lon', type=float)
+            if not (lat and lon):
+                print('[-] Invalid next location: %s,%s' % (lat, lon))
+                return 'bad parameters', 400
+            else:
+                config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
+                return 'ok'
         else:
-            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            log.info('Changing next location: %s,%s' % (lat, lon))
-            return 'ok'
+            return 'nok', 401
 
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android

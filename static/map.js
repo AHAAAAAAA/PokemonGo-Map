@@ -5,6 +5,7 @@
 
 var $selectExclude;
 var $selectNotify;
+var $masterPw;
 
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
@@ -12,6 +13,7 @@ var idToPokemon = {};
 
 var excludedPokemon = [];
 var notifiedPokemon = [];
+var masterPw = "";
 
 var map;
 var locationMarker;
@@ -814,7 +816,7 @@ function changeLocation(lat, lng) {
 }
 
 function changeSearchLocation(lat, lng) {
-    return $.post("next_loc?lat=" + lat + "&lon=" + lng, {});
+    return $.post("next_loc?lat=" + lat + "&lon=" + lng + "&master="+ masterPw, {});
 }
 
 function centerMap(lat, lng, zoom) {
@@ -846,6 +848,7 @@ $(function () {
 
     $selectExclude = $("#exclude-pokemon");
     $selectNotify  = $("#notify-pokemon");
+    $masterPw = $("#master-pw");
 
     // Load pokemon names and populate lists
     $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
@@ -876,6 +879,10 @@ $(function () {
             notifiedPokemon = $selectNotify.val().map(Number);
             localStorage.remember_select_notify = JSON.stringify(notifiedPokemon);
         });
+        $masterPw.on("input", function (e) {
+            masterPw = $masterPw.val();
+            localStorage['remember_master_pw'] = masterPw;
+        });
 
         // recall saved lists
         if (localStorage['remember_select_exclude']) {
@@ -883,6 +890,10 @@ $(function () {
         }
         if (localStorage['remember_select_notify']) {
             $selectNotify.val(JSON.parse(localStorage.remember_select_notify)).trigger("change");
+        }
+        if (localStorage['remember_master_pw']) {
+            $masterPw.val(localStorage['remember_master_pw']);
+            masterPw=localStorage['remember_master_pw'];
         }
     });
 
