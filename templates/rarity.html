@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pokémon Rarity Chart</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" rel="stylesheet">
+</style>
+</head>
+<body>
+<div class="col-md-8 col-md-offset-2">
+<table id="history-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Pokémon</th>
+            <th>Percentage</th>
+            <th>Rarity</th>
+        </th>
+    </thead>
+    <tbody>
+        {% for p in pokemons %}
+        <tr>
+            <td><img src="static/icons/{{p.p_id}}.png"></img> {{ p.name }}</td>
+            <td> {{ p.percentage}} </td>
+            <td> {{ p .rarity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<script src="http://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+<script>
+$(document).ready(function() {
+        $('#history-table').DataTable({
+            "order": [[ 1, "desc" ]]        
+        });
+} );
+</script>
+</body>
+</html>
