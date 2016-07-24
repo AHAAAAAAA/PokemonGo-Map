@@ -115,7 +115,7 @@ function initMap() {
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
-    
+
 };
 
 function createSearchMarker() {
@@ -310,7 +310,8 @@ function setupPokemonMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id)
+        content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
+        disableAutoPan: true
     });
 
     if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
@@ -336,7 +337,8 @@ function setupGymMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude)
+        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
+        disableAutoPan: true
     });
 
     addListeners(marker);
@@ -359,7 +361,8 @@ function setupPokestopMarker(item) {
 
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude +.003, item.longitude+ .003)
+        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude +.003, item.longitude+ .003),
+        disableAutoPan: true
     });
 
     addListeners(marker);
@@ -499,7 +502,7 @@ function updateMap() {
         type: 'GET',
         data: {
             'pokemon': loadPokemon,
-            'pokestops': loadPokestops, 
+            'pokestops': loadPokestops,
             'gyms': loadGyms,
             'scanned': loadScanned,
             'swLat': swLat,
@@ -577,7 +580,8 @@ function updateMap() {
                     map_gyms[item.gym_id].marker = setupGymMarker(item);
                 } else { // if it hasn't changed generate new label only (in case prestige has changed)
                     map_gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
-                        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude)
+                        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
+                        disableAutoPan: true
                     });
                 }
             }
@@ -914,7 +918,7 @@ $(function () {
             map_pokemons = {}
         }
     });
-    
+
     $('#lured-pokemon-switch').change(function() {
         localStorage["showLuredPokemon"] = this.checked;
         if (this.checked) {
