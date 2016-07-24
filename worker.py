@@ -561,6 +561,8 @@ def process_step(
             break
 
     for poke in visible:
+        if poke.TimeTillHiddenMs < 10 * 1000:
+            continue
         disappear_timestamp = time.time() + poke.TimeTillHiddenMs / 1000
         pokemons[poke.SpawnPointId] = {
             'lat': poke.Latitude,
