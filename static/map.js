@@ -845,9 +845,10 @@ $(function () {
     $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
         var pokeList = []
 
+        idToPokemon = data;
+
         $.each(data, function(key, value) {
             pokeList.push( { id: key, text: value } );
-            idToPokemon[key] = value;
         });
 
         // setup the filter lists
