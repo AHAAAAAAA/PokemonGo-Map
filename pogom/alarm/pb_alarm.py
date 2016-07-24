@@ -1,6 +1,5 @@
 import logging
 
-from datetime import datetime, timedelta
 from alarm import Alarm, gmaps_link, pkmn_time_text
 from pushbullet import PushBullet
 

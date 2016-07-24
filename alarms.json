@@ -1,14 +1,15 @@
 {
 	"alarms":[
 		{
-			"active": "True",
+			"active": "False",
 			"type":"pushbullet",
 			"api_key":""
 		},
 		{
 			"active": "True",
-			"type":"pushbullet",
-			"api_key":""
+			"type":"slack",
+			"api_key":"",
+			"channel":"#general"
 		}
 	],
 	"pokemon":{

@@ -1,11 +1,12 @@
 import os
 import json
 import logging
+from datetime import datetime
 
 log = logging.getLogger(__name__)
 
-from datetime import datetime
 from pb_alarm import PB_Alarm
+from slack_alarm import Slack_Alarm
 from ..utils import get_pokemon_name
 
 class Notifications:
@@ -22,6 +23,8 @@ class Notifications:
 				if alarm['active'] == "True" :
 					if alarm['type'] == 'pushbullet' :
 						self.alarms.append(PB_Alarm(alarm['api_key']))
+					if alarm['type'] == 'slack' :
+						self.alarms.append(Slack_Alarm(alarm['api_key'], alarm['channel']))
 				else:
 					log.info("Invalid alarm type specified: " + alarm['type'])
 			
@@ -44,10 +47,10 @@ class Notifications:
 
 	#clear stale so that the seen set doesn't get too large
 	def clear_stale(self):
-		old = {}
+		old = []
 		for id in self.seen:
 			if self.seen[id]['disappear_time'] < datetime.utcnow() :
-				old.add(id)
+				old.append(id)
 		for id in old:
 			del self.seen[id]
 
