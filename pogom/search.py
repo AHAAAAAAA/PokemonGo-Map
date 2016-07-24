@@ -17,7 +17,7 @@ from .models import parse_map
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
-api = PGoApi()
+api = None
 
 #Constants for Hex Grid
 #Gap between vertical and horzonal "rows"
@@ -94,11 +94,13 @@ def generate_location_steps(initial_location, num_steps):
 def login(args, position):
     log.info('Attempting login to Pokemon Go.')
 
+    api = PGoApi()
     while not api.login(args.auth_service, args.username, args.password, *position):
         log.info('Failed to login to Pokemon Go. Trying again.')
         time.sleep(config['REQ_SLEEP'])
 
     log.info('Login to Pokemon Go successful.')
+    return api
 
 def create_search_threads(num) :
     search_threads = []
@@ -148,17 +150,20 @@ def search(args, i):
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
-    lock = Lock()
-    with lock: # TODO: Remove lock, make immutable
-        if api._auth_provider and api._auth_provider._ticket_expire:
-            remaining_time = api._auth_provider._ticket_expire / 1000 - time.time()
-            if remaining_time > 60:
-                log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
-            else:
-                login(args, position)
+    global api
+    # Prevent races of assigning global api in between
+    active_api = api
+    if active_api and active_api._auth_provider and active_api._auth_provider._ticket_expire:
+        remaining_time = active_api._auth_provider._ticket_expire / 1000 - time.time()
+        if remaining_time > 60:
+            log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
         else:
-            login(args, position)
+            active_api = None
 
+    if not active_api:
+        api = login(args, position)
+
+    lock = Lock()
 
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
         if 'NEXT_LOCATION' in config:
