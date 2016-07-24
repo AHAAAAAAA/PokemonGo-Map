@@ -124,7 +124,7 @@ def search_thread(args):
                 with lock:
                     try:
                         pokemons, pokestops, gyms = parse_map(response_dict, i, step, step_location)
-						alarms.notify_pkmns(pokemons)
+                        alarms.notify_pkmns(pokemons)
                     except KeyError:
                         log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
                         failed_consecutive += 1
