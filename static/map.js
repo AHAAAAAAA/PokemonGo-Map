@@ -849,6 +849,14 @@ $(function () {
 
 $(function () {
 
+    function formatState (state) {
+        if (!state.id) { return state.text; }
+        var $state = $(
+            '<span><img class="select2-pokemon" height="21" src="static/icons/' + state.element.value + '.png"> ' + state.text + '</span>'
+        );
+        return $state;
+    };
+    
     $selectExclude = $("#exclude-pokemon");
     $selectNotify  = $("#notify-pokemon");
     var numberOfPokemon = 151;
