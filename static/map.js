@@ -772,6 +772,9 @@ function getPointDistance(pointA, pointB) {
 }
 
 function sendNotification(title, text, icon, lat, lng) {
+    if (!("Notification" in window)) {
+        return false; // Notifications are not present in browser
+    }
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
