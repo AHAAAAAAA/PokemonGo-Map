@@ -6,6 +6,9 @@ env:
   - FLASK=0.11.1
 install:
   - pip install Flask==$FLASK
+  - pip install flake8
   - pip install -r requirements.txt
+before_script:
+  - flake8 .
 script:
   - nosetests
