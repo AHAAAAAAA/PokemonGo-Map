@@ -1,18 +1,27 @@
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root. You can also do: sudo !!"
-  exit
+#!/bin/sh
+
+echo "Installing PokemonGo-Map Requirements."
+echo "This script may ask for your sudo/root password to perform the installation."
+echo ""
+
+if [ "$(grep -Ei 'debian|buntu|mint' /etc/*release)" ]; then
+    echo "Installing python development tools..."
+    sudo apt-get install python python-dev
+else
+    echo "This script only supports debain based Linux distros."
+    echo "Please install manually."
+    exit 1
 fi
 
-apt-get install python python-pip
+echo "Installing pip..."
+sudo python get-pip.py
+echo "Installing required python packages..."
 pip install -r requirements.txt
-pip install -r requirements.txt --upgrade
-echo -n "Enter your Google API key here:"
 
-read api
+echo "Configuring Google Maps API..."
+cp ../config/credentials.json.example ../config/credentials.json
+echo -n "Enter your Google Maps API key here:"
+read key
+sed -i -e "s/\"gmaps_key\"\ :\ \"\"/\"gmaps_key\"\ :\ \""$key"\"/g" ../config/credentials.json
 
-echo '{' >> ../config/credentials.json
-echo "gmaps_key : $api" >> ../config/credentials.json
-echo '}' >> ../config/credentials.json
-
-echo All done!
-sleep 5
+echo "All done!"
