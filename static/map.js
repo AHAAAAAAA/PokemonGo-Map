@@ -659,7 +659,9 @@ function processLuredPokemon(i, item) {
         disappear_time: expire_time
     };
 
-    if (map_data.lure_pokemons[lured_pokemon.pokestop_id] == null) {
+    if (lured_pokemon.pokemon_id == null){
+        return;
+    } else if (map_data.lure_pokemons[lured_pokemon.pokestop_id] == null) {
         lured_pokemon.marker = setupPokemonMarker(lured_pokemon);
         map_data.lure_pokemons[lured_pokemon.pokestop_id] = lured_pokemon;
     } else if (lured_pokemon.active_pokemon_id !== map_data.lure_pokemons[lured_pokemon.pokestop_id].active_pokemon_id) {
