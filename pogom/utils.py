@@ -94,7 +94,7 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
-    parser.add_argument('-wh', '--webhook', help='Add a URL to POST webhook information to', nargs='*', default=False, dest='webhooks')
+    parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to', nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
@@ -204,5 +204,7 @@ def send_to_webhook(pokemon):
         for w in webhooks:
             try:
                 requests.post(w, data=pokemon, timeout=(None, 1))
-            except requests.exceptions.Timeout:
+            except requests.exceptions.ReadTimeout:
                 log.debug('Could not receive response from webhook')
+            except requests.exceptions.RequestException as e:
+                log.debug(e)
