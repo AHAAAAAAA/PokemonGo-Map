@@ -1046,7 +1046,7 @@ $(function () {
         var pokeList = []
 
         $.each(data, function(key, value) {
-            pokeList.push( { id: key, text: value } );
+            pokeList.push( { id: key, text: + ' - #' + key } );
             idToPokemon[key] = value;
         });
 
