@@ -78,13 +78,12 @@ def get_args():
     parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
-    parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check'
-                        'locale folder for more options', default='en')
+    parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check locale folder for more options', default='en')
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
-    parser.add_argument('-ns', '--no-server', help='No-Server Mode. Starts the searcher but not the Webserver.', action='store_true', default=False, dest='no_server')
-    parser.add_argument('-os', '--only-server', help='Server-Only Mode. Starts only the Webserver without the searcher.', action='store_true', default=False, dest='only_server')
+    parser.add_argument('-ns', '--no-server', help='No (web) server will be started.', action='store_false', default=True, dest='server')
+    parser.add_argument('-nr', '--no-search', help='No searcher will be started.', action='store_false', default=True, dest='searcher')
     parser.add_argument('-fl', '--fixed-location', help='Hides the search bar for use in shared maps.', action='store_true', default=False, dest='fixed_location')
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
@@ -103,7 +102,7 @@ def get_args():
     if (args.settings):
         args = parse_config(args)
     else:
-        if args.only_server:
+        if args.server:
             if args.location is None:
                 parser.print_usage()
                 print sys.argv[0] + ': error: arguments -l/--location is required'
