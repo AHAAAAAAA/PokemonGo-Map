@@ -339,6 +339,10 @@ function setupPokemonMarker(item) {
         map: map,
         icon: icon,
     });
+    
+    marker.addListener('click', function() {
+        this.setAnimation(null);
+    });
 
     marker.infoWindow = new google.maps.InfoWindow({
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
@@ -352,7 +356,6 @@ function setupPokemonMarker(item) {
 
         sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
         marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){ marker.setAnimation(null); }, 3000);
     }
 
     addListeners(marker);
