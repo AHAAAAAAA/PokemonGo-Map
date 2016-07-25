@@ -35,6 +35,7 @@
 	</head>
 	<body id="top">
 
+
 	<div class="wrapper">
 		<!-- Header -->
 		<header id="header">
@@ -43,7 +44,7 @@
 			<a href="#stats" id="statsToggle" class="statsNav" style="float: right;"></a>
 		</header>
 
-		<!-- Nav -->
+		<!-- NAV -->
 		<nav id="nav">
 			<div class="form-control" style="display:{{is_fixed}}" >
 				<label for="next-location">
@@ -78,10 +79,13 @@
 				<div class="onoffswitch">
 					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="gyms-switch">
+
 	        				<span class="switch-label" data-on="On" data-off="Off"></span>
 	        				<span class="switch-handle"></span>
 	        			</label>
+
 				</div>
+
 			</div>
 			<div class="form-control switch-container">
 				<h3>Pokéstops</h3>
@@ -93,6 +97,18 @@
 					</label>
 				</div>
 			</div>
+
+			<div class="form-control switch-container">
+				<h3>Geolocation</h3>
+				<div class="onoffswitch">
+					<input id="geoloc-switch" type="checkbox" name="geoloc-switch" class="onoffswitch-checkbox" checked/>
+					<label class="onoffswitch-label" for="geoloc-switch">
+						<span class="switch-label" data-on="On" data-off="Off"></span>
+						<span class="switch-handle"></span>
+					</label>
+				</div>
+			</div>
+
 			<div class="form-control switch-container">
 				<h3>Scanned Locations</h3>
 				<div class="onoffswitch">
@@ -114,6 +130,7 @@
 				</div>
 			</div>
 			<hr width="100%">
+
 			<div class="form-control">
 				<label for="exclude-pokemon">
 					<h3>Hide common Pokémon</h3>
@@ -172,9 +189,10 @@
 		var center_lat = {{lat}};
 		var center_lng = {{lng}};
 	</script>
-	
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places"></script>
+
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
 	<script src="static/js/stats.js"></script>
 	<script src="static/map.js"></script>
+
 	</body>
 </html>
