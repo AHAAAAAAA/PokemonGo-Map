@@ -35,8 +35,24 @@ var map_data = {
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('static/sounds/ding.mp3');
 var pokemon_sprites = {
-    default: {columns: 12, width: 30, height: 30, filename: 'static/icons-sprite.png', name: 'Small'},
-    large:   {columns: 7,  width: 65, height: 65, filename: 'static/icons-large-sprite.png', name: 'Large'}
+    normal: {
+        columns: 12,
+        icon_width: 30,
+        icon_height: 30,
+        sprite_width: 360,
+        sprite_height: 390,
+        filename: 'static/icons-sprite.png',
+        name: 'Normal'
+    },
+    highres: {
+        columns: 7,
+        icon_width: 65,
+        icon_height: 65,
+        sprite_width: 455,
+        sprite_height: 1430,
+        filename: 'static/icons-large-sprite.png',
+        name: 'High-Res'
+    }
 };
 
 //
@@ -121,6 +137,11 @@ function initMap() {
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
+
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        redrawPokemon(map_data.pokemons);
+        redrawPokemon(map_data.lure_pokemons);
+    });
     
 };
 
@@ -181,7 +202,8 @@ function initSidebar() {
     $.each(pokemon_sprites, function(key, value) {
         icons.append($('<option></option>').attr("value", key).text(value.name));
     });
-    icons.val(localStorage.pokemonIcons || 'default');
+    icons.val((pokemon_sprites[localStorage.pokemonIcons]) ? localStorage.pokemonIcons : 'highres');
+    $('#pokemon-icon-size').val(localStorage.iconModifierSize || 0);
 }
 
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
@@ -301,18 +323,33 @@ function scannedLabel(last_modified) {
 };
 
 
-function getGoogleSprite(index, sprite_set) {
-    var sprite = pokemon_sprites[sprite_set] || pokemon_sprites['default'];
-    var size = new google.maps.Size(sprite.width, sprite.height);
-    var offset = new google.maps.Point(
-        (index % sprite.columns) * sprite.width,
-        Math.floor(index / sprite.columns) * sprite.height);
-    return new google.maps.MarkerImage(sprite.filename, size, offset);
+function getGoogleSprite(index, sprite, display_height) {
+    display_height = Math.max(display_height, 3);
+    var scale = display_height / sprite.icon_height;
+    // Crop icon just a tiny bit to avoid bleedover from neighbor
+    var scaled_icon_size = new google.maps.Size(scale * sprite.icon_width - 2, scale * sprite.icon_height - 2);
+    var scaled_icon_offset = new google.maps.Point(
+        (index % sprite.columns) * sprite.icon_width * scale + 1,
+        Math.floor(index / sprite.columns) * sprite.icon_height * scale + 1);
+    var scaled_sprite_size = new google.maps.Size(scale * sprite.sprite_width, scale * sprite.sprite_height);
+    var scaled_icon_center_offset = new google.maps.Point(scale * sprite.icon_width/2, scale * sprite.icon_height/2)
+    return {
+        url: sprite.filename,
+        size: scaled_icon_size,
+        scaledSize: scaled_sprite_size,
+        origin: scaled_icon_offset,
+        anchor: scaled_icon_center_offset
+    };
 }
 
 function setupPokemonMarker(item) {
+
+    // Scale icon size up with the map exponentially
+    var icon_size = 2 + (map.getZoom()-3) * (map.getZoom()-3) * .2 + parseInt(localStorage.iconSizeModifier || 0);
     var pokemon_index = item.pokemon_id - 1;
-    var icon = getGoogleSprite(pokemon_index, localStorage.pokemonIcons || 'default');
+    var sprite = pokemon_sprites[localStorage.pokemonIcons] || pokemon_sprites['highres']
+    var icon = getGoogleSprite(pokemon_index, sprite, icon_size);
+
     var marker = new google.maps.Marker({
         position: {
             lat: item.latitude,
@@ -898,6 +935,12 @@ $(function () {
 
     $('#pokemon-icons').change(function() {
         localStorage["pokemonIcons"] = this.value;
+        redrawPokemon(map_data.pokemons);
+        redrawPokemon(map_data.lure_pokemons);
+    });
+
+    $('#pokemon-icon-size').change(function() {
+        localStorage["iconSizeModifier"] = this.value;
         redrawPokemon(map_data.pokemons);
         redrawPokemon(map_data.lure_pokemons);
     });
