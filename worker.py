@@ -358,10 +358,10 @@ def get_heartbeat(service, api_endpoint, access_token, response):
 
     try:
         payload = response.payload[0]
+        heartbeat = pokemon_pb2.ResponseEnvelop.HeartbeatPayload()
     except (AttributeError, IndexError):
         return
 
-    heartbeat = pokemon_pb2.ResponseEnvelop.HeartbeatPayload()
     heartbeat.ParseFromString(payload)
     return heartbeat
 
@@ -439,6 +439,7 @@ class Slave(threading.Thread):
         self.step = 0
         self.cycle = 0
         self.seen = 0
+        self.error_code = None
 
     def run(self):
         self.cycle = 1
@@ -610,7 +611,7 @@ def start_worker(worker_no, points):
 
 def spawn_workers(workers, status_bar=True):
     points = utils.get_points_per_worker()
-    start_time = datetime.now()
+    start_date = datetime.now()
     count = config.GRID[0] * config.GRID[1]
     for worker_no in range(count):
         start_worker(worker_no, points[worker_no])
@@ -620,13 +621,17 @@ def spawn_workers(workers, status_bar=True):
         'min': min(lenghts),
         'avg': sum(lenghts) / float(len(lenghts)),
     }
+    last_cleaned_cache = time.time()
     while True:
+        now = time.time()
+        if now - last_cleaned_cache > (15 * 60):
+            db.CACHE.clean_expired()
         if status_bar:
             if sys.platform == 'win32':
                 _ = os.system('cls')
             else:
                 _ = os.system('clear')
-            print get_status_message(workers, count, start_time, points_stats)
+            print get_status_message(workers, count, start_date, points_stats)
         time.sleep(0.5)
 
 

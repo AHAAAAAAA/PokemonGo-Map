@@ -26,6 +26,44 @@ def get_engine():
 Base = declarative_base()
 
 
+class SightingCache(object):
+    def __init__(self):
+        self.store = {}
+
+    @staticmethod
+    def _make_key(sighting):
+        return (
+            sighting.pokemon_id,
+            sighting.spawn_id,
+            sighting.normalized_timestamp,
+            sighting.lat,
+            sighting.lon,
+        )
+
+    def add(self, sighting):
+        self.store(self._make_key(sighting)) = sighting
+
+    def __contains__(self, sighting):
+        obj = self.store.get(self._make_key(sighting))
+        if not obj:
+            return False
+        timestamp_in_range = (
+            obj.expire_timestamp > sighting.expire_timestamp - 5 and
+            obj.expire_timestamp < sighting.expire_timestamp + 5
+        )
+        return timestamp_in_range
+
+    def clean_expired(self):
+        to_remove = []
+        for key, value in self.iteritems():
+            if value.expire_timestamp < time.time() - 120:
+                to_remove.append(key)
+        for key in to_remove:
+            del self[key]
+
+CACHE = SightingCache()
+
+
 class Sighting(Base):
     __tablename__ = 'sightings'
 
@@ -55,6 +93,8 @@ def add_sighting(session, spawn_id, pokemon):
         lon=pokemon['lng'],
     )
     # Check if there isn't the same entry already
+    if obj in CACHE:
+        return
     existing = session.query(Sighting) \
         .filter(Sighting.pokemon_id == obj.pokemon_id) \
         .filter(Sighting.spawn_id == obj.spawn_id) \
@@ -66,6 +106,7 @@ def add_sighting(session, spawn_id, pokemon):
     if existing:
         return
     session.add(obj)
+    CACHE.add(sighting)
 
 
 def get_sightings(session):
