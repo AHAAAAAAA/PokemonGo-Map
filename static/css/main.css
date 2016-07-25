@@ -1778,8 +1778,7 @@ body {
   body {
     padding-top: 44px; }
   #header {
-    height: 44px;
-    line-height: 44px; }
+    height: 44px; }
     #header > h1 {
       left: 1em; }
       #header > h1 a {
