@@ -749,16 +749,22 @@ function processPokestops(i, item) {
     if (!Store.get('showPokestops')) {
         return false;
     }
-    if (map_data.pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
+
+    // If the pokestop is brand new, add it
+    if (map_data.pokestops[item.pokestop_id] == null) {
         // add marker to map and item to dict
         if (item.marker) item.marker.setMap(null);
         item.marker = setupPokestopMarker(item);
         map_data.pokestops[item.pokestop_id] = item;
-    }
-    else {
-        item2 = map_data.pokestops[item.pokestop_id];
-        if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            item.marker.setMap(null);
+
+
+    // If the new pokestop has a different lure/active_pokemon then replace the old one
+    } else {
+        pokestop_reference = map_data.pokestops[item.pokestop_id];
+        var lure_status_matches = !!item.lure_expiration == !!pokestop_reference.lure_expiration;
+        var has_same_pokemon = item.active_pokemon_id == pokestop_reference.active_pokemon_id;
+        if (!lure_status_matches || !has_same_pokemon) {
+            if (item.marker) item.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
