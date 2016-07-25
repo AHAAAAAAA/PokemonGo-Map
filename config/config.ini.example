@@ -1,4 +1,4 @@
-#Provide Pokemon Go Credentials here. This section must be filled out!
+# Provide Pokemon Go Credentials here. This section must be filled out!
 
 [Authentication]
 # ptc or google
@@ -18,7 +18,7 @@ Database_Host:
 [Search_Settings]
 Steps: 12
 Location: 
-#Time delay before beginning new scan
+# Time delay before beginning new scan
 Scan_delay: 1
 # Disable Map elements
 disable_pokemon: false
@@ -26,7 +26,14 @@ disable_pokestops: false
 disable_gyms: false
 
 [Misc]
-#you need a google maps api key to run this!
-Google_Maps_API_Key :
+# You need a google maps api key to run this!
+# See: https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Google-Maps-API:-a-brief-guide-to-your-own-key
+Google_Maps_API_Key:
+
+# Full path to the SSL key & cert
+SSL_Cert:
+SSL_Key:
+
+# What ip address and port to bind the server to
 Host: 127.0.0.1
 Port: 5000

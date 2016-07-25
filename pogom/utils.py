@@ -50,6 +50,8 @@ def parse_config(args):
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
     args.host = Config.get('Misc', 'Host')
     args.port = Config.get('Misc', 'Port')
+    args.ssl_key = Config.get('Misc', 'SSL_Key')
+    args.ssl_cert = Config.get('Misc', 'SSL_Cert')
 
     return args
 
@@ -179,8 +181,11 @@ def get_pokemon_name(pokemon_id):
 
     return get_pokemon_name.names[str(pokemon_id)]
 
+# Do not use this anymore, the .json configuration file is deprecated in
+# favor of the config.ini file. It has been kept for backwards compatibility
 def load_credentials(filepath):
     verify_config_file_exists('../config/credentials.json')
+    log.warn('The credentials.json file has been deprecated, please use the config.ini file')
     try:
         with open(filepath+os.path.sep+'/config/credentials.json') as file:
             creds = json.load(file)
