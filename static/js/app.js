@@ -34,8 +34,6 @@
 		$navToggle = document.querySelector('a[href="#nav"]'),
 		$navClose;
 
-	var $overlay = document.querySelector('#trigger-overlay');
-
 	// Event: Prevent clicks/taps inside the nav from bubbling.
 	addEventsListener($nav, 'click touchend', function(event) {
 		event.stopPropagation();
@@ -43,6 +41,10 @@
 
 	// Event: Hide nav on body click/tap.
 	addEventsListener($body, 'click touchend', function(event) {
+		// on ios safari, when navToggle is clicked, 
+		// this function executes too, so if the target
+		// is the toggle button, exit this function
+		if (event.target.matches('a[href="#nav"]')) { return; }
 		$nav.classList.remove('visible');
 	});
 
