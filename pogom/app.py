@@ -4,13 +4,19 @@
 import calendar
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
+from flask_httpauth import HTTPBasicAuth
 from datetime import datetime
 from s2sphere import *
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
+auth = HTTPBasicAuth()
 
-
+users = {
+      "jakob": "jakjos",
+      "pedro": "depacas",
+      "sweet": "jaklion"
+}
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
         super(Pogom, self).__init__(import_name, **kwargs)
@@ -20,14 +26,20 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+    @auth.get_password
+    def get_pw(username):
+      if username in users:
+          return users.get(username)
+      return None    
 
+    @auth.login_required
     def fullmap(self):
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'])
-
+    @auth.login_required
     def raw_data(self):
         d = {}
         if request.args.get('pokemon', 'true') == 'true':
@@ -43,14 +55,14 @@ class Pogom(Flask):
             d['scanned'] = ScannedLocation.get_recent()
 
         return jsonify(d)
-
+    @auth.login_required
     def loc(self):
         d = {}
         d['lat']=config['ORIGINAL_LATITUDE']
         d['lng']=config['ORIGINAL_LONGITUDE']
 
         return jsonify(d)
-
+    @auth.login_required
     def next_loc(self):
         lat = request.args.get('lat', type=float)
         lon = request.args.get('lon', type=float)
@@ -60,7 +72,7 @@ class Pogom(Flask):
         else:
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             return 'ok'
-
+    @auth.login_required
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
         pokemon_list = []
