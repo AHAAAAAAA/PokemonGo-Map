@@ -1046,12 +1046,14 @@ $(function () {
 
     $selectExclude = $("#exclude-pokemon");
     $selectNotify  = $("#notify-pokemon");
+    var numberOfPokemon = 151;
 
     // Load pokemon names and populate lists
     $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
-        var pokeList = []
+        var pokeList = [];
 
         $.each(data, function(key, value) {
+            if(key > numberOfPokemon) { return false; }
             pokeList.push( { id: key, text: value + ' - #' + key } );
             idToPokemon[key] = value;
         });
@@ -1059,11 +1061,13 @@ $(function () {
         // setup the filter lists
         $selectExclude.select2({
             placeholder: "Select Pokémon",
-            data: pokeList
+            data: pokeList,
+            templateResult: formatState
         });
         $selectNotify.select2({
             placeholder: "Select Pokémon",
-            data: pokeList
+            data: pokeList,
+            templateResult: formatState
         });
 
         // setup list change behavior now that we have the list to work from
