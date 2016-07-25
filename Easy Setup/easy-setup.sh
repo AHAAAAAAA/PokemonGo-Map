@@ -16,7 +16,7 @@ fi
 echo "Installing pip..."
 sudo python get-pip.py
 echo "Installing required python packages..."
-sudo pip install -r requirements.txt
+pip install -r requirements.txt
 
 echo "Configuring Google Maps API..."
 cp ../config/credentials.json.example ../config/credentials.json
