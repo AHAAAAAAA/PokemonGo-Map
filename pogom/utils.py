@@ -16,8 +16,6 @@ import shutil
 
 from . import config
 
-from exceptions import APIKeyException
-
 DEFAULT_THREADS = 1
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
@@ -50,6 +48,8 @@ def parse_config(args):
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
     args.host = Config.get('Misc', 'Host')
     args.port = Config.get('Misc', 'Port')
+    args.ssl_key = Config.get('Misc', 'SSL_Key')
+    args.ssl_cert = Config.get('Misc', 'SSL_Cert')
 
     return args
 
@@ -78,13 +78,12 @@ def get_args():
     parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
-    parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check'
-                        'locale folder for more options', default='en')
+    parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check locale folder for more options', default='en')
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
     parser.add_argument('-d', '--debug', help='Debug Mode', action='store_true')
     parser.add_argument('-m', '--mock', help='Mock mode. Starts the web server but not the background thread.', action='store_true', default=False)
-    parser.add_argument('-ns', '--no-server', help='No-Server Mode. Starts the searcher but not the Webserver.', action='store_true', default=False, dest='no_server')
-    parser.add_argument('-os', '--only-server', help='Server-Only Mode. Starts only the Webserver without the searcher.', action='store_true', default=False, dest='only_server')
+    parser.add_argument('-ns', '--no-server', help='No (web) server will be started.', action='store_false', default=True, dest='server')
+    parser.add_argument('-nr', '--no-search', help='No searcher will be started.', action='store_false', default=True, dest='searcher')
     parser.add_argument('-fl', '--fixed-location', help='Hides the search bar for use in shared maps.', action='store_true', default=False, dest='fixed_location')
     parser.add_argument('-k', '--google-maps-key', help='Google Maps Javascript API Key', default=None, dest='gmaps_key')
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
@@ -93,6 +92,8 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-sk', '--ssl-key', help='SSL Key file, full path', default='')
+    parser.add_argument('-sc', '--ssl-cert', help='SSL Cert file, full path', default='')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
@@ -101,7 +102,7 @@ def get_args():
     if (args.settings):
         args = parse_config(args)
     else:
-        if args.only_server:
+        if args.server:
             if args.location is None:
                 parser.print_usage()
                 print sys.argv[0] + ': error: arguments -l/--location is required'
@@ -117,6 +118,24 @@ def get_args():
             elif args.password is None:
                 args.password = config["PASSWORD"]
 
+    # Test and setup SSL context
+    # h/t to mik9 for this nice setup
+    if args.ssl_key != "" or args.ssl_cert != "":
+        if args.ssl_cert == "":
+            print sys.argv[0] + ': error: for ssl support, you should also specify -sc/--ssl-cert or populate "SSL_Cert" in config.ini'
+            sys.exit(1)
+        if args.ssl_key == "":
+            print sys.argv[0] + ': error: for ssl support, you should also specify -sk/--ssl-key or populate "SSL_Key" in config.ini'
+            sys.exit(1)
+        if os.path.exists(args.ssl_cert) is False:
+            print sys.argv[0] + ': error: your ssl_cert location could not be found on disk'
+            sys.exit(1)
+        if os.path.exists(args.ssl_key) is False:
+            print sys.argv[0] + ': error: your ssl_key location could not be found on disk'
+            sys.exit(1)
+        args.ssl_context = (args.ssl_cert, args.ssl_key)
+    else:
+        args.ssl_context = None
 
     return args
 
@@ -179,16 +198,24 @@ def get_pokemon_name(pokemon_id):
 
     return get_pokemon_name.names[str(pokemon_id)]
 
-def load_credentials(filepath):
-    verify_config_file_exists('../config/credentials.json')
+# Attempt to load gmaps key from old "credentials.json" file; file is deprecated
+def get_old_gmaps_key():
+
+    # If the file isn't there, we just exit with nothing
+    filename = os.path.join(os.path.dirname(__file__), '../config/credentials.json')
+    if os.path.exists(filename) is False:
+        return ''
+
+    # Otherwise try to get the old info
     try:
-        with open(filepath+os.path.sep+'/config/credentials.json') as file:
-            creds = json.load(file)
+        log.warn('The credentials.json file has been deprecated, please use the config.ini file')
+        with open(filename) as file:
+            credsJson = json.load(file)
+        if 'gmaps_key' in credsJson:
+            gmaps_key = credsJson['gmaps_key']
+        else:
+            gmaps_key = ''
     except IOError:
-        creds = {}
-    if not creds.get('gmaps_key'):
-        raise APIKeyException(\
-            "No Google Maps Javascript API key entered in \config\credentials.json file!"
-            " Please take a look at the wiki for instructions on how to generate this key,"
-            " then add that key to the file!")
-    return creds
+        gmaps_key = ''
+
+    return gmaps_key
