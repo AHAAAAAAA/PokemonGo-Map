@@ -1110,6 +1110,24 @@ function centerMap(lat, lng, zoom) {
   }
 }
 
+function updateNotifiedPokemom() {
+  notifiedPokemon = $selectNotify.val().map(Number);
+  Store.set('remember_select_notify', notifiedPokemon);
+
+  $.each(map_data.pokemons, function(encounterId, item) {
+    if ( item.marker ) {
+      if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+        if (!item.marker.animationDisabled && !item.marker.getAnimation() ) {
+          item.marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+      }
+      else {
+        item.marker.setAnimation(null);   
+      }
+    }
+  });
+}
+
 function i8ln(word) {
   if ($.isEmptyObject(i8ln_dictionary) && language != "en" && language_lookups < language_lookup_threshold) {
     $.ajax({
@@ -1241,8 +1259,7 @@ $(function() {
       Store.set('remember_select_exclude', excludedPokemon);
     });
     $selectNotify.on("change", function(e) {
-      notifiedPokemon = $selectNotify.val().map(Number);
-      Store.set('remember_select_notify', notifiedPokemon);
+    updateNotifiedPokemom()
     });
 
     // recall saved lists
