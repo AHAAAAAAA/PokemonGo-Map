@@ -104,7 +104,7 @@ function initMap() {
               'style_pgo_nl']
         },
     });
-	
+
 	var style_NoLabels = new google.maps.StyledMapType(noLabelsStyle, {name: "No Labels"});
 	map.mapTypes.set('nolabels_style', style_NoLabels);
 
@@ -190,6 +190,10 @@ function initSidebar() {
     $('#pokestops-switch').prop('checked', localStorage.showPokestops === 'true');
     $('#geoloc-switch').prop('checked', localStorage.geoLocate === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
+    $('#notify-all-pokemon-switch').prop('checked', localStorage.notifyAllPokemon === 'true');
+    if (localStorage.notifyAllPokemon === 'true') {
+      $('#form-notify-pokemon').hide();
+    }
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
@@ -394,8 +398,8 @@ function setupPokemonMarker(item) {
         disableAutoPan: true
     });
 
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        if (localStorage.playSound === 'true') {
+    if (localStorage.notifyAllPokemon === 'true' || notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+        if(localStorage.playSound === 'true'){
           audio.play();
         }
 
@@ -705,9 +709,7 @@ function processScanned(i, item) {
         item.marker = setupScannedMarker(item);
         map_data.scanned[item.scanned_id] = item;
     }
-
 }
-
 
 function updateMap() {
 
@@ -996,6 +998,15 @@ $(function () {
     $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
+    $('#notify-all-pokemon-switch').change(function() {
+        localStorage["notifyAllPokemon"] = this.checked;
+        if (this.checked) {
+          $('#form-notify-pokemon').hide();
+        } else {
+          $('#form-notify-pokemon').show();
+        }
+    });
+
     $('#sound-switch').change(function() {
         localStorage["playSound"] = this.checked;
     });
@@ -1012,11 +1023,11 @@ $(function () {
         redrawPokemon(map_data.lure_pokemons);
     });
 
-    $('#geoloc-switch').change(function() {  
-        if(!navigator.geolocation)  
-            this.checked = false;  
-        else   
-            localStorage["geoLocate"] = this.checked;  
+    $('#geoloc-switch').change(function() {
+        if(!navigator.geolocation)
+            this.checked = false;
+        else
+            localStorage["geoLocate"] = this.checked;
     });
 
 });
