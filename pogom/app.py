@@ -9,7 +9,7 @@ from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
-from pogom.utils import get_args
+from .utils import get_args
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
@@ -33,7 +33,7 @@ class Pogom(Flask):
         display = "inline"
         if args.fixed_location:
             display = "none"
-        
+
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
