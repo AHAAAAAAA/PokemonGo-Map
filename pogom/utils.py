@@ -92,8 +92,8 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
-    parser.add_argument('-sk', '--ssl-key', help='SSL Key file, full path')
-    parser.add_argument('-sc', '--ssl-cert', help='SSL Cert file, full path')
+    parser.add_argument('-sk', '--ssl-key', help='SSL Key file, full path', default='')
+    parser.add_argument('-sc', '--ssl-cert', help='SSL Cert file, full path', default='')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
