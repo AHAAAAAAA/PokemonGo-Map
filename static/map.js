@@ -760,10 +760,11 @@ function processPokestops(i, item) {
 
     // If the new pokestop has a different lure/active_pokemon then replace the old one
     } else {
-        pokestop_reference = map_data.pokestops[item.pokestop_id];
-        var lure_status_matches = !!item.lure_expiration == !!pokestop_reference.lure_expiration;
-        var has_same_pokemon = item.active_pokemon_id == pokestop_reference.active_pokemon_id;
+        existing_pokestop = map_data.pokestops[item.pokestop_id];
+        var lure_status_matches = !!item.lure_expiration == !!existing_pokestop.lure_expiration;
+        var has_same_pokemon = item.active_pokemon_id == existing_pokestop.active_pokemon_id;
         if (!lure_status_matches || !has_same_pokemon) {
+            if (!item.marker) console.warn('Trying to hide pokestop, but it was already hidden', item);
             if (item.marker) item.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
