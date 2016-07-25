@@ -3,6 +3,18 @@
 
 Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying Google Maps with markers on it.
 
+Features: 
+
+* Shows Pokemon, Pokestops, and gyms with a clean GUI.
+* Notifications 
+* Lure information
+* Multithreaded mode
+* Filters
+* Independent worker threads (many can be used simulatenously to quickly generate a livemap of a huge geographical area)
+* Localization (en, fr, pt_br, de, ru, zh_cn, zh_hk)
+* DB storage (sqlite or mysql) of all found pokemon
+* Incredibly fast, efficient searching algorithm (compared to everything else available)
+
 [![Deploy](https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/images/deploy-to-jelastic.png)](https://jelastic.com/install-application/?manifest=https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/manifest.jps) [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment) 
 
 #[Twitter] (https://twitter.com/PoGoMDev), [Website] (https://jz6.github.io/PoGoMap/)#
