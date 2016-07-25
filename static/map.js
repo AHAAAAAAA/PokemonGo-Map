@@ -1178,15 +1178,11 @@ $(function() {
     if (navigator.geolocation && Store.get('geoLocate')) {
       navigator.geolocation.getCurrentPosition(function(position) {
         var lat = position.coords.latitude;
-        var lon = position.coords.longitude;
+        var lng = position.coords.longitude;
 
         //the search function makes any small movements cause a loop. Need to increase resolution
-        if (getPointDistance(marker.getPosition(), (new google.maps.LatLng(lat, lon))) > 40) {
-          $.post("next_loc?lat=" + lat + "&lon=" + lon).done(function() {
-            var center = new google.maps.LatLng(lat, lon);
-            map.panTo(center);
-            marker.setPosition(center);
-          });
+        if (getPointDistance(marker.getPosition(), (new google.maps.LatLng(lat, lng))) > 40) {
+          changeLocation(lat, lng);
         }
       });
     }
