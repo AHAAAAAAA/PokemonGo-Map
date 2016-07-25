@@ -9,7 +9,7 @@ function countMarkers() {
 	pkmnTotal = 0;
 	pokestopCount = [];
 	pokestopTotal = 0;
-	if(localStorage.showPokemon == "true")
+	if(Store.get('showPokemon'))
 	{
 		$.each(map_data.pokemons, function(key, value) {
 			if (pkmnCount[map_data.pokemons[key]['pokemon_id']] == 0 || pkmnCount[map_data.pokemons[key]['pokemon_id']] == null )
@@ -43,7 +43,7 @@ function countMarkers() {
 	{
 		document.getElementById("pokemonList").innerHTML = "Pokémons markers are disabled";;
 	}
-	if(localStorage.showGyms == "true")
+	if(Store.get('showGyms'))
 	{
 		$.each(map_data.gyms, function(key, value) {
 			if (arenaCount[map_data.gyms[key]['team_id']] == 0 || arenaCount[map_data.gyms[key]['team_id']] == null )
@@ -85,7 +85,7 @@ function countMarkers() {
 	{
 		document.getElementById("arenaList").innerHTML = "Gyms markers are disabled";
 	}
-	if(localStorage.showPokestops == "true")
+	if(Store.get('showPokestops'))
 	{
 		$.each(map_data.pokestops, function(key, value) {
 			var pokestopLured = false;
@@ -137,7 +137,7 @@ function countMarkers() {
 };
 
 $('#stats-switch').change(function() {
-    localStorage["showStats"] = this.checked;
+    Store.set('showStats', this.checked);
     if (this.checked) {
         countMarkers();
 		document.getElementById("statsToggle").innerHTML = "Stats";
