@@ -6,6 +6,8 @@
 *.orig
 config/config.ini
 config/credentials.json
+config/ssl.crt
+config/ssl.key
 static/dist/
 node_modules/
 venv/
