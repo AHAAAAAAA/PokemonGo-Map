@@ -16,8 +16,6 @@ import shutil
 
 from . import config
 
-from exceptions import APIKeyException
-
 DEFAULT_THREADS = 1
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
@@ -95,6 +93,8 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-sk', '--ssl-key', help='SSL Key file, full path')
+    parser.add_argument('-sc', '--ssl-cert', help='SSL Cert file, full path')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
@@ -181,19 +181,22 @@ def get_pokemon_name(pokemon_id):
 
     return get_pokemon_name.names[str(pokemon_id)]
 
-# Do not use this anymore, the .json configuration file is deprecated in
-# favor of the config.ini file. It has been kept for backwards compatibility
-def load_credentials(filepath):
-    verify_config_file_exists('../config/credentials.json')
-    log.warn('The credentials.json file has been deprecated, please use the config.ini file')
+# Attempt to load gmaps key from old "credentials.json" file; file is deprecated
+def get_old_gmaps_key():
+
+    # If the file isn't there, we just exit with nothing
+    path = os.path.join(os.path.dirname(__file__), '../config/credentials.json')
+    if os.path.exists(path) is False:
+        return ''
+
+    # Otherwise try to get the old info
     try:
+        log.warn('The credentials.json file has been deprecated, please use the config.ini file')
         with open(filepath+os.path.sep+'/config/credentials.json') as file:
-            creds = json.load(file)
+            credsJson = json.load(file)
+        if 'gmaps_key' in credsJson:
+            gmaps_key = credsJson['gmaps_key']
     except IOError:
-        creds = {}
-    if not creds.get('gmaps_key'):
-        raise APIKeyException(\
-            "No Google Maps Javascript API key entered in \config\credentials.json file!"
-            " Please take a look at the wiki for instructions on how to generate this key,"
-            " then add that key to the file!")
-    return creds
+        gmaps_key = ''
+
+    return gmaps_key
