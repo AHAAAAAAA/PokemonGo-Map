@@ -504,11 +504,11 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
     var pokemon_index = item.pokemon_id - 1;
     var sprite = pokemon_sprites[Store.get('pokemonIcons')] || pokemon_sprites['highres']
     var icon = getGoogleSprite(pokemon_index, sprite, icon_size);
-	
-	var animationDisabled = false;
-	if(isBounceDisabled == true){
-		animationDisabled = true;
-	}
+
+    var animationDisabled = false;
+    if(isBounceDisabled == true){
+        animationDisabled = true;
+    }
 
     var marker = new google.maps.Marker({
         position: {
@@ -872,12 +872,8 @@ function updateMap() {
 function redrawPokemon(pokemon_list) {
     var skipNotification = true;
     $.each(pokemon_list, function(key, value) {
-		var isBounceDisabled = false;
-		if(this.marker.animationDisabled != false){
-			isBounceDisabled = true;
-		};
         var item =  pokemon_list[key];
-        var new_marker = setupPokemonMarker(item, skipNotification, isBounceDisabled);
+        var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
         item.marker.setMap(null);
         pokemon_list[key].marker = new_marker;
     });
