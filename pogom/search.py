@@ -99,10 +99,10 @@ def login(args, position):
     log.info('Login to Pokemon Go successful.')
 
 
-def search_thread(args):
+def search_thread(args, parent_name):
     i, total_steps, step_location, step, sem = args
 
-    log.info('Scanning step {:d} of {:d} started.'.format(step, total_steps))
+    log.info('Thread {:d} - Scanning step {:d} of {:d} started.'.format(parent_name, step, total_steps))
     #log.debug('Scan location is {:f}, {:f}'.format(step_location[0], step_location[1]))
 
     response_dict = {}
@@ -114,7 +114,7 @@ def search_thread(args):
                 sem.acquire()
                 parse_map(response_dict, i, step, step_location)
             except KeyError:
-                log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
+                log.error('Thread {:d} - Scan step {:d} failed. Response dictionary key error.'.format(parent_name, step))
                 failed_consecutive += 1
                 if(failed_consecutive >= config['REQ_MAX_FAILED']):
                     log.error('Niantic servers under heavy load. Waiting before trying again')
@@ -136,7 +136,7 @@ def process_search_threads(search_threads, curr_steps, total_steps):
         #log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
     return curr_steps
 
-def search(args, i, pos):
+def search(args, i, pos, parent_name):
     num_steps = args.step_limit
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
     #position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
@@ -161,7 +161,7 @@ def search(args, i, pos):
             return
 
         search_args = (i, total_steps, step_location, step, sem)
-        search_threads.append(Thread(target=search_thread, name='search_step_thread {}'.format(step), args=(search_args, )))
+        search_threads.append(Thread(target=search_thread, name='search_step_thread {}'.format(step), args=(search_args, parent_name, )))
 
         if step % max_threads == 0:
             curr_steps = process_search_threads(search_threads, curr_steps, total_steps)
@@ -171,8 +171,8 @@ def search(args, i, pos):
         process_search_threads(search_threads, curr_steps, total_steps)
 
 
-def location_thread(args, i, position):
-    search(args, i, position)
+def location_thread(args, i, position, parent_name):
+    search(args, i, position, parent_name)
 
 def process_location_threads(location_threads):
     for thread in location_threads:
@@ -183,7 +183,17 @@ def process_location_threads(location_threads):
 
 def search_loop(args):
     i = 0
-    positions = ['-6.1924937 106.7965414', '-6.183853 106.831836', '-6.183853 106.831836', '-6.1762377 106.7914468', '-6.1869087 106.7922616', '-6.1868733 106.8023864', '-6.1868733 106.8023864']
+    positions = [
+        '-6.1890554 106.7985666', # 1. Citicon
+        '-6.1938965 106.7840423', # 2. Binus Kijang
+        '-6.1877741 106.7903616', # 3. Bank Mandiri Gedung Pusri
+        '-6.1763713 106.7896283', # 4. APL Tower
+        '-6.1801046,106.7926431', # 5. Taman Anggrek Resicendes
+        '-6.1876777 106.8010116', # 6. PT Djarum
+        '-6.1939921 106.8178953', # 7. Grand Indonesia
+        '-6.188028 106.8230132',  # 8. Sarinah
+        '-6.1779364 106.8248713', # 9. Monas
+    ]
     location_threads = []
 
     try:
@@ -199,8 +209,10 @@ def search_loop(args):
             else:
                 login(args, (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0))
 
+            i = 0
             for position in positions:
-                location_threads.append(Thread(target=location_thread, name=position, args=(args, i, position )))
+                i += 1
+                location_threads.append(Thread(target=location_thread, name=position, args=(args, i, position, i)))
 
             process_location_threads(location_threads)
 
