@@ -167,6 +167,9 @@ class Pokestop(BaseModel):
 
         pokestops = []
         for p in query:
+            if args.china:
+                p['latitude'], p['longitude'] = \
+                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             pokestops.append(p)
 
         return pokestops
