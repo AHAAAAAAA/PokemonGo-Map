@@ -19,9 +19,9 @@ echo "Installing required python packages..."
 pip install -r requirements.txt
 
 echo "Configuring Google Maps API..."
-cp ../config/config.ini.example ../config/config.ini
+cp ../config/credentials.json.example ../config/credentials.json
 echo -n "Enter your Google Maps API key here:"
 read key
-sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" ../config/config.ini
+sed -i -e "s/\"gmaps_key\"\ :\ \"\"/\"gmaps_key\"\ :\ \""$key"\"/g" ../config/credentials.json
 
 echo "All done!"
