@@ -113,7 +113,7 @@ def search_thread(args):
     queue = args
     while True:
         i, total_steps, step_location, step, lock = queue.get()
-        log.info("Search queue depth is: " + str(queue.qsize()))
+        log.debug("Search queue depth is: " + str(queue.qsize()))
         response_dict = {}
         failed_consecutive = 0
         while not response_dict:
