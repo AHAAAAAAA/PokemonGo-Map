@@ -1351,6 +1351,10 @@ textarea {
 .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
   color: #FFFFFF !important; }
 
+.select2-pokemon {
+    vertical-align: sub;
+}
+
 /* Box */
 .box {
   border-radius: 4px;
