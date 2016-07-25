@@ -475,6 +475,22 @@ function clearStaleMarkers() {
     });
 };
 
+function updateList() {
+    // Clear out the existing body of the list
+    $('#list-content').html('');
+    $.each(map_data.pokemons, function(key, value) {
+        $('#list-content').append(getListCard(value));
+    });
+    $('a[href="#hide"]').on('click', function(event){
+        var anchor = event.currentTarget;
+        var id = anchor.dataset.id;
+        var old = $selectExclude.val();
+        if (old.indexOf(id) == -1) {
+            $selectExclude.val(old.concat(id)).trigger("change");
+        }
+    });
+}
+
 function clearOutOfBoundsMarkers(markers) {
   $.each(markers, function(key, value) {
       var marker = markers[key].marker;
@@ -653,6 +669,7 @@ function updateMap() {
         clearOutOfBoundsMarkers(map_data.pokestops);
         clearOutOfBoundsMarkers(map_data.scanned);
         clearStaleMarkers();
+        updateList();
     });
 };
 
@@ -854,6 +871,7 @@ $(function () {
         $selectExclude.on("change", function (e) {
             excludedPokemon = $selectExclude.val().map(Number);
             clearStaleMarkers();
+            updateList();
             localStorage.remember_select_exclude = JSON.stringify(excludedPokemon);
         });
         $selectNotify.on("change", function (e) {
@@ -929,3 +947,17 @@ $(function () {
 
 
 });
+
+function getListCard(pokemon) {
+    var date = new Date(pokemon.disappear_time);
+    return `
+        <div class="card">
+          <span class="image"><img src="/static/icons/${pokemon.pokemon_id}.png"/></span>
+          <span class="pokemon_name">${pokemon.pokemon_name}</span>
+          <span class="pokemon_id"><a href='http://www.pokemon.com/us/pokedex/${pokemon.pokemon_id}' target='_blank' title='View in Pokedex'>#${pokemon.pokemon_id}</a></span>
+          <div>
+           <span class="pokemon_time">${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}</span>
+           <span class="hide_pokemon"><a href="#hide" data-id="${pokemon.pokemon_id}">Hide</a></span>
+          </div>
+        </div>`;
+}

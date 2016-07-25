@@ -1,0 +1,55 @@
+/* List */
+
+#list {
+  @include vendor('transform', 'translateX(-18em)');
+  @include vendor('transition', ('transform #{_duration(nav)} ease', 'box-shadow #{_duration(nav)} ease', 'visibility #{_duration(nav)}'));
+  -webkit-overflow-scrolling: touch;
+  background: #F8F8F8;
+  box-shadow: none;
+  height: 100%;
+  max-width: 80%;
+  overflow-y: auto;
+  position: fixed;
+  top: 3.50em;
+  left: 0;
+  visibility: hidden;
+  width: 18em;
+  z-index: 500;
+  &.visible {
+    @include vendor('transform', 'translateX(0)');
+    box-shadow: 0 0 1.5em 0 rgba(0,0,0,0.2);
+    visibility: visible;
+  }
+
+  @include breakpoint(small) {
+    padding: 2.5em 1.75em;
+  }
+
+  .card {
+   box-shadow: 0 2px 3px rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.1);
+   padding: 5px 15px 5px 5px;
+   margin-bottom: 5px;
+   color: rgb(59, 59, 59);
+  }
+
+  .pokemon_id {
+   float: right;
+  }
+
+  .pokemon_name {
+   font-size: 16px;
+   vertical-align: top;
+  }
+
+  .pokemon_time {
+   color: rgb(48, 151, 209);
+  }
+
+  .hide_pokemon  {
+    float: right;
+    > a {
+      color: #b20a31;
+      text-decoration: none;
+    }
+  }
+}

@@ -1746,6 +1746,18 @@ body {
     text-decoration: none; }
     #header > a:hover {
       color: #ffffff; }
+    #header > a[href="#list"] {
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      padding-left: 0; }
+      #header > a[href="#list"]:before {
+        content: "";
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-family: FontAwesome;
+        font-style: normal;
+        font-weight: normal;
+        text-transform: none !important; }
     #header > a[href="#nav"] {
       text-decoration: none;
       -webkit-tap-highlight-color: transparent; }
@@ -1976,3 +1988,53 @@ html, body {
         border-left: 0;
         margin-left: 0;
         padding-left: 0; } }
+
+/* List */
+#list {
+  -moz-transform: translateX(-18em);
+  -webkit-transform: translateX(-18em);
+  -ms-transform: translateX(-18em);
+  transform: translateX(-18em);
+  -moz-transition: -moz-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  -webkit-transition: -webkit-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  -ms-transition: -ms-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  transition: transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  -webkit-overflow-scrolling: touch;
+  background: #F8F8F8;
+  box-shadow: none;
+  height: 100%;
+  max-width: 80%;
+  overflow-y: auto;
+  position: fixed;
+  top: 3.50em;
+  left: 0;
+  visibility: hidden;
+  width: 18em;
+  z-index: 500; }
+  #list.visible {
+    -moz-transform: translateX(0);
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    box-shadow: 0 0 1.5em 0 rgba(0, 0, 0, 0.2);
+    visibility: visible; }
+  @media screen and (max-width: 736px) {
+    #list {
+      padding: 2.5em 1.75em; } }
+  #list .card {
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    padding: 5px 15px 5px 5px;
+    margin-bottom: 5px;
+    color: #3b3b3b; }
+  #list .pokemon_id {
+    float: right; }
+  #list .pokemon_name {
+    font-size: 16px;
+    vertical-align: top; }
+  #list .pokemon_time {
+    color: #3097d1; }
+  #list .hide_pokemon {
+    float: right; }
+    #list .hide_pokemon > a {
+      color: #b20a31;
+      text-decoration: none; }
