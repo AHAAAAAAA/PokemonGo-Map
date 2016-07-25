@@ -202,4 +202,7 @@ def send_to_webhook(pokemon):
         webhooks = args.webhooks
 
         for w in webhooks:
-            r = requests.post(w, data=pokemon)
+            try:
+                requests.post(w, data=pokemon, timeout=(None, 1))
+            except requests.exceptions.Timeout:
+                log.debug('Could not receive response from webhook')
