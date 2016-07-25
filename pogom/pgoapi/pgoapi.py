@@ -54,6 +54,17 @@ class PGoApi:
         self._position_alt = 0
 
         self._req_method_list = []
+
+    def copy(self):
+        other = PGoApi()
+        other.log = self.log
+        other._auth_provider = self._auth_provider
+        other._api_endpoint = self._api_endpoint
+        other._position_lat = self._position_lat
+        other._position_lng = self._position_lng
+        other._position_alt = self._position_alt
+        other._req_method_list = list(self._req_method_list)
+        return other
         
     def call(self):
         if not self._req_method_list:
