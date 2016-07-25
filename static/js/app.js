@@ -41,6 +41,10 @@
 
 	// Event: Hide nav on body click/tap.
 	addEventsListener($body, 'click touchend', function(event) {
+		// on ios safari, when navToggle is clicked, 
+		// this function executes too, so if the target
+		// is the toggle button, exit this function
+		if (event.target.matches($navToggle)) { return; }
 		$nav.classList.remove('visible');
 	});
 
@@ -64,8 +68,9 @@
 
 	// Event: Hide on ESC.
 	window.addEventListener('keydown', function(event) {
-		if (event.keyCode == 27)
+		if (event.keyCode == 27) {
 			$nav.classList.remove('visible');
+		}
 	});
 
 	// Event: Hide nav on click.
