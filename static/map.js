@@ -220,7 +220,7 @@ function initMap() {
         zoom: 16,
         fullscreenControl: true,
         streetViewControl: false,
-		mapTypeControl: true,
+		mapTypeControl: false,
 		mapTypeControlOptions: {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           position: google.maps.ControlPosition.RIGHT_TOP,
