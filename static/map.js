@@ -339,6 +339,11 @@ function initSidebar() {
     });
     icons.val((pokemon_sprites[Store.get('pokemonIcons')]) ? Store.get('pokemonIcons') : 'highres');
     $('#pokemon-icon-size').val(Store.get('iconSizeModifier'));
+	
+	var changeStyle = document.getElementById('map-style')
+	changeStyle.addEventListener("change", function(key, value) {
+		map.setMapTypeId(changeStyle.value)
+	}
 }
 
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
