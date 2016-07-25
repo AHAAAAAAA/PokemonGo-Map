@@ -97,7 +97,7 @@ def login(args, position):
 
     while not api.login(args.auth_service, args.username, args.password):
         log.info('Failed to login to Pokemon Go. Trying again.')
-        time.sleep(config['REQ_SLEEP'])
+        time.sleep(args.scan_delay)
 
     log.info('Login to Pokemon Go successful.')
 
@@ -132,9 +132,9 @@ def search_thread(args):
                         response_dict = {}
             else:
                 log.info('Map Download failed. Trying again.')
-                time.sleep(config['REQ_SLEEP'])
+                time.sleep(args.scan_delay)
 
-        time.sleep(config['REQ_SLEEP'])
+        time.sleep(args.scan_delay)
 
 def process_search_threads(search_threads, curr_steps, total_steps):
     for thread in search_threads:
