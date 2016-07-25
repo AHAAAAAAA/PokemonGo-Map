@@ -76,6 +76,9 @@ if __name__ == '__main__':
             start_locator_thread(args)
         else:
             insert_mock_data()
+            if args.tests:
+                time.sleep(20)
+                exit()
 
     app = Pogom(__name__)
 
