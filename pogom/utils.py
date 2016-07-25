@@ -184,17 +184,19 @@ def get_pokemon_name(pokemon_id):
 def get_old_gmaps_key():
 
     # If the file isn't there, we just exit with nothing
-    path = os.path.join(os.path.dirname(__file__), '../config/credentials.json')
-    if os.path.exists(path) is False:
+    filename = os.path.join(os.path.dirname(__file__), '../config/credentials.json')
+    if os.path.exists(filename) is False:
         return ''
 
     # Otherwise try to get the old info
     try:
         log.warn('The credentials.json file has been deprecated, please use the config.ini file')
-        with open(filepath+os.path.sep+'/config/credentials.json') as file:
+        with open(filename) as file:
             credsJson = json.load(file)
         if 'gmaps_key' in credsJson:
             gmaps_key = credsJson['gmaps_key']
+        else:
+            gmaps_key = ''
     except IOError:
         gmaps_key = ''
 
