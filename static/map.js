@@ -1047,7 +1047,7 @@ $(function () {
     function formatState (state) {
         if (!state.id) { return state.text; }
         var $state = $(
-            '<span class="pokemon-sprite n' + state.element.value + '> ' + state.text + '</span>'
+            '<span><i class="pokemon-sprite n' + state.element.value.toString() + '"></i> ' + state.text + '</span>'
         );
         return $state;
     };
