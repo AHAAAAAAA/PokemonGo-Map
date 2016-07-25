@@ -4318,5 +4318,11 @@
     "rarity": "",
     "type":[],
     "spawn_rate": ""
-  },"721":"Volcanion"
+  },
+  "721":{
+    "name": "Volcanion",
+    "rarity": "",
+    "type":[],
+    "spawn_rate": ""
+  }
 }
