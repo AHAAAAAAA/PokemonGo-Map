@@ -61,7 +61,7 @@ def parse_config(args):
     if args.port is None:
         args.port = Config.get('Misc', 'Port')
 
-    if args.port is None:
+    if args.gmaps_key is None:
         if Config.get('Misc', 'Google_Maps_API_Key'):
             args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
 
