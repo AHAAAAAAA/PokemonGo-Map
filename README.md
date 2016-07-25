@@ -1,15 +1,13 @@
-# PokemonGo Map ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/PoGoMapDev)
+# PokemonGo Map![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
 
 
-Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying a Google Maps with markers on it.
+Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying Google Maps with markers on it.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment)
+[![Deploy](https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/images/deploy-to-jelastic.png)](https://jelastic.com/install-application/?manifest=https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/manifest.jps) [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment) 
 
+#[Twitter] (https://twitter.com/PoGoMDev), [Website] (https://jz6.github.io/PoGoMap/)#
 
-#[Official Twitter] (https://twitter.com/PoGoMDev) Please give us a follow or contact us here.
-#[Official Website] (https://jz6.github.io/PoGoMap/)#
-
-![Map](https://i.imgur.com/ZjB9lo0.jpg)
+![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
 
 
 ## How to setup
@@ -35,5 +33,3 @@ Using this software is against the ToS of the game. You can get banned, use this
 Please submit all pull requests to [develop](https://github.com/AHAAAAAAA/PokemonGo-Map/tree/develop) branch.
 
 Building off [tejado's python pgoapi](https://github.com/tejado/pgoapi), [Mila432](https://github.com/Mila432/Pokemon_Go_API)'s API, [leegao's additions](https://github.com/leegao/pokemongo-api-demo/tree/simulation) and [Flask-GoogleMaps](https://github.com/rochacbruno/Flask-GoogleMaps). Current version relies primarily on the pgoapi and Google Maps JS API.
-
-Bitcoin donations appreciated! **18ABe5rhZgLR6zdH27hDWp8DdTkWKJoKwo**
