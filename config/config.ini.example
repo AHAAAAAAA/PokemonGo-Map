@@ -1,32 +1,27 @@
-#Provide Pokemon Go Credentials here. This section must be filled out!
+# Authentication settings
+#auth-service:          # ptc (default) or google
+#username:
+#password:
 
-[Authentication]
-# ptc or google
-Service: ptc
-Username: 
-Password: 
+# Database settings
+#db-type: sqlite        # sqlite (default) or mysql
+#db-host:               # required for mysql
+#db-name:               # required for mysql
+#db-user:               # required for mysql
+#db-pass:               # required for mysql
 
-[Database]
-# Possible values: sqlite, mysql
-Type: sqlite
-# The following are only required if it's not sqlite
-Database_Name: 
-Database_User: 
-Database_Pass: 
-Database_Host: 
+# Search settings
+#location: 
+#no-gyms:               # disables gym scanning (default false)
+#no-pokemon:            # disables pokemon scanning (default false)
+#no-pokestops:          # disables pokestop scanning (default false)
+#num-threads:           # number of search threads (default 1)
+#scan-delay:            # default 1
+#step-limit:            # default 12
 
-[Search_Settings]
-Steps: 12
-Location: 
-#Time delay before beginning new scan
-Scan_delay: 1
-# Disable Map elements
-disable_pokemon: false
-disable_pokestops: false
-disable_gyms: false
+# Misc
+#gmaps-key:
 
-[Misc]
-#you need a google maps api key to run this!
-Google_Maps_API_Key :
-Host: 127.0.0.1
-Port: 5000
+# Webserver settings
+#host:                  # address to listen on (default 127.0.0.1)
+#port:                  # port to liste on (default 5000)
