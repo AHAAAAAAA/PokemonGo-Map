@@ -276,6 +276,8 @@ function initMap() {
         redrawPokemon(map_data.pokemons);
         redrawPokemon(map_data.lure_pokemons);
     });
+
+    window.setInterval(updateMap, 5000);
 };
 
 function createSearchMarker() {
@@ -1084,7 +1086,6 @@ $(function () {
 
     // run interval timers to regularly update map and timediffs
     window.setInterval(updateLabelDiffTime, 1000);
-    window.setInterval(updateMap, 5000);
     window.setInterval(function() {
       if(navigator.geolocation && Store.get('geoLocate')) {
         navigator.geolocation.getCurrentPosition(function (position){
