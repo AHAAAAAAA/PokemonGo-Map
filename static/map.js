@@ -220,7 +220,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
             </div>
             </center></div>`;
     } else {
-    	var gym_prestige = [2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000$
+        var gym_prestige = [2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000, 50000];
         var gym_level = 1;
         while (gym_points >= gym_prestige[gym_level - 1]) {
                 gym_level++;
