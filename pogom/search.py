@@ -6,7 +6,7 @@ import time
 import math
 
 from threading import Thread, Lock
-from queue import PriorityQueue
+from queue import Queue
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -28,9 +28,7 @@ lng_gap_meters = 86.6
 meters_per_degree = 111111
 lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
 
-search_queue = PriorityQueue(config['SEARCH_QUEUE_DEPTH'])
-search_priority = 10
-scan_priority = 5
+search_queue = Queue(config['SEARCH_QUEUE_DEPTH'])
 
 def calculate_lng_degrees(lat):
     return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
@@ -113,7 +111,7 @@ def create_search_threads(num) :
 def search_thread(args):
     queue = args
     while True:
-        priority, i, total_steps, step_location, step, lock = queue.get()
+        i, total_steps, step_location, step, lock = queue.get()
         log.info("Search queue depth is: " + str(queue.qsize()))
         response_dict = {}
         failed_consecutive = 0
@@ -145,8 +143,10 @@ def process_search_threads(search_threads, curr_steps, total_steps):
         log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
     return curr_steps
 
-def search(args, i, position, num_steps):
+def search(args, i):
+    num_steps = args.step_limit
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
+    position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
     lock = Lock()
     with lock: # TODO: Remove lock, make immutable
@@ -166,10 +166,10 @@ def search(args, i, position, num_steps):
             config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
             config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
             config.pop('NEXT_LOCATION', None)
-            search(args, i, num_steps)
+            search(args, i)
             return
 
-        search_args = (search_priority, i, total_steps, step_location, step, lock)
+        search_args = ( i, total_steps, step_location, step, lock)
         search_queue.put(search_args)
 
 def search_loop(args):
@@ -177,8 +177,7 @@ def search_loop(args):
     try:
         while True:
             log.info("Map iteration: {}".format(i))
-            position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
-            search(args, i, position, args.num_steps)
+            search(args, i)
             log.info("Scanning complete.")
             if args.scan_delay > 1:
                 log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
