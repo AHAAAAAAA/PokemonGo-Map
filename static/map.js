@@ -954,25 +954,38 @@ function getPointDistance(pointA, pointB) {
 }
 
 function sendNotification(title, text, icon, lat, lng) {
-  if (!("Notification" in window)) {
-    return false; // Notifications are not present in browser
+  try
+  {
+    if (!("Notification" in window)) {
+      return false; // Notifications are not present in browser
+    }
+
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    } else {
+      var notification = new Notification(title, {
+        icon: icon,
+        body: text,
+        sound: 'sounds/ding.mp3'
+      });
+
+      notification.onclick = function() {
+        window.focus();
+        notification.close();
+
+        centerMap(lat, lng, 20);
+      };
+    }        
   }
-
-  if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-  } else {
-    var notification = new Notification(title, {
-      icon: icon,
-      body: text,
-      sound: 'sounds/ding.mp3'
-    });
-
-    notification.onclick = function() {
-      window.focus();
-      notification.close();
-
-      centerMap(lat, lng, 20);
-    };
+  catch(e) // Gotta catch em all!
+  {
+    // Some browsers will throw when creating the Notifcation object, 
+    // with an error pointing us towards ServiceWorkerRegistration.showNotification.
+    // Just eat exceptions until someone can implement that.
+    
+    if ( window.console ) {
+      console.log(e);
+    }
   }
 }
 
