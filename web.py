@@ -3,8 +3,6 @@ from datetime import datetime
 import argparse
 import json
 
-from geopy import distance
-from geopy import Point
 import requests
 from flask import Flask, request, render_template
 from flask_googlemaps import GoogleMaps
@@ -200,18 +198,7 @@ def report_main():
     session_stats = db.get_session_stats(session)
     session.close()
 
-    lat1 = app_config.MAP_START[0]
-    lat2 = app_config.MAP_END[0]
-    lon1 = app_config.MAP_START[1]
-    lon2 = app_config.MAP_END[1]
-    p1 = Point(lat1, lon1)
-    p2 = Point(lat1, lon2)
-    p3 = Point(lat1, lon1)
-    p4 = Point(lat2, lon1)
-
-    width = distance.distance(p1,p2).kilometers
-    height = distance.distance(p3,p4).kilometers
-    area = int(width * height)
+    area = utils.get_scan_area()
 
     return render_template(
         'report.html',
