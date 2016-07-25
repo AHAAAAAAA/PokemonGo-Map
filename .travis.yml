@@ -8,4 +8,4 @@ install:
   - pip install Flask==$FLASK
   - pip install -r requirements.txt
 script:
-  - python runserver.py -m -d -u test -p test -a test -l "Boulder CO" -st 5 -ts
+  - nosetests

@@ -93,7 +93,6 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
-    parser.add_argument('-ts', '--tests', help='For Travis tests', action='store_true', default=False)
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
