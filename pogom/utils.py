@@ -118,6 +118,24 @@ def get_args():
             elif args.password is None:
                 args.password = config["PASSWORD"]
 
+    # Test and setup SSL context
+    # h/t to mik9 for this nice setup
+    if args.ssl_key != "" or args.ssl_cert != "":
+        if args.ssl_cert == "":
+            print sys.argv[0] + ': error: for ssl support, you should also specify -sc/--ssl-cert or populate "SSL_Cert" in config.ini'
+            sys.exit(1)
+        if args.ssl_key == "":
+            print sys.argv[0] + ': error: for ssl support, you should also specify -sk/--ssl-key or populate "SSL_Key" in config.ini'
+            sys.exit(1)
+        if os.path.exists(args.ssl_cert) is False:
+            print sys.argv[0] + ': error: your ssl_cert location could not be found on disk'
+            sys.exit(1)
+        if os.path.exists(args.ssl_key) is False:
+            print sys.argv[0] + ': error: your ssl_key location could not be found on disk'
+            sys.exit(1)
+        args.ssl_context = (args.ssl_cert, args.ssl_key)
+    else:
+        args.ssl_context = None
 
     return args
 
