@@ -65,10 +65,11 @@ function initMap() {
             lng: center_lng
         },
         zoom: 16,
+        disableDoubleClickZoom: true,
         fullscreenControl: true,
         streetViewControl: false,
-		mapTypeControl: true,
-		mapTypeControlOptions: {
+        mapTypeControl: true,
+        mapTypeControlOptions: {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
@@ -82,15 +83,15 @@ function initMap() {
               'style_pgo_nl']
         },
     });
+    
+    var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
+    map.mapTypes.set('dark_style', style_dark);
 
-	var style_dark = new google.maps.StyledMapType(darkStyle, {name: "Dark"});
-	map.mapTypes.set('dark_style', style_dark);
+    var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
+    map.mapTypes.set('style_light2', style_light2);
 
-	var style_light2 = new google.maps.StyledMapType(light2Style, {name: "Light2"});
-	map.mapTypes.set('style_light2', style_light2);
-
-	var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
-	map.mapTypes.set('style_pgo', style_pgo);
+    var style_pgo = new google.maps.StyledMapType(pGoStyle, {name: "PokemonGo"});
+    map.mapTypes.set('style_pgo', style_pgo);
 
     var style_dark_nl = new google.maps.StyledMapType(darkStyleNoLabels, {name: "Dark (No Labels)"});
     map.mapTypes.set('dark_style_nl', style_dark_nl);
@@ -116,6 +117,19 @@ function initMap() {
 
     addMyLocationButton();
     initSidebar();
+
+    google.maps.event.addListener(map, 'dblclick', function(e) {
+        var oldLocation = marker.getPosition();
+        changeSearchLocation(e.latLng.lat(), e.latLng.lng())
+            .done(function() {
+                oldLocation = null;
+                marker.setPosition(e.latLng);
+            })
+            .fail(function() {
+                marker.setPosition(oldLocation);
+            });
+    });
+
     google.maps.event.addListenerOnce(map, 'idle', function(){
         updateMap();
     });
@@ -394,6 +408,7 @@ function setupScannedMarker(item) {
     var marker = new google.maps.Circle({
         map: map,
         center: circleCenter,
+        clickable: false,
         radius: 100,    // 10 miles in metres
         fillColor: getColorByDate(item.last_modified),
         strokeWeight: 1
