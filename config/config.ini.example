@@ -20,6 +20,10 @@ Steps: 12
 Location: 
 #Time delay before beginning new scan
 Scan_delay: 1
+# Disable Map elements
+disable_pokemon: false
+disable_pokestops: false
+disable_gyms: false
 
 [Misc]
 #you need a google maps api key to run this!
