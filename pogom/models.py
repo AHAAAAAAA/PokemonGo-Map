@@ -29,11 +29,15 @@ def init_database():
 
     print args.db_type
     if args.db_type == 'mysql':
+        if not (1 <= args.db_port <= 65535):
+            log.warning('{} is not a valid port number. Defaulting to 3306.'.format(args.db_port))
+            args.db_port=3306
         db = MySQLDatabase(
-            args.db_name,
-            user=args.db_user,
-            password=args.db_pass,
-            host=args.db_host)
+            args.db_name, 
+            user=args.db_user, 
+            password=args.db_pass, 
+            host=args.db_host, 
+            port=args.db_port)
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)

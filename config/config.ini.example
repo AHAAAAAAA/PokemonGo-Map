@@ -14,6 +14,8 @@ Database_Name:
 Database_User: 
 Database_Pass: 
 Database_Host: 
+# Possible values: 1 to 65535. MySQL default port is 3306
+Database_Port: 3306
 
 [Search_Settings]
 Steps: 12
