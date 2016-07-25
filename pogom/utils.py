@@ -201,5 +201,5 @@ def send_to_webhook(pokemon):
     if args.webhooks:
         webhooks = args.webhooks
 
-    for w in webhooks:
-        r = requests.post(w, data=pokemon)
+        for w in webhooks:
+            r = requests.post(w, data=pokemon)
