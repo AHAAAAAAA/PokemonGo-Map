@@ -17,7 +17,7 @@ Database_Host:
 
 [Search_Settings]
 Steps: 12
-Location:
+Location: 
 # Time delay before beginning new scan
 Scan_delay: 1
 # Disable Map elements
