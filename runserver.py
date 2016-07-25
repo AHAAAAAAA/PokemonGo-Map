@@ -5,7 +5,6 @@ import os
 import sys
 import logging
 import time
-import ssl
 
 from threading import Thread
 from flask_cors import CORS, cross_origin
