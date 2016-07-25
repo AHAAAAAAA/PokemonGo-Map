@@ -632,17 +632,32 @@ function addListeners(marker) {
         marker.persist = null;
     });
 
-    marker.addListener('mouseover', function() {
+    function mouseover() {
         marker.infoWindow.open(map, marker);
         clearSelection();
         updateLabelDiffTime();
-    });
+    }
 
-    marker.addListener('mouseout', function() {
+    function mouseout() {
         if (!marker.persist) {
             marker.infoWindow.close();
         }
+    }
+
+    marker.addListener('mouseover', function() { mouseover() });
+    marker.addListener('mouseout', function() { mouseout() });
+
+
+    marker.addListener('touchstart', function() {
+        marker.removeListener('mouseover');
+        marker.removeListener('mouseout');
     });
+
+    marker.addListener('touchend', function() {
+        marker.addListener('mouseover', function() { mouseover() });
+        marker.addListener('mouseout', function() { mouseout() });
+    });
+
     return marker
 };
 
