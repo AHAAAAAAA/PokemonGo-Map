@@ -35,6 +35,7 @@
 	</head>
 	<body id="top">
 
+
 	<div class="wrapper">
 		<!-- Header -->
 		<header id="header">
@@ -42,7 +43,7 @@
 			<h1><a href="#">Pokémon Go Map</a></h1>
 		</header>
 
-		<!-- Nav -->
+		<!-- NAV -->
 		<nav id="nav">
 			<div class="form-control" style="display:{{is_fixed}}" >
 				<label for="next-location">
@@ -77,10 +78,13 @@
 				<div class="onoffswitch">
 					<input id="gyms-switch" type="checkbox" name="gyms-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="gyms-switch">
+
 	        				<span class="switch-label" data-on="On" data-off="Off"></span>
 	        				<span class="switch-handle"></span>
 	        			</label>
+
 				</div>
+
 			</div>
 			<div class="form-control switch-container">
 				<h3>Pokéstops</h3>
@@ -92,6 +96,18 @@
 					</label>
 				</div>
 			</div>
+
+			<div class="form-control switch-container">
+				<h3>Geolocation</h3>
+				<div class="onoffswitch">
+					<input id="geoloc-switch" type="checkbox" name="geoloc-switch" class="onoffswitch-checkbox" checked/>
+					<label class="onoffswitch-label" for="geoloc-switch">
+						<span class="switch-label" data-on="On" data-off="Off"></span>
+						<span class="switch-handle"></span>
+					</label>
+				</div>
+			</div>
+
 			<div class="form-control switch-container">
 				<h3>Scanned Locations</h3>
 				<div class="onoffswitch">
@@ -102,7 +118,21 @@
 					</label>
 				</div>
 			</div>
+			<div class="form-control switch-container">
+				<h3>Icons</h3>
+				<select name="pokemon-icons" id="pokemon-icons"></select>
+			</div>
+			<div class="form-control switch-container">
+				<h3>Icon Size</h3>
+				<select name="pokemon-icon-size" id="pokemon-icon-size">
+					<option value="-8">Small</option>
+					<option value="0">Normal</option>
+					<option value="10">Large</option>
+					<option value="20">X-Large</option>
+				</select>
+			</div>
 			<hr width="100%">
+
 			<div class="form-control">
 				<label for="exclude-pokemon">
 					<h3>Hide common Pokémon</h3>
@@ -143,7 +173,8 @@
 		var center_lng = {{lng}};
 	</script>
 
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
 	<script src="static/map.js"></script>
+
 	</body>
 </html>
