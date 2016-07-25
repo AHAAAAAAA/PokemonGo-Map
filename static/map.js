@@ -275,7 +275,7 @@ function setupPokemonMarker(item) {
         if(localStorage.playSound === 'true'){
           audio.play();
         }
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png')
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to see map', 'static/icons/' + item.pokemon_id + '.png')
     }
 
     addListeners(marker);
@@ -576,7 +576,7 @@ function sendNotification(title, text, icon) {
         });
 
         notification.onclick = function () {
-            window.open(window.location.href);
+            window.focus();
         };
     }
 }
