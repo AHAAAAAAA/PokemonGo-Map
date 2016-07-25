@@ -318,7 +318,7 @@ function setupPokemonMarker(item) {
           new Audio(audio_base_url + item.pokemon_id + '.mp3').play();
         }
 
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', item.pokemon_id, item.latitude, item.longitude);
+        sendNotification(item.pokemon_name, item.pokemon_id, item.latitude, item.longitude);
     }
 
     addListeners(marker);
@@ -703,13 +703,14 @@ var updateLabelDiffTime = function() {
     });
 };
 
-function sendNotification(title, text, pokemon_id, lat, lng) {
+function sendNotification(pokemon_name, pokemon_id, lat, lng) {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
     } else {
-        var notification = new Notification(title, {
+        var notification = new Notification(
+            'A wild ' + pokemon_name + ' appeared!', {
             icon: 'static/icons/' + pokemon_id + '.png',
-            body: text,
+            body: 'Click to load map',
             sound: audio_base_url + pokemon_id + '.mp3'
         });
 
