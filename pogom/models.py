@@ -102,7 +102,12 @@ class ScannedLocation(BaseModel):
             scans.append(s)
 
         return scans
-
+'''
+The method parse_map takes the location co-ordinates of the player or user and retrieves all the pokemons, pokestops, gyms.
+It also gets the pokemons spawnpoints, dissapear times and also the pokestops whether they are active for that particular 
+user and the information about gyms, which contain the information about the team which occupies the gym and the pokemons
+present in the gym etc.
+'''
 def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
     pokestops = {}
