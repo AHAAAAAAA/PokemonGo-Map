@@ -93,10 +93,24 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-hc', '--https-cert', help='Specify https certificate', default=None, dest='https_cert')
+    parser.add_argument('-hpk', '--https-private-key', help='Specify https private key', default=None, dest='https_key')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
     args = parse_db_config(args)
+
+    if args.https_cert is not None or args.https_key is not None:
+        if args.https_cert is None:
+            print sys.argv[0] + ': error: you should also specify -hc/--https-cert'
+            sys.exit(1)
+        if args.https_key is None:
+            print sys.argv[0] + ': error: you should also specify -hpk/--https-private-key'
+            sys.exit(1)
+
+        args.ssl_context = (args.https_cert, args.https_key)
+    else:
+        args.ssl_context = None
 
     if (args.settings):
         args = parse_config(args)
