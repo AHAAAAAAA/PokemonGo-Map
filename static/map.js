@@ -228,7 +228,11 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
         </div>
         <div>
             Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
-            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span></div>
+            <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span>
+        </div>
+        <div>
+            Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+        </div>
         <div>
             <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
             <a href='javascript:notifyAboutPokemon(${id})'>Notify</a>&nbsp;&nbsp;
@@ -249,11 +253,19 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
             <div>
+                Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+            </div>
+            <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
             </div>
             </center></div>`;
     } else {
+        var gym_prestige = [2000, 4000, 8000, 12000, 16000, 20000, 30000, 40000, 50000];
+        var gym_level = 1;
+        while (gym_points >= gym_prestige[gym_level - 1]) {
+                gym_level++;
+        }
         str = `
             <div><center>
             <div style='padding-bottom: 2px'>Gym owned by:</div>
@@ -261,7 +273,10 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
                 <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
-            <div>Prestige: ${gym_points}</div>
+            <div>Level: ${gym_level} | Prestige: ${gym_points}</div>
+            <div>
+                Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+            </div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
@@ -301,6 +316,9 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
                 <span class='label-countdown' disappears-at='${expire_time}'>(00m00s)</span></div>
             <div>
             <div>
+                Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+            </div>
+            <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
                         target='_blank' title='View in Maps'>Get directions</a>
             </div>`;
@@ -308,6 +326,9 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
         str = `
             <div>
                 <b>Pokéstop</b>
+            </div>
+            <div>
+                Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
             </div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
