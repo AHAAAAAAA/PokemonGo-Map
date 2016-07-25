@@ -334,10 +334,10 @@ function getGoogleSprite(index, sprite, display_height) {
     display_height = Math.max(display_height, 3);
     var scale = display_height / sprite.icon_height;
     // Crop icon just a tiny bit to avoid bleedover from neighbor
-    var scaled_icon_size = new google.maps.Size(scale * sprite.icon_width - 2, scale * sprite.icon_height - 2);
+    var scaled_icon_size = new google.maps.Size(scale * sprite.icon_width - 1, scale * sprite.icon_height - 1);
     var scaled_icon_offset = new google.maps.Point(
-        (index % sprite.columns) * sprite.icon_width * scale + 1,
-        Math.floor(index / sprite.columns) * sprite.icon_height * scale + 1);
+        (index % sprite.columns) * sprite.icon_width * scale + 0.5,
+        Math.floor(index / sprite.columns) * sprite.icon_height * scale + 0.5);
     var scaled_sprite_size = new google.maps.Size(scale * sprite.sprite_width, scale * sprite.sprite_height);
     var scaled_icon_center_offset = new google.maps.Point(scale * sprite.icon_width/2, scale * sprite.icon_height/2)
     return {
