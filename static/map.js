@@ -190,7 +190,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
             <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span>
         </div>
         <div>
-                Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+            Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
         </div>
         <div>
             <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
@@ -212,7 +212,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
                 <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
             </div>
             <div>
-                    Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
+                Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
             </div>
             <div>
                 <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}'
