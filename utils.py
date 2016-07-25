@@ -59,4 +59,17 @@ def get_points_per_worker():
             grid_col = int(map_col / float(total_columns) * config.GRID[1])
             worker_no = grid_row * config.GRID[1] + grid_col
             points[worker_no].append((lat, lon))
+    points = [
+        sort_points_for_worker(p, i)
+        for i, p in enumerate(points)
+    ]
     return points
+
+
+def sort_points_for_worker(points, worker_no):
+    center = get_start_coords(worker_no)
+    return sorted(points, key=lambda p: get_distance(p, center))
+
+
+def get_distance(p1, p2):
+    return math.sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
