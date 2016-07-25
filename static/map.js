@@ -58,6 +58,14 @@ var pokemon_sprites = {
     }
 };
 
+//Exponential backoff on main map update loop
+var INITIAL_DELAY = 5000;
+var INITIAL_MAX_RETRY = 5;
+
+var updateDelay = INITIAL_DELAY;
+var maxRetry = INITIAL_MAX_RETRY;
+var updateWindowInterval;
+
 //
 // Functions
 //
@@ -709,8 +717,7 @@ function processScanned(i, item) {
 }
 
 
-function updateMap() {
-
+var updateMap = function() {
     loadRawData().done(function (result) {
         $.each(result.pokemons, processPokemons);
         $.each(result.pokestops, processPokestops);
@@ -723,6 +730,14 @@ function updateMap() {
         clearOutOfBoundsMarkers(map_data.pokestops);
         clearOutOfBoundsMarkers(map_data.scanned);
         clearStaleMarkers();
+
+        //update var
+        isLocalUp = true;
+    }).fail(function(){
+        isLocalUp = false;
+    }).always(function(){
+        //refresh the timings
+        refreshUpdateTimings(isLocalUp);
     });
 };
 
@@ -892,12 +907,38 @@ function centerMap(lat, lng, zoom) {
 }
 
 //
-// Page Ready Exection
+// Exponential Backoff
+//
+
+var refreshUpdateTimings = function(isSuccess){
+     
+     if(isSuccess){
+         maxRetry = INITIAL_MAX_RETRY;
+         updateDelay = INITIAL_DELAY;
+     } else{
+         if(maxRetry > 0){
+            maxRetry -= 1;
+            updateDelay *= 2;
+         }
+     }
+    
+     if(updateWindowInterval){
+          clearInterval(updateWindowInterval);
+     }
+
+     if(maxRetry > 0){
+        //console.log('max',maxRetry,'next delay',updateDelay);
+        updateWindowInterval = window.setInterval(updateMap, updateDelay);
+     }
+};
+
+//
+// Page Ready Exception
 //
 
 $(function () {
     if (!Notification) {
-        console.log('could not load notifications');
+        //console.log('could not load notifications');
         return;
     }
 
@@ -952,7 +993,9 @@ $(function () {
 
     // run interval timers to regularly update map and timediffs
     window.setInterval(updateLabelDiffTime, 1000);
-    window.setInterval(updateMap, 5000);
+
+    updateMap();
+    
     window.setInterval(function() {
       if(navigator.geolocation && localStorage.geoLocate === 'true') {
         navigator.geolocation.getCurrentPosition(function (position){
