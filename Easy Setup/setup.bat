@@ -39,12 +39,9 @@ cd ..
 "%PATH2%\Scripts\pip" install -r requirements.txt
 "%PATH2%\Scripts\pip" install -r requirements.txt --upgrade
 cd config
+copy config.ini.example config.ini
 set /p API= Enter your Google API key here:
+powershell -Command "(gc config.ini) -replace '#gmaps-key:', 'gmaps-key: %API%' | Out-File config.ini"
 
-    (
-    echo {
-    echo "gmaps_key" : "%API%"
-    echo }
-    ) > credentials.json
 echo All done!
 pause
