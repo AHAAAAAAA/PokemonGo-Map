@@ -313,7 +313,6 @@ function createSearchMarker() {
 function initSidebar() {
     $('#gyms-switch').prop('checked', Store.get('showGyms'));
     $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
-    $('#lured-pokemon-switch').prop('checked', Store.get('showLuredPokemon'));
     $('#pokestops-switch').prop('checked', Store.get('showPokestops'));
     $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
     $('#scanned-switch').prop('checked', Store.get('showScanned'));
@@ -694,7 +693,7 @@ function clearOutOfBoundsMarkers(markers) {
 function loadRawData() {
     var loadPokemon = Store.get('showPokemon');
     var loadGyms = Store.get('showGyms');
-    var loadPokestops = Store.get('showPokestops') || Store.get('showLuredPokemon');
+    var loadPokestops = Store.get('showPokestops') || Store.get('showPokemon');
     var loadScanned = Store.get('showScanned');
 
     var bounds = map.getBounds();
@@ -766,7 +765,7 @@ function processPokestops(i, item) {
 }
 
 function processLuredPokemon(i, item) {
-    if (!Store.get('showLuredPokemon')) {
+    if (!Store.get('showPokemon')) {
         return false;
     }
     var item2 = {
@@ -779,6 +778,8 @@ function processLuredPokemon(i, item) {
         disappear_time: item.lure_expiration
     };
 
+    if (item2.pokemon_id == null){
+        return;
     if (map_data.lure_pokemons[item2.pokestop_id] == null && item2.lure_expiration) {
         //if (item.marker) item.marker.setMap(null);
         item2.marker = setupPokemonMarker(item2);
@@ -1121,7 +1122,6 @@ $(function () {
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
     $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
-    $('#lured-pokemon-switch').change(buildSwitchChangeListener(map_data, "lure_pokemons", "showLuredPokemon"));
     $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
