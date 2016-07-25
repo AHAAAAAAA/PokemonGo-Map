@@ -245,6 +245,18 @@ def parse_map(map_dict, iteration_num, step, step_location):
                             lure_expiration = datetime.utcfromtimestamp(
                                 f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
                             active_pokemon_id = f['lure_info']['active_pokemon_id']
+
+                            # create fake encounter_id for lured pokemon and store in db, info to be used in data mining
+                            fake_encounter_id = '{}-{}'.format(f['id'], f['lure_info']['lure_expires_timestamp_ms'])
+                            pokemons[fake_encounter_id] = {
+                                'encounter_id': b64encode(fake_encounter_id),
+                                'spawnpoint_id': f['id'],
+                                'pokemon_id': active_pokemon_id,
+                                'latitude': f['latitude'],
+                                'longitude': f['longitude'],
+                                'disappear_time': lure_expiration
+                            }
+
                         else:
                             lure_expiration, active_pokemon_id = None, None
 
