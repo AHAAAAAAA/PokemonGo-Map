@@ -13,6 +13,7 @@ import ConfigParser
 import platform
 import logging
 import shutil
+import requests
 
 from . import config
 
@@ -93,6 +94,7 @@ def get_args():
     parser.add_argument('-np', '--no-pokemon', help='Disables Pokemon from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-ng', '--no-gyms', help='Disables Gyms from the map (including parsing them into local db)', action='store_true', default=False)
     parser.add_argument('-nk', '--no-pokestops', help='Disables PokeStops from the map (including parsing them into local db)', action='store_true', default=False)
+    parser.add_argument('-wh', '--webhook', help='Add a URL to POST webhook information to', nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
@@ -192,3 +194,12 @@ def load_credentials(filepath):
             " Please take a look at the wiki for instructions on how to generate this key,"
             " then add that key to the file!")
     return creds
+
+def send_to_webhook(pokemon):
+    args = get_args()
+
+    if args.webhooks:
+        webhooks = args.webhooks
+
+    for w in webhooks:
+        r = requests.post(w, data=pokemon)
