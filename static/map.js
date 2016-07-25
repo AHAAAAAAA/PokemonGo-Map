@@ -210,7 +210,7 @@ function initSidebar() {
         icons.append($('<option></option>').attr("value", key).text(value.name));
     });
     icons.val((pokemon_sprites[localStorage.pokemonIcons]) ? localStorage.pokemonIcons : 'highres');
-    $('#pokemon-icon-size').val(localStorage.iconModifierSize || 0);
+    $('#pokemon-icon-size').val(localStorage.iconSizeModifier || 0);
 }
 
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
