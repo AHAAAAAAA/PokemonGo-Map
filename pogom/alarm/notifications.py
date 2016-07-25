@@ -46,6 +46,7 @@ class Notifications:
 				self.seen[id] = pkinfo
 				if(self.notify_list[pkinfo['name']] == "True"):
 					log.info(pkinfo['name']+" notification has been triggered!")
+					log.info("Encounter ID:" + str(id))
 					for alarm in self.alarms:
 						alarm.pokemon_alert(pkinfo)
 		self.clear_stale()
