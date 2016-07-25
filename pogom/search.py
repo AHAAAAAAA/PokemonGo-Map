@@ -182,7 +182,7 @@ def search(args, i):
 def search_loop(args):
     i = 0
     try:
-        while True:
+        while (not args.single_scan) or i == 0 :
             log.info("Map iteration: {}".format(i))
             search(args, i)
             log.info("Scanning complete.")
