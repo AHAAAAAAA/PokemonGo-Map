@@ -171,6 +171,7 @@ def search(args, i):
             config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
             config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
             config.pop('NEXT_LOCATION', None)
+            search_queue.queue.clear()
             search(args, i)
             return
 
