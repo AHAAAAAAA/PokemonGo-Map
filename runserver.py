@@ -5,6 +5,7 @@ import os
 import sys
 import logging
 import time
+import ssl
 
 from threading import Thread
 from flask_cors import CORS, cross_origin
@@ -83,6 +84,8 @@ if __name__ == '__main__':
         CORS(app);
 
     config['ROOT_PATH'] = app.root_path
+
+    # Load the gmaps key from ini file, and attempt to fall back to the old json file just in case
     if args.gmaps_key is not None:
         config['GMAPS_KEY'] = args.gmaps_key
     else:
@@ -93,4 +96,9 @@ if __name__ == '__main__':
             time.sleep(1)
         search_thread.join()
     else:
-        app.run(threaded=True, debug=args.debug, host=args.host, port=args.port)
+        if args.ssl_key != "" and args.ssl_cert != "":
+            ssl_context=(args.ssl_cert, args.ssl_key)
+        else:
+            ssl_context=None
+        app.run(threaded=True, debug=args.debug, host=args.host, port=args.port, ssl_context=ssl_context)
+
