@@ -37,19 +37,33 @@ def parse_config(args):
     verify_config_file_exists('../config/config.ini')
     Config = ConfigParser.ConfigParser()
     Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
-    args.auth_service = Config.get('Authentication', 'Service')
-    args.username = Config.get('Authentication', 'Username')
-    args.password = Config.get('Authentication', 'Password')
-    args.location = Config.get('Search_Settings', 'Location')
-    args.step_limit = int(Config.get('Search_Settings', 'Steps'))
-    args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
-    args.no_pokemon = Config.getboolean('Search_Settings', 'Disable_Pokemon')
-    args.no_pokestops = Config.getboolean('Search_Settings', 'Disable_Pokestops')
-    args.no_gyms = Config.getboolean('Search_Settings', 'Disable_Gyms')
-    if Config.get('Misc', 'Google_Maps_API_Key') :
-        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
-    args.host = Config.get('Misc', 'Host')
-    args.port = Config.get('Misc', 'Port')
+    
+    if args.auth_service is None:
+        args.auth_service = Config.get('Authentication', 'Service')
+    if args.username is None:
+        args.username = Config.get('Authentication', 'Username')
+    if args.password is None:
+        args.password = Config.get('Authentication', 'Password')
+    if args.location is None:
+        args.location = Config.get('Search_Settings', 'Location')
+    if args.step_limit is None:
+        args.step_limit = int(Config.get('Search_Settings', 'Steps'))
+    if args.scan_delay is None:
+        args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
+    if args.no_pokemon is None:
+        args.no_pokemon = Config.getboolean('Search_Settings', 'Disable_Pokemon')
+    if args.no_pokestops is None:
+        args.no_pokestops = Config.getboolean('Search_Settings', 'Disable_Pokestops')
+    if args.no_gyms is None:
+        args.no_gyms = Config.getboolean('Search_Settings', 'Disable_Gyms')
+    if args.host is None:
+        args.host = Config.get('Misc', 'Host')
+    if args.port is None:
+        args.port = Config.get('Misc', 'Port')
+
+    if args.gmaps_key is None:
+        if Config.get('Misc', 'Google_Maps_API_Key'):
+            args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
 
     return args
 
@@ -76,8 +90,8 @@ def get_args():
     parser.add_argument('-st', '--step-limit', help='Steps', required=False, type=int)
     parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', required=False, type=int, default=1)
     parser.add_argument('-dc','--display-in-console',help='Display Found Pokemon in Console',action='store_true',default=False)
-    parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
-    parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
+    parser.add_argument('-H', '--host', help='Set web server listening host')
+    parser.add_argument('-P', '--port', type=int, help='Set web server listening port')
     parser.add_argument('-L', '--locale', help='Locale for Pokemon names: default en, check'
                         'locale folder for more options', default='en')
     parser.add_argument('-c', '--china', help='Coordinates transformer for China', action='store_true')
@@ -98,24 +112,32 @@ def get_args():
 
     args = parse_db_config(args)
 
+    # Read settings from config.ini
     if (args.settings):
         args = parse_config(args)
-    else:
-        if args.only_server:
-            if args.location is None:
-                parser.print_usage()
-                print sys.argv[0] + ': error: arguments -l/--location is required'
-                sys.exit(1);
-        else:
-            if (args.username is None or args.location is None or args.step_limit is None):
-                parser.print_usage()
-                print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
-                sys.exit(1);
 
-            if config["PASSWORD"] is None and args.password is None:
-                config["PASSWORD"] = args.password = getpass.getpass()
-            elif args.password is None:
-                args.password = config["PASSWORD"]
+    # Apply defaults if not in config or on cmd line
+    if args.host is None:
+        args.host = '127.0.0.1'
+    if args.port is None:
+        args.port = 5000
+
+    # Check settings are valid
+    if args.only_server:
+        if args.location is None:
+            parser.print_usage()
+            print sys.argv[0] + ': error: arguments -l/--location is required'
+            sys.exit(1);
+    else:
+        if (args.username is None or args.location is None or args.step_limit is None):
+            parser.print_usage()
+            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
+            sys.exit(1);
+
+        if config["PASSWORD"] is None and args.password is None:
+            config["PASSWORD"] = args.password = getpass.getpass()
+        elif args.password is None:
+            args.password = config["PASSWORD"]
 
 
     return args
