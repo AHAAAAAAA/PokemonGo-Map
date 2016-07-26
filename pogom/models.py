@@ -3,11 +3,11 @@
 
 import logging
 import os
+import time
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, DoubleField, BooleanField, DateTimeField,\
                    OperationalError
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from base64 import b64encode
 
 from . import config
@@ -237,7 +237,17 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'longitude': p['longitude'],
                     'disappear_time': d_t
                 }
-                send_to_webhook(pokemons[p['encounter_id']]);
+
+                webhook_data = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': p['spawnpoint_id'],
+                    'pokemon_id': p['pokemon_data']['pokemon_id'],
+                    'latitude': p['latitude'],
+                    'longitude': p['longitude'],
+                    'disappear_time': time.mktime(d_t.timetuple())
+                }
+
+                send_to_webhook('pokemon', webhook_data);
 
         if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):

@@ -142,15 +142,20 @@ def get_pokemon_name(pokemon_id):
 
     return get_pokemon_name.names[str(pokemon_id)]
 
-def send_to_webhook(pokemon):
+def send_to_webhook(type, message):
     args = get_args()
+
+    data = {
+        'type': type,
+        'message': message
+    }
 
     if args.webhooks:
         webhooks = args.webhooks
 
         for w in webhooks:
             try:
-                requests.post(w, data=pokemon, timeout=(None, 1))
+                requests.post(w, json=data, timeout=(None, 1))
             except requests.exceptions.ReadTimeout:
                 log.debug('Could not receive response from webhook')
             except requests.exceptions.RequestException as e:
