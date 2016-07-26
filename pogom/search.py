@@ -13,16 +13,18 @@ from pgoapi.utilities import f2i, get_cellid
 
 from . import config
 from .models import parse_map
+from pogom.utils import get_args
 
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
 
+args = get_args()
 #Constants for Hex Grid
 #Gap between vertical and horzonal "rows"
-lat_gap_meters = 150
-lng_gap_meters = 86.6
+lat_gap_meters = 150 * args.jump_block
+lng_gap_meters = 86.6 * args.jump_block
 
 #111111m is approx 1 degree Lat, which is close enough for this
 meters_per_degree = 111111
