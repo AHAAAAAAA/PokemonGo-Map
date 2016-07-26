@@ -110,19 +110,16 @@ def create_search_threads(num, locations):
             locations.pop()
 
     for i in range(num):
-        if i > len(locations):
-            idx = (i-1) % len(locations)
-        elif i == len(locations):
-            idx = i % len(locations)
+        if i >= len(locations):
+            location = search_queue[i % len(locations)]
         else:
-            idx = i
+            location = WorkerLocation(locations[i][0], locations[i][1], config['SEARCH_QUEUE_DEPTH'])
+            search_queue.append(location)
 
-        location = WorkerLocation(locations[idx][0], locations[idx][1], config['SEARCH_QUEUE_DEPTH'])
         t = Thread(target=search_thread, name='search_thread {}'.format(i), args=(location.get_queue(),))
         t.daemon = True
         t.start()
         search_threads.append(t)
-        search_queue.append(location)
 
 def search_thread(args):
     queue = args
