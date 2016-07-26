@@ -475,6 +475,7 @@ class Slave(threading.Thread):
 
     def main(self, service, api_endpoint, access_token, profile_response):
         session = db.Session()
+        self.step = 0
         self.seen = 0
         for i, point in enumerate(self.points):
             logger.info('Visiting point %d (%s %s)', i, point[0], point[1])
