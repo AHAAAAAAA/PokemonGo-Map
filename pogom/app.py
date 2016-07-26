@@ -11,7 +11,6 @@ from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
 
-from pogom.pgoapi.utilities import get_pos_by_name
 from pogom.search import search_queue
 from pogom.utils import get_args
 
