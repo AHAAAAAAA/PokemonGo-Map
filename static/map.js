@@ -114,6 +114,10 @@ function initMap() {
         map: map,
         animation: google.maps.Animation.DROP
     });
+    
+    google.maps.event.addListener(map, 'click', function(event) {
+        marker.setPosition(event.latLng);
+    });
 
     initSidebar();
 };
