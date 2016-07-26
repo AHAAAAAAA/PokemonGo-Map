@@ -40,11 +40,7 @@ cd ..
 "%PATH2%\Scripts\pip" install -r requirements.txt --upgrade
 cd config
 set /p API= Enter your Google API key here:
+"%PATH2%\python" -c "print open('config.ini.example').read().replace('#gmaps-key:','gmaps-key:%API%')" > config.ini
 
-    (
-    echo {
-    echo "gmaps_key" : "%API%"
-    echo }
-    ) > credentials.json
 echo All done!
 pause

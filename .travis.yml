@@ -1,0 +1,11 @@
+sudo: false
+language: python
+python:
+  - 2.7
+env:
+  - FLASK=0.11.1
+install:
+  - pip install Flask==$FLASK
+  - pip install -r requirements.txt
+script:
+  - nosetests

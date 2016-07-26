@@ -6,6 +6,7 @@ import logging
 
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
+from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
 from pogom.utils import get_args
@@ -14,10 +15,12 @@ from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
 log = logging.getLogger(__name__)
+compress = Compress()
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
         super(Pogom, self).__init__(import_name, **kwargs)
+        compress.init_app(self)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
@@ -94,7 +97,12 @@ class Pogom(Flask):
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
         pokemon_list = []
-        origin_point = LatLng.from_degrees(config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'])
+
+        # Allow client to specify location
+        lat = request.args.get('lat', config['ORIGINAL_LATITUDE'], type=float)
+        lon = request.args.get('lon', config['ORIGINAL_LONGITUDE'], type=float)
+        origin_point = LatLng.from_degrees(lat, lon)
+
         for pokemon in Pokemon.get_active(None, None, None, None):
             pokemon_point = LatLng.from_degrees(pokemon['latitude'], pokemon['longitude'])
             diff = pokemon_point - origin_point
@@ -107,7 +115,8 @@ class Pogom(Flask):
                 'name': pokemon['pokemon_name'],
                 'card_dir': direction,
                 'distance': int(origin_point.get_distance(pokemon_point).radians * 6366468.241830914),
-                'time_to_disappear': '%dmin %dsec' % (divmod((pokemon['disappear_time']-datetime.utcnow()).seconds, 60)),
+                'time_to_disappear': '%d min %d sec' % (divmod((pokemon['disappear_time']-datetime.utcnow()).seconds, 60)),
+                'disappear_time': pokemon['disappear_time'],
                 'latitude': pokemon['latitude'],
                 'longitude': pokemon['longitude']
             }
@@ -115,8 +124,8 @@ class Pogom(Flask):
         pokemon_list = [y[0] for y in sorted(pokemon_list, key=lambda x: x[1])]
         return render_template('mobile_list.html',
                                pokemon_list=pokemon_list,
-                               origin_lat=config['ORIGINAL_LATITUDE'],
-                               origin_lng=config['ORIGINAL_LONGITUDE'])
+                               origin_lat=lat,
+                               origin_lng=lon)
 
 
 class CustomJSONEncoder(JSONEncoder):
