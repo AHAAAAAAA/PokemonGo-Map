@@ -12,15 +12,11 @@ from pgoapi.utilities import f2i, get_cellid
 
 from . import config
 from .models import parse_map
-from .models import bulk_upsert
-from .models import Pokemon
 
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
-
-pokemon_data = {}
 
 #Constants for Hex Grid
 #Gap between vertical and horzonal "rows"
@@ -104,7 +100,6 @@ def login(args, position):
 
 
 def search_thread(args, parent_name):
-    global pokemon_data
     i, total_steps, step_location, step, sem = args
 
     log.info('Thread {:d} - Scanning step {:d} of {:d} started.'.format(parent_name, step, total_steps))
@@ -118,10 +113,6 @@ def search_thread(args, parent_name):
             try:
                 sem.acquire()
                 parse_map(response_dict, i, step, step_location)
-                data = parse_map(response_dict, i, step, step_location)
-                if data.keys() is not []:
-                    for key, value in data.iteritems():
-                        pokemon_data[key] = value
             except KeyError:
                 log.error('Thread {:d} - Scan step {:d} failed. Response dictionary key error.'.format(parent_name, step))
                 failed_consecutive += 1
@@ -137,13 +128,11 @@ def search_thread(args, parent_name):
     time.sleep(config['REQ_SLEEP'])
 
 def process_search_threads(search_threads, curr_steps, total_steps):
-    #global pokemon_data
     for thread in search_threads:
         thread.start()
     for thread in search_threads:
         curr_steps += 1
         thread.join()
-        bulk_upsert(Pokemon, pokemon_data)
         #log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
     return curr_steps
 
@@ -186,23 +175,20 @@ def location_thread(args, i, position, parent_name):
     search(args, i, position, parent_name)
 
 def process_location_threads(location_threads):
-    #global pokemon_data
     for thread in location_threads:
         thread.start()
     for thread in location_threads:
         thread.join()
 
 
-
 def search_loop(args):
-    global pokemon_data
     i = 0
     positions = [
         '-6.1890554 106.7985666', # 1. Citicon
         '-6.1938965 106.7840423', # 2. Binus Kijang
         '-6.1877741 106.7903616', # 3. Bank Mandiri Gedung Pusri
         '-6.1763713 106.7896283', # 4. APL Tower
-        '-6.1801046 106.7926431', # 5. Taman Anggrek Resicendes
+        '-6.1801046,106.7926431', # 5. Taman Anggrek Resicendes
         '-6.1876777 106.8010116', # 6. PT Djarum
         '-6.1939921 106.8178953', # 7. Grand Indonesia
         '-6.188028 106.8230132',  # 8. Sarinah
@@ -224,10 +210,9 @@ def search_loop(args):
                 login(args, (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0))
 
             i = 0
-            pokemon_data = {}
             for position in positions:
                 i += 1
-                location_threads.append(Thread(target=location_thread, name=position, args=(args, i, position, i, )))
+                location_threads.append(Thread(target=location_thread, name=position, args=(args, i, position, i)))
 
             process_location_threads(location_threads)
 
