@@ -5,7 +5,7 @@ import logging
 import os
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, DoubleField, BooleanField, DateTimeField,\
-                   OperationalError
+                   OperationalError, fn
 from datetime import datetime
 from datetime import timedelta
 from base64 import b64encode
@@ -121,6 +121,25 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    @classmethod
+    def get_seen(cls, timediff):
+        if timediff == 0:
+            query = (Pokemon
+                     .select(Pokemon.pokemon_id, fn.COUNT(Pokemon.pokemon_id).alias('count'))
+                     .group_by(Pokemon.pokemon_id)
+                     .dicts())
+        else:
+            query = (Pokemon
+                     .select(Pokemon.pokemon_id, fn.COUNT(Pokemon.pokemon_id).alias('count'))
+                     .where(Pokemon.disappear_time > datetime.utcnow() - timediff)
+                     .group_by(Pokemon.pokemon_id)
+                     .dicts())
+        pokemons = []
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemons.append(p)
+
+        return pokemons
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True)
