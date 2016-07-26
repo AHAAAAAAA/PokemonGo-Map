@@ -1020,8 +1020,8 @@ function addMyLocationButton() {
 }
 
 function changeLocation(lat, lng) {
-    var loc = new google.maps.LatLng(lat, lng, 0);
-    changeSearchLocation(lat, lng).done(function() {
+    var loc = new google.maps.LatLng(lat, lng);
+    changeSearchLocation(lat, lng, 0).done(function() {
         map.setCenter(loc);
         markers[0].setPosition(loc);
     });
