@@ -1052,6 +1052,9 @@ $(function () {
         var pokeList = []
 
         $.each(data, function(key, value) {
+            if (key > 151) {
+            	return false;	
+            }
             pokeList.push( { id: key, text: value + ' - #' + key } );
             idToPokemon[key] = value;
         });
