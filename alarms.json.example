@@ -21,9 +21,9 @@
 		},
 		{
 		"active": "False",
-			"type":"telegram",
-			"api_key":"",
-			"chatid":""
+		"type":"telegram",
+		"api_key":"",
+		"chatid":""
 		}
 	],
 	"pokemon":{
