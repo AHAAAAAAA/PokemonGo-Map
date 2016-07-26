@@ -203,6 +203,16 @@ function excludePokemon(id) {
     ).trigger('change')
 }
 
+function isPokemonExcluded(id) {
+    var wildcard = excludedPokemon.indexOf(-1) >= 0;
+    return excludedPokemon.indexOf(id) >= 0 ? !wildcard : wildcard;
+}
+
+function isPokemonNotified(id) {
+    var wildcard = notifiedPokemon.indexOf(-1) >= 0;
+    return notifiedPokemon.indexOf(id) >= 0 ? !wildcard : wildcard;
+}
+
 function notifyAboutPokemon(id) {
     $selectNotify.val(
         $selectNotify.val().concat(id)
@@ -503,7 +513,7 @@ function getGoogleSprite(index, sprite, display_height) {
     };
 }
 
-function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
+function setupPokemonMarker(item, isBounceDisabled) {
 
     // Scale icon size up with the map exponentially
     var icon_size = 2 + (map.getZoom()-3) * (map.getZoom()-3) * .2 + Store.get('iconSizeModifier');
@@ -537,18 +547,6 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
         disableAutoPan: true
     });
-
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
-        if (!skipNotification) {
-            if (Store.get('playSound')) {
-              audio.play();
-            }
-            sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
-        }
-		if (marker.animationDisabled != true){
-			marker.setAnimation(google.maps.Animation.BOUNCE);	
-		}
-    }
 
     addListeners(marker);
     return marker;
@@ -668,7 +666,7 @@ function clearStaleMarkers() {
     $.each(map_data.pokemons, function(key, value) {
 
         if (map_data.pokemons[key]['disappear_time'] < new Date().getTime() ||
-                excludedPokemon.indexOf(map_data.pokemons[key]['pokemon_id']) >= 0) {
+                isPokemonExcluded(map_data.pokemons[key]['pokemon_id'])) {
             map_data.pokemons[key].marker.setMap(null);
             delete map_data.pokemons[key];
         }
@@ -677,7 +675,7 @@ function clearStaleMarkers() {
     $.each(map_data.lure_pokemons, function(key, value) {
 
         if (map_data.lure_pokemons[key]['lure_expiration'] < new Date().getTime() ||
-                excludedPokemon.indexOf(map_data.lure_pokemons[key]['pokemon_id']) >= 0) {
+                isPokemonExcluded(map_data.lure_pokemons[key]['pokemon_id'])) {
             map_data.lure_pokemons[key].marker.setMap(null);
             delete map_data.lure_pokemons[key];
         }
@@ -763,7 +761,7 @@ function processPokemons(i, item) {
         return false; // in case the checkbox was unchecked in the meantime.
     }
     if (!(item.encounter_id in map_data.pokemons) &&
-        excludedPokemon.indexOf(item.pokemon_id) < 0) {
+        !isPokemonExcluded(item.pokemon_id)) {
         // add marker to map and item to dict
         if (item.marker) item.marker.setMap(null);
         if (!item.hidden) {
@@ -814,11 +812,11 @@ function processLuredPokemon(i, item) {
         disappear_time: item.lure_expiration
     };
 
-    if (item2.pokemon_id == null) {
+    if (item2.pokemon_id == null || isPokemonExcluded(item2.pokemon_id)) {
         return;
     }
 
-    if (map_data.lure_pokemons[item2.pokestop_id] == null && item2.lure_expiration) {
+    if (map_data.lure_pokemons[item2.pokestop_id] == null && item2.lure_expiration > new Date().getTime()) {
         //if (item.marker) item.marker.setMap(null);
         if (!item2.hidden) {
             item2.marker = setupPokemonMarker(item2);
@@ -826,7 +824,7 @@ function processLuredPokemon(i, item) {
         }
 
     }
-    if (map_data.lure_pokemons[item.pokestop_id] != null && item2.lure_expiration && item2.active_pokemon_id != map_data.lure_pokemons[item2.pokestop_id].active_pokemon_id) {
+    if (map_data.lure_pokemons[item.pokestop_id] != null && item2.lure_expiration > new Date().getTime() && item2.active_pokemon_id != map_data.lure_pokemons[item2.pokestop_id].active_pokemon_id) {
         //if (item.marker) item.marker.setMap(null);
         map_data.lure_pokemons[item2.pokestop_id].marker.setMap(null);
         if (!item2.hidden) {
@@ -880,10 +878,70 @@ function processScanned(i, item) {
 
 }
 
+function processNewPokemons(pokemons, oldPokemonKeys) {
+
+    newPokemonItems = []
+
+    $.each(pokemons, function (key, item) {
+        if(oldPokemonKeys.indexOf(key) == -1 && isPokemonNotified(item.pokemon_id)){
+            newPokemonItems.push(item);
+        }
+    });
+
+    if(newPokemonItems.length==0) return;
+
+    if (Store.get('playSound')) {
+      audio.play();
+    }
+
+    $.each(newPokemonItems, function (key, item) {
+        if (item.marker.animationDisabled != true) {
+            item.marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    });
+
+    if(newPokemonItems.length < 4) {
+        $.each(newPokemonItems, function (key, item) {
+            var notification = sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png');
+            if(notification){
+                notification.onclick = function () {
+                    window.focus();
+                    notification.close();
+                    centerMap(item.latitude, item.longitude, false);
+                    if (item.marker.animationDisabled != true) {
+                        item.marker.setAnimation(google.maps.Animation.BOUNCE);
+                    }
+                    setTimeout(function() {
+                        redrawPokemon(pokemons);
+                    }, 2000);
+                };
+            }
+        });
+    } else {
+        var notification = sendNotification('Several pokemons appeared!', 'Click to load map', 'static/appicons/114x114.png');
+        if(notification){
+            notification.onclick = function () {
+                window.focus();
+                notification.close();
+                $.each(newPokemonItems, function (key, item) {
+                    if (item.marker.animationDisabled != true) {
+                        item.marker.setAnimation(google.maps.Animation.BOUNCE);
+                    }
+                });
+                setTimeout(function() {
+                    redrawPokemon(pokemons);
+                }, 2000);
+            };
+        }
+    }
+
+}
 
 function updateMap() {
 
     loadRawData().done(function (result) {
+        oldPokemonKeys = Object.keys(map_data.pokemons)
+        oldLurePokemonKeys = Object.keys(map_data.lure_pokemons)
         $.each(result.pokemons, processPokemons);
         $.each(result.pokestops, processPokestops);
         $.each(result.pokestops, processLuredPokemon);
@@ -895,6 +953,8 @@ function updateMap() {
         showInBoundsMarkers(map_data.pokestops);
         showInBoundsMarkers(map_data.scanned);
         clearStaleMarkers();
+        processNewPokemons(map_data.pokemons, oldPokemonKeys)
+        processNewPokemons(map_data.lure_pokemons, oldLurePokemonKeys)
     });
 };
 
@@ -905,7 +965,7 @@ function redrawPokemon(pokemon_list) {
     $.each(pokemon_list, function(key, value) {
         var item =  pokemon_list[key];
         if (!item.hidden) {
-            var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
+            var new_marker = setupPokemonMarker(item, this.marker.animationDisabled);
             item.marker.setMap(null);
             pokemon_list[key].marker = new_marker;
         }
@@ -960,8 +1020,9 @@ function sendNotification(title, text, icon, lat, lng) {
             window.focus();
             notification.close();
 
-            centerMap(lat, lng, 20);
+            centerMap(lat, lng, false);
         };
+        return notification
     }
 }
 
@@ -1101,7 +1162,7 @@ $(function () {
 
     // Load pokemon names and populate lists
     $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
-        var pokeList = [];
+        var pokeList = [ { id: -1, text: '*'}];
 
         $.each(data, function(key, value) {
             if(key > numberOfPokemon) { return false; }
