@@ -58,7 +58,7 @@ class BaseModel(Model):
 class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
-    encounter_id = CharField(primary_key=True)
+    encounter_id = CharField(primary_key=True, max_length=50)
     spawnpoint_id = CharField()
     pokemon_id = IntegerField()
     latitude = DoubleField()
@@ -123,7 +123,7 @@ class Pokemon(BaseModel):
 
 
 class Pokestop(BaseModel):
-    pokestop_id = CharField(primary_key=True)
+    pokestop_id = CharField(primary_key=True, max_length=50)
     enabled = BooleanField()
     latitude = DoubleField()
     longitude = DoubleField()
@@ -162,7 +162,7 @@ class Gym(BaseModel):
     TEAM_VALOR = 2
     TEAM_INSTINCT = 3
 
-    gym_id = CharField(primary_key=True)
+    gym_id = CharField(primary_key=True, max_length=50)
     team_id = IntegerField()
     guard_pokemon_id = IntegerField()
     gym_points = IntegerField()
@@ -193,7 +193,7 @@ class Gym(BaseModel):
         return gyms
 
 class ScannedLocation(BaseModel):
-    scanned_id = CharField(primary_key=True)
+    scanned_id = CharField(primary_key=True, max_length=50)
     latitude = DoubleField()
     longitude = DoubleField()
     last_modified = DateTimeField()
