@@ -150,7 +150,8 @@ def search_thread(thread_args):
 
             if (failed_consecutive >= config['REQ_MAX_FAILED']):
                 global shared_api
-                shared_api = None  # Drop connection, will relogin on next pass
+                if shared_api is instance_api:  # If not already changed / reset by other worker
+                    shared_api = None  # Drop connection, will relogin on next pass
                 log.error('Niantic servers under heavy load. Waiting before trying again')
                 time.sleep(config['REQ_HEAVY_SLEEP'])
                 failed_consecutive = 0
