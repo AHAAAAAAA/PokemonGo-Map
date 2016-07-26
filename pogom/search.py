@@ -143,13 +143,17 @@ def search_thread(thread_args):
                 except KeyError:
                     log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
                     failed_consecutive += 1
-                    if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                        log.error('Niantic servers under heavy load. Waiting before trying again')
-                        time.sleep(config['REQ_HEAVY_SLEEP'])
-                        failed_consecutive = 0
                     response_dict = {}
             else:
                 log.info('Map Download failed. Trying again.')
+                failed_consecutive += 1
+
+            if (failed_consecutive >= config['REQ_MAX_FAILED']):
+                global shared_api
+                shared_api = None  # Drop connection, will relogin on next pass
+                log.error('Niantic servers under heavy load. Waiting before trying again')
+                time.sleep(config['REQ_HEAVY_SLEEP'])
+                failed_consecutive = 0
 
         time.sleep(config['REQ_SLEEP'])
 
