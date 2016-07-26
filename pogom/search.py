@@ -17,7 +17,8 @@ from .models import parse_map
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
-api = None
+shared_api = None
+shared_api_lock = Lock()
 
 #Constants for Hex Grid
 #Gap between vertical and horzonal "rows"
@@ -90,6 +91,22 @@ def generate_location_steps(initial_location, num_steps):
 
         ring += 1
 
+def login_if_needed(args, position):
+    global shared_api
+    api = shared_api  # So we don't have to lock here, usually api exists
+    if api and api._auth_provider and api._auth_provider._ticket_expire:
+        remaining_time = api._auth_provider._ticket_expire / 1000 - time.time()
+        if remaining_time > 60:
+            log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
+            return api
+        else:
+            shared_api = None  # Discard connection
+
+    with shared_api_lock:
+        if not shared_api:  # Another thread might have logged in while waiting
+            shared_api = login(args, position)
+        return shared_api
+
 
 def login(args, position):
     log.info('Attempting login to Pokemon Go.')
@@ -110,27 +127,27 @@ def create_search_threads(num) :
         t.start()
         search_threads.append(t)
 
-def search_thread(args):
-    queue = args
+def search_thread(thread_args):
+    queue = thread_args
     while True:
-        i, total_steps, step_location, step, lock = queue.get()
+        args, i, total_steps, step_location, step = queue.get()
         log.info("Search queue depth is: " + str(queue.qsize()))
         response_dict = {}
         failed_consecutive = 0
         while not response_dict:
-            response_dict = send_map_request(api, step_location)
+            instance_api = login_if_needed(args, step_location)
+            response_dict = send_map_request(instance_api, step_location)
             if response_dict:
-                with lock:
-                    try:
-                        parse_map(response_dict, i, step, step_location)
-                    except KeyError:
-                        log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
-                        failed_consecutive += 1
-                        if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                            log.error('Niantic servers under heavy load. Waiting before trying again')
-                            time.sleep(config['REQ_HEAVY_SLEEP'])
-                            failed_consecutive = 0
-                        response_dict = {}
+                try:
+                    parse_map(response_dict, i, step, step_location)
+                except KeyError:
+                    log.error('Scan step {:d} failed. Response dictionary key error.'.format(step))
+                    failed_consecutive += 1
+                    if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                        log.error('Niantic servers under heavy load. Waiting before trying again')
+                        time.sleep(config['REQ_HEAVY_SLEEP'])
+                        failed_consecutive = 0
+                    response_dict = {}
             else:
                 log.info('Map Download failed. Trying again.')
 
@@ -150,21 +167,6 @@ def search(args, i):
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
-    global api
-    # Prevent races of assigning global api in between
-    active_api = api
-    if active_api and active_api._auth_provider and active_api._auth_provider._ticket_expire:
-        remaining_time = active_api._auth_provider._ticket_expire / 1000 - time.time()
-        if remaining_time > 60:
-            log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
-        else:
-            active_api = None
-
-    if not active_api:
-        api = login(args, position)
-
-    lock = Lock()
-
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
         if 'NEXT_LOCATION' in config:
             log.info('New location found. Starting new scan.')
@@ -174,7 +176,7 @@ def search(args, i):
             search(args, i)
             return
 
-        search_args = ( i, total_steps, step_location, step, lock)
+        search_args = (args, i, total_steps, step_location, step)
         search_queue.put(search_args)
 
 def search_loop(args):

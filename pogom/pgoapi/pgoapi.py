@@ -60,9 +60,6 @@ class PGoApi:
     def get_endpoint(self):
         return self._api_endpoint
 
-    def get_position(self):
-        return (self._position_lat, self._position_lng, self._position_alt)
-
     def set_logger(self, logger):
         self._ = logger or logging.getLogger(__name__)
 
