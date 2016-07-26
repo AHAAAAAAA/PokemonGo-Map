@@ -134,7 +134,7 @@ var StoreOptions = {
         default: true,
         type: StoreTypes.Boolean
     },
-    showLuredPokestops: {
+    showLuredPokestopsOnly: {
         default: 0,
         type: StoreTypes.Number
     },
@@ -318,7 +318,7 @@ function initSidebar() {
     $('#gyms-switch').prop('checked', Store.get('showGyms'));
     $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
     $('#pokestops-switch').prop('checked', Store.get('showPokestops'));
-    $('#lured-pokestops-switch').val(Store.get('showLuredPokestops'));
+    $('#lured-pokestops-only-switch').val(Store.get('showLuredPokestopsOnly'));
     $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
     $('#scanned-switch').prop('checked', Store.get('showScanned'));
     $('#sound-switch').prop('checked', Store.get('playSound'));
@@ -765,11 +765,16 @@ function processPokestops(i, item) {
     if (!Store.get('showPokestops')) {
         return false;
     }
+    if (Store.get('showLuredPokestopsOnly') && !item.lure_expiration) {
+        if (map_data.pokestops[item.pokestop_id] && map_data.pokestops[item.pokestop_id].marker) {
+            map_data.pokestops[item.pokestop_id].marker.setMap(null);
+            delete map_data.pokestops[item.pokestop_id];
+        }
+        return true;
+    }
     if (map_data.pokestops[item.pokestop_id] == null) { // add marker to map and item to dict
         // add marker to map and item to dict
-        if (item.marker) {
-            item.marker.setMap(null);
-        }
+        if (item.marker) item.marker.setMap(null);
         item.marker = setupPokestopMarker(item);
         map_data.pokestops[item.pokestop_id] = item;
     }
@@ -777,7 +782,7 @@ function processPokestops(i, item) {
         item2 = map_data.pokestops[item.pokestop_id];
         if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
             item2.marker.setMap(null);
-            if (item.marker) item.marker.setMap(null);
+            item.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
@@ -1148,8 +1153,8 @@ $(function () {
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
 
-    $('#lured-pokestops-switch').change(function() {
-        Store.set("showLuredPokestops", this.value);
+    $('#lured-pokestops-only-switch').change(function() {
+        Store.set("showLuredPokestopsOnly", this.value);
         updateMap();
     });
 
