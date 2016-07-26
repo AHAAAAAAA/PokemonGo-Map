@@ -774,8 +774,8 @@ function processPokestops(i, item) {
         var lure_status_matches = !!item.lure_expiration == !!existing_pokestop.lure_expiration;
         var has_same_pokemon = item.active_pokemon_id == existing_pokestop.active_pokemon_id;
         if (!lure_status_matches || !has_same_pokemon) {
-            if (!item.marker) console.warn('Trying to hide pokestop, but it was already hidden', item);
-            if (item.marker) item.marker.setMap(null);
+            if (!existing_pokestop.marker) console.warn('Trying to hide pokestop, but it was already hidden', existing_pokestop);
+            if (existing_pokestop.marker) existing_pokestop.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
