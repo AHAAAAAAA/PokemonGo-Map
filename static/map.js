@@ -496,13 +496,18 @@ function getGoogleSprite(index, sprite, display_height) {
     };
 }
 
-function setupPokemonMarker(item, skipNotification) {
+function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
 
     // Scale icon size up with the map exponentially
     var icon_size = 2 + (map.getZoom()-3) * (map.getZoom()-3) * .2 + Store.get('iconSizeModifier');
     var pokemon_index = item.pokemon_id - 1;
     var sprite = pokemon_sprites[Store.get('pokemonIcons')] || pokemon_sprites['highres']
     var icon = getGoogleSprite(pokemon_index, sprite, icon_size);
+
+    var animationDisabled = false;
+    if(isBounceDisabled == true){
+        animationDisabled = true;
+    }
 
     var marker = new google.maps.Marker({
         position: {
@@ -513,7 +518,13 @@ function setupPokemonMarker(item, skipNotification) {
         optimized: false,
         map: map,
         icon: icon,
+		animationDisabled: animationDisabled,
     });
+	
+	marker.addListener('click', function() {
+		this.setAnimation(null);
+		this.animationDisabled = true;
+	});
 
     marker.infoWindow = new google.maps.InfoWindow({
         content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
@@ -527,8 +538,9 @@ function setupPokemonMarker(item, skipNotification) {
             }
             sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
         }
-        // Icons still get a bounce, even on redraw
-        marker.setAnimation(google.maps.Animation.BOUNCE);
+		if (marker.animationDisabled != true){
+			marker.setAnimation(google.maps.Animation.BOUNCE);	
+		}
     }
 
     addListeners(marker);
@@ -757,7 +769,7 @@ function processPokestops(i, item) {
     else {
         item2 = map_data.pokestops[item.pokestop_id];
         if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            item.marker.setMap(null);
+            item2.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
@@ -864,7 +876,7 @@ function redrawPokemon(pokemon_list) {
     var skipNotification = true;
     $.each(pokemon_list, function(key, value) {
         var item =  pokemon_list[key];
-        var new_marker = setupPokemonMarker(item, skipNotification);
+        var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
         item.marker.setMap(null);
         pokemon_list[key].marker = new_marker;
     });
