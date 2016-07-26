@@ -1805,9 +1805,8 @@ body {
   height: 100%;
   max-width: 80%;
   overflow-y: auto;
-  padding: 1.5em 1.5em 4em 1.5em;
+  padding: 5em 1.5em 4em;
   position: fixed;
-  top: 3.50em;
   left: 0;
   visibility: hidden;
   width: 18em;
@@ -1886,7 +1885,7 @@ body {
     visibility: visible; }
   @media screen and (max-width: 736px) {
     #nav {
-      padding: 2.5em 1.75em; } }
+      padding: 5em 1.5em 2em; } }
 
 /* Banner */
 #banner {
