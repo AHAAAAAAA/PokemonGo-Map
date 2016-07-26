@@ -1,27 +1,27 @@
 # Authentication settings
-auth-service: google
-username: pogoherenet@gmail.com
-password: 28330771Aa
+#auth-service:          # ptc (default) or google
+#username:
+#password:
 
 # Database settings
-db-type: sqlite        sqlite
+#db-type: sqlite        # sqlite (default) or mysql
 #db-host:               # required for mysql
 #db-name:               # required for mysql
 #db-user:               # required for mysql
 #db-pass:               # required for mysql
 
 # Search settings
-location: "Monument Circle, Indianapolis, IN"
+#location: 
 #no-gyms:               # disables gym scanning (default false)
 #no-pokemon:            # disables pokemon scanning (default false)
 #no-pokestops:          # disables pokestop scanning (default false)
 #num-threads:           # number of search threads (default 1)
 #scan-delay:            # default 1
-step-limit:            3
+#step-limit:            # default 12
 
 # Misc
-gmaps-key: AIzaSyCuAhcZL5r5dvmvzF3FVVuYpDTjpH_jwmk
+#gmaps-key:
 
 # Webserver settings
-host:                  0.0.0.0
-#port:                  # port to liste on (default 5000)
+#host:                  # address to listen on (default 127.0.0.1)
+#port:                  # port to listen on (default 5000)
