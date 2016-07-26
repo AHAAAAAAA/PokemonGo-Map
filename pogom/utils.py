@@ -142,11 +142,11 @@ def get_pokemon_name(pokemon_id):
 
     return get_pokemon_name.names[str(pokemon_id)]
 
-def send_to_webhook(type, message):
+def send_to_webhook(message_type, message):
     args = get_args()
 
     data = {
-        'type': type,
+        'type': message_type,
         'message': message
     }
 
