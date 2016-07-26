@@ -19,10 +19,12 @@
 			"to_number":"+1123456789",
 			"from_number":"+1123456789"
 		},
-			"active": "False"
-			"type": "telegram",
+		{
+			"active": "False",
+			"type":"telegram",
 			"api_key":"",
 			"chatid":""
+		}
 	],
 	"pokemon":{
 		"Bulbasaur":"False",
