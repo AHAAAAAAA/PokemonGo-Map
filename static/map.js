@@ -341,8 +341,25 @@ function initSidebar() {
 
 function pad(number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
 
+var typesMap = {'bug':'#a8b820','dark':'#705848','dragon':'#7038f8','electric':'#f8d030','fairy':'#e898e8','fighting':'#c03028','fire':'#f08030','flying':'#a890f0','ghost':'#705898','grass':'#78c850','ground':'#e0c068','ice':'#98d8d8','normal':'#8a8a59','poison':'#a040a0','psychic':'#f85888','rock':'#b8a038','steel':'#b8b8d0','water':'#6890f0'};
+var typesList = Object.keys(typesMap).sort();
+var pokemonTypes = [null,[13,9],[13,9],[13,9],[6],[6],[7,6],[17],[17],[17],[0],[0],[7,0],[13,0],[13,0],[13,0],[12,7],[12,7],[12,7],[12],[12],[12,7],[12,7],[13],[13],[3],[3],[10],[10],[13],[13],[13,10],[13],[13],[13,10],[4],[4],[6],[6],[12,4],[12,4],[7,13],[7,13],[13,9],[13,9],[13,9],[0,9],[0,9],[13,0],[13,0],[10],[10],[12],[12],[17],[17],[5],[5],[6],[6],[17],[17],[5,17],[14],[14],[14],[5],[5],[5],[13,9],[13,9],[13,9],[13,17],[13,17],[10,15],[10,15],[10,15],[6],[6],[17,14],[17,14],[16,3],[16,3],[12,7],[12,7],[12,7],[17],[17,11],[13],[13],[17],[17,11],[13,8],[13,8],[13,8],[10,15],[14],[14],[17],[17],[3],[3],[9,14],[9,14],[10],[10],[5],[5],[12],[13],[13],[10,15],[10,15],[12],[9],[12],[17],[17],[17],[17],[17],[17,14],[4,14],[7,0],[11,14],[3],[6],[0],[12],[17],[7,17],[17,11],[12],[12],[17],[3],[6],[12],[15,17],[15,17],[15,17],[15,17],[7,15],[12],[7,11],[7,3],[7,6],[2],[2],[7,2],[14],[14]];
+
+
+function getTypeSpan(typeId) {
+    
+    var type = typesList[typeId];
+    return `<span style='padding: 2px 5px; text-transform: uppercase; color: white; margin-right: 2px; border-radius: 4px; font-size: 0.8em; vertical-align: text-bottom; background-color: ` + typesMap[type] + `'>` + type + `</span>`;
+}
+
 function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_id) {
-    disappear_date = new Date(disappear_time)
+    disappear_date = new Date(disappear_time);
+    
+    var typeStr = getTypeSpan(pokemonTypes[id][0]);
+    
+    if (pokemonTypes[id][1]) {
+        typeStr += getTypeSpan(pokemonTypes[id][1]);
+    }
 
     var contentstring = `
         <div>
@@ -351,6 +368,8 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
             <small>
                 <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
             </small>
+            <span> - </span>
+            <small>` + typeStr + `</small>
         </div>
         <div>
             Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
