@@ -1,5 +1,5 @@
 geopy==1.11.0
-protobuf==2.6.1
+protobuf>=3.0.0a3
 requests==2.10.0
 flask-googlemaps==0.2.2
 s2sphere==0.2.4
@@ -8,3 +8,4 @@ gpsoauth==0.3.0
 coveralls==1.1
 werkzeug==0.11.10
 sqlalchemy==1.0.14
+-e git://github.com/tejado/pgoapi.git#egg=pgoapi
