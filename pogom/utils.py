@@ -15,6 +15,8 @@ import shutil
 
 from . import config
 
+DEFAULT_GAP = 1
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 log = logging.getLogger(__name__)
 
@@ -59,6 +61,7 @@ def get_args():
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('-jb', '--jump-block', required=False, help='Gap measurement of search algorithm (Default is "1")', type=int, default=DEFAULT_GAP)
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
