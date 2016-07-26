@@ -372,6 +372,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
             <span> - </span>
             <small>` + typeStr + `</small>
         </div>
+        <div>
             Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
             <span class='label-countdown' disappears-at='${disappear_time}'>(00m00s)</span>
         </div>
