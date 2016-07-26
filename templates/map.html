@@ -29,7 +29,18 @@
 		<link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="152x152">
 		<!-- retina iPhone 6 iOS 7 -->
 		<link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
-
+		<style>
+		@media screen and (max-width: 600px) {
+		  #help_message {
+			visibility: hidden;
+			clear: both;
+			float: left;
+			margin: 10px auto 5px 20px;
+			width: 28%;
+			display: none;
+		  }
+		}
+		</style>
 		<link rel="stylesheet" href="static/dist/css/app.min.css">
 		<script src="static/js/vendor/modernizr.custom.js"></script>
 	</head>
@@ -40,18 +51,12 @@
 		<!-- Header -->
 		<header id="header">
 			<a href="#nav">Options</a>
-			<h1><a href="#">Pokémon Go Map</a></h1>
+			<h1><a href="#">Pokémon Go Map</a></h1>&nbsp;
+			<h1 id="help_message"><i>Если карта не загружается, сделайте принудительное обновление страницы нажав Ctrl + F5 (или CMD + R на Mac), со 2-3 раза карта загрузится.</i></h1>
 		</header>
 
 		<!-- NAV -->
 		<nav id="nav">
-			<div class="form-control" style="display:{{is_fixed}}" >
-				<label for="next-location">
-					<h3>Change your location</h3>
-					<input id="next-location" type="text" name="next-location" placeholder="Change your location">
-				</label>
-				<hr width="100%">
-			</div>
 			<p>Select markers to be visible on map.</p>
 			<div class="form-control switch-container">
 				<h3>Wild Pokémon</h3>
@@ -161,20 +166,31 @@
 	</div>
 
 	<!-- Scripts -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+	<script src="static/js/jquery.min.js"></script>
+	<script src="static/js/skel.min.js"></script>
+	<script src="static/js/select2.min.js"></script>
 
 	<script src="static/dist/js/app.min.js"></script>
 	<script src="static/js/vendor/classie.js"></script>
 
 	<script>
-		var center_lat = {{lat}};
-		var center_lng = {{lng}};
+		var center_lat = 40.3659;
+		var center_lng = 49.8316;
+		var zoom_lvl = 18;
 	</script>
 
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
 	<script src="static/map.js"></script>
+	<script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
+	
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+	  ga('create', 'UA-81300063-1', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
 	</body>
 </html>
