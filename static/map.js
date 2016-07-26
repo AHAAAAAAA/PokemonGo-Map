@@ -192,6 +192,7 @@ function initSidebar() {
     $('#geoloc-switch').prop('checked', localStorage.geoLocate === 'true');
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
+    $('#aopi-switch').prop('checked', localStorage.autoOpenPokeInfo === 'true');
 
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
@@ -614,6 +615,9 @@ function processPokemons(i, item) {
         if (item.marker) item.marker.setMap(null);
         item.marker = setupPokemonMarker(item);
         map_data.pokemons[item.encounter_id] = item;
+        if (localStorage.autoOpenPokeInfo === 'true') {
+            item.marker.infoWindow.open(map, item.marker);
+        }
     }
 }
 
@@ -1023,5 +1027,15 @@ $(function () {
         else   
             localStorage["geoLocate"] = this.checked;  
     });
+    
+    $('#aopi-switch').change(function() {
+        localStorage["autoOpenPokeInfo"] = this.checked;
+    });
+    
+    $('#close-pokeinfo').click(function() {
+        $.each(map_data['pokemons'], function (key, value) {
+            map_data['pokemons'][key].marker.infoWindow.close();
+        });
+    })
 
 });
