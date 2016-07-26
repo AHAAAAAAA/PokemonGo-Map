@@ -12,7 +12,7 @@ from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
 
 from . import config
-from .models import parse_map
+from .models import parse_map, WorkerLocation
 
 log = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ lng_gap_meters = 86.6
 meters_per_degree = 111111
 lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
 
-search_queue = Queue(config['SEARCH_QUEUE_DEPTH'])
+search_queue = []
 
 def calculate_lng_degrees(lat):
     return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
@@ -101,13 +101,28 @@ def login(args, position):
 
     log.info('Login to Pokemon Go successful.')
 
-def create_search_threads(num) :
+def create_search_threads(num, locations):
     search_threads = []
+    if num < len(locations):
+        log.warning("You need more threads to lookup all specified locations")
+        log.warning("Removing locations exceeding the limit")
+        while num < len(locations):
+            locations.pop()
+
     for i in range(num):
-        t = Thread(target=search_thread, name='search_thread {}'.format(i), args=( search_queue,))
+        if i > len(locations):
+            idx = (i-1) % len(locations)
+        elif i == len(locations):
+            idx = i % len(locations)
+        else:
+            idx = i
+
+        location = WorkerLocation(locations[idx][0], locations[idx][1], config['SEARCH_QUEUE_DEPTH'])
+        t = Thread(target=search_thread, name='search_thread {}'.format(i), args=(location.get_queue(),))
         t.daemon = True
         t.start()
         search_threads.append(t)
+        search_queue.append(location)
 
 def search_thread(args):
     queue = args
@@ -145,7 +160,7 @@ def process_search_threads(search_threads, curr_steps, total_steps):
         log.info('Completed {:5.2f}% of scan.'.format(float(curr_steps) / total_steps*100))
     return curr_steps
 
-def search(args, i):
+def search(args, search_locations, i):
     num_steps = args.step_limit
     total_steps = (3 * (num_steps**2)) - (3 * num_steps) + 1
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
@@ -162,29 +177,28 @@ def search(args, i):
 
     lock = Lock()
 
-    search_threads = []
-    curr_steps = 0
-    max_threads = args.num_threads
+    for location in search_locations:
+        for step, step_location in enumerate(generate_location_steps(location.get_lat_lon(), num_steps), 1):
+            if 'NEXT_LOCATION' in config:
+                log.info('New location found. Starting new scan.')
+                lat = float(config['NEXT_LOCATION']['lat'])
+                lon = float(config['NEXT_LOCATION']['lon'])
+                idx = int(config['NEXT_LOCATION']['marker'])
+                config.pop('NEXT_LOCATION', None)
+                search_locations[idx].set_lat_lon(lat, lon)
+                search_locations[idx].get_queue().queue.clear()
+                search(args, [search_locations[idx]], i)
+                return
 
-    for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
-        if 'NEXT_LOCATION' in config:
-            log.info('New location found. Starting new scan.')
-            config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
-            config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
-            config.pop('NEXT_LOCATION', None)
-            search_queue.queue.clear()
-            search(args, i)
-            return
-
-        search_args = ( i, total_steps, step_location, step, lock)
-        search_queue.put(search_args)
+            search_args = (i, total_steps, step_location, step, lock)
+            location.queue_put(search_args)
 
 def search_loop(args):
     i = 0
     try:
         while True:
             log.info("Map iteration: {}".format(i))
-            search(args, i)
+            search(args, search_queue, i)
             log.info("Scanning complete.")
             if args.scan_delay > 1:
                 log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))

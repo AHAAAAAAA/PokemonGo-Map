@@ -3,6 +3,8 @@
 
 import logging
 import os
+from Queue import Queue
+
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, DoubleField, BooleanField, DateTimeField,\
                    OperationalError
@@ -214,6 +216,31 @@ class ScannedLocation(BaseModel):
             scans.append(s)
 
         return scans
+
+class WorkerLocation:
+    latitude = DoubleField()
+    longitude = DoubleField()
+    search_queue = Queue()
+
+    def __init__(self, lat, lon, queue_size):
+        self.latitude = float(lat)
+        self.longitude = float(lon)
+        self.search_queue = Queue(queue_size)
+
+    def get_queue(self):
+        return self.search_queue
+
+    def queue_put(self, args):
+        return self.search_queue.put(args)
+
+    def get_lat_lon(self, with_altitude=False):
+        if with_altitude:
+            return self.latitude, self.longitude, 0
+        return self.latitude, self.longitude
+
+    def set_lat_lon(self, lat, lon):
+        self.latitude = lat
+        self.longitude = lon
 
 def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}

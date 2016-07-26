@@ -16,7 +16,6 @@ var notifiedPokemon = [];
 var map;
 var rawDataIsLoading = false;
 var locationMarker;
-var marker;
 
 var noLabelsStyle=[{featureType:"poi",elementType:"labels",stylers:[{visibility:"off"}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]}];
 var light2Style=[{"elementType":"geometry","stylers":[{"hue":"#ff4400"},{"saturation":-68},{"lightness":-4},{"gamma":0.72}]},{"featureType":"road","elementType":"labels.icon"},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"hue":"#0077ff"},{"gamma":3.1}]},{"featureType":"water","stylers":[{"hue":"#00ccff"},{"gamma":0.44},{"saturation":-33}]},{"featureType":"poi.park","stylers":[{"hue":"#44ff00"},{"saturation":-23}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"hue":"#007fff"},{"gamma":0.77},{"saturation":65},{"lightness":99}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"gamma":0.11},{"weight":5.6},{"saturation":99},{"hue":"#0091ff"},{"lightness":-86}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"lightness":-48},{"hue":"#ff5e00"},{"gamma":1.2},{"saturation":-23}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"saturation":-64},{"hue":"#ff9100"},{"lightness":16},{"gamma":0.47},{"weight":2.7}]}];
@@ -264,7 +263,12 @@ function initMap() {
     map.setMapTypeId(Store.get('map_style'));
     google.maps.event.addListener(map, 'idle', updateMap);
 
-    marker = createSearchMarker();
+    var bounds = new google.maps.LatLngBounds();
+    for(var idx in locations) {
+        createSearchMarker(locations[idx], idx);
+        bounds.extend(new google.maps.LatLng(locations[idx][0], locations[idx][1]));
+    }
+    map.fitBounds(bounds);
 
     addMyLocationButton();
     initSidebar();
@@ -278,15 +282,16 @@ function initMap() {
     });
 };
 
-function createSearchMarker() {
-    marker = new google.maps.Marker({ //need to keep reference.
+function createSearchMarker(loc, idx) {
+    var marker = new google.maps.Marker({
         position: {
-            lat: center_lat,
-            lng: center_lng
+            lat: loc[0],
+            lng: loc[1]
         },
         map: map,
         animation: google.maps.Animation.DROP,
-        draggable: true
+        draggable: true,
+        locationIdx: idx
     });
 
     var oldLocation = null;
@@ -296,7 +301,8 @@ function createSearchMarker() {
 
     google.maps.event.addListener(marker, 'dragend', function() {
         var newLocation = marker.getPosition();
-        changeSearchLocation(newLocation.lat(), newLocation.lng())
+        var idx = marker.locationIdx;
+        changeSearchLocation(newLocation.lat(), newLocation.lng(), idx)
             .done(function() {
                 oldLocation = null;
             })
@@ -1013,8 +1019,8 @@ function changeLocation(lat, lng) {
     });
 }
 
-function changeSearchLocation(lat, lng) {
-    return $.post("next_loc?lat=" + lat + "&lon=" + lng, {});
+function changeSearchLocation(lat, lng, idx) {
+    return $.post("next_loc?lat=" + lat + "&lon=" + lng + "&mk=" + idx, {});
 }
 
 function centerMap(lat, lng, zoom) {
