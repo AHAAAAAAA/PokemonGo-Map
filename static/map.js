@@ -79,11 +79,12 @@ function initMap() {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
+          		'style_pgo',
               google.maps.MapTypeId.ROADMAP,
               google.maps.MapTypeId.SATELLITE,
               'dark_style',
               'style_light2',
-              'style_pgo']
+              ]
         },
     });
 
