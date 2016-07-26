@@ -18,12 +18,10 @@ sudo python get-pip.py
 echo "Installing required python packages..."
 pip install -r requirements.txt
 
-#Will fix after moving config file inside Tools Folder.
-
-#echo "Configuring Google Maps API..."
-#cp ../config/config.ini.example ../config/config.ini
-#echo -n "Enter your Google Maps API key here:"
-#read key
-#sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" ../config/config.ini
+echo "Configuring Google Maps API..."
+cp ../../config/config.ini.example ../../config/config.ini
+echo -n "Enter your Google Maps API key here:"
+read key
+sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" ../config/config.ini
 
 echo "All done!"
