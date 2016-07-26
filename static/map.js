@@ -221,7 +221,7 @@ function removePokemonMarker(encounter_id) {
 
 function initMap() {
 	var url_lat = getParameterByName('lat');
-	var url_long = getParameterByName('long');
+	var url_lng = getParameterByName('lng');
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
@@ -290,7 +290,7 @@ function initMap() {
     });
 	
 	if (url_lat) {
-		centerMap(url_lat, url_long, 16);
+		centerMap(url_lat, url_lng, 16);
 	}
 };
 
