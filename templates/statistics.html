@@ -4,101 +4,48 @@
     <meta charset="UTF-8">
     <title>Pokemon Go Map - Statistics</title>
 
-    <style type="text/css">
-        body{
-            background: #f1f1f1;
-        }
+    <!-- Fav- & Apple-Touch-Icons -->
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="static/appicons/favicon.ico" type="image/x-icon">
+    <!-- non-retina iPhone pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/114x114.png" sizes="57x57">
+    <!-- non-retina iPad pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/144x144.png" sizes="72x72">
+    <!-- non-retina iPad iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="76x76">
+    <!-- retina iPhone pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/114x114.png" sizes="114x114">
+    <!-- retina iPhone iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/120x120.png" sizes="120x120">
+    <!-- retina iPad pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/144x144.png" sizes="144x144">
+    <!-- retina iPad iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="152x152">
+    <!-- retina iPhone 6 iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
 
-        table{
-            background: #f8f8f8;
-        }
+    <link rel="stylesheet" href="static/css/statistics.css">
 
-        table thead{
-            font-weight: bold;
-        }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
-        table thead .title{
-            text-align: center;
-        }
-
-        table .even{
-            background: #f1f1f1;
-        }
-
-        table tfoot{
-            font-weight: bold;
-        }
-
-        table td{
-            padding: 5px;
-        }
-
-        .label{
-            font-weight: bold;
-        }
-
-        .options{
-            padding-bottom: 5px;
-        }
-
-        .container{
-            overflow: auto;
-        }
-
-        .container .item{
-            float: left;
-            border: 1px solid #acacac;
-            border-radius: 5px;
-            -moz-border-radius: 5px;
-            background: #f8f8f8;
-            margin: 0px 5px 5px 0px;
-            padding: 5px;
-            overflow: auto;
-            height: 50px;
-            min-width: 200px;
-        }
-
-        .container .item .image{
-            float: left;
-            width: 40px;
-            text-align: center;
-        }
-
-        .container .item .info{
-            float: left;
-        }
-    </style>
 </head>
 <body>
     <div class="filter">
-        <form method="get" action="/stats">
-            <div class="options">
-                <span class="label">Duration:</span>
-                <select name="duration" class="input">
-                    {% for value, duration in valid_durations.items() %}
-                        <option value="{{value}}" {{duration.checked}}>{{duration.display}}</option>
+        <div class="options">
+            {% for name, item in valid_input.items() %}
+                <span class="label">{{item.display}}</span>
+                <select id="{{name}}" name="{{name}}" class="input" onChange="updatePage();">
+                    {% for value, entry in item["items"].items() %}
+                        <option value="{{value}}" {{entry.selected}}>{{entry.display}}</option>
                     {% endfor %}
                 </select>
-            </div>
-            <div class="buttons">
-                <input type="submit" value="Change Duration" />
-            </div>
-        </form>
+            {% endfor %}
+        </div>
     </div>
-    <h1>Pokemon Seen in {{header}}</h1>
-    <h3>Total: {{total_seen}}</h3>
-    <div class="container">
-        {% for pokemon in seen_list %}
-            <div class="item">
-                <div class="image">
-                    <img src='static/icons/{{pokemon.id}}.png' alt="Icon for Pokemon number {{pokemon.id}}">
-                </div>
-                <div class="info">
-                    <span class="name">{{pokemon.name}}</span><br />
-                    <span class="seen">Seen: {{pokemon.count}} ({% print '{:.2f}'.format(pokemon.count / total_seen * 100) %}%)</span>
-                </div>
-            </div>
-        {% endfor %}
+    <h1 id="seen_header"></h1>
+    <h3 id="seen_total">Total: {{total_seen}}</h3>
+    <div class="container" id="seen_container">
     </div>
+    <script src="static/js/statistics.js"></script>
 </body>
 </html>

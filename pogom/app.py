@@ -67,6 +67,12 @@ class Pogom(Flask):
         if request.args.get('scanned', 'true') == 'true':
             d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat, neLng)
 
+        if request.args.get('seen', 'false') == 'true':
+            for label, duration in self.get_valid_stat_input()["duration"]["items"].items():
+                if duration["selected"] == "SELECTED":
+                    d['seen'] = Pokemon.get_seen(duration["value"])
+                    break
+
         return jsonify(d)
 
     def loc(self):
@@ -130,44 +136,46 @@ class Pogom(Flask):
                                origin_lat=lat,
                                origin_lng=lon)
 
-    def get_valid_durations(self):
+    def get_valid_stat_input(self):
+        duration = request.args.get("duration", type=str)
+        sort = request.args.get("sort", type=str)
+        order = request.args.get("order", type=str)
         valid_durations = OrderedDict()
-        valid_durations["1h"] = {"display": "Last Hour", "value": timedelta(hours=1), "selected": ""}
-        valid_durations["3h"] = {"display": "Last 3 Hours", "value": timedelta(hours=3), "selected": ""}
-        valid_durations["6h"] = {"display": "Last 6 Hours", "value": timedelta(hours=6), "selected": ""}
-        valid_durations["12h"] = {"display": "Last 12 Hours", "value": timedelta(hours=12), "selected": ""}
-        valid_durations["1d"] = {"display": "Last Day", "value": timedelta(days=1), "selected": ""}
-        valid_durations["7d"] = {"display": "Last 7 Days", "value": timedelta(days=7), "selected": ""}
-        valid_durations["14d"] = {"display": "Last 14 Days", "value": timedelta(days=14), "selected": ""}
-        valid_durations["1m"] = {"display": "Last Month", "value": timedelta(days=365/12), "selected": ""}
-        valid_durations["3m"] = {"display": "Last 3 Months", "value": timedelta(days=3*365/12), "selected": ""}
-        valid_durations["6m"] = {"display": "Last 6 Months", "value": timedelta(days=6*365/12), "selected": ""}
-        valid_durations["1y"] = {"display": "Last Year", "value": timedelta(days=365), "selected": ""}
-        valid_durations["all"] = {"display": "Map Lifetime", "value": 0, "selected": ""}
-        return valid_durations
+        valid_durations["1h"] = {"display": "Last Hour", "value": timedelta(hours=1), "selected": ("SELECTED" if duration == "1h" else "")}
+        valid_durations["3h"] = {"display": "Last 3 Hours", "value": timedelta(hours=3), "selected": ("SELECTED" if duration == "3h" else "")}
+        valid_durations["6h"] = {"display": "Last 6 Hours", "value": timedelta(hours=6), "selected": ("SELECTED" if duration == "6h" else "")}
+        valid_durations["12h"] = {"display": "Last 12 Hours", "value": timedelta(hours=12), "selected": ("SELECTED" if duration == "12h" else "")}
+        valid_durations["1d"] = {"display": "Last Day", "value": timedelta(days=1), "selected": ("SELECTED" if duration == "1d" else "")}
+        valid_durations["7d"] = {"display": "Last 7 Days", "value": timedelta(days=7), "selected": ("SELECTED" if duration == "7d" else "")}
+        valid_durations["14d"] = {"display": "Last 14 Days", "value": timedelta(days=14), "selected": ("SELECTED" if duration == "14d" else "")}
+        valid_durations["1m"] = {"display": "Last Month", "value": timedelta(days=365/12), "selected": ("SELECTED" if duration == "1m" else "")}
+        valid_durations["3m"] = {"display": "Last 3 Months", "value": timedelta(days=3*365/12), "selected": ("SELECTED" if duration == "3m" else "")}
+        valid_durations["6m"] = {"display": "Last 6 Months", "value": timedelta(days=6*365/12), "selected": ("SELECTED" if duration == "6m" else "")}
+        valid_durations["1y"] = {"display": "Last Year", "value": timedelta(days=365), "selected": ("SELECTED" if duration == "1y" else "")}
+        valid_durations["all"] = {"display": "Map Lifetime", "value": 0, "selected": ("SELECTED" if duration == "all" else "")}
+        if not duration in valid_durations:
+            valid_durations["1d"]["selected"] = "SELECTED"
+        valid_sort = OrderedDict()
+        valid_sort["count"] = {"display": "Count", "selected": ("SELECTED" if sort == "count" else "")}
+        valid_sort["id"] = {"display": "Pokedex Number", "selected": ("SELECTED" if sort == "id" else "")}
+        valid_sort["name"] = {"display": "Pokemon Name", "selected": ("SELECTED" if sort == "name" else "")}
+        if not sort in valid_sort:
+            valid_sort["count"]["selected"] = "SELECTED"
+        valid_order = OrderedDict()
+        valid_order["asc"] = {"display": "Ascending", "selected": ("SELECTED" if order == "asc" else "")}
+        valid_order["desc"] = {"display": "Descending", "selected": ("SELECTED" if order == "desc" else "")}
+        if not order in valid_order:
+            valid_order["desc"]["selected"] = "SELECTED"
+        valid_input = OrderedDict()
+        valid_input["duration"] = {"display": "Duration", "items": valid_durations}
+        valid_input["sort"] = {"display": "Sort", "items": valid_sort}
+        valid_input["order"] = {"display": "Order", "items": valid_order}
+        return valid_input
 
     def get_stats(self):
-        duration = request.args.get('duration', type=str)
-        valid_durations = self.get_valid_durations()
-        if not duration in valid_durations:
-            duration = "1d"
-        valid_durations[duration]["checked"] = "SELECTED"
-        seen_list = []
-        total_seen = 0
-        for pokemon in Pokemon.get_seen(valid_durations[duration]["value"]):
-            entry = {
-                'id': pokemon['pokemon_id'],
-                'name': pokemon['pokemon_name'],
-                'count': pokemon['count']
-            }
-            total_seen += pokemon['count']
-            seen_list.append((entry, entry['id']))
-        seen_list = [y[0] for y in sorted(seen_list, key=lambda x: x[1])]
         return render_template('statistics.html',
-                               header=valid_durations[duration]["display"],
-                               valid_durations=valid_durations,
-                               seen_list=seen_list,
-                               total_seen=total_seen)
+                               valid_input=self.get_valid_stat_input()
+                               )
 
 
 class CustomJSONEncoder(JSONEncoder):
