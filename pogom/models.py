@@ -3,6 +3,7 @@
 
 import logging
 import os
+import math
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, DoubleField, BooleanField, DateTimeField,\
                    OperationalError
@@ -225,9 +226,13 @@ def parse_map(map_dict, iteration_num, step, step_location):
     for cell in cells:
         if config['parse_pokemon']:
             for p in cell.get('wild_pokemons', []):
-                d_t = datetime.utcfromtimestamp(
-                    (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0)
+                #Temporary x time to the time_hidden_ms if it already expired, this lookes like a special kind of spawn that last longer
+                #Add 6 hours if expired time is between minus 5 and minus 6 hours etc.
+                if p['time_till_hidden_ms'] < 0:
+                    correction = (math.floor(math.fabs(p['time_till_hidden_ms']) / 3600000) + 1) * 3600000
+                    d_t = datetime.utcfromtimestamp((p['last_modified_timestamp_ms'] + p['time_till_hidden_ms'] + correction) / 1000.0)
+                else:
+                    d_t = datetime.utcfromtimestamp((p['last_modified_timestamp_ms'] + p['time_till_hidden_ms']) / 1000.0)
                 printPokemon(p['pokemon_data']['pokemon_id'],p['latitude'],p['longitude'],d_t)
                 pokemons[p['encounter_id']] = {
                     'encounter_id': b64encode(str(p['encounter_id'])),
