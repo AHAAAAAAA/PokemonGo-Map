@@ -3,7 +3,7 @@
 
 import logging
 from peewee import Model, SqliteDatabase, InsertQuery, IntegerField,\
-                   CharField, FloatField, BooleanField, DateTimeField
+                   CharField, FloatField, BooleanField, DateTimeField, MySQLDatabase
 from datetime import datetime
 from datetime import timedelta
 from base64 import b64encode
@@ -15,11 +15,17 @@ from .customLog import printPokemon
 args = get_args()
 db = SqliteDatabase(args.db)
 log = logging.getLogger(__name__)
+mysql_db = MySQLDatabase(
+    args.database_name,
+    user=args.database_username,
+    password=args.database_password,
+    host=args.database_host
+)
 
 
 class BaseModel(Model):
     class Meta:
-        database = db
+        database = mysql_db
 
     @classmethod
     def get_all(cls):
@@ -160,16 +166,16 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     }
 
     if pokemons:
-        log.info("Upserting {} pokemon".format(len(pokemons)))
+        #log.info("Upserting {} pokemon".format(len(pokemons)))
         bulk_upsert(Pokemon, pokemons)
 
-    if pokestops:
-        log.info("Upserting {} pokestops".format(len(pokestops)))
-        bulk_upsert(Pokestop, pokestops)
+    #if pokestops:
+        #log.info("Upserting {} pokestops".format(len(pokestops)))
+        #bulk_upsert(Pokestop, pokestops)
 
-    if gyms:
-        log.info("Upserting {} gyms".format(len(gyms)))
-        bulk_upsert(Gym, gyms)
+    #if gyms:
+        #log.info("Upserting {} gyms".format(len(gyms)))
+        #bulk_upsert(Gym, gyms)
 
     scanned[0] = {
         'scanned_id': str(step_location[0])+','+str(step_location[1]),
