@@ -132,6 +132,7 @@ def search_thread(args):
                         response_dict = {}
             else:
                 log.info('Map Download failed. Trying again.')
+                time.sleep(config['REQ_SLEEP'])
 
         time.sleep(config['REQ_SLEEP'])
 
@@ -186,7 +187,7 @@ def search_loop(args):
             search(args, i)
             log.info("Scanning complete.")
             if args.scan_delay > 1:
-                log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
+                log.info('Waiting {:f} seconds before beginning new scan.'.format(args.scan_delay))
                 time.sleep(args.scan_delay)
             i += 1
 
