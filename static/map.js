@@ -531,7 +531,7 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
         disableAutoPan: true
     });
 
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+    if (notifiedPokemon.indexOf(item.pokemon_id) > -1 && map.getBounds().contains(marker.getPosition())) {
         if (!skipNotification) {
             if (Store.get('playSound')) {
               audio.play();
