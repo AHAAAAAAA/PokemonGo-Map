@@ -31,7 +31,11 @@ def parse_config(args):
     if Config.get('Misc', 'Google_Maps_API_Key') :
         args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key') 
     args.host = Config.get('Misc', 'Host') 
-    args.port = Config.get('Misc', 'Port') 
+    args.port = Config.get('Misc', 'Port')
+    args.database_name = Config.get('Database', 'Name')
+    args.database_username = Config.get('Database', 'Username')
+    args.database_password = Config.get('Database', 'Password')
+    args.database_host = Config.get('Database', 'Host')
     return args
 
 def get_args():

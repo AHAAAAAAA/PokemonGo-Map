@@ -16,10 +16,10 @@ args = get_args()
 db = SqliteDatabase(args.db)
 log = logging.getLogger(__name__)
 mysql_db = MySQLDatabase(
-    'pgm',
-    user='root',
-    password='root',
-    host='127.0.0.1'
+    args.database_name,
+    user=args.database_username,
+    password=args.database_password,
+    host=args.database_host
 )
 
 
