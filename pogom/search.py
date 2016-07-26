@@ -135,6 +135,11 @@ def search_thread(args):
                         response_dict = {}
             else:
                 log.info('Map Download failed. Trying again.')
+<<<<<<< HEAD
+=======
+                time.sleep(config['REQ_SLEEP'])
+
+>>>>>>> 1b9f720cc9209d7f9f87e9b3e4d282505c4a5fdf
         time.sleep(config['REQ_SLEEP'])
 
 def process_search_threads(search_threads, curr_steps, total_steps):
