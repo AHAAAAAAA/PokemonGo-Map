@@ -782,13 +782,16 @@ function processLuredPokemon(i, item) {
         return;
     }
 
-    if (map_data.lure_pokemons[item2.pokestop_id] == null && item2.lure_expiration) {
+    if (map_data.lure_pokemons[item2.pokestop_id] == null
+            && item2.lure_expiration > new Date().getTime()) {
         //if (item.marker) item.marker.setMap(null);
         item2.marker = setupPokemonMarker(item2);
         map_data.lure_pokemons[item2.pokestop_id] = item2;
 
     }
-    if (map_data.lure_pokemons[item.pokestop_id] != null && item2.lure_expiration && item2.active_pokemon_id != map_data.lure_pokemons[item2.pokestop_id].active_pokemon_id) {
+    if (map_data.lure_pokemons[item.pokestop_id] != null
+            && item2.lure_expiration > new Date().getTime()
+            && item2.active_pokemon_id != map_data.lure_pokemons[item2.pokestop_id].active_pokemon_id) {
         //if (item.marker) item.marker.setMap(null);
         map_data.lure_pokemons[item2.pokestop_id].marker.setMap(null);
         item2.marker = setupPokemonMarker(item2);
