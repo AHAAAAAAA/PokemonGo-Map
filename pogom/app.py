@@ -8,7 +8,7 @@ from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
-from dateutil import parser
+import time
 from s2sphere import *
 from pogom.utils import get_args, get_pokemon_name
 
@@ -18,13 +18,6 @@ from .models import Pokemon, Gym, Pokestop, ScannedLocation
 args = get_args()
 log = logging.getLogger(__name__)
 compress = Compress()
-
-from datetime import datetime, tzinfo, timedelta
-class simple_utc(tzinfo):
-    def tzname(self):
-        return "UTC"
-    def utcoffset(self, dt):
-        return timedelta(0)
 
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
@@ -61,9 +54,10 @@ class Pogom(Flask):
         lastUpdate = request.args.get('lastUpdate')
 
         if lastUpdate:
-            lastUpdate = parser.parse(lastUpdate)
+            lastUpdate = datetime.fromtimestamp(float(lastUpdate))
 
-        d['updateTime'] = now.replace(tzinfo=simple_utc()).isoformat()
+        # Use unix time in JSON
+        d['updateTime'] = time.mktime(now.timetuple())
 
         if request.args.get('pokemon', 'true') == 'true':
             pokemons = (Pokemon.select()

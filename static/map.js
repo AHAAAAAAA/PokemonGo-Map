@@ -746,7 +746,7 @@ function loadRawData() {
             'swLng': swLng,
             'neLat': neLat,
             'neLng': neLng,
-            'lastUpdate': lastUpdateTime ? lastUpdateTime.toISOString() : null
+            'lastUpdate': lastUpdateTime ? lastUpdateTime.getTime() : null
         },
         dataType: "json",
         beforeSend: function() {
@@ -875,7 +875,8 @@ function processScanned(i, item) {
 function updateMap() {
 
     loadRawData().done(function (result) {
-        lastUpdateTime = new Date(Date.parse(result.updateTime));
+        console.log(result.pokemons.length);
+        lastUpdateTime = new Date(result.updateTime);
         $.each(result.pokemons, processPokemons);
         $.each(result.pokestops, processPokestops);
         $.each(result.pokestops, processLuredPokemon);
