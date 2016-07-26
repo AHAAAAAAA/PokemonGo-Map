@@ -188,7 +188,7 @@ def search_loop(args):
         '-6.1938965 106.7840423', # 2. Binus Kijang
         '-6.1877741 106.7903616', # 3. Bank Mandiri Gedung Pusri
         '-6.1763713 106.7896283', # 4. APL Tower
-        '-6.1801046,106.7926431', # 5. Taman Anggrek Residences
+        '-6.1801046 106.7926431', # 5. Taman Anggrek Residences
         '-6.1876777 106.8010116', # 6. PT Djarum
         '-6.1939921 106.8178953', # 7. Grand Indonesia
         '-6.188028 106.8230132',  # 8. Sarinah
