@@ -10,7 +10,7 @@ parser.add_argument("-lp", "--leaps", help="like 'steps' but for workers instead
 
 R = 6378137.0
 
-r_hex = 1426.0 / 19.0
+r_hex = 149.9497
 
 args = parser.parse_args()
 st = (int)(args.steps)
