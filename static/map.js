@@ -1085,15 +1085,8 @@ $(function() {
 		$selectStyle.val(Store.get('map_style')).trigger("change");
 		
 	});
-	
-	
-	
-});
 
-//var changeStyle = document.getElementById('map-style')
-//	changeStyle.addEventListener("change", function(key, value) {
-//		map.setMapTypeId(changeStyle.value)
-//	})
+});
 
 $(function () {
 
