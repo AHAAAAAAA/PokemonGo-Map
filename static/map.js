@@ -109,12 +109,11 @@ function initMap() {
 
     marker = new google.maps.Marker({
         position: {
-            lat: 19.4326068,
-            lng: -99.1353936
+            lat: center_lat,
+            lng: center_lng
         },
         map: map,
-        animation: google.maps.Animation.DROP,
-        icon: 'static/appicons/logo30x30.png'
+        animation: google.maps.Animation.DROP
     });
 
     initSidebar();
