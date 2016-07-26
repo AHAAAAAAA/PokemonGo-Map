@@ -1088,14 +1088,13 @@ $(function () {
     window.setInterval(function() {
       if(navigator.geolocation && Store.get('geoLocate')) {
         navigator.geolocation.getCurrentPosition(function (position){
-          var baseURL = location.protocol + "//" + location.hostname + (location.port ? ":"+location.port: "");
           lat = position.coords.latitude;
           lon = position.coords.longitude;
 
           //the search function makes any small movements cause a loop. Need to increase resolution
           if(getPointDistance(marker.getPosition(), (new google.maps.LatLng(lat, lon))) > 40) //changed to 40 from PR notes, less jitter.
           {
-            $.post(baseURL + "/next_loc?lat=" + lat + "&lon=" + lon).done(function(){
+            $.post("next_loc?lat=" + lat + "&lon=" + lon).done(function(){
               var center = new google.maps.LatLng(lat, lon);
               map.panTo(center);
               marker.setPosition(center);
