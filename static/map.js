@@ -635,6 +635,16 @@ function clearInfoWindows() {
         // Close all windows
         value.marker.infoWindow.close();
     });
+
+    $.each(map_data.gyms, function(key, value) {
+        // Close all windows
+        value.marker.infoWindow.close();
+    });
+
+    $.each(map_data.pokestops, function(key, value) {
+        // Close all windows
+        value.marker.infoWindow.close();
+    });
 };
 
 function addListeners(marker) {
