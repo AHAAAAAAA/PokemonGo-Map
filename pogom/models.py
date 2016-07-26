@@ -81,13 +81,13 @@ class Pokemon(BaseModel):
     @classmethod
     def get_p_by_type(cls,type):
 
-        with open(os.path.join('static','locales,"type.eng.json")) as data_file:
+        with open(os.path.join('static','locales',"type.eng.json")) as data_file:
             id_to_type = json.load(data_file)
         for id in id_to_type:
             if type in id_to_type.type:
                 ids_of_type.append(id)
 
-
+        pokemons = []
         query = (Pokemon
                  .select()
                  .where(Pokemon.pokemon_id.in_(ids_of_type))

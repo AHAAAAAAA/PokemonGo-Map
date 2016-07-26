@@ -539,7 +539,10 @@ function updateHeatmap() {
 			gradient: gradient
 		});
 		
-		if(heatmapData.length > 1000){
+		if(heatmapData.length < 100){
+			changeIntensity(3);
+		}
+		if(heatmapData.length >= 100){
 			changeIntensity(100);
 		}
 		
