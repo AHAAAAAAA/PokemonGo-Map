@@ -95,6 +95,11 @@
 				line-height: 4em;
 			}
 		}
+    
+    .divider {
+      clear: both;
+      max-width: none;
+    }
 
 		&.visible {
 			@include vendor('transform', 'translateX(0)');

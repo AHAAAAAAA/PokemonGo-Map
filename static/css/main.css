@@ -1876,6 +1876,9 @@ body {
       #nav .close {
         height: 4em;
         line-height: 4em; } }
+  #nav .divider {
+    clear: both;
+    max-width: none; }
   #nav.visible {
     -moz-transform: translateX(0);
     -webkit-transform: translateX(0);
