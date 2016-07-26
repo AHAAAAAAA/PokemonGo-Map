@@ -753,7 +753,6 @@ function loadRawData() {
     })
 }
 
-
 function processPokemons(i, item) {
     if (!Store.get('showPokemon')) {
         return false; // in case the checkbox was unchecked in the meantime.
@@ -780,7 +779,7 @@ function processPokestops(i, item) {
     else {
         item2 = map_data.pokestops[item.pokestop_id];
         if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            item2.marker.setMap(null);
+            item.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
@@ -855,7 +854,6 @@ function processScanned(i, item) {
     if (item.scanned_id in map_data.scanned) {
         map_data.scanned[item.scanned_id].marker.setOptions({fillColor: getColorByDate(item.last_modified)});
     }
-
     else { // add marker to map and item to dict
         if (item.marker) item.marker.setMap(null);
         item.marker = setupScannedMarker(item);
@@ -1144,12 +1142,10 @@ $(function () {
             }
         }
     }
-    
 
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
     $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
-    $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "lure_pokemons", "showPokemon"));
     $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
