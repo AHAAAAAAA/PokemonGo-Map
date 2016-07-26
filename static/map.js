@@ -619,8 +619,27 @@ function clearSelection() {
     }
 };
 
+
+function clearInfoWindows() {
+    $.each(map_data.pokemons, function(key, value) {
+        // Close all windows
+        value.marker.infoWindow.close();
+    });
+
+    $.each(map_data.lure_pokemons, function(key, value) {
+        // Close all windows
+        value.marker.infoWindow.close();
+    });
+
+    $.each(map_data.scanned, function(key, value) {
+        // Close all windows
+        value.marker.infoWindow.close();
+    });
+};
+
 function addListeners(marker) {
     marker.addListener('click', function() {
+    	clearInfoWindows();
         marker.infoWindow.open(map, marker);
         clearSelection();
         updateLabelDiffTime();
@@ -632,6 +651,7 @@ function addListeners(marker) {
     });
 
     marker.addListener('mouseover', function() {
+    	clearInfoWindows();
         marker.infoWindow.open(map, marker);
         clearSelection();
         updateLabelDiffTime();
