@@ -581,7 +581,7 @@ function setupPokestopMarker(item) {
         dead = true;
     }
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude +.003, item.longitude+ .003),
+        content: pokestopLabel(!!item.lure_expiration, item.last_modified, item.active_pokemon_id, item.latitude +.003, item.longitude+ .003, dead),
         disableAutoPan: true
     });
 
@@ -675,12 +675,12 @@ function clearStaleMarkers() {
         }
     });
     
-    $.each(map_pokestops, function(key, value) {
+    $.each(map_data.pokestops, function(key, value) {
 
         if (!map_data.pokestops[key]['dead'] && !!map_data.pokestops[key]['lure_expiration'] && map_data.pokestops[key]['lure_expiration'] < new Date().getTime()) {
             map_data.pokestops[key].marker.setMap(null);
 	    map_data.pokestops[key]['dead'] = true;
-	    if (!(localStorage.showPokestops === 'true')) {
+	    if ((localStorage.showPokestops === 'true')) {
                 map_data.pokestops[key].marker = setupPokestopMarker(map_data.pokestops[key]);
             }            	
         }
@@ -780,7 +780,7 @@ function processPokestops(i, item) {
     else {
         item2 = map_data.pokestops[item.pokestop_id];
         if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            item.marker.setMap(null);
+            item2.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
@@ -1144,10 +1144,12 @@ $(function () {
             }
         }
     }
+    
 
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
     $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
+    $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "lure_pokemons", "showPokemon"));
     $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
