@@ -1934,7 +1934,8 @@ html, body {
   height: 100%;
   margin-top: 3.5em; }
 
-.wrapper {
+.wrapper,
+.map-wrapper {
   position: relative;
   width: 100%;
   height: 100%; }
