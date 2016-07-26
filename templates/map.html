@@ -44,7 +44,7 @@
 		</header>
 
 		<!-- NAV -->
-		<nav id="nav">
+		<nav id="nav" style="overflow:scroll;">
 			<div class="form-control" style="display:{{is_fixed}}" >
 				<label for="next-location">
 					<h3>Change your location</h3>
@@ -145,6 +145,22 @@
 					</label>
 				</div>
 			</div>
+			<div class="form-control">
+				<hr width="100%">
+					<h3>Style</h3>
+					<div>
+					<select id="map-style" style="min-width:100%;">
+						<option value="roadmap">Roadmap</option>
+						<option value="satellite">Satellite</option>
+						<option value="nolabels_style">No Labels</option>
+						<option value="dark_style">Dark</option>
+						<option value="style_light2">Light2</option>
+						<option value="style_pgo">PokemonGo</option>
+						<option value="dark_style_nl">Dark (No Labels)</option>
+						<option value="style_light2_nl">Light2 (No Labels)</option>
+						<option value="style_pgo_nl">PokemonGo (No Labels)</option>
+					</select>
+			</div>
 		</nav>
 
 		<div id="map"></div>
@@ -161,6 +177,14 @@
 	<script>
 		var center_lat = {{lat}};
 		var center_lng = {{lng}};
+	</script>
+	
+	<script>
+		$(function() {
+			if(localStorage.getItem('map_style')){
+				$('#map-style').val(localStorage.getItem('map_style'));
+			}
+		});
 	</script>
 
 	<script src="static/map.js"></script>
