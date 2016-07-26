@@ -159,9 +159,10 @@ def parse_map(map_dict, iteration_num, step, step_location):
                             f['last_modified_timestamp_ms'] / 1000.0),
                     }
 
-    if pokemons:
-        #log.info("Upserting {} pokemon".format(len(pokemons)))
-        bulk_upsert(Pokemon, pokemons)
+    return pokemons
+    # if pokemons:
+    #     log.info("Upserting {} pokemon".format(len(pokemons)))
+    #     bulk_upsert(Pokemon, pokemons)
 
     #if pokestops:
         #log.info("Upserting {} pokestops".format(len(pokestops)))
@@ -171,14 +172,14 @@ def parse_map(map_dict, iteration_num, step, step_location):
         #log.info("Upserting {} gyms".format(len(gyms)))
         #bulk_upsert(Gym, gyms)
 
-    scanned[0] = {
-        'scanned_id': str(step_location[0])+','+str(step_location[1]),
-        'latitude': step_location[0],
-        'longitude': step_location[1],
-        'last_modified': datetime.utcnow(),
-    }
-
-    bulk_upsert(ScannedLocation, scanned)
+    # scanned[0] = {
+    #     'scanned_id': str(step_location[0])+','+str(step_location[1]),
+    #     'latitude': step_location[0],
+    #     'longitude': step_location[1],
+    #     'last_modified': datetime.utcnow(),
+    # }
+    #
+    # bulk_upsert(ScannedLocation, scanned)
 
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
