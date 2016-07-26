@@ -68,8 +68,8 @@ function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
-            lat: center_lat,
-            lng: center_lng
+            lat: 19.4326068,
+            lng: -99.1353936
         },
         zoom: 16,
         fullscreenControl: true,
@@ -79,11 +79,12 @@ function initMap() {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           position: google.maps.ControlPosition.RIGHT_TOP,
           mapTypeIds: [
+          		'style_pgo',
               google.maps.MapTypeId.ROADMAP,
               google.maps.MapTypeId.SATELLITE,
               'dark_style',
               'style_light2',
-              'style_pgo']
+              ]
         },
     });
 
