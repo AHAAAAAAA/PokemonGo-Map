@@ -11,11 +11,9 @@ from flask_cors import CORS, cross_origin
 
 from pogom import config
 from pogom.app import Pogom
-from pogom.utils import get_args, insert_mock_data
+from pogom.utils import get_args, insert_mock_data, get_pos_by_name
 from pogom.search import search_loop, create_search_threads
 from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
-
-from pogom.pgoapi.utilities import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
@@ -33,8 +31,8 @@ if __name__ == '__main__':
 
     logging.getLogger("peewee").setLevel(logging.INFO)
     logging.getLogger("requests").setLevel(logging.WARNING)
-    logging.getLogger("pogom.pgoapi.pgoapi").setLevel(logging.WARNING)
-    logging.getLogger("pogom.pgoapi.rpc_api").setLevel(logging.INFO)
+    logging.getLogger("pgoapi").setLevel(logging.WARNING)
+    logging.getLogger("pgoapi.rpc_api").setLevel(logging.INFO)
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
     args = get_args()
