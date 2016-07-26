@@ -57,7 +57,7 @@ def pokemon_found(pokemon):
 
     #http://maps.google.com/maps/place/<place_lat>,<place_long>/@<map_center_lat>,<map_center_long>,<zoom_level>z
     latLon = '{},{}'.format(repr(pokemon["lat"]), repr(pokemon["lng"]))
-    google_maps_link = 'http://maps.google.com/maps/place/{}/@{},{}z'.format(latLon, latLon, 20)
+    google_maps_link = 'http://maps.google.com/maps?q={}&{}z'.format(latLon, 20)
 
     notification_text = "Pokemon Found " + _str(pokemon["name"]) + "!"
     disappear_time = str(datetime.fromtimestamp(pokemon["disappear_time"]).strftime("%I:%M%p").lstrip('0'))+")"
