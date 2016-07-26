@@ -3,8 +3,9 @@
 
 import calendar
 import logging
+import simplejson as json
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, render_template, request
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
@@ -64,14 +65,14 @@ class Pogom(Flask):
         if request.args.get('scanned', 'true') == 'true':
             d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat, neLng)
 
-        return jsonify(d)
+        return json.dumps(d, cls=self.json_encoder), 200, {'Content-Type': 'application/json'}
 
     def loc(self):
         d = {}
         d['lat']=config['ORIGINAL_LATITUDE']
         d['lng']=config['ORIGINAL_LONGITUDE']
 
-        return jsonify(d)
+        return json.dumps(d, cls=self.json_encoder), 200, {'Content-Type': 'application/json'}
 
     def next_loc(self):
         args = get_args()
