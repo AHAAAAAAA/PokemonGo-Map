@@ -425,13 +425,13 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
 
         var expire_date = new Date(current_date.getTime() + time_until_expire);
         var expire_time = expire_date.getTime();
-	
-	var waitText;
-	if(dead) {
-		waitText = "<div>Lured Pokemon: Waiting for scan...</div>";
-	}
-	else {
-		waitText = `<div>
+
+        var waitText;
+        if(dead) {
+                waitText = "<div>Lured Pokemon: Waiting for scan...</div>";
+        }
+        else {
+	        waitText = `<div>
                 Lured Pokémon: ${active_pokemon}
                 <span> - </span>
                 <small>
