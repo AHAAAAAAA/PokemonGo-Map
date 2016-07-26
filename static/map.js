@@ -926,6 +926,7 @@ function myLocationButton(map, marker) {
     var locationContainer = document.createElement('div');
 
     var locationButton = document.createElement('button');
+    locationButton.style.display = '{{is_fixed}}';
     locationButton.style.backgroundColor = '#fff';
     locationButton.style.border = 'none';
     locationButton.style.outline = 'none';
