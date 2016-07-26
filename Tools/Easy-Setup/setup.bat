@@ -35,13 +35,13 @@ setx PATH "%PATH%;%PATH2%;%PATH2%\Scripts;"
 popd
 
 "%PATH2%\python" get-pip.py
-cd ..
+cd ..\..
 "%PATH2%\Scripts\pip" install -r requirements.txt
 "%PATH2%\Scripts\pip" install -r requirements.txt --upgrade
 
-REM cd config
-REM set /p API= Enter your Google API key here:
-REM "%PATH2%\python" -c "print open('config.ini.example').read().replace('#gmaps-key:','gmaps-key:%API%')" > config.ini
+cd config
+set /p API= Enter your Google API key here:
+"%PATH2%\python" -c "print open('config.ini.example').read().replace('#gmaps-key:','gmaps-key:%API%')" > config.ini
 
 echo All done!
 pause
