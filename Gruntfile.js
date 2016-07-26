@@ -58,7 +58,10 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/css/app.min.css': 'static/css/main.css'
+          'static/dist/css/app.min.css': [
+              'static/css/main.css',
+              'static/css/pokemon-sprites.css'
+          ]
         }
       }
   	},
