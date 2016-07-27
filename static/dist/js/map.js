@@ -138,6 +138,10 @@ var StoreOptions = (_StoreOptions = {
         default: true,
         type: StoreTypes.Boolean
     },
+    showLuredPokestopsOnly: {
+        default: 0,
+        type: StoreTypes.Number
+    },
     showScanned: {
         default: false,
         type: StoreTypes.Boolean
@@ -301,6 +305,8 @@ function initSidebar() {
     $('#gyms-switch').prop('checked', Store.get('showGyms'));
     $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
     $('#pokestops-switch').prop('checked', Store.get('showPokestops'));
+    $('#lured-pokestops-only-switch').val(Store.get('showLuredPokestopsOnly'));
+    $('#lured-pokestops-only-wrapper').toggle(Store.get('showPokestops'));
     $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
     $('#scanned-switch').prop('checked', Store.get('showScanned'));
     $('#sound-switch').prop('checked', Store.get('playSound'));
@@ -588,20 +594,26 @@ function clearStaleMarkers() {
     });
 };
 
-function clearOutOfBoundsMarkers(markers) {
+function showInBoundsMarkers(markers) {
     $.each(markers, function (key, value) {
-        if (markers[key].hidden) return true; // don't remove hidden markers so we can remember they're hidden
         var marker = markers[key].marker;
-        if (typeof marker.getPosition === 'function') {
-            if (!map.getBounds().contains(marker.getPosition())) {
-                markers[key].marker.setMap(null);
-                delete markers[key];
+        var show = false;
+        if (!markers[key].hidden) {
+            if (typeof marker.getPosition === 'function') {
+                if (map.getBounds().contains(marker.getPosition())) {
+                    show = true;
+                }
+            } else if (typeof marker.getCenter === 'function') {
+                if (map.getBounds().contains(marker.getCenter())) {
+                    show = true;
+                }
             }
-        } else if (typeof marker.getCenter === 'function') {
-            if (!map.getBounds().contains(marker.getCenter())) {
-                markers[key].marker.setMap(null);
-                delete markers[key];
-            }
+        }
+
+        if (show && !markers[key].marker.getMap()) {
+            markers[key].marker.setMap(map);
+        } else if (!show && markers[key].marker.getMap()) {
+            markers[key].marker.setMap(null);
         }
     });
 }
@@ -664,6 +676,13 @@ function processPokemons(i, item) {
 function processPokestops(i, item) {
     if (!Store.get('showPokestops')) {
         return false;
+    }
+    if (Store.get('showLuredPokestopsOnly') && !item.lure_expiration) {
+        if (map_data.pokestops[item.pokestop_id] && map_data.pokestops[item.pokestop_id].marker) {
+            map_data.pokestops[item.pokestop_id].marker.setMap(null);
+            delete map_data.pokestops[item.pokestop_id];
+        }
+        return true;
     }
     if (map_data.pokestops[item.pokestop_id] == null) {
         // add marker to map and item to dict
@@ -764,11 +783,11 @@ function updateMap() {
         $.each(result.pokestops, processLuredPokemon);
         $.each(result.gyms, processGyms);
         $.each(result.scanned, processScanned);
-        clearOutOfBoundsMarkers(map_data.pokemons);
-        clearOutOfBoundsMarkers(map_data.lure_pokemons);
-        clearOutOfBoundsMarkers(map_data.gyms);
-        clearOutOfBoundsMarkers(map_data.pokestops);
-        clearOutOfBoundsMarkers(map_data.scanned);
+        showInBoundsMarkers(map_data.pokemons);
+        showInBoundsMarkers(map_data.lure_pokemons);
+        showInBoundsMarkers(map_data.gyms);
+        showInBoundsMarkers(map_data.pokestops);
+        showInBoundsMarkers(map_data.scanned);
         clearStaleMarkers();
     });
 };
@@ -957,14 +976,26 @@ $(function () {
 
 $(function () {
 
+    function formatState(state) {
+        if (!state.id) {
+            return state.text;
+        }
+        var $state = $('<span><i class="pokemon-sprite n' + state.element.value.toString() + '"></i> ' + state.text + '</span>');
+        return $state;
+    };
+
     $selectExclude = $("#exclude-pokemon");
     $selectNotify = $("#notify-pokemon");
+    var numberOfPokemon = 151;
 
     // Load pokemon names and populate lists
     $.getJSON("static/locales/pokemon." + language + ".json").done(function (data) {
         var pokeList = [];
 
         $.each(data, function (key, value) {
+            if (key > numberOfPokemon) {
+                return false;
+            }
             pokeList.push({ id: key, text: value + ' - #' + key });
             idToPokemon[key] = value;
         });
@@ -972,11 +1003,13 @@ $(function () {
         // setup the filter lists
         $selectExclude.select2({
             placeholder: "Select Pokémon",
-            data: pokeList
+            data: pokeList,
+            templateResult: formatState
         });
         $selectNotify.select2({
             placeholder: "Select Pokémon",
-            data: pokeList
+            data: pokeList,
+            templateResult: formatState
         });
 
         // setup list change behavior now that we have the list to work from
@@ -1032,11 +1065,45 @@ $(function () {
         };
     }
 
+    function buildSwitchChangeListener2(data, data_type1, data_type2, storageKey) {
+        return function () {
+            Store.set(storageKey, this.checked);
+            if (this.checked) {
+                updateMap();
+            } else {
+                console.log("After party");
+                $.each(data[data_type1], function (key, value) {
+                    data[data_type1][key].marker.setMap(null);
+                });
+                $.each(data[data_type2], function (key, value) {
+                    data[data_type2][key].marker.setMap(null);
+                });
+                data[data_type1] = {};
+                data[data_type2] = {};
+            }
+        };
+    }
+
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
-    $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
-    $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
+    $('#pokemon-switch').change(buildSwitchChangeListener2(map_data, "pokemons", "lure_pokemons", "showPokemon"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
+
+    $('#pokestops-switch').change(function () {
+        var options = { 'duration': 500 },
+            wrapper = $('#lured-pokestops-only-wrapper');
+        if (this.checked) {
+            wrapper.show(options);
+        } else {
+            wrapper.hide(options);
+        }
+        return buildSwitchChangeListener(map_data, "pokestops", "showPokestops").bind(this)();
+    });
+
+    $('#lured-pokestops-only-switch').change(function () {
+        Store.set("showLuredPokestopsOnly", this.value);
+        updateMap();
+    });
 
     $('#sound-switch').change(function () {
         Store.set("playSound", this.checked);
