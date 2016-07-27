@@ -1156,9 +1156,28 @@ $(function () {
         }
     }
 
+    function buildSwitchChangeListener2(data, data_type1, data_type2, storageKey) {
+        return function () {
+            Store.set(storageKey, this.checked);
+            if (this.checked) {
+                updateMap();
+            } else {
+                console.log("After party");
+                $.each(data[data_type1], function (key, value) {
+                    data[data_type1][key].marker.setMap(null);
+                });
+                $.each(data[data_type2], function (key, value) {
+                    data[data_type2][key].marker.setMap(null);
+                });
+                data[data_type1] = {}
+                data[data_type2] = {}
+            }
+        }
+    }
+
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
-    $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
+    $('#pokemon-switch').change(buildSwitchChangeListener2(map_data, "pokemons", "lure_pokemons", "showPokemon"));
     $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
