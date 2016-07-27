@@ -42,8 +42,10 @@ lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
 
 search_queue = Queue()
 
+
 def calculate_lng_degrees(lat):
-    return float(lng_gap_meters) / (meters_per_degree * math.cos(math.radians(lat)))
+    return float(lng_gap_meters) / \
+        (meters_per_degree * math.cos(math.radians(lat)))
 
 
 def send_map_request(api, position):
@@ -51,9 +53,9 @@ def send_map_request(api, position):
         api_copy = api.copy()
         api_copy.set_position(*position)
         api_copy.get_map_objects(latitude=f2i(position[0]),
-                            longitude=f2i(position[1]),
-                            since_timestamp_ms=TIMESTAMP,
-                            cell_id=get_cellid(position[0], position[1]))
+                                 longitude=f2i(position[1]),
+                                 since_timestamp_ms=TIMESTAMP,
+                                 cell_id=get_cellid(position[0], position[1]))
         return api_copy.call()
     except Exception as e:
         log.warning("Uncaught exception when downloading map " + str(e))
@@ -62,11 +64,11 @@ def send_map_request(api, position):
 
 def generate_location_steps(initial_location, num_steps):
 
-    ring = 1 # Which ring are we on, 0 = center
+    ring = 1  # Which ring are we on, 0 = center
     lat_location = initial_location[0]
     lng_location = initial_location[1]
 
-    yield (initial_location[0],initial_location[1], 0) #Middle circle
+    yield (initial_location[0], initial_location[1], 0)  # Middle circle
 
     while ring < num_steps:
         # Move the location diagonally to top left spot, then start the circle which will end up back here for the next ring
@@ -76,29 +78,29 @@ def generate_location_steps(initial_location, num_steps):
 
         for direction in range(6):
             for i in range(ring):
-                if direction == 0: #Right
+                if direction == 0:  # Right
                     lng_location += calculate_lng_degrees(lat_location) * 2
 
-                if direction == 1: #Right Down
+                if direction == 1:  # Right Down
                     lat_location -= lat_gap_degrees
                     lng_location += calculate_lng_degrees(lat_location)
 
-                if direction == 2: #Left Down
+                if direction == 2:  # Left Down
                     lat_location -= lat_gap_degrees
                     lng_location -= calculate_lng_degrees(lat_location)
 
-                if direction == 3: #Left
+                if direction == 3:  # Left
                     lng_location -= calculate_lng_degrees(lat_location) * 2
 
-                if direction == 4: #Left Up
+                if direction == 4:  # Left Up
                     lat_location += lat_gap_degrees
                     lng_location -= calculate_lng_degrees(lat_location)
 
-                if direction == 5: #Right Up
+                if direction == 5:  # Right Up
                     lat_location += lat_gap_degrees
                     lng_location += calculate_lng_degrees(lat_location)
 
-                yield (lat_location, lng_location, 0) #Middle circle
+                yield (lat_location, lng_location, 0)  # Middle circle
 
         ring += 1
 
@@ -114,17 +116,18 @@ def login(args, position):
 
     log.info('Login to Pokemon Go successful.')
 
+
 #
 # Search Threads Logic
 #
-
-def create_search_threads(num) :
+def create_search_threads(num):
     search_threads = []
     for i in range(num):
         t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue,))
         t.daemon = True
         t.start()
         search_threads.append(t)
+
 
 def search_thread(q):
     threadname = threading.currentThread().getName()
@@ -138,7 +141,7 @@ def search_thread(q):
         if 'NEXT_LOCATION' in config:
             log.debug("{}: new location waiting, flushing queue".format(threadname))
             q.task_done()
-            continue;
+            continue
 
         log.debug("{}: processing itteration {} step {}".format(threadname, i, step))
         response_dict = {}
@@ -152,7 +155,8 @@ def search_thread(q):
                         log.debug("{}: itteration {} step {} complete".format(threadname, i, step))
                     except KeyError:
                         log.error('Search thread failed. Response dictionary key error')
-                        log.debug('{}: itteration {} step {} failed. Response dictionary key error.'.format(threadname, i, step))
+                        log.debug('{}: itteration {} step {} failed. Response dictionary\
+                            key error.'.format(threadname, i, step))
                         failed_consecutive += 1
                         if(failed_consecutive >= config['REQ_MAX_FAILED']):
                             log.error('Niantic servers under heavy load. Waiting before trying again')
@@ -166,6 +170,7 @@ def search_thread(q):
 
         time.sleep(config['REQ_SLEEP'])
         q.task_done()
+
 
 #
 # Search Overseer
@@ -184,6 +189,7 @@ def search_loop(args):
             if args.thread_delay > 0:
                 log.info('Waiting {:g} seconds before beginning new scan.'.format(args.thread_delay))
                 time.sleep(args.thread_delay)
+
 
 #
 # Overseer main logic
@@ -204,7 +210,8 @@ def search(args, i):
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
         if remaining_time > 60:
-            log.info("Skipping Pokemon Go login process since already logged in for another {:.2f} seconds".format(remaining_time))
+            log.info("Skipping Pokemon Go login process since already logged in \
+                for another {:.2f} seconds".format(remaining_time))
         else:
             login(args, position)
     else:
