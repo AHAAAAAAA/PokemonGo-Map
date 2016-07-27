@@ -22,7 +22,10 @@ import utils
 pokemons = {}
 workers = {}
 local_data = threading.local()
-# api.local_data = local_data
+
+
+class CannotProcessStep(Exception):
+    """Raised when servers are too busy"""
 
 
 def configure_logger(filename='worker.log'):
@@ -82,8 +85,13 @@ class Slave(threading.Thread):
             time.sleep(random.randint(5, 10))
             start_worker(self.worker_no, self.points)
             return
-        while self.cycle <= 3:
-            self.main()
+        while self.cycle <= 3:  # TODO: to config
+            try:
+                self.main()
+            except CannotProcessStep:
+                self.error_code = 'RESTART'
+                time.sleep(random.randint(15, 30))
+                start_worker(self.worker_no, self.points)
             self.cycle += 1
             if self.cycle <= 3:
                 self.error_code = 'SLEEP'
@@ -106,6 +114,8 @@ class Slave(threading.Thread):
                 cell_id=cell_ids
             )
             response_dict = self.api.call()
+            if response_dict is False:
+                raise CannotProcessStep
             now = time.time()
             map_objects = response_dict['responses'].get('GET_MAP_OBJECTS', {})
             pokemons = []

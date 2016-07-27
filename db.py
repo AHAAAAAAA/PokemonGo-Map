@@ -27,6 +27,11 @@ Base = declarative_base()
 
 
 class SightingCache(object):
+    """Simple cache for storing actual sightings
+
+    It's used in order not to make as many queries to the database.
+    It's also capable of purging old entries.
+    """
     def __init__(self):
         self.store = {}
 
