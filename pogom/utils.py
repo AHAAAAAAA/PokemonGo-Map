@@ -26,6 +26,47 @@ def verify_config_file_exists(filename):
         log.info("Could not find " + filename + ", copying default")
         shutil.copy2(fullpath + '.example', fullpath)
 
+def parse_config(args):
+    verify_config_file_exists('../config/config.ini')
+    Config = ConfigParser.ConfigParser()
+    Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
+    args.auth_service = Config.get('Authentication', 'Service')
+    args.username = Config.get('Authentication', 'Username')
+    args.password = Config.get('Authentication', 'Password')
+    args.location = Config.get('Search_Settings', 'Location')
+    args.step_limit = int(Config.get('Search_Settings', 'Steps'))
+    args.scan_delay = int(Config.get('Search_Settings', 'Scan_delay'))
+    args.no_pokemon = Config.getboolean('Search_Settings', 'Disable_Pokemon')
+    args.no_pokestops = Config.getboolean('Search_Settings', 'Disable_Pokestops')
+    args.no_gyms = Config.getboolean('Search_Settings', 'Disable_Gyms')
+    if Config.get('Misc', 'Google_Maps_API_Key') :
+        args.gmaps_key = Config.get('Misc', 'Google_Maps_API_Key')
+    args.host = Config.get('Misc', 'Host')
+    args.port = Config.get('Misc', 'Port')
+
+    return args
+
+def parse_db_config(args):
+    verify_config_file_exists('../config/config.ini')
+    Config = ConfigParser.ConfigParser()
+    Config.read(os.path.join(os.path.dirname(__file__), '../config/config.ini'))
+    args.db_type = Config.get('Database','Type')
+    args.db_name = Config.get('Database', 'Database_Name')
+    args.db_user = Config.get('Database', 'Database_User')
+    args.db_pass = Config.get('Database', 'Database_Pass')
+    args.db_host = Config.get('Database', 'Database_Host')
+
+    return args
+
+def cache_args(function):
+    to_return = {}
+    def decorator(*args):
+        if args not in to_return:
+            to_return[args] = function()
+        return to_return[args]
+    return decorator
+
+@cache_args
 def get_args():
     # fuck PEP8
     configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
