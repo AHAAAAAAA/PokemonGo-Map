@@ -17,6 +17,7 @@ from .models import Pokemon, Gym, Pokestop, ScannedLocation
 log = logging.getLogger(__name__)
 compress = Compress()
 
+
 class Pogom(Flask):
     def __init__(self, import_name, **kwargs):
         super(Pogom, self).__init__(import_name, **kwargs)
@@ -33,7 +34,7 @@ class Pogom(Flask):
         display = "inline"
         if args.fixed_location:
             display = "none"
-        
+
         return render_template('map.html',
                                lat=config['ORIGINAL_LATITUDE'],
                                lng=config['ORIGINAL_LONGITUDE'],
@@ -51,7 +52,8 @@ class Pogom(Flask):
         if request.args.get('pokemon', 'true') == 'true':
             if request.args.get('ids'):
                 ids = [int(x) for x in request.args.get('ids').split(',')]
-                d['pokemons'] = Pokemon.get_active_by_id(ids, swLat, swLng, neLat, neLng)
+                d['pokemons'] = Pokemon.get_active_by_id(ids, swLat, swLng,
+                                                         neLat, neLng)
             else:
                 d['pokemons'] = Pokemon.get_active(swLat, swLng, neLat, neLng)
 
@@ -62,14 +64,15 @@ class Pogom(Flask):
             d['gyms'] = Gym.get_gyms(swLat, swLng, neLat, neLng)
 
         if request.args.get('scanned', 'true') == 'true':
-            d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat, neLng)
+            d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat,
+                                                      neLng)
 
         return jsonify(d)
 
     def loc(self):
         d = {}
-        d['lat']=config['ORIGINAL_LATITUDE']
-        d['lng']=config['ORIGINAL_LONGITUDE']
+        d['lat'] = config['ORIGINAL_LATITUDE']
+        d['lng'] = config['ORIGINAL_LONGITUDE']
 
         return jsonify(d)
 
@@ -77,11 +80,11 @@ class Pogom(Flask):
         args = get_args()
         if args.fixed_location:
             return 'Location searching is turned off', 403
-       #part of query string
+        # part of query string
         if request.args:
             lat = request.args.get('lat', type=float)
             lon = request.args.get('lon', type=float)
-        #from post requests
+        # from post requests
         if request.form:
             lat = request.form.get('lat', type=float)
             lon = request.form.get('lon', type=float)
@@ -95,7 +98,8 @@ class Pogom(Flask):
             return 'ok'
 
     def list_pokemon(self):
-        # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
+        # todo: check if client is android/iOS/Desktop for geolink, currently
+        # only supports android
         pokemon_list = []
 
         # Allow client to specify location
@@ -104,18 +108,23 @@ class Pogom(Flask):
         origin_point = LatLng.from_degrees(lat, lon)
 
         for pokemon in Pokemon.get_active(None, None, None, None):
-            pokemon_point = LatLng.from_degrees(pokemon['latitude'], pokemon['longitude'])
+            pokemon_point = LatLng.from_degrees(pokemon['latitude'],
+                                                pokemon['longitude'])
             diff = pokemon_point - origin_point
             diff_lat = diff.lat().degrees
             diff_lng = diff.lng().degrees
-            direction = (('N' if diff_lat >= 0 else 'S') if abs(diff_lat) > 1e-4 else '') + (
-                ('E' if diff_lng >= 0 else 'W') if abs(diff_lng) > 1e-4 else '')
+            direction = (('N' if diff_lat >= 0 else 'S')
+                         if abs(diff_lat) > 1e-4 else '') +\
+                        (('E' if diff_lng >= 0 else 'W')
+                         if abs(diff_lng) > 1e-4 else '')
             entry = {
                 'id': pokemon['pokemon_id'],
                 'name': pokemon['pokemon_name'],
                 'card_dir': direction,
-                'distance': int(origin_point.get_distance(pokemon_point).radians * 6366468.241830914),
-                'time_to_disappear': '%d min %d sec' % (divmod((pokemon['disappear_time']-datetime.utcnow()).seconds, 60)),
+                'distance': int(origin_point.get_distance(
+                    pokemon_point).radians * 6366468.241830914),
+                'time_to_disappear': '%d min %d sec' % (divmod((
+                    pokemon['disappear_time']-datetime.utcnow()).seconds, 60)),
                 'disappear_time': pokemon['disappear_time'],
                 'latitude': pokemon['latitude'],
                 'longitude': pokemon['longitude']
