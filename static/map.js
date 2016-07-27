@@ -12,6 +12,7 @@ var idToPokemon = {};
 
 var excludedPokemon = [];
 var notifiedPokemon = [];
+var notifiedMarkers = [];
 
 var map;
 var rawDataIsLoading = false;
@@ -538,7 +539,9 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
         disableAutoPan: true
     });
 
-    if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
+    if (notifiedPokemon.indexOf(item.pokemon_id) > -1 && notifiedMarkers.indexOf(item) < 0) {
+        notifiedMarkers.push(item);
+
         if (!skipNotification) {
             if (Store.get('playSound')) {
               audio.play();
@@ -670,6 +673,9 @@ function clearStaleMarkers() {
         if (map_data.pokemons[key]['disappear_time'] < new Date().getTime() ||
                 excludedPokemon.indexOf(map_data.pokemons[key]['pokemon_id']) >= 0) {
             map_data.pokemons[key].marker.setMap(null);
+            if (notifiedMarkers.indexOf(map_data.pokemons[key]) > -1) {
+                notifiedMarkers.splice(notifiedMarkers.indexOf(map_data.pokemons[key], 1));
+            }
             delete map_data.pokemons[key];
         }
     });
@@ -679,6 +685,9 @@ function clearStaleMarkers() {
         if (map_data.lure_pokemons[key]['lure_expiration'] < new Date().getTime() ||
                 excludedPokemon.indexOf(map_data.lure_pokemons[key]['pokemon_id']) >= 0) {
             map_data.lure_pokemons[key].marker.setMap(null);
+            if (notifiedMarkers.indexOf(map_data.lure_pokemons[key]) > -1) {
+                notifiedMarkers.splice(notifiedMarkers.indexOf(map_data.lure_pokemons[key], 1));
+            }
             delete map_data.lure_pokemons[key];
         }
     });
@@ -1178,7 +1187,12 @@ $(function () {
 
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
-    $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
+
+    $('#pokemon-switch').change(function () {
+        notifiedMarkers = [];
+        return buildSwitchChangeListener(map_data, "pokemons", "showPokemon").bind(this);
+    });
+
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
     $('#pokestops-switch').change(function () {
