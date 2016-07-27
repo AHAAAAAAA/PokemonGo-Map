@@ -2,6 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import os
+
+
+# Make sure pogom/pgoapi is actually removed if it is an empty directory
+# This is a leftover directory from the time pgoapi was embedded in PokemonGo-Map
+# The empty directory will cause problems with `import pgoapi` so it needs to go
+pgoapiPath = os.path.join(os.path.dirname(__file__), "pogom/pgoapi")
+if os.path.isdir(pgoapiPath):
+    if os.listdir(pgoapiPath) == []:
+        os.rmdir(pgoapiPath)
+    else:
+        print("Warning: pogom/pgoapi exists and could cause problems while importing pgoapi. " +
+              "Please consider removing it.")
+
+
 import sys
 import logging
 import time
@@ -15,7 +29,7 @@ from pogom.utils import get_args, insert_mock_data
 from pogom.search import search_loop, create_search_threads
 from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
 
-from pogom.pgoapi.utilities import get_pos_by_name
+from pogom.utils import get_pos_by_name
 
 log = logging.getLogger(__name__)
 
