@@ -41,15 +41,15 @@ class SightingCache(object):
         )
 
     def add(self, sighting):
-        self.store[self._make_key(sighting)] = True
+        self.store[self._make_key(sighting)] = sighting.expire_timestamp
 
     def __contains__(self, sighting):
-        obj = self.store.get(self._make_key(sighting))
-        if not obj:
+        expire_timestamp = self.store.get(self._make_key(sighting))
+        if not expire_timestamp:
             return False
         timestamp_in_range = (
-            obj.expire_timestamp > sighting.expire_timestamp - 5 and
-            obj.expire_timestamp < sighting.expire_timestamp + 5
+            expire_timestamp > sighting.expire_timestamp - 5 and
+            expire_timestamp < sighting.expire_timestamp + 5
         )
         return timestamp_in_range
 
