@@ -140,6 +140,17 @@
 		var center_lat = {{lat}};
 		var center_lng = {{lng}};
 	</script>
+	
+	<!--Enable drag and pinch gestures on Chrome Mobile-->
+	<script>
+		function MapTouch() {
+			return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
+		}
+		if (MapTouch() === true) {
+			navigator = navigator || {};
+			navigator.msMaxTouchPoints = navigator.msMaxTouchPoints || 2;
+	   }
+	</script>
 
 
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places"></script>
