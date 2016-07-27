@@ -18,7 +18,6 @@ import math
 import threading
 
 from threading import Thread, Lock
-from queue import Queue
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
@@ -133,26 +132,34 @@ def create_search_threads(num, locations) :
             location = WorkerLocation(locations[i][0], locations[i][1])
             search_queue.append(location)
 
-        t = Thread(target=search_thread, name='search_thread {}'.format(i), args=(location.get_queue(),))
+        t = Thread(target=search_thread, name='search_thread {}'.format(i), args=(location,))
         t.daemon = True
         t.start()
         search_threads.append(t)
 
-def search_thread(q):
+def search_thread(location):
+    q = location.get_queue()
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
     while True:
 
         # Get the next item off the queue (this blocks till there is something)
-        i, step_location, step, lock = q.get()
+        i, step_location, step, lock, num_steps = q.get()
+
+        if q.empty():
+            fill_location_queue(num_steps, location, i, lock)
+            continue
 
         # If a new location has been set, just mark done and continue
         if 'NEXT_LOCATION' in config:
-            log.debug("{}: new location waiting, flushing queue".format(threadname))
-            q.task_done()
-            continue
+            idx = int(config['NEXT_LOCATION']['marker'])
+            log.debug("{}: new location waiting for marker {}, flushing queue".format(threadname, idx))
 
-        log.debug("{}: processing itteration {} step {}".format(threadname, i, step))
+            if search_queue[idx].get_queue() == q:
+                q.task_done()
+                continue
+
+        log.debug("{}: processing iteration {} step {}".format(threadname, i, step))
         response_dict = {}
         failed_consecutive = 0
         while not response_dict:
@@ -166,7 +173,7 @@ def search_thread(q):
                         log.error('Search thread failed. Response dictionary key error')
                         log.debug('{}: itteration {} step {} failed. Response dictionary key error.'.format(threadname, i, step))
                         failed_consecutive += 1
-                        if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                        if failed_consecutive >= config['REQ_MAX_FAILED']:
                             log.error('Niantic servers under heavy load. Waiting before trying again')
                             time.sleep(config['REQ_HEAVY_SLEEP'])
                             failed_consecutive = 0
@@ -187,7 +194,7 @@ def search_loop(args):
     while True:
         log.info("Search loop {} starting".format(i))
         try:
-            search(args, search_queue, i)
+            search(args, i)
             log.info("Search loop {} complete.".format(i))
             i += 1
         except Exception as e:
@@ -200,19 +207,7 @@ def search_loop(args):
 #
 # Overseer main logic
 #
-def search(args, search_locations, i):
-    num_steps = args.step_limit
-
-    # Update the location if needed
-    if 'NEXT_LOCATION' in config:
-        log.info('New location set')
-        lat = float(config['NEXT_LOCATION']['lat'])
-        lon = float(config['NEXT_LOCATION']['lon'])
-        idx = int(config['NEXT_LOCATION']['marker'])
-        config.pop('NEXT_LOCATION', None)
-        search_locations[idx].set_lat_lon(lat, lon)
-        search_locations[idx].get_queue().queue.clear()
-
+def search(args, i):
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
@@ -227,27 +222,27 @@ def search(args, search_locations, i):
 
     lock = Lock()
 
-    is_empty = True
-    remaining = 0
-    for location in search_locations:
-        for step, step_location in enumerate(generate_location_steps(location.get_lat_lon(), num_steps), 1):
-            log.debug("Queue search itteration {}, step {}".format(i, step))
-            search_args = (i, step_location, step, lock)
-            location.get_queue().put(search_args)
-
-        if not location.get_queue().empty():
-            is_empty = False
-            remaining += location.get_queue().qsize()
-
-    # Wait until this scan itteration queue is empty (not nessearily done)
-    while not is_empty:
-        log.debug("Waiting for current search queue to complete (remaining: {})".format(remaining))
-        time.sleep(1)
+    for location in search_queue:
+        fill_location_queue(args.step_limit, location, i, lock)
 
     # Don't let this method exit until the last item has ACTUALLY finished
-    for location in search_locations:
+    for location in search_queue:
         location.get_queue().join()
 
+def fill_location_queue(num_steps, location, i, lock):
+    # Update the location if needed
+    if 'NEXT_LOCATION' in config:
+        lat = float(config['NEXT_LOCATION']['lat'])
+        lon = float(config['NEXT_LOCATION']['lon'])
+        idx = int(config['NEXT_LOCATION']['marker'])
+        config.pop('NEXT_LOCATION', None)
+        search_queue[idx].set_lat_lon(lat, lon)
+        log.info('New location set for marker {}'.format(idx))
+
+    for step, step_location in enumerate(generate_location_steps(location.get_lat_lon(), num_steps), 1):
+        log.debug("Queue fill iteration {}, step {}".format(i, step))
+        search_args = (i, step_location, step, lock, num_steps)
+        location.get_queue().put(search_args)
 
 #
 # A fake search loop which does....nothing!
