@@ -280,7 +280,7 @@ function initMap() {
 };
 
 function createSearchMarker(loc, idx) {
-    marker = new google.maps.Marker({ //need to keep reference.
+    var marker = new google.maps.Marker({
         position: {
             lat: loc[0],
             lng: loc[1]
