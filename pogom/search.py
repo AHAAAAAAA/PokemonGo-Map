@@ -229,7 +229,7 @@ def search(args, i):
 #
 # A fake search loop which does....nothing!
 #
-def fake_search_loop(args):
+def fake_search_loop():
     while True:
         log.info('Fake search loop running...')
         time.sleep(10)
