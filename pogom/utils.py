@@ -60,6 +60,8 @@ def get_args():
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('--db-connection-string', help='Peewee DB Connection String (http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#db-url). '
+                        'Overrides all other DB settings.', default=False)
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to', nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
 

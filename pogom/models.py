@@ -7,7 +7,13 @@ import time
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, DoubleField, BooleanField, DateTimeField,\
                    OperationalError
+<<<<<<< HEAD
+from playhouse.db_url import connect
+from datetime import datetime
+from datetime import timedelta
+=======
 from datetime import datetime, timedelta
+>>>>>>> upstream/develop
 from base64 import b64encode
 
 from . import config
@@ -25,6 +31,11 @@ def init_database():
     if db is not None:
         return db
 
+    if args.db_connection_string:
+        db = connect(args.db_connection_string)
+        return db
+
+    print args.db_type
     if args.db_type == 'mysql':
         db = MySQLDatabase(
             args.db_name,
