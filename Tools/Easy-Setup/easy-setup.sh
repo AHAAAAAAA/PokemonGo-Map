@@ -14,9 +14,9 @@ else
 fi
 
 echo "Installing pip..."
-cd ../..
 sudo python get-pip.py
 echo "Installing required python packages..."
+cd ../..
 pip install -r requirements.txt
 
 echo "Configuring Google Maps API..."
