@@ -66,6 +66,8 @@ if __name__ == '__main__':
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
+    config['PAGE_PASS'] = args.page_pass
+    config['PAGE_USER'] = args.page_user
 
     if not args.only_server:
         # Gather the pokemons!
