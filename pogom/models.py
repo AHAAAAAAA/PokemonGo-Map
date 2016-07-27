@@ -3,19 +3,17 @@
 
 import logging
 import os
+import time
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
                    CharField, DoubleField, BooleanField, DateTimeField,\
                    OperationalError
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from base64 import b64encode
 
 from . import config
-from .utils import get_pokemon_name, get_args
+from .utils import get_pokemon_name, get_args, send_to_webhook
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +25,6 @@ def init_database():
     if db is not None:
         return db
 
-    print args.db_type
     if args.db_type == 'mysql':
         db = MySQLDatabase(
             args.db_name,
@@ -58,7 +55,7 @@ class BaseModel(Model):
 class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
-    encounter_id = CharField(primary_key=True)
+    encounter_id = CharField(primary_key=True, max_length=50)
     spawnpoint_id = CharField()
     pokemon_id = IntegerField()
     latitude = DoubleField()
@@ -123,7 +120,7 @@ class Pokemon(BaseModel):
 
 
 class Pokestop(BaseModel):
-    pokestop_id = CharField(primary_key=True)
+    pokestop_id = CharField(primary_key=True, max_length=50)
     enabled = BooleanField()
     latitude = DoubleField()
     longitude = DoubleField()
@@ -162,7 +159,7 @@ class Gym(BaseModel):
     TEAM_VALOR = 2
     TEAM_INSTINCT = 3
 
-    gym_id = CharField(primary_key=True)
+    gym_id = CharField(primary_key=True, max_length=50)
     team_id = IntegerField()
     guard_pokemon_id = IntegerField()
     gym_points = IntegerField()
@@ -193,7 +190,7 @@ class Gym(BaseModel):
         return gyms
 
 class ScannedLocation(BaseModel):
-    scanned_id = CharField(primary_key=True)
+    scanned_id = CharField(primary_key=True, max_length=50)
     latitude = DoubleField()
     longitude = DoubleField()
     last_modified = DateTimeField()
@@ -238,6 +235,17 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'disappear_time': d_t
                 }
 
+                webhook_data = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': p['spawnpoint_id'],
+                    'pokemon_id': p['pokemon_data']['pokemon_id'],
+                    'latitude': p['latitude'],
+                    'longitude': p['longitude'],
+                    'disappear_time': time.mktime(d_t.timetuple())
+                }
+
+                send_to_webhook('pokemon', webhook_data);
+
         if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
                 if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops
@@ -257,7 +265,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                                 f['last_modified_timestamp_ms'] / 1000.0),
                             'lure_expiration': lure_expiration,
                             'active_pokemon_id': active_pokemon_id
-                    }
+                        }
 
                 elif config['parse_gyms'] and f.get('type') == None:  # Currently, there are only stops and gyms
                         gyms[f['id']] = {
