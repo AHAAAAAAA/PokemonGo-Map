@@ -7,5 +7,8 @@ env:
 install:
   - pip install Flask==$FLASK
   - pip install -r requirements.txt
+  - npm install grunt-cli -g
+  - npm install
 script:
+  - grunt build
   - nosetests
