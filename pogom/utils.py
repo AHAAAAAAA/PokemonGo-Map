@@ -14,7 +14,6 @@ import requests
 
 from . import config
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
 log = logging.getLogger(__name__)
 
 def parse_unicode(bytestring):
@@ -36,7 +35,9 @@ def get_args():
     parser.add_argument('-p', '--password', help='Password')
     parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates')
     parser.add_argument('-st', '--step-limit', help='Steps', type=int, default=12)
-    parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', type=float, default=1)
+    parser.add_argument('-sd', '--scan-delay', help='Time delay between requests in scan threads', type=float, default=5)
+    parser.add_argument('-td', '--thread-delay', help='Time delay between each scan thread loop', type=float, default=5)
+    parser.add_argument('-ld', '--login-delay', help='Time delay between each login attempt', type=float, default=5)
     parser.add_argument('-dc', '--display-in-console',help='Display Found Pokemon in Console',action='store_true', default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
@@ -87,6 +88,9 @@ def insert_mock_data():
     num_pokestop = 6
     num_gym = 6
 
+    log.info('Creating fake: {} pokemon, {} pokestops, {} gyms'.format(
+        num_pokemon, num_pokestop, num_gym))
+
     from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
@@ -97,7 +101,7 @@ def insert_mock_data():
 
     detect_time = datetime.now()
 
-    for i in xrange(num_pokemon):
+    for i in range(num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
@@ -107,7 +111,6 @@ def insert_mock_data():
                        detect_time=detect_time)
 
     for i in range(num_pokestop):
-
         Pokestop.create(pokestop_id=uuid.uuid4(),
                         enabled=True,
                         latitude=locations[i+num_pokemon][0],
