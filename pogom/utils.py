@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 import platform
 import logging
 import shutil
+import requests
 
 from . import config
 
@@ -60,6 +61,7 @@ def get_args():
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to', nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
@@ -140,3 +142,22 @@ def get_pokemon_name(pokemon_id):
             get_pokemon_name.names = json.loads(f.read())
 
     return get_pokemon_name.names[str(pokemon_id)]
+
+def send_to_webhook(message_type, message):
+    args = get_args()
+
+    data = {
+        'type': message_type,
+        'message': message
+    }
+
+    if args.webhooks:
+        webhooks = args.webhooks
+
+        for w in webhooks:
+            try:
+                requests.post(w, json=data, timeout=(None, 1))
+            except requests.exceptions.ReadTimeout:
+                log.debug('Could not receive response from webhook')
+            except requests.exceptions.RequestException as e:
+                log.debug(e)
