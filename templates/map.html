@@ -181,6 +181,7 @@
 	</div>
 
 	<!-- Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
@@ -193,7 +194,7 @@
 		var center_lng = {{lng}};
 	</script>
 
-	<script src="static/map.js"></script>
+	<script src="static/dist/js/map.js"></script>
 	<script src="static/js/stats.js"></script>
 	<script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
 
