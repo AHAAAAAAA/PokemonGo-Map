@@ -1219,4 +1219,22 @@ $(function () {
             Store.set('geoLocate', this.checked);
     });
 
+    $("body").on("keypress", function(event) {
+        if (event.which == 103) { // g
+            $("#gyms-switch").prop('checked', !Store.get('showGyms'));
+            $("#gyms-switch").change();
+        }
+        if (event.which == 108) { // l
+            $("#scanned-switch").prop('checked', !Store.get('showScanned'));
+            $("#scanned-switch").change();
+        }
+        if (event.which == 112) { // p
+            $("#pokemon-switch").prop('checked', !Store.get('showPokemon'));
+            $("#pokemon-switch").change();
+        }
+        if (event.which == 115) { // s
+            $("#pokestops-switch").prop('checked', !Store.get('showPokestops'));
+            $("#pokestops-switch").change();
+        }
+    });
 });
