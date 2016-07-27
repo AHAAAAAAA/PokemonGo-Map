@@ -130,7 +130,7 @@ def create_search_threads(num, locations) :
         if i >= len(locations):
             location = search_queue[i % len(locations)]
         else:
-            location = WorkerLocation(locations[i][0], locations[i][1], config['SEARCH_QUEUE_DEPTH'])
+            location = WorkerLocation(locations[i][0], locations[i][1])
             search_queue.append(location)
 
         t = Thread(target=search_thread, name='search_thread {}'.format(i), args=(location.get_queue(),))
@@ -150,7 +150,7 @@ def search_thread(q):
         if 'NEXT_LOCATION' in config:
             log.debug("{}: new location waiting, flushing queue".format(threadname))
             q.task_done()
-            continue;
+            continue
 
         log.debug("{}: processing itteration {} step {}".format(threadname, i, step))
         response_dict = {}
@@ -227,20 +227,19 @@ def search(args, search_locations, i):
 
     lock = Lock()
 
-
     for location in search_locations:
         for step, step_location in enumerate(generate_location_steps(location.get_lat_lon(), num_steps), 1):
             log.debug("Queue search itteration {}, step {}".format(i, step))
             search_args = (i, step_location, step, lock)
-            search_queue.put(search_args)
+            location.get_queue().put(search_args)
 
         # Wait until this scan itteration queue is empty (not nessearily done)
-        while not search_queue.empty():
-            log.debug("Waiting for current search queue to complete (remaining: {})".format(search_queue.qsize()))
+        while not location.get_queue().empty():
+            log.debug("Waiting for current search queue to complete (remaining: {})".format(location.get_queue().qsize()))
             time.sleep(1)
 
-    # Don't let this method exit until the last item has ACTUALLY finished
-    search_queue.join()
+        # Don't let this method exit until the last item has ACTUALLY finished
+        location.get_queue().join()
 
 
 #

@@ -220,16 +220,13 @@ class WorkerLocation:
     longitude = DoubleField()
     search_queue = Queue()
 
-    def __init__(self, lat, lon, queue_size):
+    def __init__(self, lat, lon):
         self.latitude = float(lat)
         self.longitude = float(lon)
-        self.search_queue = Queue(queue_size)
+        self.search_queue = Queue()
 
     def get_queue(self):
         return self.search_queue
-
-    def queue_put(self, args):
-        return self.search_queue.put(args)
 
     def get_lat_lon(self, with_altitude=False):
         if with_altitude:
