@@ -41,7 +41,7 @@ class SightingCache(object):
         )
 
     def add(self, sighting):
-        self.store[self._make_key(sighting)] = sighting
+        self.store[self._make_key(sighting)] = True
 
     def __contains__(self, sighting):
         obj = self.store.get(self._make_key(sighting))
