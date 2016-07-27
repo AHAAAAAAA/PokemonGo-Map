@@ -1,0 +1,9 @@
+---
+applications:
+- path: .
+  command: python runserver.py -a "$AUTH_SERVICE" -u "$USERNAME" -p "$PASSWORD" -l "$LOCATION" -st $STEP_COUNT -H 0.0.0.0 -P $PORT -k $GMAPS_KEY
+  buildpack: https://github.com/cloudfoundry/python-buildpack
+  memory: 512M
+  instances: 1
+  domain: mybluemix.net
+  disk_quota: 1024M
