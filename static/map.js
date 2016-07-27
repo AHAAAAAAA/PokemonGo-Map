@@ -1163,42 +1163,24 @@ $(function () {
 
 
     function buildSwitchChangeListener(data, data_type, storageKey) {
-        return function () {
-            Store.set(storageKey, this.checked);
-            if (this.checked) {
-                updateMap();
-            } else {
-                $.each(data[data_type], function (key, value) {
-                    data[data_type][key].marker.setMap(null);
-                });
-                data[data_type] = {}
-            }
-        }
-    }
-
-    function buildSwitchChangeListener2(data, data_type1, data_type2, storageKey) {
-        return function () {
-            Store.set(storageKey, this.checked);
-            if (this.checked) {
-                updateMap();
-            } else {
-                console.log("After party");
-                $.each(data[data_type1], function (key, value) {
-                    data[data_type1][key].marker.setMap(null);
-                });
-                $.each(data[data_type2], function (key, value) {
-                    data[data_type2][key].marker.setMap(null);
-                });
-                data[data_type1] = {}
-                data[data_type2] = {}
-            }
-        }
-    }
+     $(function () {
+             if (this.checked) {
+                 updateMap();
+             } else {
+                 $.each(data_type, function(d, d_type) {
+                    $.each(data[d_type], function (key, value) {
+                        data[d_type][key].marker.setMap(null);
+                    });
+                    data[d_type] = {}
+                 });
+             }
+         }
+     }
 
     // Setup UI element interactions
-    $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
-   $('#pokemon-switch').change(buildSwitchChangeListener2(map_data, "pokemons", "lure_pokemons", "showPokemon"));
-    $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
+    $('#gyms-switch').change(buildSwitchChangeListener(map_data,[ "gyms"], "showGyms"));
+   $('#pokemon-switch').change(buildSwitchChangeListener(map_data,["pokemons", "lure_pokemons"], "showPokemon"));
+    $('#scanned-switch').change(buildSwitchChangeListener(map_data, ["scanned"], "showScanned"));
 
     $('#pokestops-switch').change(function () {
         var options = {'duration': 500}, wrapper = $('#lured-pokestops-only-wrapper');
@@ -1207,7 +1189,7 @@ $(function () {
         } else {
             wrapper.hide(options);
         }
-        return buildSwitchChangeListener(map_data, "pokestops", "showPokestops").bind(this)();
+        return buildSwitchChangeListener(map_data,[ "pokestops"], "showPokestops").bind(this)();
     });
 
     $('#lured-pokestops-only-switch').change(function(){
