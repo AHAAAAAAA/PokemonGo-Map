@@ -24,15 +24,13 @@ Author: tjado <https://github.com/tejado>
 """
 
 import logging
-import re
-import requests
 
-from utilities import f2i, h2f
+from utilities import f2i
 
 from rpc_api import RpcApi
 from auth_ptc import AuthPtc
 from auth_google import AuthGoogle
-from exceptions import AuthException, NotLoggedInException, ServerBusyOrOfflineException
+from exceptions import AuthException, ServerBusyOrOfflineException
 
 import protos.RpcEnum_pb2 as RpcEnum
 

@@ -33,21 +33,21 @@ from geopy.geocoders import GoogleV3
 
 
 def f2i(float):
-  return struct.unpack('<Q', struct.pack('<d', float))[0]
+    return struct.unpack('<Q', struct.pack('<d', float))[0]
 
 def f2h(float):
-  return hex(struct.unpack('<Q', struct.pack('<d', float))[0])
+    return hex(struct.unpack('<Q', struct.pack('<d', float))[0])
 
 def h2f(hex):
-  return struct.unpack('<d', struct.pack('<Q', int(hex,16)))[0]
+    return struct.unpack('<d', struct.pack('<Q', int(hex,16)))[0]
   
 def to_camel_case(value):
-  def camelcase():
-    while True:
-      yield str.capitalize
+    def camelcase():
+        while True:
+            yield str.capitalize
 
-  c = camelcase()
-  return "".join(c.next()(x) if x else '_' for x in value.split("_"))
+    c = camelcase()
+    return "".join(c.next()(x) if x else '_' for x in value.split("_"))
 
 def get_pos_by_name(location_name):
     prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
