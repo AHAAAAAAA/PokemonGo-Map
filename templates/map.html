@@ -86,6 +86,13 @@
 					</label>
 				</div>
 			</div>
+      
+			<div class="form-control switch-container" id="lured-pokestops-only-wrapper" style="display:none">
+				<select name="lured-pokestops-only-switch" id="lured-pokestops-only-switch">
+					<option value="0">All</option>
+					<option value="1">Only Lured</option>
+				</select>
+			</div>
 
 			<div class="form-control switch-container">
 				<h3>Geolocation</h3>
@@ -126,13 +133,17 @@
 			<div class="form-control">
 				<label for="exclude-pokemon">
 					<h3>Hide Pokémon</h3>
+					<div style="max-height:165px;overflow-y:auto";>
       					<select id="exclude-pokemon" multiple="multiple"></select>
-    				</label>
+      				</div>
+    			</label>
 			</div>
 			<div class="form-control">
 				<label for="notify-pokemon">
 					<h3>Notify of Pokémon</h3>
-					<select id="notify-pokemon" multiple="multiple"></select>
+					<div style="max-height:165px;overflow-y:auto";>
+						<select id="notify-pokemon" multiple="multiple"></select>
+					</div>
 				</label>
 			</div>
 			<div class="form-control switch-container">

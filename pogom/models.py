@@ -16,8 +16,6 @@ from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 from .sendEmail import *
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
-
 log = logging.getLogger(__name__)
 
 args = get_args()
@@ -28,7 +26,6 @@ def init_database():
     if db is not None:
         return db
 
-    print args.db_type
     if args.db_type == 'mysql':
         db = MySQLDatabase(
             args.db_name,
@@ -271,7 +268,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                                 f['last_modified_timestamp_ms'] / 1000.0),
                             'lure_expiration': lure_expiration,
                             'active_pokemon_id': active_pokemon_id
-                    }
+                        }
 
                 elif config['parse_gyms'] and f.get('type') == None:  # Currently, there are only stops and gyms
                         gyms[f['id']] = {
