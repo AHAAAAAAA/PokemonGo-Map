@@ -686,22 +686,29 @@ function clearStaleMarkers() {
     });
 };
 
-function clearOutOfBoundsMarkers(markers) {
-  $.each(markers, function(key, value) {
-      if (markers[key].hidden) return true;  // don't remove hidden markers so we can remember they're hidden
-      var marker = markers[key].marker;
-      if(typeof marker.getPosition === 'function') {
-        if(!map.getBounds().contains(marker.getPosition())) {
-          markers[key].marker.setMap(null);
-          delete markers[key];
+function showInBoundsMarkers(markers) {
+    $.each(markers, function(key, value) {
+        var marker = markers[key].marker;
+        var show = false;
+        if (!markers[key].hidden) {
+            if(typeof marker.getPosition === 'function') {
+                if(map.getBounds().contains(marker.getPosition())) {
+                  show = true;
+                }
+            } else if(typeof marker.getCenter === 'function') {
+                if(map.getBounds().contains(marker.getCenter())) {
+                  show = true;
+                }   
+            }
         }
-      } else if(typeof marker.getCenter === 'function') {
-        if(!map.getBounds().contains(marker.getCenter())) {
-          markers[key].marker.setMap(null);
-          delete markers[key];
+        
+        if ( show && !markers[key].marker.getMap()) {
+            markers[key].marker.setMap(map);
         }
-      }
-  });
+        else if (!show && markers[key].marker.getMap()) {
+            markers[key].marker.setMap(null);    
+        }
+    });
 }
 
 function loadRawData() {
@@ -869,11 +876,11 @@ function updateMap() {
         $.each(result.pokestops, processLuredPokemon);
         $.each(result.gyms, processGyms);
         $.each(result.scanned, processScanned);
-        clearOutOfBoundsMarkers(map_data.pokemons);
-        clearOutOfBoundsMarkers(map_data.lure_pokemons);
-        clearOutOfBoundsMarkers(map_data.gyms);
-        clearOutOfBoundsMarkers(map_data.pokestops);
-        clearOutOfBoundsMarkers(map_data.scanned);
+        showInBoundsMarkers(map_data.pokemons);
+        showInBoundsMarkers(map_data.lure_pokemons);
+        showInBoundsMarkers(map_data.gyms);
+        showInBoundsMarkers(map_data.pokestops);
+        showInBoundsMarkers(map_data.scanned);
         clearStaleMarkers();
     });
 };
