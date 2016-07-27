@@ -58,9 +58,9 @@ def get_args():
     parser.add_argument('-P', '--port', type=int,
                         help='Set web server listening port', default=5000)
     parser.add_argument('-L', '--locale',
-                        help='Locale for Pokemon names (default: default en,\
+                        help='Locale for Pokemon names (default: {},\
                         check {} for more)'.
-                        format(config['LOCALES_DIR']), default='en')
+                        format(config['LOCALE'], config['LOCALES_DIR']), default='en')
     parser.add_argument('-c', '--china',
                         help='Coordinates transformer for China',
                         action='store_true')
