@@ -212,11 +212,16 @@ def search(args, i):
 
     lock = Lock()
 
-    for search_location in config['SEARCH_LOCATIONS']:
-        search_key = get_location_key(search_location['lat'], search_location['lon'])
+    search_locations = []
+    for loc in config['SEARCH_LOCATIONS']:
+        search_key = get_location_key(loc['lat'], loc['lon'])
         search_dict[search_key] = []
+        search_locations.append(
+            list((search_key, step, step_location) for step, step_location in enumerate(
+                generate_location_steps((loc['lat'], loc['lon'], 0), num_steps), 1)))
 
-        for step, step_location in enumerate(generate_location_steps((search_location['lat'], search_location['lon'], 0), num_steps), 1):
+    for step_locations in zip(*search_locations):
+        for search_key, step, step_location in step_locations:
             log.debug("Queue search itteration {}, step {}".format(i, step))
             search_args = { 'iteration': i, 'step_location': step_location, 'step': step, 'lock': lock, 'skip': False }
             search_queue.put(search_args)
