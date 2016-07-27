@@ -1,0 +1,27 @@
+version: '2'
+services:
+  httpsfrontend:
+    image: abiosoft/caddy
+    depends_on:
+      - pokemap
+    links:
+      - pokemap
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/Caddyfile:/etc/Caddyfile
+      - /root/.caddy
+    environment:
+      - EMAIL=youremail@yourdomain.com
+  pokemap:
+    build: .
+    depends_on:
+      - pokesql
+    links:
+      - pokesql
+  pokesql:
+    image: mysql:5.6
+    environment:
+      MYSQL_DATABASE:pogom
+      MYSQL_ROOT_PASSWORD:some-db-password
