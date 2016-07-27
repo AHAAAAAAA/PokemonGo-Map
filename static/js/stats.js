@@ -3,12 +3,12 @@ function countMarkers() {
 	document.getElementById("stats-gym-label").innerHTML = "Gyms";
 	document.getElementById("stats-pkstop-label").innerHTML = "PokéStops";
 	
-	arenaCount = [];
-	arenaTotal = 0;
-	pkmnCount = [];
-	pkmnTotal = 0;
-	pokestopCount = [];
-	pokestopTotal = 0;
+	var arenaCount = [];
+	var arenaTotal = 0;
+	var pkmnCount = [];
+	var pkmnTotal = 0;
+	var pokestopCount = [];
+	var pokestopTotal = 0;
 	if(Store.get('showPokemon'))
 	{
 		$.each(map_data.pokemons, function(key, value) {
