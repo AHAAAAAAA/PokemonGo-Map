@@ -1187,17 +1187,22 @@ $(function() {
       if (this.checked) {
         updateMap();
       } else {
-        $.each(data[data_type], function(key, value) {
-          data[data_type][key].marker.setMap(null);
+        if(typeof data_type === 'string') {
+          data_type = [data_type];
+        }
+        $.each(data_type, function(i, type) {
+          $.each(data[type], function (key, value) {
+            data[type][key].marker.setMap(null);
+          });
+          data[type] = {};
         });
-        data[data_type] = {}
       }
     }
   }
 
   // Setup UI element interactions
   $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
-  $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
+  $('#pokemon-switch').change(buildSwitchChangeListener(map_data, ["pokemons", "lure_pokemons"], "showPokemon"));
   $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
   $('#pokestops-switch').change(function() {
