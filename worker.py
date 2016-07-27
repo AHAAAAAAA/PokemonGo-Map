@@ -107,7 +107,7 @@ class Slave(threading.Thread):
             )
             response_dict = self.api.call()
             now = time.time()
-            map_objects = response_dict['responses']['GET_MAP_OBJECTS']
+            map_objects = response_dict['responses'].get('GET_MAP_OBJECTS', {})
             pokemons = []
             if map_objects.get('status') == 1:
                 for map_cell in map_objects['map_cells']:
