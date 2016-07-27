@@ -14,12 +14,21 @@ services:
       - /root/.caddy
     environment:
       - EMAIL=youremail@yourdomain.com
-  pokemap:
+    command: 
+  pokeworker:
     build: .
     depends_on:
       - pokesql
     links:
       - pokesql
+    command: "--auth-service=ptc --username=youruser --password=yourpassword --db-type=mysql --db-host=pokesql --db-name=pogom --db-user=root --db-pass=some-db-password --gmaps-key=someapikey"
+    pokemap:
+    build: .
+    depends_on:
+      - pokesql
+    links:
+      - pokesql
+    command: "--no-server --location="Miami, FL" --auth-service=ptc --username=yourotheruser --password=yourotherpassword --db-type=mysql --db-host=pokesql --db-name=pogom --db-user=root --db-pass=some-db-password --gmaps-key=someapikey"
   pokesql:
     image: mysql:5.6
     environment:
