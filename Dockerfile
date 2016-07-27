@@ -2,6 +2,7 @@
 # Usage:
 #   docker build -t pokemongo-map .
 #   docker run -d -P pokemongo-map -a ptc -u YOURUSERNAME -p YOURPASSWORD -l "Seattle, WA" -st 10 --google-maps-key CHECKTHEWIKI
+#   docker run -P pokemongo-map --help
 
 FROM python:2.7-alpine
 
