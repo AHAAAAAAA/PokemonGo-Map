@@ -325,6 +325,30 @@ function initSidebar() {
     $('#scanned-switch').prop('checked', Store.get('showScanned'));
     $('#sound-switch').prop('checked', Store.get('playSound'));
 
+    var browserLocationButton = $('#browser-location');
+    var browserLocationButtonDefaultText = browserLocationButton.text();
+    if ('geolocation' in navigator) {
+      browserLocationButton.on('click', function(event) {
+        event.preventDefault();
+        browserLocationButton.prop('disabled', true);
+        browserLocationButton.text('Fetching your location ...');
+        navigator.geolocation.getCurrentPosition(function(position) {
+          browserLocationButton.text('Found location! Moving map ...');
+          var loc = {
+            "lat": position.coords.latitude,
+            "lng": position.coords.longitude
+          };
+
+          changeLocation(loc.lat, loc.lng);
+          browserLocationButton.prop('disabled', false);
+          browserLocationButton.text(browserLocationButtonDefaultText);
+        });
+      });
+    } else {
+      browserLocationButton.prop('disabled', true);
+      browserLocationButton.attr('title', 'You cannot use geolocation, since your browser does not support this.');
+    }
+
     var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
     searchBox.addListener('places_changed', function() {
