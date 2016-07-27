@@ -7,7 +7,7 @@ import logging
 import time
 
 from threading import Thread
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 from pogom import config
 from pogom.app import Pogom

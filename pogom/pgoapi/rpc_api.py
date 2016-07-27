@@ -23,7 +23,6 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 Author: tjado <https://github.com/tejado>
 """
 
-import re
 import logging
 import requests
 import subprocess
@@ -32,11 +31,10 @@ from exceptions import NotLoggedInException, ServerBusyOrOfflineException
 
 from google.protobuf.message import DecodeError
 from protobuf_to_dict import protobuf_to_dict
-from utilities   import f2i, h2f, to_camel_case, get_class
+from utilities   import h2f, to_camel_case, get_class
 
 import protos.RpcEnum_pb2 as RpcEnum
 import protos.RpcEnvelope_pb2 as RpcEnvelope
-import protos.RpcSub_pb2 as RpcSub
 
 class RpcApi:
     
