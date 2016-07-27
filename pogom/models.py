@@ -62,6 +62,9 @@ class Pokemon(BaseModel):
     longitude = DoubleField()
     disappear_time = DateTimeField(index=True)
 
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
+
     @classmethod
     def get_active(cls, swLat, swLng, neLat, neLng):
         if swLat == None or swLng == None or neLat == None or neLng == None:
@@ -128,6 +131,9 @@ class Pokestop(BaseModel):
     lure_expiration = DateTimeField(null=True, index=True)
     active_pokemon_id = IntegerField(null=True)
 
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
+
     @classmethod
     def get_stops(cls, swLat, swLng, neLat, neLng):
         if swLat == None or swLng == None or neLat == None or neLng == None:
@@ -168,6 +174,9 @@ class Gym(BaseModel):
     longitude = DoubleField()
     last_modified = DateTimeField(index=True)
 
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
+
     @classmethod
     def get_gyms(cls, swLat, swLng, neLat, neLng):
         if swLat == None or swLng == None or neLat == None or neLng == None:
@@ -194,6 +203,9 @@ class ScannedLocation(BaseModel):
     latitude = DoubleField()
     longitude = DoubleField()
     last_modified = DateTimeField(index=True)
+
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
 
     @classmethod
     def get_recent(cls, swLat, swLng, neLat, neLng):
