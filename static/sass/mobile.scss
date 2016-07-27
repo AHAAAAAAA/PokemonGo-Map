@@ -2,7 +2,7 @@ body {
 	font-family: sans-serif;
 }
 h1 {
-	margin: 5px 0 55px 0;
+	margin: 5px 0 65px 0;
 }
 ol {
 	margin: 0 -5px;
@@ -24,6 +24,7 @@ li {
 	image-rendering: pixelated;
 	list-style: none;
 	cursor: pointer;
+	overflow: scroll;
 	> div {
 		margin: 15px 2px;
 		float: left;
@@ -39,7 +40,8 @@ li {
 	top: 55px;
 	left: 10px;
 	button {
-		padding: .3em 1em;
+		float: left;
+		padding: .7em 1em;
 		border: solid 1px #ddd;
 		background: white;
 		font-size: 17px;
@@ -48,14 +50,15 @@ li {
 		cursor: pointer;
 		width: 140px;
 	}
-	> * {
-		cursor: pointer;
-		display: block;
+	> div {
+		display: inline-block;
 		float: left;
 		text-align: middle;
 	}
 	label {
+		display: block;
 		cursor: pointer;
+		padding: 2px 0;
 		input {
 			margin-top: 1px;
 			margin-left: 10px;

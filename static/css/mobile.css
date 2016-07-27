@@ -2,7 +2,7 @@ body {
   font-family: sans-serif; }
 
 h1 {
-  margin: 5px 0 55px 0; }
+  margin: 5px 0 65px 0; }
 
 ol {
   margin: 0 -5px;
@@ -23,7 +23,8 @@ li {
   height: 50px;
   image-rendering: pixelated;
   list-style: none;
-  cursor: pointer; }
+  cursor: pointer;
+  overflow: scroll; }
   li > div {
     margin: 15px 2px;
     float: left; }
@@ -38,7 +39,8 @@ li {
   top: 55px;
   left: 10px; }
   #nav button {
-    padding: .3em 1em;
+    float: left;
+    padding: .7em 1em;
     border: solid 1px #ddd;
     background: white;
     font-size: 17px;
@@ -46,13 +48,14 @@ li {
     color: #333;
     cursor: pointer;
     width: 140px; }
-  #nav > * {
-    cursor: pointer;
-    display: block;
+  #nav > div {
+    display: inline-block;
     float: left;
     text-align: middle; }
   #nav label {
-    cursor: pointer; }
+    display: block;
+    cursor: pointer;
+    padding: 2px 0; }
     #nav label input {
       margin-top: 1px;
       margin-left: 10px; }
