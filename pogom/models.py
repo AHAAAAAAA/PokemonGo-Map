@@ -4,9 +4,9 @@
 import logging
 import os
 import time
-from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerField,\
-                   CharField, DoubleField, BooleanField, DateTimeField,\
-                   OperationalError
+from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery,\
+                   IntegerField, CharField, DoubleField, BooleanField,\
+                   DateTimeField, OperationalError
 from datetime import datetime, timedelta
 from base64 import b64encode
 
@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 
 args = get_args()
 db = None
+
 
 def init_database():
     global db
@@ -48,9 +49,11 @@ class BaseModel(Model):
         results = [m for m in cls.select().dicts()]
         if args.china:
             for result in results:
-                result['latitude'],  result['longitude'] = \
-                    transform_from_wgs_to_gcj(result['latitude'],  result['longitude'])
+                result['latitude'], result['longitude'] = \
+                    transform_from_wgs_to_gcj(
+                        result['latitude'], result['longitude'])
         return results
+
 
 class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
@@ -64,20 +67,20 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_active(cls, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
+        if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Pokemon
-                 .select()
-                 .where(Pokemon.disappear_time > datetime.utcnow())
-                 .dicts())
+                     .select()
+                     .where(Pokemon.disappear_time > datetime.utcnow())
+                     .dicts())
         else:
             query = (Pokemon
-                 .select()
-                 .where((Pokemon.disappear_time > datetime.utcnow()) &
-                    (Pokemon.latitude >= swLat) &
-                    (Pokemon.longitude >= swLng) &
-                    (Pokemon.latitude <= neLat) &
-                    (Pokemon.longitude <= neLng))
-                 .dicts())
+                     .select()
+                     .where((Pokemon.disappear_time > datetime.utcnow()) &
+                            (Pokemon.latitude >= swLat) &
+                            (Pokemon.longitude >= swLng) &
+                            (Pokemon.latitude <= neLat) &
+                            (Pokemon.longitude <= neLng))
+                     .dicts())
 
         pokemons = []
         for p in query:
@@ -91,7 +94,7 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_active_by_id(cls, ids, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
+        if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Pokemon
                      .select()
                      .where((Pokemon.pokemon_id << ids) &
@@ -130,18 +133,18 @@ class Pokestop(BaseModel):
 
     @classmethod
     def get_stops(cls, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
+        if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Pokestop
-                 .select()
-                 .dicts())
+                     .select()
+                     .dicts())
         else:
             query = (Pokestop
-                 .select()
-                 .where((Pokestop.latitude >= swLat) &
-                    (Pokestop.longitude >= swLng) &
-                    (Pokestop.latitude <= neLat) &
-                    (Pokestop.longitude <= neLng))
-                 .dicts())
+                     .select()
+                     .where((Pokestop.latitude >= swLat) &
+                            (Pokestop.longitude >= swLng) &
+                            (Pokestop.latitude <= neLat) &
+                            (Pokestop.longitude <= neLng))
+                     .dicts())
 
         pokestops = []
         for p in query:
@@ -170,24 +173,25 @@ class Gym(BaseModel):
 
     @classmethod
     def get_gyms(cls, swLat, swLng, neLat, neLng):
-        if swLat == None or swLng == None or neLat == None or neLng == None:
+        if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Gym
-                 .select()
-                 .dicts())
+                     .select()
+                     .dicts())
         else:
             query = (Gym
-                 .select()
-                 .where((Gym.latitude >= swLat) &
-                    (Gym.longitude >= swLng) &
-                    (Gym.latitude <= neLat) &
-                    (Gym.longitude <= neLng))
-                 .dicts())
+                     .select()
+                     .where((Gym.latitude >= swLat) &
+                            (Gym.longitude >= swLng) &
+                            (Gym.latitude <= neLat) &
+                            (Gym.longitude <= neLng))
+                     .dicts())
 
         gyms = []
         for g in query:
             gyms.append(g)
 
         return gyms
+
 
 class ScannedLocation(BaseModel):
     scanned_id = CharField(primary_key=True, max_length=50)
@@ -199,11 +203,12 @@ class ScannedLocation(BaseModel):
     def get_recent(cls, swLat, swLng, neLat, neLng):
         query = (ScannedLocation
                  .select()
-                 .where((ScannedLocation.last_modified >= (datetime.utcnow() - timedelta(minutes=15))) &
-                    (ScannedLocation.latitude >= swLat) &
-                    (ScannedLocation.longitude >= swLng) &
-                    (ScannedLocation.latitude <= neLat) &
-                    (ScannedLocation.longitude <= neLng))
+                 .where((ScannedLocation.last_modified >=
+                        (datetime.utcnow() - timedelta(minutes=15))) &
+                        (ScannedLocation.latitude >= swLat) &
+                        (ScannedLocation.longitude >= swLng) &
+                        (ScannedLocation.latitude <= neLat) &
+                        (ScannedLocation.longitude <= neLng))
                  .dicts())
 
         scans = []
@@ -211,6 +216,7 @@ class ScannedLocation(BaseModel):
             scans.append(s)
 
         return scans
+
 
 def parse_map(map_dict, iteration_num, step, step_location):
     pokemons = {}
@@ -225,7 +231,8 @@ def parse_map(map_dict, iteration_num, step, step_location):
                 d_t = datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
                      p['time_till_hidden_ms']) / 1000.0)
-                printPokemon(p['pokemon_data']['pokemon_id'],p['latitude'],p['longitude'],d_t)
+                printPokemon(p['pokemon_data']['pokemon_id'], p['latitude'],
+                             p['longitude'], d_t)
                 pokemons[p['encounter_id']] = {
                     'encounter_id': b64encode(str(p['encounter_id'])),
                     'spawnpoint_id': p['spawnpoint_id'],
@@ -244,7 +251,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'disappear_time': time.mktime(d_t.timetuple())
                 }
 
-                send_to_webhook('pokemon', webhook_data);
+                send_to_webhook('pokemon', webhook_data)
 
         if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
@@ -267,7 +274,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                             'active_pokemon_id': active_pokemon_id
                         }
 
-                elif config['parse_gyms'] and f.get('type') == None:  # Currently, there are only stops and gyms
+                elif config['parse_gyms'] and f.get('type') is None:  # Currently, there are only stops and gyms
                         gyms[f['id']] = {
                             'gym_id': f['id'],
                             'team_id': f.get('owned_by_team', 0),
@@ -313,6 +320,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
 
     bulk_upsert(ScannedLocation, scanned)
 
+
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
@@ -327,6 +335,7 @@ def bulk_upsert(cls, data):
             continue
 
         i+=step
+
 
 def create_tables(db):
     db.connect()
