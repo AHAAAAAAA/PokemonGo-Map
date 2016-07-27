@@ -19,7 +19,6 @@ import db
 import utils
 
 
-pokemons = {}
 workers = {}
 local_data = threading.local()
 
@@ -43,6 +42,7 @@ logger = logging.getLogger()
 
 
 class Slave(threading.Thread):
+    """Single worker walking on the map"""
     def __init__(
         self,
         group=None,
@@ -63,10 +63,13 @@ class Slave(threading.Thread):
         self.api = PGoApi()
 
     def run(self):
+        """Wrapper for self.main - runs it a few times before restarting
+
+        Also is capable of restarting in case an error occurs.
+        """
         self.cycle = 1
         self.error_code = None
 
-        # Login sequentially for PTC
         service = config.ACCOUNTS[self.worker_no][2]
         try:
             self.api.login(
@@ -82,26 +85,24 @@ class Slave(threading.Thread):
             return
         except pgoapi_exceptions.ServerBusyOrOfflineException:
             self.error_code = 'RETRYING'
-            time.sleep(random.randint(5, 10))
-            start_worker(self.worker_no, self.points)
+            self.restart()
             return
         while self.cycle <= 3:  # TODO: to config
             try:
                 self.main()
             except CannotProcessStep:
                 self.error_code = 'RESTART'
-                time.sleep(random.randint(15, 30))
-                start_worker(self.worker_no, self.points)
+                self.restart()
             self.cycle += 1
             if self.cycle <= 3:
                 self.error_code = 'SLEEP'
                 time.sleep(random.randint(30, 60))
                 self.error_code = None
         self.error_code = 'RESTART'
-        time.sleep(random.randint(30, 60))
-        start_worker(self.worker_no, self.points)
+        self.restart()
 
     def main(self):
+        """"""
         session = db.Session()
         self.seen = 0
         for i, point in enumerate(self.points):
@@ -138,6 +139,7 @@ class Slave(threading.Thread):
 
     @staticmethod
     def normalize_pokemon(raw, now):
+        """Normalizes data coming from API into something acceptable by db"""
         return {
             'encounter_id': raw['encounter_id'],
             'spawn_id': raw['spawn_point_id'],
@@ -149,6 +151,7 @@ class Slave(threading.Thread):
 
     @property
     def status(self):
+        """Returns status message to be displayed in status screen"""
         if self.error_code:
             msg = self.error_code
         else:
@@ -161,6 +164,11 @@ class Slave(threading.Thread):
             worker_no=self.worker_no,
             msg=msg
         )
+
+    def restart(self, sleep_min=5, sleep_max=20):
+        """Sleeps for a bit, then restarts"""
+        time.sleep(random.randint(sleep_min, sleep_max))
+        start_worker(self.worker_no, self.points)
 
 
 def get_status_message(workers, count, start_time, points_stats):
