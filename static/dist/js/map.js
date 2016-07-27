@@ -665,16 +665,22 @@ function processPokestops(i, item) {
     if (!Store.get('showPokestops')) {
         return false;
     }
+
+    // If the pokestop is brand new, add it
     if (map_data.pokestops[item.pokestop_id] == null) {
-        // add marker to map and item to dict
         // add marker to map and item to dict
         if (item.marker) item.marker.setMap(null);
         item.marker = setupPokestopMarker(item);
         map_data.pokestops[item.pokestop_id] = item;
+
+        // If the new pokestop has a different lure/active_pokemon then replace the old one
     } else {
-        var item2 = map_data.pokestops[item.pokestop_id];
-        if (!!item.lure_expiration != !!item2.lure_expiration || item.active_pokemon_id != item2.active_pokemon_id) {
-            item2.marker.setMap(null);
+        var existing_pokestop = map_data.pokestops[item.pokestop_id];
+        var lure_status_matches = !!item.lure_expiration == !!existing_pokestop.lure_expiration;
+        var has_same_pokemon = item.active_pokemon_id == existing_pokestop.active_pokemon_id;
+        if (!lure_status_matches || !has_same_pokemon) {
+            if (!existing_pokestop.marker) console.warn('Trying to hide pokestop, but it was already hidden', existing_pokestop);
+            if (existing_pokestop.marker) existing_pokestop.marker.setMap(null);
             item.marker = setupPokestopMarker(item);
             map_data.pokestops[item.pokestop_id] = item;
         }
@@ -957,14 +963,26 @@ $(function () {
 
 $(function () {
 
+    function formatState(state) {
+        if (!state.id) {
+            return state.text;
+        }
+        var $state = $('<span><i class="pokemon-sprite n' + state.element.value.toString() + '"></i> ' + state.text + '</span>');
+        return $state;
+    };
+
     $selectExclude = $("#exclude-pokemon");
     $selectNotify = $("#notify-pokemon");
+    var numberOfPokemon = 151;
 
     // Load pokemon names and populate lists
     $.getJSON("static/locales/pokemon." + language + ".json").done(function (data) {
         var pokeList = [];
 
         $.each(data, function (key, value) {
+            if (key > numberOfPokemon) {
+                return false;
+            }
             pokeList.push({ id: key, text: value + ' - #' + key });
             idToPokemon[key] = value;
         });
@@ -972,11 +990,13 @@ $(function () {
         // setup the filter lists
         $selectExclude.select2({
             placeholder: "Select Pokémon",
-            data: pokeList
+            data: pokeList,
+            templateResult: formatState
         });
         $selectNotify.select2({
             placeholder: "Select Pokémon",
-            data: pokeList
+            data: pokeList,
+            templateResult: formatState
         });
 
         // setup list change behavior now that we have the list to work from
