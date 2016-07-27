@@ -4,16 +4,19 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     sass: {
-  		dist: {
-  			files: {
-  			  'static/css/main.css' : 'static/sass/main.scss'
-  			}
-  		}
-	  },
+      dist: {
+        files: {
+          'static/dist/css/app.css': [
+            'static/sass/main.scss',
+            'static/sass/pokemon-sprite.scss'
+          ]
+        }
+      }
+    },
     jshint: {
       files: ['Gruntfile.js', 'js/*.js', '!js/vendor/**/*.js'],
       options: {
-		    reporter: require('jshint-stylish'),
+        reporter: require('jshint-stylish'),
         globals: {
           jQuery: true,
           console: true,
@@ -30,39 +33,41 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'static/dist/js/app.js': 'static/js/app.js',
-          'static/dist/js/map.js': 'static/map.js'
+          'static/dist/js/map.js': 'static/map.js' // Todo: move map.js into the js folder
         }
       }
     },
     uglify: {
       options: {
-        banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n'
+        banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n',
+        sourceMap: true
       },
       build: {
         files: {
-          'static/dist/js/app.min.js': 'static/dist/js/app.js'
+          'static/dist/js/app.min.js': 'static/dist/js/app.js',
+          'static/dist/js/map.min.js': 'static/dist/js/map.js'
         }
       }
     },
     watch: {
-  		options: {
-  			interval: 1000,
-  			spawn: true
-  		},
-  		src: {
-  			files: ['**/*.html'],
-  			options: { livereload: true }
-  		},
-  		js: {
-  			files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
-  			options: { livereload: true },
+      options: {
+        interval: 1000,
+        spawn: true
+      },
+      src: {
+        files: ['**/*.html'],
+        options: { livereload: true }
+      },
+      js: {
+        files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
+        options: { livereload: true },
         tasks: ['babel', 'uglify']
-  		},
-  		css: {
-  			files: '**/*.scss',
-  			options: { livereload: true },
-  			tasks: ['sass', 'cssmin']
-  		}
+      },
+      css: {
+        files: '**/*.scss',
+        options: { livereload: true },
+        tasks: ['sass', 'cssmin']
+      }
     },
     cssmin: {
       options: {
@@ -70,13 +75,10 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/css/app.min.css': [
-              'static/css/main.css',
-              'static/css/pokemon-sprites.css'
-          ]
+          'static/dist/css/app.min.css': 'static/dist/css/app.css'
         }
       }
-  	},
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -91,7 +93,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('build', ['jshint', 'sass', 'cssmin', 'uglify']);
+  grunt.registerTask('build', ['jshint', 'sass', 'cssmin', 'babel', 'uglify']);
   grunt.registerTask('default', ['build', 'watch']);
 
 };
