@@ -1180,20 +1180,20 @@ $(function() {
     }
   }, 1000);
   
-function buildSwitchChangeListener(data, data_type, storageKey) {
-  $(function () {
-    if (this.checked) {
-      updateMap();
-    } else {
-      $.each(data_type, function(d, d_type) {
-        $.each(data[d_type], function (key, value) {
-          data[d_type][key].marker.setMap(null);
+  function buildSwitchChangeListener(data, data_type, storageKey) {
+    $(function () {
+      if (this.checked) {
+        updateMap();
+      } else {
+        $.each(data_type, function(d, d_type) {
+          $.each(data[d_type], function (key, value) {
+            data[d_type][key].marker.setMap(null);
+          });
+          data[d_type] = {}
         });
-        data[d_type] = {}
-      });
-    }
-  });
-}
+      }
+    });
+  }
 
 
   // Setup UI element interactions
