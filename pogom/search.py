@@ -227,18 +227,25 @@ def search(args, search_locations, i):
 
     lock = Lock()
 
+    is_empty = True
+    remaining = 0
     for location in search_locations:
         for step, step_location in enumerate(generate_location_steps(location.get_lat_lon(), num_steps), 1):
             log.debug("Queue search itteration {}, step {}".format(i, step))
             search_args = (i, step_location, step, lock)
             location.get_queue().put(search_args)
 
-        # Wait until this scan itteration queue is empty (not nessearily done)
-        while not location.get_queue().empty():
-            log.debug("Waiting for current search queue to complete (remaining: {})".format(location.get_queue().qsize()))
-            time.sleep(1)
+        if not location.get_queue().empty():
+            is_empty = False
+            remaining += location.get_queue().qsize()
 
-        # Don't let this method exit until the last item has ACTUALLY finished
+    # Wait until this scan itteration queue is empty (not nessearily done)
+    while not is_empty:
+        log.debug("Waiting for current search queue to complete (remaining: {})".format(remaining))
+        time.sleep(1)
+
+    # Don't let this method exit until the last item has ACTUALLY finished
+    for location in search_locations:
         location.get_queue().join()
 
 
