@@ -1180,8 +1180,10 @@ $(function() {
     }
   }, 1000);
   
+  //Wipe off/restore map icons when switches are toggled
   function buildSwitchChangeListener(data, data_type, storageKey) {
-    $(function () {
+    return function () {
+      Store.set(storageKey, this.checked);
       if (this.checked) {
         updateMap();
       } else {
@@ -1192,9 +1194,8 @@ $(function() {
           data[d_type] = {}
         });
       }
-    });
+    };
   }
-
 
   // Setup UI element interactions
   $('#gyms-switch').change(buildSwitchChangeListener(map_data, ["gyms"], "showGyms"));
