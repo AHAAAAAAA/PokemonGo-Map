@@ -210,8 +210,20 @@ function removePokemonMarker(encounter_id) {
     map_data.pokemons[encounter_id].hidden = true;
 }
 
-function initMap() {
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
+function initMap() {
+	var url_lat = getParameterByName('lat');
+	var url_lng = getParameterByName('lng');
+	
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: center_lat,
@@ -277,6 +289,10 @@ function initMap() {
         redrawPokemon(map_data.pokemons);
         redrawPokemon(map_data.lure_pokemons);
     });
+	
+	if (url_lat) {
+		centerMap(url_lat, url_lng, 16);
+	}
 };
 
 function createSearchMarker() {
