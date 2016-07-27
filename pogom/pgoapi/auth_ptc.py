@@ -25,7 +25,6 @@ Author: tjado <https://github.com/tejado>
 
 import re
 import json
-import logging
 import requests
 
 from auth import Auth
