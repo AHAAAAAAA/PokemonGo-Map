@@ -207,6 +207,7 @@ function notifyAboutPokemon(id) {
 
 function removePokemonMarker(encounter_id) {
     map_data.pokemons[encounter_id].marker.setMap(null);
+    map_data.pokemons[encounter_id].hidden = true;
 }
 
 function initMap() {
@@ -687,6 +688,7 @@ function clearStaleMarkers() {
 
 function clearOutOfBoundsMarkers(markers) {
   $.each(markers, function(key, value) {
+      if (markers[key].hidden) return true;  // don't remove hidden markers so we can remember they're hidden
       var marker = markers[key].marker;
       if(typeof marker.getPosition === 'function') {
         if(!map.getBounds().contains(marker.getPosition())) {
@@ -751,8 +753,10 @@ function processPokemons(i, item) {
         excludedPokemon.indexOf(item.pokemon_id) < 0) {
         // add marker to map and item to dict
         if (item.marker) item.marker.setMap(null);
-        item.marker = setupPokemonMarker(item);
-        map_data.pokemons[item.encounter_id] = item;
+        if (!item.hidden) {
+            item.marker = setupPokemonMarker(item);
+            map_data.pokemons[item.encounter_id] = item;
+        }
     }
 }
 
@@ -796,15 +800,19 @@ function processLuredPokemon(i, item) {
 
     if (map_data.lure_pokemons[item2.pokestop_id] == null && item2.lure_expiration) {
         //if (item.marker) item.marker.setMap(null);
-        item2.marker = setupPokemonMarker(item2);
-        map_data.lure_pokemons[item2.pokestop_id] = item2;
+        if (!item2.hidden) {
+            item2.marker = setupPokemonMarker(item2);
+            map_data.lure_pokemons[item2.pokestop_id] = item2;
+        }
 
     }
     if (map_data.lure_pokemons[item.pokestop_id] != null && item2.lure_expiration && item2.active_pokemon_id != map_data.lure_pokemons[item2.pokestop_id].active_pokemon_id) {
         //if (item.marker) item.marker.setMap(null);
         map_data.lure_pokemons[item2.pokestop_id].marker.setMap(null);
-        item2.marker = setupPokemonMarker(item2);
-        map_data.lure_pokemons[item2.pokestop_id] = item2;
+        if (!item2.hidden) {
+            item2.marker = setupPokemonMarker(item2);
+            map_data.lure_pokemons[item2.pokestop_id] = item2;
+        }
 
     }
 
@@ -876,9 +884,11 @@ function redrawPokemon(pokemon_list) {
     var skipNotification = true;
     $.each(pokemon_list, function(key, value) {
         var item =  pokemon_list[key];
-        var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
-        item.marker.setMap(null);
-        pokemon_list[key].marker = new_marker;
+        if (!item.hidden) {
+            var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
+            item.marker.setMap(null);
+            pokemon_list[key].marker = new_marker;
+        }
     });
 };
 
