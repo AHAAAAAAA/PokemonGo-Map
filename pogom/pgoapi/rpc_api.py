@@ -30,6 +30,7 @@ import subprocess
 
 from exceptions import NotLoggedInException, ServerBusyOrOfflineException
 
+from google.protobuf.message import DecodeError
 from protobuf_to_dict import protobuf_to_dict
 from utilities   import f2i, h2f, to_camel_case, get_class
 
@@ -166,7 +167,7 @@ class RpcApi:
         response_proto = RpcEnvelope.Response()
         try:
             response_proto.ParseFromString(response_raw.content)
-        except google.protobuf.message.DecodeError as e:
+        except DecodeError as e:
             self.log.warning('Could not parse response: %s', str(e))
             return False
         
