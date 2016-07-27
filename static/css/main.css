@@ -1778,8 +1778,7 @@ body {
   body {
     padding-top: 44px; }
   #header {
-    height: 44px;
-    line-height: 44px; }
+    height: 44px; }
     #header > h1 {
       left: 1em; }
       #header > h1 a {
@@ -1839,6 +1838,9 @@ body {
           margin: 0.5em 0 0 0; }
         #nav > ul.links > li:first-child > a:not(.button) {
           border-top: 0 !important; }
+  #nav .form-control > select {
+    float: right;
+    font-size: 18px; }
   #nav .close {
     text-decoration: none;
     -moz-transition: color 0.2s ease-in-out;
