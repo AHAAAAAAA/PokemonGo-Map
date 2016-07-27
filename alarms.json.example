@@ -1,7 +1,7 @@
 {
 	"alarms":[
 		{
-			"active": "False",
+			"active":"False",
 			"type":"pushbullet",
 			"api_key":""
 		},
@@ -20,10 +20,10 @@
 			"from_number":"+1123456789"
 		},
 		{
-			"active": "False",
-			"type":"telegram",
-			"api_key":"",
-			"chatid":""
+		"active": "False",
+		"type":"telegram",
+		"api_key":"",
+		"chatid":""
 		}
 	],
 	"pokemon":{
@@ -180,3 +180,4 @@
 		"Mew":"False"
 	}
 }
+

@@ -62,4 +62,3 @@ class Notifications:
 		
 	def notify_gyms(self, gyms):
 		raise NotImplementedError("This method is not yet implimented.")
-	
