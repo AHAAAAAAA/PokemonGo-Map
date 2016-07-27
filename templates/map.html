@@ -54,23 +54,13 @@
 			</div>
 			<p>Select markers to be visible on map.</p>
 			<div class="form-control switch-container">
-				<h3>Wild Pokémon</h3>
+				<h3>Pokémon</h3>
 				<div class="onoffswitch">
 					<input id="pokemon-switch" type="checkbox" name="pokemon-switch" class="onoffswitch-checkbox" checked>
 					<label class="onoffswitch-label" for="pokemon-switch">
 	        				<span class="switch-label" data-on="On" data-off="Off"></span>
 	        				<span class="switch-handle"></span>
 				        </label>
-				</div>
-			</div>
-			<div class="form-control switch-container">
-				<h3>Lured Pokemon</h3>
-				<div class="onoffswitch">
-					<input id="lured-pokemon-switch" type="checkbox" name="lured-pokemon-switch" class="onoffswitch-checkbox" checked/>
-					<label class="onoffswitch-label" for="lured-pokemon-switch">
-						<span class="switch-label" data-on="On" data-off="Off"></span>
-						<span class="switch-handle"></span>
-					</label>
 				</div>
 			</div>
 			<div class="form-control switch-container">
@@ -95,6 +85,13 @@
 						<span class="switch-handle"></span>
 					</label>
 				</div>
+			</div>
+      
+			<div class="form-control switch-container" id="lured-pokestops-only-wrapper" style="display:none">
+				<select name="lured-pokestops-only-switch" id="lured-pokestops-only-switch">
+					<option value="0">All</option>
+					<option value="1">Only Lured</option>
+				</select>
 			</div>
 
 			<div class="form-control switch-container">
@@ -135,14 +132,18 @@
 
 			<div class="form-control">
 				<label for="exclude-pokemon">
-					<h3>Hide common Pokémon</h3>
+					<h3>Hide Pokémon</h3>
+					<div style="max-height:165px;overflow-y:auto";>
       					<select id="exclude-pokemon" multiple="multiple"></select>
-    				</label>
+      				</div>
+    			</label>
 			</div>
 			<div class="form-control">
 				<label for="notify-pokemon">
 					<h3>Notify of Pokémon</h3>
-					<select id="notify-pokemon" multiple="multiple"></select>
+					<div style="max-height:165px;overflow-y:auto";>
+						<select id="notify-pokemon" multiple="multiple"></select>
+					</div>
 				</label>
 			</div>
 			<div class="form-control switch-container">
@@ -161,6 +162,7 @@
 	</div>
 
 	<!-- Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
@@ -173,7 +175,7 @@
 		var center_lng = {{lng}};
 	</script>
 
-	<script src="static/map.js"></script>
+	<script src="static/dist/js/map.js"></script>
 	<script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
 
 	</body>
