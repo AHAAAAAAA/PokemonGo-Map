@@ -692,13 +692,13 @@ function clearStaleMarkers() {
     });
 };
 
-function showInBoundsMarkers(markers) {
-    $.each(markers, function(key, value) {
+function showInBoundsMarkers(markers) { //display pokemon marker on map if their location meets criteria
+    $.each(markers, function(key, value) {//iterate though every marker
         var marker = markers[key].marker;
-        var show = false;
-        if (!markers[key].hidden) {
+        var show = false; //default to marker not shown
+        if (!markers[key].hidden) {//if the marker is not flagges as hidden (assuming here that it is hidden if expired or manually hidden idk)
             if(typeof marker.getPosition === 'function') {
-                if(map.getBounds().contains(marker.getPosition())) {
+                if(args.render_all is true or map.getBounds().contains(marker.getPosition())) {//check if he override is enabled (flag) or if the marker is on screen
                   show = true;
                 }
             } else if(typeof marker.getCenter === 'function') {

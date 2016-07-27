@@ -61,6 +61,7 @@ def get_args():
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to', nargs='*', default=False, dest='webhooks')
+    parser.add_argument('-r', '--render-all', help='Force all pokemon to display on the map even when they are off screen', action='store_true') #forces all pokemon to be loaded by the web browser so that spawn alerts can be triggered
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
