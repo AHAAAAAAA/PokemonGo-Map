@@ -343,7 +343,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
     return contentstring;
 }
 
-function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
+function gymLabel(team_name, team_id, gym_points, latitude, longitude, guard_pokemon_id) {
     var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
     var str;
     if (team_id == 0) {
@@ -354,7 +354,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
         while (gym_points >= gym_prestige[gym_level - 1]) {
             gym_level++;
         }
-        str = "\n            <div><center>\n            <div style='padding-bottom: 2px'>Gym owned by:</div>\n            <div>\n                <b style='color:rgba(" + gym_color[team_id] + ")'>Team " + team_name + "</b><br>\n                <img height='70px' style='padding: 5px;' src='static/forts/" + team_name + "_large.png'>\n            </div>\n            <div>Level: " + gym_level + " | Prestige: " + gym_points + "</div>\n            <div>\n                Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n            </div>\n            <div>\n                <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "'\n                        target='_blank' title='View in Maps'>Get directions</a>\n            </div>\n            </center></div>";
+        str = "\n            <div><center>\n            <div style='padding-bottom: 2px'>Gym owned by:</div>\n            <div>\n                <b style='color:rgba(" + gym_color[team_id] + ")'>Team " + team_name + "</b><br>\n                <img height='70px' style='padding: 5px;' src='static/forts/" + team_name + "_large.png'>\n            </div>\n            <div>Level: " + gym_level + " | Prestige: " + gym_points + "</div>\n            <div>Guard Pok&eacute;mon:<br /><a href='http://www.pokemon.com/us/pokedex/" + guard_pokemon_id + "' target='_blank' title='View in Pokedex'><img src='static/icons/" + guard_pokemon_id + ".png' /></a></div>\n            <div>\n                Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n            </div>\n            <div>\n                <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "'\n                        target='_blank' title='View in Maps'>Get directions</a>\n            </div>\n            </center></div>";
     }
 
     return str;
@@ -470,7 +470,7 @@ function setupGymMarker(item) {
     });
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
+        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude, item.guard_pokemon_id),
         disableAutoPan: true
     });
 
@@ -748,7 +748,7 @@ function processGyms(i, item) {
         } else {
             // if it hasn't changed generate new label only (in case prestige has changed)
             map_data.gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
-                content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
+                content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude, item.guard_pokemon_id),
                 disableAutoPan: true
             });
         }
