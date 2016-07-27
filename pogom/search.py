@@ -179,8 +179,12 @@ def search(args, i):
 
 def search_loop(args):
     i = 0
+    if not (args.iter_limit > 0):
+        lim = -1
+    else:
+        lim = args.iter_limit
     try:
-        while True:
+        while (i != lim):
             log.info("Map iteration: {}".format(i))
             search(args, i)
             log.info("Scanning complete.")
