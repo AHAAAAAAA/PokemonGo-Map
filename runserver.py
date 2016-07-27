@@ -7,7 +7,7 @@ import logging
 import time
 
 from threading import Thread
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 from pogom import config
 from pogom.app import Pogom
@@ -85,6 +85,7 @@ if __name__ == '__main__':
 
     config['ROOT_PATH'] = app.root_path
     config['GMAPS_KEY'] = args.gmaps_key
+    config['REQ_SLEEP'] = args.scan_delay
 
     if args.no_server:
         while not search_thread.isAlive():

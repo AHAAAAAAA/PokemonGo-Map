@@ -4,14 +4,13 @@
 import sys
 import getpass
 import configargparse
-import re
 import uuid
 import os
 import json
 from datetime import datetime, timedelta
-import platform
 import logging
 import shutil
+import requests
 
 from . import config
 
@@ -30,13 +29,14 @@ def verify_config_file_exists(filename):
 
 def get_args():
     # fuck PEP8
-    parser = configargparse.ArgParser(default_config_files=['config/config.ini'])
+    configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
+    parser = configargparse.ArgParser(default_config_files=[configpath])
     parser.add_argument('-a', '--auth-service', type=str.lower, help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username')
     parser.add_argument('-p', '--password', help='Password')
     parser.add_argument('-l', '--location', type=parse_unicode, help='Location, can be an address or coordinates')
     parser.add_argument('-st', '--step-limit', help='Steps', type=int, default=12)
-    parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', type=int, default=1)
+    parser.add_argument('-sd', '--scan-delay', help='Time delay before beginning new scan', type=float, default=1)
     parser.add_argument('-dc', '--display-in-console',help='Display Found Pokemon in Console',action='store_true', default=False)
     parser.add_argument('-H', '--host', help='Set web server listening host', default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int, help='Set web server listening port', default=5000)
@@ -59,6 +59,7 @@ def get_args():
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to', nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
@@ -139,3 +140,22 @@ def get_pokemon_name(pokemon_id):
             get_pokemon_name.names = json.loads(f.read())
 
     return get_pokemon_name.names[str(pokemon_id)]
+
+def send_to_webhook(message_type, message):
+    args = get_args()
+
+    data = {
+        'type': message_type,
+        'message': message
+    }
+
+    if args.webhooks:
+        webhooks = args.webhooks
+
+        for w in webhooks:
+            try:
+                requests.post(w, json=data, timeout=(None, 1))
+            except requests.exceptions.ReadTimeout:
+                log.debug('Could not receive response from webhook')
+            except requests.exceptions.RequestException as e:
+                log.debug(e)
