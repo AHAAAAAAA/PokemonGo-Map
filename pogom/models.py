@@ -9,6 +9,7 @@ from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery, IntegerFie
                    OperationalError
 from datetime import datetime, timedelta
 from base64 import b64encode
+from threading import Lock
 
 from . import config
 from .utils import get_pokemon_name, get_args, send_to_webhook
@@ -21,9 +22,11 @@ log = logging.getLogger(__name__)
 
 args = get_args()
 db = None
+db_lock = None
 
 def init_database():
     global db
+    global db_lock
     if db is not None:
         return db
 
@@ -37,6 +40,7 @@ def init_database():
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)
+        db_lock = Lock()
         log.info('Connecting to local SQLLite database.')
 
     return db
@@ -324,7 +328,11 @@ def bulk_upsert(cls, data):
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
         try:
-            InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+            if db_lock is None or db_lock.acquire(True):
+                InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
+                if db_lock is not None:
+                    db_lock.release()
+
         except OperationalError as e:
             log.warning("%s... Retrying", e)
             continue
