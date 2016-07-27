@@ -319,6 +319,7 @@ function initSidebar() {
     $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
     $('#pokestops-switch').prop('checked', Store.get('showPokestops'));
     $('#lured-pokestops-only-switch').val(Store.get('showLuredPokestopsOnly'));
+    $('#lured-pokestops-only-wrapper').toggle(Store.get('showPokestops'));
     $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
     $('#scanned-switch').prop('checked', Store.get('showScanned'));
     $('#sound-switch').prop('checked', Store.get('playSound'));
@@ -1148,9 +1149,17 @@ $(function () {
     // Setup UI element interactions
     $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
     $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
-    $('#pokestops-switch').change(buildSwitchChangeListener(map_data, "pokestops", "showPokestops"));
     $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
 
+    $('#pokestops-switch').change(function () {
+        var options = {'duration': 500}, wrapper = $('#lured-pokestops-only-wrapper');
+        if (this.checked) {
+            wrapper.show(options);
+        } else {
+            wrapper.hide(options);
+        }
+        return buildSwitchChangeListener(map_data, "pokestops", "showPokestops").bind(this)();
+    });
 
     $('#lured-pokestops-only-switch').change(function() {
         Store.set("showLuredPokestopsOnly", this.value);
