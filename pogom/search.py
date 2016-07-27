@@ -23,6 +23,8 @@ from queue import Queue
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i, get_cellid
 
+from pogom.utils import get_location_key
+
 from . import config
 from .models import parse_map
 
@@ -31,6 +33,7 @@ log = logging.getLogger(__name__)
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
 
+search_dict = {}
 search_queue = Queue()
 
 
@@ -138,42 +141,34 @@ def search_thread(q):
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
     while True:
+        search_args = q.get()
+        if not search_args['skip']:
+            log.debug("{}: processing itteration {} step {}".format(threadname, search_args['iteration'], search_args['step']))
+            response_dict = {}
+            failed_consecutive = 0
+            while not response_dict:
+                response_dict = send_map_request(api, search_args['step_location'])
+                if response_dict:
+                    with search_args['lock']:
+                        try:
+                            parse_map(response_dict, search_args['iteration'], search_args['step'], search_args['step_location'])
+                            log.debug("{}: itteration {} step {} complete".format(threadname, search_args['iteration'], search_args['step']))
+                        except KeyError:
+                            log.error('Search thread failed. Response dictionary key error')
+                            log.debug('{}: itteration {} step {} failed. Response dictionary\
+                                key error.'.format(threadname, search_args['iteration'], search_args['step']))
+                            failed_consecutive += 1
+                            if(failed_consecutive >= config['REQ_MAX_FAILED']):
+                                log.error('Niantic servers under heavy load. Waiting before trying again')
+                                time.sleep(config['REQ_HEAVY_SLEEP'])
+                                failed_consecutive = 0
+                            response_dict = {}
+                else:
+                    log.info('Map download failed, waiting and retrying')
+                    log.debug('{}: itteration {} step {} failed'.format(threadname, search_args['iteration'], search_args['step']))
+                    time.sleep(config['REQ_SLEEP'])
 
-        # Get the next item off the queue (this blocks till there is something)
-        i, step_location, step, lock = q.get()
-
-        # If a new location has been set, just mark done and continue
-        if 'NEXT_LOCATION' in config:
-            log.debug("{}: new location waiting, flushing queue".format(threadname))
-            q.task_done()
-            continue
-
-        log.debug("{}: processing itteration {} step {}".format(threadname, i, step))
-        response_dict = {}
-        failed_consecutive = 0
-        while not response_dict:
-            response_dict = send_map_request(api, step_location)
-            if response_dict:
-                with lock:
-                    try:
-                        parse_map(response_dict, i, step, step_location)
-                        log.debug("{}: itteration {} step {} complete".format(threadname, i, step))
-                    except KeyError:
-                        log.error('Search thread failed. Response dictionary key error')
-                        log.debug('{}: itteration {} step {} failed. Response dictionary\
-                            key error.'.format(threadname, i, step))
-                        failed_consecutive += 1
-                        if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                            log.error('Niantic servers under heavy load. Waiting before trying again')
-                            time.sleep(config['REQ_HEAVY_SLEEP'])
-                            failed_consecutive = 0
-                        response_dict = {}
-            else:
-                log.info('Map download failed, waiting and retrying')
-                log.debug('{}: itteration {} step {} failed'.format(threadname, i, step))
-                time.sleep(config['REQ_SLEEP'])
-
-        time.sleep(config['REQ_SLEEP'])
+            time.sleep(config['REQ_SLEEP'])
         q.task_done()
 
 
@@ -202,14 +197,7 @@ def search_loop(args):
 def search(args, i):
     num_steps = args.step_limit
 
-    # Update the location if needed
-    if 'NEXT_LOCATION' in config:
-        log.info('New location set')
-        config['ORIGINAL_LATITUDE'] = config['NEXT_LOCATION']['lat']
-        config['ORIGINAL_LONGITUDE'] = config['NEXT_LOCATION']['lon']
-        config.pop('NEXT_LOCATION', None)
-
-    position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
+    position = (config['SEARCH_LOCATIONS'][0]['lat'], config['SEARCH_LOCATIONS'][0]['lon'], 0)
 
     if api._auth_provider and api._auth_provider._ticket_expire:
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
@@ -224,10 +212,15 @@ def search(args, i):
 
     lock = Lock()
 
-    for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
-        log.debug("Queue search itteration {}, step {}".format(i, step))
-        search_args = (i, step_location, step, lock)
-        search_queue.put(search_args)
+    for search_location in config['SEARCH_LOCATIONS']:
+        search_key = get_location_key(search_location['lat'], search_location['lon'])
+        search_dict[search_key] = []
+
+        for step, step_location in enumerate(generate_location_steps((search_location['lat'], search_location['lon'], 0), num_steps), 1):
+            log.debug("Queue search itteration {}, step {}".format(i, step))
+            search_args = { 'iteration': i, 'step_location': step_location, 'step': step, 'lock': lock, 'skip': False }
+            search_queue.put(search_args)
+            search_dict[search_key].append(search_args)
 
     # Wait until this scan itteration queue is empty (not nessearily done)
     while not search_queue.empty():
@@ -237,7 +230,6 @@ def search(args, i):
     # Don't let this method exit until the last item has ACTUALLY finished
     search_queue.join()
 
-
 #
 # A fake search loop which does....nothing!
 #
@@ -245,3 +237,12 @@ def fake_search_loop():
     while True:
         log.info('Fake search loop running...')
         time.sleep(10)
+
+#
+# Skips the searches queued for a particular location
+#
+def stop_search(lat, lon):
+    search_key = get_location_key(lat, lon)
+    if search_key in search_dict:
+        for search_args in search_dict[search_key]:
+            search_args['skip'] = True

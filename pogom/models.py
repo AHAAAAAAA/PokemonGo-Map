@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from base64 import b64encode
 
 from . import config
-from .utils import get_pokemon_name, get_args, send_to_webhook
+from .utils import get_pokemon_name, get_args, send_to_webhook, get_location_key
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
 
@@ -317,7 +317,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
       gyms_upserted))
 
     scanned[0] = {
-        'scanned_id': str(step_location[0])+','+str(step_location[1]),
+        'scanned_id': get_location_key(step_location[0], step_location[1]),
         'latitude': step_location[0],
         'longitude': step_location[1],
         'last_modified': datetime.utcnow(),

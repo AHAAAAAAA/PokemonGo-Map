@@ -62,8 +62,7 @@ if __name__ == '__main__':
     if args.no_gyms:
         log.info('Parsing of Gyms disabled.')
 
-    config['ORIGINAL_LATITUDE'] = position[0]
-    config['ORIGINAL_LONGITUDE'] = position[1]
+    config['SEARCH_LOCATIONS'] = [{'lat': position[0], 'lon': position[1], 'name': args.location}]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
