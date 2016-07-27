@@ -1191,26 +1191,28 @@ $(function() {
       });
     }
   }, 1000);
-
-
+  
+  //Wipe off/restore map icons when switches are toggled
   function buildSwitchChangeListener(data, data_type, storageKey) {
-    return function() {
+    return function () {
       Store.set(storageKey, this.checked);
       if (this.checked) {
         updateMap();
       } else {
-        $.each(data[data_type], function(key, value) {
-          data[data_type][key].marker.setMap(null);
+        $.each(data_type, function(d, d_type) {
+          $.each(data[d_type], function (key, value) {
+            data[d_type][key].marker.setMap(null);
+          });
+          data[d_type] = {}
         });
-        data[data_type] = {}
       }
-    }
+    };
   }
 
   // Setup UI element interactions
-  $('#gyms-switch').change(buildSwitchChangeListener(map_data, "gyms", "showGyms"));
-  $('#pokemon-switch').change(buildSwitchChangeListener(map_data, "pokemons", "showPokemon"));
-  $('#scanned-switch').change(buildSwitchChangeListener(map_data, "scanned", "showScanned"));
+  $('#gyms-switch').change(buildSwitchChangeListener(map_data, ["gyms"], "showGyms"));
+  $('#pokemon-switch').change(buildSwitchChangeListener(map_data, ["pokemons", "lure_pokemons"], "showPokemon"));
+  $('#scanned-switch').change(buildSwitchChangeListener(map_data, ["scanned"], "showScanned"));
   $('#stats-switch').change(statsSwitchToggled());
 
   function statsSwitchToggled() {
@@ -1242,7 +1244,7 @@ $(function() {
     } else {
       wrapper.hide(options);
     }
-    return buildSwitchChangeListener(map_data, "pokestops", "showPokestops").bind(this)();
+    return buildSwitchChangeListener(map_data, ["pokestops"], "showPokestops").bind(this)();
   });
 
   $('#lured-pokestops-only-switch').change(function() {
