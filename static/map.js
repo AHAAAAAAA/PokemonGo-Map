@@ -1187,11 +1187,11 @@ $(function() {
       if (this.checked) {
         updateMap();
       } else {
-        if(typeof data_type === 'string') {
+        if (typeof data_type === 'string') {
           data_type = [data_type];
         }
         $.each(data_type, function(i, type) {
-          $.each(data[type], function (key, value) {
+          $.each(data[type], function(key, value) {
             data[type][key].marker.setMap(null);
           });
           data[type] = {};
