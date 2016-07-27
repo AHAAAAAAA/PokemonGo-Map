@@ -338,6 +338,7 @@ function initSidebar() {
   $('#sound-switch').prop('checked', Store.get('playSound'));
 
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
+  $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
 
   searchBox.addListener('places_changed', function() {
     var places = searchBox.getPlaces();
@@ -1234,6 +1235,8 @@ $(function() {
   });
 
   $('#geoloc-switch').change(function() {
+    $("#next-location").prop("disabled", this.checked);
+    $("#next-location").css("background-color", this.checked ? "#e0e0e0" : "#ffffff");
     if (!navigator.geolocation)
       this.checked = false;
     else
