@@ -615,6 +615,12 @@ function setupGymMarker(item) {
   return marker;
 }
 
+function updateGymMarker(item, marker) {
+  marker.setIcon('static/forts/' + gym_types[item.team_id] + '.png');
+  marker.infoWindow.setContent(gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude));
+  return marker;
+}
+
 function setupPokestopMarker(item) {
   var imagename = !!item.lure_expiration ? "PstopLured" : "Pstop";
   var marker = new google.maps.Marker({
@@ -878,21 +884,11 @@ function processGyms(i, item) {
   }
 
   if (item.gym_id in map_data.gyms) {
-    // if team has changed, create new marker (new icon)
-    if (map_data.gyms[item.gym_id].team_id != item.team_id) {
-      map_data.gyms[item.gym_id].marker.setMap(null);
-      map_data.gyms[item.gym_id].marker = setupGymMarker(item);
-    } else { // if it hasn't changed generate new label only (in case prestige has changed)
-      map_data.gyms[item.gym_id].marker.infoWindow = new google.maps.InfoWindow({
-        content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
-        disableAutoPan: true
-      });
-    }
+    item.marker = updateGymMarker(item, map_data.gyms[item.gym_id].marker);
   } else { // add marker to map and item to dict
-    if (item.marker) item.marker.setMap(null);
     item.marker = setupGymMarker(item);
-    map_data.gyms[item.gym_id] = item;
   }
+  map_data.gyms[item.gym_id] = item;
 
 }
 
