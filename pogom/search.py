@@ -36,12 +36,13 @@ def calculate_lng_degrees(lat):
 
 def send_map_request(api, position):
     try:
-        api.set_position(*position)
-        api.get_map_objects(latitude=f2i(position[0]),
+        api_copy = api.copy()
+        api_copy.set_position(*position)
+        api_copy.get_map_objects(latitude=f2i(position[0]),
                             longitude=f2i(position[1]),
                             since_timestamp_ms=TIMESTAMP,
                             cell_id=get_cellid(position[0], position[1]))
-        return api.call()
+        return api_copy.call()
     except Exception as e:
         log.warning("Uncaught exception when downloading map " + str(e))
         return False
@@ -201,7 +202,7 @@ def search_loop(args):
             search(args, search_queue, i)
             log.info("Scanning complete.")
             if args.scan_delay > 1:
-                log.info('Waiting {:d} seconds before beginning new scan.'.format(args.scan_delay))
+                log.info('Waiting {:f} seconds before beginning new scan.'.format(args.scan_delay))
                 time.sleep(args.scan_delay)
             i += 1
 
