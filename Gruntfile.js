@@ -91,6 +91,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('default', ['jshint', 'sass', 'cssmin', 'babel', 'uglify', 'watch']);
+  grunt.registerTask('build', ['jshint', 'sass', 'cssmin', 'uglify']);
+  grunt.registerTask('default', ['build', 'watch']);
 
 };
