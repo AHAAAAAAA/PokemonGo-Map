@@ -48,13 +48,14 @@ if __name__ == '__main__':
     db = init_database()
     create_tables(db)
 
-    position = get_pos_by_name(args.location)
-    if not any(position):
+    parsed_locations = get_pos_by_name(args.location)
+    if not list(parsed_locations):
         log.error('Could not get a position by name, aborting.')
         sys.exit()
 
-    log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
-             format(*position))
+    for loc in parsed_locations:
+        log.info('Parsed location is: {:.4f}/{:.4f} (lat/lng)'.
+                 format(*loc))
     if args.no_pokemon:
         log.info('Parsing of Pokemon disabled.')
     if args.no_pokestops:
@@ -62,8 +63,8 @@ if __name__ == '__main__':
     if args.no_gyms:
         log.info('Parsing of Gyms disabled.')
 
-    config['ORIGINAL_LATITUDE'] = position[0]
-    config['ORIGINAL_LONGITUDE'] = position[1]
+    config['ORIGINAL_LATITUDE'] = parsed_locations[0][0]
+    config['ORIGINAL_LONGITUDE'] = parsed_locations[0][1]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
@@ -71,7 +72,7 @@ if __name__ == '__main__':
         # Gather the pokemons!
         if not args.mock:
             log.debug('Starting a real search thread and {} search runner thread(s)'.format(args.num_threads))
-            create_search_threads(args.num_threads)
+            create_search_threads(args.num_threads, parsed_locations)
             search_thread = Thread(target=search_loop, args=(args,))
         else:
             log.debug('Starting a fake search thread')

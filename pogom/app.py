@@ -5,10 +5,13 @@ import calendar
 import logging
 
 from flask import Flask, jsonify, render_template, request
+from flask import json
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
+
+from pogom.search import search_queue
 from pogom.utils import get_args
 
 from . import config
@@ -30,13 +33,13 @@ class Pogom(Flask):
 
     def fullmap(self):
         args = get_args()
+        locations = search_queue
         display = "inline"
         if args.fixed_location:
             display = "none"
         
         return render_template('map.html',
-                               lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'],
+                               locations=json.dumps(map(lambda x: x.get_lat_lon(), locations)),
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
                                is_fixed=display
@@ -81,17 +84,19 @@ class Pogom(Flask):
         if request.args:
             lat = request.args.get('lat', type=float)
             lon = request.args.get('lon', type=float)
+            marker = request.args.get('mk', type=int)
         #from post requests
         if request.form:
             lat = request.form.get('lat', type=float)
             lon = request.form.get('lon', type=float)
+            marker = request.form.get('mk', type=int)
 
         if not (lat and lon):
             log.warning('Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
-            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            log.info('Changing next location: %s,%s' % (lat, lon))
+            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon, 'marker': marker}
+            log.info('Changing next location: %s,%s for marker %d' % (lat, lon, marker))
             return 'ok'
 
     def list_pokemon(self):

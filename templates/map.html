@@ -171,8 +171,9 @@
 	<script src="static/js/vendor/classie.js"></script>
 
 	<script>
-		var center_lat = {{lat}};
-		var center_lng = {{lng}};
+		var locations = {{locations}};
+		var center_lat = locations[0][0];
+		var center_lng = locations[0][1];
 	</script>
 
 	<script src="static/dist/js/map.js"></script>
