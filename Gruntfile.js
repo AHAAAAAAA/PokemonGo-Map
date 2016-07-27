@@ -6,7 +6,8 @@ module.exports = function(grunt) {
     sass: {
   		dist: {
   			files: {
-  			  'static/css/main.css' : 'static/sass/main.scss'
+  			  'static/css/main.css' : 'static/sass/main.scss',
+          'static/css/mobile.css': 'static/sass/mobile.scss'
   			}
   		}
 	  },
@@ -28,7 +29,8 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/js/app.min.js': 'static/js/app.js'
+          'static/dist/js/app.min.js': 'static/js/app.js',
+          'static/dist/js/mobile.min.js': 'static/js/mobile.js'
         }
       }
     },
@@ -58,7 +60,8 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/css/app.min.css': 'static/css/main.css'
+          'static/dist/css/app.min.css': 'static/css/main.css',
+          'static/dist/css/mobile.min.css': 'static/css/mobile.css'
         }
       }
   	},
