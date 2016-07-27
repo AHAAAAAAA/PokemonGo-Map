@@ -1,465 +1,616 @@
 .pokemon-sprite {
-    display: inline-block;
-    background-image: url(/static/icons-sprite.png);
-    background-repeat: no-repeat;
-    top: 6px;
-    position: relative;
-    zoom: 0.8;
-    -moz-transform: scale(0.80);
-    -moz-transform-origin: 0 0;
-    height: 30px;
-    width: 30px;
+  display: inline-block;
+  background-image: url(/static/icons-sprite.png);
+  background-repeat: no-repeat;
+  top: 6px;
+  position: relative;
+  zoom: 0.8;
+  -moz-transform: scale(0.80);
+  -moz-transform-origin: 0 0;
+  height: 30px;
+  width: 30px;
 }
+
 .pokemon-sprite.n1 {
-    background-position: -0px -0px;
+  background-position: -0px -0px;
 }
+
 .pokemon-sprite.n2 {
-    background-position: -30px -0px;
+  background-position: -30px -0px;
 }
+
 .pokemon-sprite.n3 {
-    background-position: -60px -0px;
+  background-position: -60px -0px;
 }
+
 .pokemon-sprite.n4 {
-    background-position: -90px -0px;
+  background-position: -90px -0px;
 }
+
 .pokemon-sprite.n5 {
-    background-position: -120px -0px;
+  background-position: -120px -0px;
 }
+
 .pokemon-sprite.n6 {
-    background-position: -150px -0px;
+  background-position: -150px -0px;
 }
+
 .pokemon-sprite.n7 {
-    background-position: -180px -0px;
+  background-position: -180px -0px;
 }
+
 .pokemon-sprite.n8 {
-    background-position: -210px -0px;
+  background-position: -210px -0px;
 }
+
 .pokemon-sprite.n9 {
-    background-position: -240px -0px;
+  background-position: -240px -0px;
 }
+
 .pokemon-sprite.n10 {
-    background-position: -270px -0px;
+  background-position: -270px -0px;
 }
+
 .pokemon-sprite.n11 {
-    background-position: -300px -0px;
+  background-position: -300px -0px;
 }
+
 .pokemon-sprite.n12 {
-    background-position: -330px -0px;
+  background-position: -330px -0px;
 }
+
 .pokemon-sprite.n13 {
-    background-position: -0px -30px;
+  background-position: -0px -30px;
 }
+
 .pokemon-sprite.n14 {
-    background-position: -30px -30px;
+  background-position: -30px -30px;
 }
+
 .pokemon-sprite.n15 {
-    background-position: -60px -30px;
+  background-position: -60px -30px;
 }
+
 .pokemon-sprite.n16 {
-    background-position: -90px -30px;
+  background-position: -90px -30px;
 }
+
 .pokemon-sprite.n17 {
-    background-position: -120px -30px;
+  background-position: -120px -30px;
 }
+
 .pokemon-sprite.n18 {
-    background-position: -150px -30px;
+  background-position: -150px -30px;
 }
+
 .pokemon-sprite.n19 {
-    background-position: -180px -30px;
+  background-position: -180px -30px;
 }
+
 .pokemon-sprite.n20 {
-    background-position: -210px -30px;
+  background-position: -210px -30px;
 }
+
 .pokemon-sprite.n21 {
-    background-position: -240px -30px;
+  background-position: -240px -30px;
 }
+
 .pokemon-sprite.n22 {
-    background-position: -270px -30px;
+  background-position: -270px -30px;
 }
+
 .pokemon-sprite.n23 {
-    background-position: -300px -30px;
+  background-position: -300px -30px;
 }
+
 .pokemon-sprite.n24 {
-    background-position: -330px -30px;
+  background-position: -330px -30px;
 }
+
 .pokemon-sprite.n25 {
-    background-position: -0px -60px;
+  background-position: -0px -60px;
 }
+
 .pokemon-sprite.n26 {
-    background-position: -30px -60px;
+  background-position: -30px -60px;
 }
+
 .pokemon-sprite.n27 {
-    background-position: -60px -60px;
+  background-position: -60px -60px;
 }
+
 .pokemon-sprite.n28 {
-    background-position: -90px -60px;
+  background-position: -90px -60px;
 }
+
 .pokemon-sprite.n29 {
-    background-position: -120px -60px;
+  background-position: -120px -60px;
 }
+
 .pokemon-sprite.n30 {
-    background-position: -150px -60px;
+  background-position: -150px -60px;
 }
+
 .pokemon-sprite.n31 {
-    background-position: -180px -60px;
+  background-position: -180px -60px;
 }
+
 .pokemon-sprite.n32 {
-    background-position: -210px -60px;
+  background-position: -210px -60px;
 }
+
 .pokemon-sprite.n33 {
-    background-position: -240px -60px;
+  background-position: -240px -60px;
 }
+
 .pokemon-sprite.n34 {
-    background-position: -270px -60px;
+  background-position: -270px -60px;
 }
+
 .pokemon-sprite.n35 {
-    background-position: -300px -60px;
+  background-position: -300px -60px;
 }
+
 .pokemon-sprite.n36 {
-    background-position: -330px -60px;
+  background-position: -330px -60px;
 }
+
 .pokemon-sprite.n37 {
-    background-position: -0px -90px;
+  background-position: -0px -90px;
 }
+
 .pokemon-sprite.n38 {
-    background-position: -30px -90px;
+  background-position: -30px -90px;
 }
+
 .pokemon-sprite.n39 {
-    background-position: -60px -90px;
+  background-position: -60px -90px;
 }
+
 .pokemon-sprite.n40 {
-    background-position: -90px -90px;
+  background-position: -90px -90px;
 }
+
 .pokemon-sprite.n41 {
-    background-position: -120px -90px;
+  background-position: -120px -90px;
 }
+
 .pokemon-sprite.n42 {
-    background-position: -150px -90px;
+  background-position: -150px -90px;
 }
+
 .pokemon-sprite.n43 {
-    background-position: -180px -90px;
+  background-position: -180px -90px;
 }
+
 .pokemon-sprite.n44 {
-    background-position: -210px -90px;
+  background-position: -210px -90px;
 }
+
 .pokemon-sprite.n45 {
-    background-position: -240px -90px;
+  background-position: -240px -90px;
 }
+
 .pokemon-sprite.n46 {
-    background-position: -270px -90px;
+  background-position: -270px -90px;
 }
+
 .pokemon-sprite.n47 {
-    background-position: -300px -90px;
+  background-position: -300px -90px;
 }
+
 .pokemon-sprite.n48 {
-    background-position: -330px -90px;
+  background-position: -330px -90px;
 }
+
 .pokemon-sprite.n49 {
-    background-position: -0px -120px;
+  background-position: -0px -120px;
 }
+
 .pokemon-sprite.n50 {
-    background-position: -30px -120px;
+  background-position: -30px -120px;
 }
+
 .pokemon-sprite.n51 {
-    background-position: -60px -120px;
+  background-position: -60px -120px;
 }
+
 .pokemon-sprite.n52 {
-    background-position: -90px -120px;
+  background-position: -90px -120px;
 }
+
 .pokemon-sprite.n53 {
-    background-position: -120px -120px;
+  background-position: -120px -120px;
 }
+
 .pokemon-sprite.n54 {
-    background-position: -150px -120px;
+  background-position: -150px -120px;
 }
+
 .pokemon-sprite.n55 {
-    background-position: -180px -120px;
+  background-position: -180px -120px;
 }
+
 .pokemon-sprite.n56 {
-    background-position: -210px -120px;
+  background-position: -210px -120px;
 }
+
 .pokemon-sprite.n57 {
-    background-position: -240px -120px;
+  background-position: -240px -120px;
 }
+
 .pokemon-sprite.n58 {
-    background-position: -270px -120px;
+  background-position: -270px -120px;
 }
+
 .pokemon-sprite.n59 {
-    background-position: -300px -120px;
+  background-position: -300px -120px;
 }
+
 .pokemon-sprite.n60 {
-    background-position: -330px -120px;
+  background-position: -330px -120px;
 }
+
 .pokemon-sprite.n61 {
-    background-position: -0px -150px;
+  background-position: -0px -150px;
 }
+
 .pokemon-sprite.n62 {
-    background-position: -30px -150px;
+  background-position: -30px -150px;
 }
+
 .pokemon-sprite.n63 {
-    background-position: -60px -150px;
+  background-position: -60px -150px;
 }
+
 .pokemon-sprite.n64 {
-    background-position: -90px -150px;
+  background-position: -90px -150px;
 }
+
 .pokemon-sprite.n65 {
-    background-position: -120px -150px;
+  background-position: -120px -150px;
 }
+
 .pokemon-sprite.n66 {
-    background-position: -150px -150px;
+  background-position: -150px -150px;
 }
+
 .pokemon-sprite.n67 {
-    background-position: -180px -150px;
+  background-position: -180px -150px;
 }
+
 .pokemon-sprite.n68 {
-    background-position: -210px -150px;
+  background-position: -210px -150px;
 }
+
 .pokemon-sprite.n69 {
-    background-position: -240px -150px;
+  background-position: -240px -150px;
 }
+
 .pokemon-sprite.n70 {
-    background-position: -270px -150px;
+  background-position: -270px -150px;
 }
+
 .pokemon-sprite.n71 {
-    background-position: -300px -150px;
+  background-position: -300px -150px;
 }
+
 .pokemon-sprite.n72 {
-    background-position: -330px -150px;
+  background-position: -330px -150px;
 }
+
 .pokemon-sprite.n73 {
-    background-position: -0px -180px;
+  background-position: -0px -180px;
 }
+
 .pokemon-sprite.n74 {
-    background-position: -30px -180px;
+  background-position: -30px -180px;
 }
+
 .pokemon-sprite.n75 {
-    background-position: -60px -180px;
+  background-position: -60px -180px;
 }
+
 .pokemon-sprite.n76 {
-    background-position: -90px -180px;
+  background-position: -90px -180px;
 }
+
 .pokemon-sprite.n77 {
-    background-position: -120px -180px;
+  background-position: -120px -180px;
 }
+
 .pokemon-sprite.n78 {
-    background-position: -150px -180px;
+  background-position: -150px -180px;
 }
+
 .pokemon-sprite.n79 {
-    background-position: -180px -180px;
+  background-position: -180px -180px;
 }
+
 .pokemon-sprite.n80 {
-    background-position: -210px -180px;
+  background-position: -210px -180px;
 }
+
 .pokemon-sprite.n81 {
-    background-position: -240px -180px;
+  background-position: -240px -180px;
 }
+
 .pokemon-sprite.n82 {
-    background-position: -270px -180px;
+  background-position: -270px -180px;
 }
+
 .pokemon-sprite.n83 {
-    background-position: -300px -180px;
+  background-position: -300px -180px;
 }
+
 .pokemon-sprite.n84 {
-    background-position: -330px -180px;
+  background-position: -330px -180px;
 }
+
 .pokemon-sprite.n85 {
-    background-position: -0px -210px;
+  background-position: -0px -210px;
 }
+
 .pokemon-sprite.n86 {
-    background-position: -30px -210px;
+  background-position: -30px -210px;
 }
+
 .pokemon-sprite.n87 {
-    background-position: -60px -210px;
+  background-position: -60px -210px;
 }
+
 .pokemon-sprite.n88 {
-    background-position: -90px -210px;
+  background-position: -90px -210px;
 }
+
 .pokemon-sprite.n89 {
-    background-position: -120px -210px;
+  background-position: -120px -210px;
 }
+
 .pokemon-sprite.n90 {
-    background-position: -150px -210px;
+  background-position: -150px -210px;
 }
+
 .pokemon-sprite.n91 {
-    background-position: -180px -210px;
+  background-position: -180px -210px;
 }
+
 .pokemon-sprite.n92 {
-    background-position: -210px -210px;
+  background-position: -210px -210px;
 }
+
 .pokemon-sprite.n93 {
-    background-position: -240px -210px;
+  background-position: -240px -210px;
 }
+
 .pokemon-sprite.n94 {
-    background-position: -270px -210px;
+  background-position: -270px -210px;
 }
+
 .pokemon-sprite.n95 {
-    background-position: -300px -210px;
+  background-position: -300px -210px;
 }
+
 .pokemon-sprite.n96 {
-    background-position: -330px -210px;
+  background-position: -330px -210px;
 }
+
 .pokemon-sprite.n97 {
-    background-position: -0px -240px;
+  background-position: -0px -240px;
 }
+
 .pokemon-sprite.n98 {
-    background-position: -30px -240px;
+  background-position: -30px -240px;
 }
+
 .pokemon-sprite.n99 {
-    background-position: -60px -240px;
+  background-position: -60px -240px;
 }
+
 .pokemon-sprite.n100 {
-    background-position: -90px -240px;
+  background-position: -90px -240px;
 }
+
 .pokemon-sprite.n101 {
-    background-position: -120px -240px;
+  background-position: -120px -240px;
 }
+
 .pokemon-sprite.n102 {
-    background-position: -150px -240px;
+  background-position: -150px -240px;
 }
+
 .pokemon-sprite.n103 {
-    background-position: -180px -240px;
+  background-position: -180px -240px;
 }
+
 .pokemon-sprite.n104 {
-    background-position: -210px -240px;
+  background-position: -210px -240px;
 }
+
 .pokemon-sprite.n105 {
-    background-position: -240px -240px;
+  background-position: -240px -240px;
 }
+
 .pokemon-sprite.n106 {
-    background-position: -270px -240px;
+  background-position: -270px -240px;
 }
+
 .pokemon-sprite.n107 {
-    background-position: -300px -240px;
+  background-position: -300px -240px;
 }
+
 .pokemon-sprite.n108 {
-    background-position: -330px -240px;
+  background-position: -330px -240px;
 }
+
 .pokemon-sprite.n109 {
-    background-position: -0px -270px;
+  background-position: -0px -270px;
 }
+
 .pokemon-sprite.n110 {
-    background-position: -30px -270px;
+  background-position: -30px -270px;
 }
+
 .pokemon-sprite.n111 {
-    background-position: -60px -270px;
+  background-position: -60px -270px;
 }
+
 .pokemon-sprite.n112 {
-    background-position: -90px -270px;
+  background-position: -90px -270px;
 }
+
 .pokemon-sprite.n113 {
-    background-position: -120px -270px;
+  background-position: -120px -270px;
 }
+
 .pokemon-sprite.n114 {
-    background-position: -150px -270px;
+  background-position: -150px -270px;
 }
+
 .pokemon-sprite.n115 {
-    background-position: -180px -270px;
+  background-position: -180px -270px;
 }
+
 .pokemon-sprite.n116 {
-    background-position: -210px -270px;
+  background-position: -210px -270px;
 }
+
 .pokemon-sprite.n117 {
-    background-position: -240px -270px;
+  background-position: -240px -270px;
 }
+
 .pokemon-sprite.n118 {
-    background-position: -270px -270px;
+  background-position: -270px -270px;
 }
+
 .pokemon-sprite.n119 {
-    background-position: -300px -270px;
+  background-position: -300px -270px;
 }
+
 .pokemon-sprite.n120 {
-    background-position: -330px -270px;
+  background-position: -330px -270px;
 }
+
 .pokemon-sprite.n121 {
-    background-position: -0px -300px;
+  background-position: -0px -300px;
 }
+
 .pokemon-sprite.n122 {
-    background-position: -30px -300px;
+  background-position: -30px -300px;
 }
+
 .pokemon-sprite.n123 {
-    background-position: -60px -300px;
+  background-position: -60px -300px;
 }
+
 .pokemon-sprite.n124 {
-    background-position: -90px -300px;
+  background-position: -90px -300px;
 }
+
 .pokemon-sprite.n125 {
-    background-position: -120px -300px;
+  background-position: -120px -300px;
 }
+
 .pokemon-sprite.n126 {
-    background-position: -150px -300px;
+  background-position: -150px -300px;
 }
+
 .pokemon-sprite.n127 {
-    background-position: -180px -300px;
+  background-position: -180px -300px;
 }
+
 .pokemon-sprite.n128 {
-    background-position: -210px -300px;
+  background-position: -210px -300px;
 }
+
 .pokemon-sprite.n129 {
-    background-position: -240px -300px;
+  background-position: -240px -300px;
 }
+
 .pokemon-sprite.n130 {
-    background-position: -270px -300px;
+  background-position: -270px -300px;
 }
+
 .pokemon-sprite.n131 {
-    background-position: -300px -300px;
+  background-position: -300px -300px;
 }
+
 .pokemon-sprite.n132 {
-    background-position: -330px -300px;
+  background-position: -330px -300px;
 }
+
 .pokemon-sprite.n133 {
-    background-position: -0px -330px;
+  background-position: -0px -330px;
 }
+
 .pokemon-sprite.n134 {
-    background-position: -30px -330px;
+  background-position: -30px -330px;
 }
+
 .pokemon-sprite.n135 {
-    background-position: -60px -330px;
+  background-position: -60px -330px;
 }
+
 .pokemon-sprite.n136 {
-    background-position: -90px -330px;
+  background-position: -90px -330px;
 }
+
 .pokemon-sprite.n137 {
-    background-position: -120px -330px;
+  background-position: -120px -330px;
 }
+
 .pokemon-sprite.n138 {
-    background-position: -150px -330px;
+  background-position: -150px -330px;
 }
+
 .pokemon-sprite.n139 {
-    background-position: -180px -330px;
+  background-position: -180px -330px;
 }
+
 .pokemon-sprite.n140 {
-    background-position: -210px -330px;
+  background-position: -210px -330px;
 }
+
 .pokemon-sprite.n141 {
-    background-position: -240px -330px;
+  background-position: -240px -330px;
 }
+
 .pokemon-sprite.n142 {
-    background-position: -270px -330px;
+  background-position: -270px -330px;
 }
+
 .pokemon-sprite.n143 {
-    background-position: -300px -330px;
+  background-position: -300px -330px;
 }
+
 .pokemon-sprite.n144 {
-    background-position: -330px -330px;
+  background-position: -330px -330px;
 }
+
 .pokemon-sprite.n145 {
-    background-position: -0px -360px;
+  background-position: -0px -360px;
 }
+
 .pokemon-sprite.n146 {
-    background-position: -30px -360px;
+  background-position: -30px -360px;
 }
+
 .pokemon-sprite.n147 {
-    background-position: -60px -360px;
+  background-position: -60px -360px;
 }
+
 .pokemon-sprite.n148 {
-    background-position: -90px -360px;
+  background-position: -90px -360px;
 }
+
 .pokemon-sprite.n149 {
-    background-position: -120px -360px;
+  background-position: -120px -360px;
 }
+
 .pokemon-sprite.n150 {
-    background-position: -150px -360px;
+  background-position: -150px -360px;
 }
+
 .pokemon-sprite.n151 {
-    background-position: -180px -360px;
+  background-position: -180px -360px;
 }
