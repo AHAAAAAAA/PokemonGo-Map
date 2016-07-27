@@ -4,12 +4,10 @@
 import sys
 import getpass
 import configargparse
-import re
 import uuid
 import os
 import json
 from datetime import datetime, timedelta
-import platform
 import logging
 import shutil
 import requests
