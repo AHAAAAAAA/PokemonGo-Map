@@ -9,7 +9,7 @@ from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
-from pogom.utils import get_args
+from pogom.utils import get_args, get_pokemon_name 
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
@@ -27,6 +27,8 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/stats", methods=['GET'])(self.get_stats)
+        self.route("/rarity", methods=['GET'])(self.get_rarity)
 
     def fullmap(self):
         args = get_args()
@@ -41,6 +43,28 @@ class Pogom(Flask):
                                lang=config['LOCALE'],
                                is_fixed=display
                                )
+
+    def get_rarity(self):
+        swLat = request.args.get('swLat')
+        swLng = request.args.get('swLng')
+        neLat = request.args.get('neLat')
+        neLng = request.args.get('neLng')
+        pokemons = Pokemon.get_history_by_location(swLat, swLng, neLat, neLng)
+        class P:
+            def __init__(self, p_id, percentage):
+                self.p_id = p_id
+                self.percentage = "{0:.2f} %".format(percentage * 100)
+                if percentage > 0.1:
+                    self.rarity = "Everywhere"
+                elif percentage > 0.01:
+                    self.rarity = "Common"
+                else:
+                    self.rarity = "Rare"
+                self.name = get_pokemon_name(p_id)
+        results = []
+        for p in pokemons:
+            results.append(P(p, pokemons[p]))
+        return render_template("rarity.html", pokemons=results)
 
     def raw_data(self):
         d = {}
@@ -126,6 +150,13 @@ class Pogom(Flask):
                                pokemon_list=pokemon_list,
                                origin_lat=lat,
                                origin_lng=lon)
+
+    def get_stats(self):
+        neLat = request.args.get('neLat', type=float)
+        neLon = request.args.get('neLon', type=float)
+        swLat = request.args.get('swLat', type=float)
+        swLon = request.args.get('swLon', type=float)
+        return jsonify(Pokemon.get_history_by_location(swLat, swLon, neLat, neLon))
 
 
 class CustomJSONEncoder(JSONEncoder):

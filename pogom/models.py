@@ -118,6 +118,34 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    @classmethod
+    def get_history_by_location(cls, swLat, swLng, neLat, neLng):
+        if swLat == None or swLng == None or neLat == None or neLng == None:
+            query = (Pokemon
+                    .select()
+                    .dicts())
+        else:
+            query = (Pokemon
+                     .select()
+                     .where((Pokemon.latitude >= swLat) &
+                            (Pokemon.longitude >= swLng) &
+                            (Pokemon.latitude <= neLat) &
+                            (Pokemon.longitude <= neLng))
+                     .dicts()) 
+        pokemons = {}
+        query_result = list(query)
+        if len(query_result) == 0:
+            return pokemons
+        else:
+            increment = 1.0 / len(query_result)
+        for p in query:
+            p_id = p["pokemon_id"]
+            if p_id in pokemons:
+                pokemons[p_id] += increment 
+            else:
+                pokemons[p_id] = increment
+        return pokemons
+
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True, max_length=50)

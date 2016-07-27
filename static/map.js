@@ -1219,4 +1219,14 @@ $(function () {
             Store.set('geoLocate', this.checked);
     });
 
+    $("#check-rarity").click(function(){
+        var bounds = map.getBounds();
+        var swLat = bounds.getSouthWest().lat().toString();
+        var swLng = bounds.getSouthWest().lng().toString();
+        var neLat = bounds.getNorthEast().lat().toString();
+        var neLng = bounds.getNorthEast().lng().toString();
+        var url = "/rarity?swLat=" + swLat + "&swLng=" + swLng + "&neLat=" + neLat + "&neLng=" + neLng;
+        window.open(url, '_blank');
+    });
+
 });
