@@ -135,7 +135,7 @@ class RpcApi:
                     try:
                         setattr(subrequest_extension, key, value)
                     except Exception as e:
-                       self.log.info('Argument %s with value %s unknown inside %s', key, value, proto_name)
+                        self.log.info('Argument %s with value %s unknown inside %s', key, value, proto_name)
 
                 subrequest = mainrequest.requests.add()
                 subrequest.type = entry_id
