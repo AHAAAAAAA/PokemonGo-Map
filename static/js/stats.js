@@ -136,23 +136,6 @@ function countMarkers() {
 	}
 };
 
-$('#stats-switch').change(function() {
-    Store.set('showStats', this.checked);
-    if (this.checked) {
-        countMarkers();
-		document.getElementById("statsToggle").innerHTML = "Stats";
-    } else {
-		document.getElementById("pokemonList").innerHTML = "";
-		document.getElementById("arenaList").innerHTML = "";
-		document.getElementById("pokestopList").innerHTML = "";
-		document.getElementById("stats-pkmn-label").innerHTML = "";
-		document.getElementById("stats-gym-label").innerHTML = "";
-		document.getElementById("stats-pkstop-label").innerHTML = "";
-		document.getElementById("statsToggle").innerHTML = "";
-		document.getElementById("stats").classList.remove('visible');
-    }
-});
-
 var sort_by = function(field, reverse, primer){
     var key = primer ? 
         function(x) {return primer(x[field])} : 
