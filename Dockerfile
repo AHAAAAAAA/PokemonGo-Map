@@ -20,17 +20,22 @@ CMD ["-h"]
 # Install required system packages
 RUN apk add --no-cache ca-certificates
 
-# Since we're changing requirements and css so often now, it's almost guaranteed
-# that SOMETHING which requires a rebuild needs to be redone. As such, and to
-# optimize layers for distribution, this will copy in everything in a go.
-COPY . /usr/src/app/
+COPY requirements.txt /usr/src/app/
 
-# Get it all installed and built then remove the build systems
-RUN apk add --no-cache build-base nodejs \
+RUN apk add --no-cache build-base \
  && pip install --no-cache-dir -r requirements.txt \
+ && apk del build-base
+
+COPY package.json Gruntfile.js /usr/src/app/
+COPY static /usr/src/app/static
+
+RUN apk add --no-cache build-base nodejs \
  && npm install -g grunt-cli \
  && npm install \
  && npm run-script build \
  && npm uninstall -g grunt-cli \
  && rm -rf node_modules \
  && apk del build-base nodejs
+
+# Copy everything to the working directory (Python files, templates, config) in one go.
+COPY . /usr/src/app/
