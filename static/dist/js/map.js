@@ -347,11 +347,28 @@ function initSidebar() {
 function pad(number) {
   return number <= 99 ? ("0" + number).slice(-2) : number;
 }
+var typesMap = {'bug':'#a8b820','dark':'#705848','dragon':'#7038f8','electric':'#f8d030','fairy':'#e898e8','fighting':'#c03028','fire':'#f08030','flying':'#a890f0','ghost':'#705898','grass':'#78c850','ground':'#e0c068','ice':'#98d8d8','normal':'#8a8a59','poison':'#a040a0','psychic':'#f85888','rock':'#b8a038','steel':'#b8b8d0','water':'#6890f0'};
+var typesList = Object.keys(typesMap).sort();
+var pokemonTypes = [null,[13,9],[13,9],[13,9],[6],[6],[7,6],[17],[17],[17],[0],[0],[7,0],[13,0],[13,0],[13,0],[12,7],[12,7],[12,7],[12],[12],[12,7],[12,7],[13],[13],[3],[3],[10],[10],[13],[13],[13,10],[13],[13],[13,10],[4],[4],[6],[6],[12,4],[12,4],[7,13],[7,13],[13,9],[13,9],[13,9],[0,9],[0,9],[13,0],[13,0],[10],[10],[12],[12],[17],[17],[5],[5],[6],[6],[17],[17],[5,17],[14],[14],[14],[5],[5],[5],[13,9],[13,9],[13,9],[13,17],[13,17],[10,15],[10,15],[10,15],[6],[6],[17,14],[17,14],[16,3],[16,3],[12,7],[12,7],[12,7],[17],[17,11],[13],[13],[17],[17,11],[13,8],[13,8],[13,8],[10,15],[14],[14],[17],[17],[3],[3],[9,14],[9,14],[10],[10],[5],[5],[12],[13],[13],[10,15],[10,15],[12],[9],[12],[17],[17],[17],[17],[17],[17,14],[4,14],[7,0],[11,14],[3],[6],[0],[12],[17],[7,17],[17,11],[12],[12],[17],[3],[6],[12],[15,17],[15,17],[15,17],[15,17],[7,15],[12],[7,11],[7,3],[7,6],[2],[2],[7,2],[14],[14]];
+function getTypeSpan(typeId) {
+     var type = typesList[typeId];
+     return `<span style='padding: 2px 5px; text-transform: uppercase; color: white; margin-right: 2px; border-radius: 4px; font-size: 0.8em; vertical-align: text-bottom; background-color: ` + typesMap[type] + `'>` + type + `</span>`;
+ }
+
+var rarityMap = {'very Common':'#64B3DF','common':'#115778','uncommon':'#9DE259','rare':'#548724','very rare':'#FFE060','special':'#FFAA3C','epic':'#FF5F5E','legendary':'#9D44BA','region exclusive':'#EFE4B0'};
+var rarityList = Object.keys(rarityMap);
+var pokemonRarity = [null, [1],[5],[6],[1],[5],[6],[1],[5],[6],[0],[1],[2],[0],[1],[3],[0],[1],[3],[0],[1],[1],[2],[0],[1],[1],[4],[0],[1],[0],[2],[4],[0],[2],[4],[1],[6],[1],[2],[1],[2],[0],[1],[0],[2],[4],[0],[2],[0],[4],[1],[2],[0],[1],[1],[2],[0],[2],[1],[3],[0],[2],[4],[1],[2],[4],[0],[1],[2],[0],[3],[4],[1],[2],[0],[1],[2],[1],[3],[0],[3],[0],[1],[3,8],[1],[2],[1],[4],[1],[3],[1],[2],[0],[1],[4],[3],[1],[2],[0],[3],[0],[1],[1],[3],[1],[4],[1],[2],[2],[1],[2],[1],[3],[2],[3],[4,8],[1],[2],[0],[2],[1],[2],[3,8],[2],[1],[4],[3],[3],[6,8],[0],[4],[4],[7],[0],[4],[3],[3],[5],[5],[6],[2],[4],[5],[3],[7],[7],[7],[2],[4],[6],[7],[7]];
+function getRaritySpan(id){
+	 var rarity = rarityList[id];
+	 return `<span style='padding: 2px 5px; text-transform: uppercase; color: white; margin-right: 2px; border-radius: 4px; font-size: 0.8em; vertical-align: text-bottom; background-color: ` + rarityMap[rarity] + `'>` + rarity + `</span>`;
+ }
 
 function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_id) {
   var disappear_date = new Date(disappear_time);
+  var typeStr = getTypeSpan(pokemonTypes[id][0]);
+  var rarityStr = getRaritySpan(pokemonRarity[id][0]);
 
-  var contentstring = "\n    <div>\n      <b>" + name + "</b>\n      <span> - </span>\n      <small>\n        <a href='http://www.pokemon.com/us/pokedex/" + id + "' target='_blank' title='View in Pokedex'>#" + id + "</a>\n      </small>\n    </div>\n    <div>\n      Disappears at " + pad(disappear_date.getHours()) + ":" + pad(disappear_date.getMinutes()) + ":" + pad(disappear_date.getSeconds()) + "\n      <span class='label-countdown' disappears-at='" + disappear_time + "'>(00m00s)</span>\n    </div>\n    <div>\n      Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n    </div>\n    <div>\n      <a href='javascript:excludePokemon(" + id + ")'>Exclude</a>&nbsp;&nbsp;\n      <a href='javascript:notifyAboutPokemon(" + id + ")'>Notify</a>&nbsp;&nbsp;\n      <a href='javascript:removePokemonMarker(\"" + encounter_id + "\")'>Remove</a>&nbsp;&nbsp;\n      <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "' target='_blank' title='View in Maps'>Get directions</a>\n    </div>";
+  var contentstring = "\n    <div>\n      <b>" + name + "</b>\n      <span> - </span>\n      <small>\n        <a href='http://pokemondb.net/pokedex/" + name + "' target='_blank' title='View in Pokedex'>#" + id + "</a>\n      </small><span> - </span><small>" + typeStr + "</small><br><small>"+rarityStr+"<small>\n    </div>\n    <div>\n      Disappears at " + pad(disappear_date.getHours()) + ":" + pad(disappear_date.getMinutes()) + ":" + pad(disappear_date.getSeconds()) + "\n      <span class='label-countdown' disappears-at='" + disappear_time + "'>(00m00s)</span>\n    </div>\n    <div>\n      Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n    </div>\n    <div>\n      <a href='javascript:excludePokemon(" + id + ")'>Exclude</a>&nbsp;&nbsp;\n      <a href='javascript:notifyAboutPokemon(" + id + ")'>Notify</a>&nbsp;&nbsp;\n      <a href='javascript:removePokemonMarker(\"" + encounter_id + "\")'>Remove</a>&nbsp;&nbsp;\n      <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "' target='_blank' title='View in Maps'>Get directions</a>\n    </div>";
   return contentstring;
 }
 
@@ -385,7 +402,7 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
     var expire_date = new Date(current_date.getTime() + time_until_expire);
     var expire_time = expire_date.getTime();
 
-    str = "\n      <div>\n        <b>Lured Pokéstop</b>\n      </div>\n      <div>\n        Lured Pokémon: " + active_pokemon + "\n        <span> - </span>\n        <small>\n          <a href='http://www.pokemon.com/us/pokedex/" + active_pokemon_id + "' target='_blank' title='View in Pokedex'>#" + active_pokemon_id + "</a>\n        </small>\n      </div>\n      <div>\n        Lure expires at " + pad(expire_date.getHours()) + ":" + pad(expire_date.getMinutes()) + ":" + pad(expire_date.getSeconds()) + "\n        <span class='label-countdown' disappears-at='" + expire_time + "'>(00m00s)</span>\n      </div>\n      <div>\n        Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n      </div>\n      <div>\n        <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "' target='_blank' title='View in Maps'>Get directions</a>\n      </div>";
+    str = "\n      <div>\n        <b>Lured Pokéstop</b>\n      </div>\n      <div>\n        Lured Pokémon: " + active_pokemon + "\n        <span> - </span>\n        <small>\n          <a href='http://pokemondb.net/pokedex/" + active_pokemon + "' target='_blank' title='View in Pokedex'>#" + active_pokemon_id + "</a>\n        </small>\n      </div>\n      <div>\n        Lure expires at " + pad(expire_date.getHours()) + ":" + pad(expire_date.getMinutes()) + ":" + pad(expire_date.getSeconds()) + "\n        <span class='label-countdown' disappears-at='" + expire_time + "'>(00m00s)</span>\n      </div>\n      <div>\n        Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n      </div>\n      <div>\n        <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "' target='_blank' title='View in Maps'>Get directions</a>\n      </div>";
   } else {
     str = "\n      <div>\n        <b>Pokéstop</b>\n      </div>\n      <div>\n        Location: " + latitude.toFixed(6) + ", " + longitude.toFixed(7) + "\n      </div>\n      <div>\n        <a href='https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude + "' target='_blank' title='View in Maps'>Get directions</a>\n      </div>";
   }
