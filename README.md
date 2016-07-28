@@ -1,4 +1,4 @@
-# PokemonGo Map! [Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
+# PokemonGo Map![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
 
 
 Live visualization of all the pokemon (with option to show gyms and pokestops) in your area. This is a proof of concept that we can load all the pokemon visible nearby given a location. Currently runs on a Flask server displaying Google Maps with markers on it.
@@ -17,7 +17,7 @@ Features:
 
 [![Deploy](https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/images/deploy-to-jelastic.png)](https://jelastic.com/install-application/?manifest=https://raw.githubusercontent.com/sych74/PokemonGo-Map-in-Cloud/master/manifest.jps) [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/Heroku-Deployment) 
 
-## You can also check us out on [Twitter] (https://twitter.com/PoGoMDev) and on our fancy [Website!] (https://jz6.github.io/PoGoMap/)#
+#[Twitter] (https://twitter.com/PoGoMDev), [Website] (https://jz6.github.io/PoGoMap/)#
 
 ![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
 
