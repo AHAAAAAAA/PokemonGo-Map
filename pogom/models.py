@@ -7,6 +7,7 @@ import time
 from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError
+from playhouse.shortcuts import RetryOperationalError
 from datetime import datetime, timedelta
 from base64 import b64encode
 
@@ -21,13 +22,17 @@ args = get_args()
 db = None
 
 
+class MyRetryDB(RetryOperationalError, MySQLDatabase):
+    pass
+
+
 def init_database():
     global db
     if db is not None:
         return db
 
     if args.db_type == 'mysql':
-        db = MySQLDatabase(
+        db = MyRetryDB(
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
