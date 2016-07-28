@@ -31,15 +31,6 @@ log = logging.getLogger(__name__)
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
 
-# Constants for Hex Grid
-# Gap between vertical and horzonal "rows"
-lat_gap_meters = 150
-lng_gap_meters = 86.6
-
-# 111111m is approx 1 degree Lat, which is close enough for this
-meters_per_degree = 111111
-lat_gap_degrees = float(lat_gap_meters) / meters_per_degree
-
 search_queue = Queue()
 
 
@@ -61,47 +52,61 @@ def send_map_request(api, position):
         log.warning("Uncaught exception when downloading map " + str(e))
         return False
 
+def get_new_coords(init_loc, distance, bearing):
+    """ Given an initial lat/lng, a distance(in kms), and a bearing (degrees),
+    this will calculate the resulting lat/lng coordinates.
+    """ 
+    R = 6378.1 #km radius of the earth
+    bearing = math.radians(bearing)
 
-def generate_location_steps(initial_location, num_steps):
+    init_coords = [math.radians(init_loc[0]), math.radians(init_loc[1])] # convert lat/lng to radians
 
-    ring = 1  # Which ring are we on, 0 = center
-    lat_location = initial_location[0]
-    lng_location = initial_location[1]
+    new_lat = math.asin( math.sin(init_coords[0])*math.cos(distance/R) +
+        math.cos(init_coords[0])*math.sin(distance/R)*math.cos(bearing))
 
-    yield (initial_location[0], initial_location[1], 0)  # Middle circle
+    new_lon = init_coords[1] + math.atan2(math.sin(bearing)*math.sin(distance/R)*math.cos(init_coords[0]),
+        math.cos(distance/R)-math.sin(init_coords[0])*math.sin(new_lat))
 
-    while ring < num_steps:
-        # Move the location diagonally to top left spot, then start the circle which will end up back here for the next ring
-        # Move Lat north first
-        lat_location += lat_gap_degrees
-        lng_location -= calculate_lng_degrees(lat_location)
+    return [math.degrees(new_lat), math.degrees(new_lon)]
 
+def generate_location_steps(initial_loc, step_count):
+    #Bearing (degrees)
+    NORTH = 0
+    EAST = 90
+    SOUTH = 180
+    WEST = 270
+
+    pulse_radius = 0.1                  # km - radius of players heartbeat is 100m
+    xdist = math.sqrt(3)*pulse_radius   # dist between column centers
+    ydist = 3*(pulse_radius/2)          # dist between row centers
+
+    yield (initial_loc[0], initial_loc[1], 0) #insert initial location
+
+    ring = 1            
+    loc = initial_loc
+    while ring < step_count:
+        #Set loc to start at top left
+        loc = get_new_coords(loc, ydist, NORTH)
+        loc = get_new_coords(loc, xdist/2, WEST)
         for direction in range(6):
             for i in range(ring):
-                if direction == 0:  # Right
-                    lng_location += calculate_lng_degrees(lat_location) * 2
-
-                if direction == 1:  # Right Down
-                    lat_location -= lat_gap_degrees
-                    lng_location += calculate_lng_degrees(lat_location)
-
-                if direction == 2:  # Left Down
-                    lat_location -= lat_gap_degrees
-                    lng_location -= calculate_lng_degrees(lat_location)
-
-                if direction == 3:  # Left
-                    lng_location -= calculate_lng_degrees(lat_location) * 2
-
-                if direction == 4:  # Left Up
-                    lat_location += lat_gap_degrees
-                    lng_location -= calculate_lng_degrees(lat_location)
-
-                if direction == 5:  # Right Up
-                    lat_location += lat_gap_degrees
-                    lng_location += calculate_lng_degrees(lat_location)
-
-                yield (lat_location, lng_location, 0)  # Middle circle
-
+                if direction == 0: # RIGHT
+                    loc = get_new_coords(loc, xdist, EAST)
+                if direction == 1: # DOWN + RIGHT
+                    loc = get_new_coords(loc, ydist, SOUTH)
+                    loc = get_new_coords(loc, xdist/2, EAST)
+                if direction == 2: # DOWN + LEFT
+                    loc = get_new_coords(loc, ydist, SOUTH)
+                    loc = get_new_coords(loc, xdist/2, WEST)
+                if direction == 3: # LEFT
+                    loc = get_new_coords(loc, xdist, WEST)
+                if direction == 4: # UP + LEFT
+                    loc = get_new_coords(loc, ydist, NORTH)
+                    loc = get_new_coords(loc, xdist/2, WEST)
+                if direction == 5: # UP + RIGHT
+                    loc = get_new_coords(loc, ydist, NORTH)
+                    loc = get_new_coords(loc, xdist/2, EAST)
+                yield (loc[0], loc[1], 0)
         ring += 1
 
 
