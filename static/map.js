@@ -116,6 +116,10 @@ var StoreOptions = {
     default: [],
     type: StoreTypes.JSON
   },
+  remember_location: {
+    default: {lat: center_lat, lon: center_lng},
+    type: StoreTypes.JSON
+  },
   showGyms: {
     default: false,
     type: StoreTypes.Boolean
@@ -214,10 +218,7 @@ function removePokemonMarker(encounter_id) {
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {
-      lat: center_lat,
-      lng: center_lng
-    },
+    center: Store.get('remember_location'),
     zoom: 16,
     fullscreenControl: true,
     streetViewControl: false,
@@ -297,10 +298,7 @@ function initMap() {
 
 function createSearchMarker() {
   marker = new google.maps.Marker({ //need to keep reference.
-    position: {
-      lat: center_lat,
-      lng: center_lng
-    },
+    position: Store.get('remember_location'),
     map: map,
     animation: google.maps.Animation.DROP,
     draggable: true
@@ -1036,10 +1034,7 @@ function addMyLocationButton() {
   locationMarker = new google.maps.Marker({
     map: map,
     animation: google.maps.Animation.DROP,
-    position: {
-      lat: center_lat,
-      lng: center_lng
-    },
+    position: Store.get('remember_location'),
     icon: {
       path: google.maps.SymbolPath.CIRCLE,
       fillOpacity: 1,
@@ -1068,6 +1063,7 @@ function changeLocation(lat, lng) {
   changeSearchLocation(lat, lng).done(function() {
     map.setCenter(loc);
     marker.setPosition(loc);
+    Store.set('remember_location', {lat: lat, lng: lng});
   });
 }
 
