@@ -4,17 +4,17 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     sass: {
-  		dist: {
-  			files: {
-  			  'static/css/main.css' : 'static/sass/main.scss',
+      dist: {
+        files: {
+          'static/css/main.css' : 'static/sass/main.scss',
           'static/css/mobile.css': 'static/sass/mobile.scss'
-  			}
-  		}
-	  },
+        }
+      }
+    },
     jshint: {
       files: ['Gruntfile.js', 'js/*.js', '!js/vendor/**/*.js'],
       options: {
-		    reporter: require('jshint-stylish'),
+        reporter: require('jshint-stylish'),
         globals: {
           jQuery: true,
           console: true,
@@ -47,24 +47,24 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-  		options: {
-  			interval: 1000,
-  			spawn: true
-  		},
-  		src: {
-  			files: ['**/*.html'],
-  			options: { livereload: true }
-  		},
-  		js: {
-  			files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
-  			options: { livereload: true },
+      options: {
+        interval: 1000,
+        spawn: true
+      },
+      src: {
+        files: ['**/*.html'],
+        options: { livereload: true }
+      },
+      js: {
+        files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
+        options: { livereload: true },
         tasks: ['babel', 'uglify']
-  		},
-  		css: {
-  			files: '**/*.scss',
-  			options: { livereload: true },
-  			tasks: ['sass', 'cssmin']
-  		}
+      },
+      css: {
+        files: '**/*.scss',
+        options: { livereload: true },
+        tasks: ['sass', 'cssmin']
+      }
     },
     cssmin: {
       options: {
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
           'static/dist/css/mobile.min.css': 'static/css/mobile.css'
         }
       }
-  	},
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
