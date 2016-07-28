@@ -68,6 +68,11 @@ ACCOUNTS = [
 # Trash Pokemon won't be shown on the live map.
 # Their data will still be collected to the database.
 TRASH_IDS = [16, 19, 41, 96]
+
+# List of stage 2 & rare evolutions to show in the report
+STAGE2 = [
+    3, 6, 9, 12, 15, 18, 31, 34, 45, 62, 65, 68, 71, 76, 94, 139, 141, 149
+]
 ```
 
 ### Setting up database
