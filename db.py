@@ -60,8 +60,8 @@ class SightingCache(object):
 
     def clean_expired(self):
         to_remove = []
-        for key, value in self.store.iteritems():
-            if value.expire_timestamp < time.time() - 120:
+        for key, timestamp in self.store.items():
+            if timestamp < time.time() - 120:
                 to_remove.append(key)
         for key in to_remove:
             del self.store[key]
