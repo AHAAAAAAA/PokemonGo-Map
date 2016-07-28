@@ -55,7 +55,7 @@ function countMarkers() {
 				arenaCount[map_data.gyms[key]['team_id']] += 1;
 			}
 			arenaTotal++;
-			var arenaListString = "<table><th>Icon</th><th>Team Color</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>"+arenaTotal+"</td></tr>";
+			var arenaListString = "<table><th>Icon</th><th>Team Color</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>"+arenaTotal+"</td><td></td></tr>";
 			for(var i=0;i < arenaCount.length;i++) {
 				if (arenaCount[i] > 0)
 				{
@@ -112,7 +112,7 @@ function countMarkers() {
 				}
 			}
 			pokestopTotal++;
-			var pokestopListString = "<table><th>Icon</th><th>Status</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>"+pokestopTotal+"</td></tr>";
+			var pokestopListString = "<table><th>Icon</th><th>Status</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>"+pokestopTotal+"</td><td></td></tr>";
 			for(var i=0;i < pokestopCount.length;i++) {
 				if (pokestopCount[i] > 0)
 				{
