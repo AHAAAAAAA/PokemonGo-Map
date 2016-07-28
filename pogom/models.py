@@ -35,7 +35,8 @@ def init_database(app):
             user=args.db_user,
             password=args.db_pass,
             host=args.db_host,
-            max_connections=args.db_max_connections)
+            max_connections=args.db_max_connections,
+            stale_timeout=300)
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)
@@ -338,10 +339,13 @@ def parse_map(map_dict, iteration_num, step, step_location):
     bulk_upsert(ScannedLocation, scanned)
 
 
+
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
     step = 120
+
+    flaskDb.connect_db()
 
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
@@ -352,6 +356,9 @@ def bulk_upsert(cls, data):
             continue
 
         i+=step
+
+    flaskDb.close_db(None)
+
 
 def create_tables(db):
     db.connect()

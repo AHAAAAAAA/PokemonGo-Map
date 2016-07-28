@@ -6,6 +6,10 @@ import sys
 import logging
 import time
 
+# Moved here so logger is configured at load time
+logging.basicConfig(format='%(asctime)s [%(threadName)14s][%(module)14s] [%(levelname)7s] %(message)s')
+log = logging.getLogger()
+
 from threading import Thread
 from flask_cors import CORS
 
@@ -18,8 +22,6 @@ from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pok
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
-logging.basicConfig(format='%(asctime)s [%(module)14s] [%(levelname)7s] %(message)s')
-log = logging.getLogger()
 
 if __name__ == '__main__':
     args = get_args()
