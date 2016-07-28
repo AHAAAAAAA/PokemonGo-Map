@@ -991,6 +991,10 @@ function myLocationButton(map, marker) {
   locationButton.style.marginRight = '10px';
   locationButton.style.padding = '0px';
   locationButton.title = 'Your Location';
+  locationButton.id = 'location-button';
+  if (Store.get('geoLocate')) {
+    locationButton.style.display = 'none';
+  }
   locationContainer.appendChild(locationButton);
 
   var locationIcon = document.createElement('div');
@@ -1240,6 +1244,11 @@ $(function() {
   });
 
   $('#geoloc-switch').change(function() {
+    if (this.checked) {
+      $("#location-button").hide();
+    } else {
+      $("#location-button").show();
+    }
     $("#next-location").prop("disabled", this.checked);
     $("#next-location").css("background-color", this.checked ? "#e0e0e0" : "#ffffff");
     if (!navigator.geolocation)
