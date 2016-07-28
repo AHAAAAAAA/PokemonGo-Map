@@ -46,7 +46,7 @@
             <input id="next-location" type="text" name="next-location" placeholder="Change your location">
           </label>
         </div>
-        <div class="form-control switch-container">
+        <div class="form-control switch-container" style="display:{{is_fixed}}" >
           <h3>Follow location</h3>
 	  <div class="onoffswitch">
 	    <input id="geoloc-switch" type="checkbox" name="geoloc-switch" class="onoffswitch-checkbox" checked/>
@@ -57,7 +57,7 @@
 	  </div>
 	</div>
 
-	<hr width="100%">
+	<hr width="100%" style="display:{{is_fixed}}" >
 
         <p>Select markers to be visible on map.</p>
         <div class="form-control switch-container">
