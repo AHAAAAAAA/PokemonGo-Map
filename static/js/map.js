@@ -751,7 +751,9 @@ function showInBoundsMarkers(markers) {
 
     if (show && !markers[key].marker.getMap()) {
       markers[key].marker.setMap(map);
+      markers[key].marker.setAnimation(markers[key].marker.oldAnimation);
     } else if (!show && markers[key].marker.getMap()) {
+      markers[key].marker.oldAnimation = markers[key].marker.getAnimation();
       markers[key].marker.setMap(null);
     }
   });
