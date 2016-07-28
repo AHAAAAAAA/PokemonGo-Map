@@ -25,7 +25,7 @@ def get_scan_area():
     width = distance.distance(p1,p2).kilometers
     height = distance.distance(p3,p4).kilometers
     area = int(width * height)
-    return area;
+    return area
 
 def get_start_coords(worker_no):
     """Returns center of square for given worker"""
