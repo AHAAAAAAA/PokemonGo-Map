@@ -32,7 +32,7 @@ function countMarkers() {
 			for(var i=0;i < pkmnCount.length;i++) {
 				if (pkmnCount[i] != null && pkmnCount[i].Count > 0)
 				{
-					pkmnListString += "<tr><td><img src=\"/static/icons/" + pkmnCount[i].ID + ".png\" /></td><td><a href='http://www.pokemon.com/us/pokedex/" + pkmnCount[i].ID + "' target='_blank' title='View in Pokedex' style=\"color: black;\">" + pkmnCount[i].Name + "</a></td><td>" + pkmnCount[i].Count + "</td><td>"+Math.round(pkmnCount[i].Count*100/pkmnTotal*10)/10+"%</td></tr>";
+					pkmnListString += "<tr><td><img src=\"static/icons/" + pkmnCount[i].ID + ".png\" /></td><td><a href='http://www.pokemon.com/us/pokedex/" + pkmnCount[i].ID + "' target='_blank' title='View in Pokedex' style=\"color: black;\">" + pkmnCount[i].Name + "</a></td><td>" + pkmnCount[i].Count + "</td><td>"+Math.round(pkmnCount[i].Count*100/pkmnTotal*10)/10+"%</td></tr>";
 				}
 			}
 			pkmnListString += "</tbody></table>";
@@ -61,19 +61,19 @@ function countMarkers() {
 				{
 					if(i == 1)
 					{
-						arenaListString += "<tr><td><img src=\"/static/forts/Mystic.png\" /></td><td>" + "Blue" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
+						arenaListString += "<tr><td><img src=\"static/forts/Mystic.png\" /></td><td>" + "Blue" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 					}
 					else if(i == 2)
 					{
-						arenaListString += "<tr><td><img src=\"/static/forts/Valor.png\" /></td><td>" + "Red" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
+						arenaListString += "<tr><td><img src=\"static/forts/Valor.png\" /></td><td>" + "Red" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 					}
 					else if(i == 3)
 					{
-						arenaListString += "<tr><td><img src=\"/static/forts/Instinct.png\" /></td><td>" + "Yellow" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
+						arenaListString += "<tr><td><img src=\"static/forts/Instinct.png\" /></td><td>" + "Yellow" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 					}
 					else
 					{
-						arenaListString += "<tr><td><img src=\"/static/forts/Uncontested.png\" /></td><td>" + "Clear" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
+						arenaListString += "<tr><td><img src=\"static/forts/Uncontested.png\" /></td><td>" + "Clear" + "</td><td>" + arenaCount[i] + "</td><td>"+Math.round(arenaCount[i]*100/arenaTotal*10)/10+"%</td></tr>";
 					}
 				}
 			}
@@ -118,11 +118,11 @@ function countMarkers() {
 				{
 					if(i == 0)
 					{
-						pokestopListString += "<tr><td><img src=\"/static/forts/Pstop.png\" /></td><td>" + "Not Lured" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*10)/10+"%</td></tr>";
+						pokestopListString += "<tr><td><img src=\"static/forts/Pstop.png\" /></td><td>" + "Not Lured" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*10)/10+"%</td></tr>";
 					}
 					else if(i == 1)
 					{
-						pokestopListString += "<tr><td><img src=\"/static/forts/PstopLured.png\" /></td><td>" + "Lured" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*10)/10+"%</td></tr>";
+						pokestopListString += "<tr><td><img src=\"static/forts/PstopLured.png\" /></td><td>" + "Lured" + "</td><td>" + pokestopCount[i] + "</td><td>"+Math.round(pokestopCount[i]*100/pokestopTotal*10)/10+"%</td></tr>";
 					}
 				}
 			}
