@@ -11,3 +11,5 @@ venv/
 core
 
 Tools/genhex.py
+
+config/config.ini.example
