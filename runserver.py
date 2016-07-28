@@ -48,13 +48,15 @@ if __name__ == '__main__':
     db = init_database()
     create_tables(db)
 
-    position = get_pos_by_name(args.location)
-    if not any(position):
+    locations = args.location.split('|')
+    positions = map(lambda location: get_pos_by_name(location), locations)
+    if not positions:
         log.error('Could not get a position by name, aborting.')
         sys.exit()
 
-    log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
-             format(*position))
+    for position in positions:
+        log.info(position)
+        log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.format(*position))
     if args.no_pokemon:
         log.info('Parsing of Pokemon disabled.')
     if args.no_pokestops:
@@ -62,8 +64,7 @@ if __name__ == '__main__':
     if args.no_gyms:
         log.info('Parsing of Gyms disabled.')
 
-    config['ORIGINAL_LATITUDE'] = position[0]
-    config['ORIGINAL_LONGITUDE'] = position[1]
+    config['SEARCH_LOCATIONS'] = [{'lat': position[0], 'lon': position[1], 'name': locations[i]} for i, position in enumerate(positions)]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 

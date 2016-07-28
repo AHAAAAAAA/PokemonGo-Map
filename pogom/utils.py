@@ -136,8 +136,8 @@ def insert_mock_data():
     from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
-    latitude, longitude = float(config['ORIGINAL_LATITUDE']),\
-        float(config['ORIGINAL_LONGITUDE'])
+    latitude, longitude = float(config['SEARCH_LOCATIONS'][0]['lat']),\
+        float(config['SEARCH_LOCATIONS'][0]['lon'])
 
     locations = [l for l in generate_location_steps((latitude, longitude),
                  num_pokemon)]
@@ -190,6 +190,9 @@ def get_pokemon_name(pokemon_id):
     return get_pokemon_name.names[str(pokemon_id)]
 
 
+def get_location_key(lat, lon):
+    return str(lat) + ',' + str(lon)
+    
 def send_to_webhook(message_type, message):
     args = get_args()
 

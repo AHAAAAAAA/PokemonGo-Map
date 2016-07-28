@@ -3,13 +3,15 @@
 
 import calendar
 import logging
+import json
 
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
-from pogom.utils import get_args
+from pogom.utils import get_args, get_location_key
+from pogom.search import stop_search
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
@@ -26,7 +28,8 @@ class Pogom(Flask):
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
-        self.route("/next_loc", methods=['POST'])(self.next_loc)
+        self.route("/update_loc", methods=['POST'])(self.update_loc)
+        self.route("/remove_loc", methods=['POST'])(self.remove_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
 
     def fullmap(self):
@@ -36,8 +39,7 @@ class Pogom(Flask):
             display = "none"
 
         return render_template('map.html',
-                               lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'],
+                               searchLocations=json.dumps(config['SEARCH_LOCATIONS']),
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
                                is_fixed=display
@@ -70,13 +72,11 @@ class Pogom(Flask):
         return jsonify(d)
 
     def loc(self):
-        d = {}
-        d['lat'] = config['ORIGINAL_LATITUDE']
-        d['lng'] = config['ORIGINAL_LONGITUDE']
+        d = config['SEARCH_LOCATIONS'][0]
 
         return jsonify(d)
 
-    def next_loc(self):
+    def update_loc(self):
         args = get_args()
         if args.fixed_location:
             return 'Location searching is turned off', 403
@@ -84,17 +84,59 @@ class Pogom(Flask):
         if request.args:
             lat = request.args.get('lat', type=float)
             lon = request.args.get('lon', type=float)
+            last_lat = request.args.get('last_lat', type=float)
+            last_lon = request.args.get('last_lon', type=float)
         # from post requests
+        if request.form:
+            lat = request.form.get('lat', type=float)
+            lon = request.form.get('lon', type=float)
+            last_lat = request.form.get('last_lat', type=float)
+            last_lon = request.form.get('last_lon', type=float)
+
+        if not (lat and lon):
+            log.warning('Invalid next location: %s,%s', lat, lon)
+            return 'bad parameters', 400
+        else:
+
+            if not (last_lat and last_lon):
+                config['SEARCH_LOCATIONS'].insert(0, {'lat': lat, 'lon': lon})
+                log.info('Adding location: %s,%s', lat, lon)
+                return 'ok'
+            else:
+                for search_location in config['SEARCH_LOCATIONS']:
+                    if (get_location_key(search_location['lat'], search_location['lon']) == get_location_key(last_lat, last_lon)):
+                        search_location['lat'] = lat
+                        search_location['lon'] = lon
+                        stop_search(last_lat, last_lon)
+                        log.info('Updating location: %s,%s to %s,%s', last_lat, last_lon, lat, lon)
+                return 'ok'
+
+    def remove_loc(self):
+        args = get_args()
+        if args.fixed_location:
+            return 'Location searching is turned off', 403
+
+        if len(config['SEARCH_LOCATIONS']) <= 1:
+            return 'Can''t remove last location', 400
+
+        #part of query string
+        if request.args:
+            lat = request.args.get('lat', type=float)
+            lon = request.args.get('lon', type=float)
+        #from post requests
         if request.form:
             lat = request.form.get('lat', type=float)
             lon = request.form.get('lon', type=float)
 
         if not (lat and lon):
-            log.warning('Invalid next location: %s,%s' % (lat, lon))
+            log.warning('Invalid next location: %s,%s', lat, lon)
             return 'bad parameters', 400
         else:
-            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            log.info('Changing next location: %s,%s' % (lat, lon))
+            for search_location in config['SEARCH_LOCATIONS'][:]:
+                if (get_location_key(search_location['lat'], search_location['lon']) == get_location_key(lat, lon)):
+                    config['SEARCH_LOCATIONS'].remove(search_location)
+                    stop_search(lat, lon)
+                    log.info('Removing location: %s,%s', lat, lon)
             return 'ok'
 
     def list_pokemon(self):
@@ -103,8 +145,8 @@ class Pogom(Flask):
         pokemon_list = []
 
         # Allow client to specify location
-        lat = request.args.get('lat', config['ORIGINAL_LATITUDE'], type=float)
-        lon = request.args.get('lon', config['ORIGINAL_LONGITUDE'], type=float)
+        lat = request.args.get('lat', config['SEARCH_LOCATIONS'][0]['lat'], type=float)
+        lon = request.args.get('lon', config['SEARCH_LOCATIONS'][0]['lon'], type=float)
         origin_point = LatLng.from_degrees(lat, lon)
 
         for pokemon in Pokemon.get_active(None, None, None, None):

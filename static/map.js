@@ -15,7 +15,7 @@ var notifiedPokemon = [];
 var map;
 var rawDataIsLoading = false;
 var locationMarker;
-var marker;
+var searchMarkers;
 
 var noLabelsStyle=[{featureType:"poi",elementType:"labels",stylers:[{visibility:"off"}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]}];
 var light2Style=[{"elementType":"geometry","stylers":[{"hue":"#ff4400"},{"saturation":-68},{"lightness":-4},{"gamma":0.72}]},{"featureType":"road","elementType":"labels.icon"},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"hue":"#0077ff"},{"gamma":3.1}]},{"featureType":"water","stylers":[{"hue":"#00ccff"},{"gamma":0.44},{"saturation":-33}]},{"featureType":"poi.park","stylers":[{"hue":"#44ff00"},{"saturation":-23}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"hue":"#007fff"},{"gamma":0.77},{"saturation":65},{"lightness":99}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"gamma":0.11},{"weight":5.6},{"saturation":99},{"hue":"#0091ff"},{"lightness":-86}]},{"featureType":"transit.line","elementType":"geometry","stylers":[{"lightness":-48},{"hue":"#ff5e00"},{"gamma":1.2},{"saturation":-23}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"saturation":-64},{"hue":"#ff9100"},{"lightness":16},{"gamma":0.47},{"weight":2.7}]}];
@@ -215,8 +215,8 @@ function removePokemonMarker(encounter_id) {
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {
-      lat: center_lat,
-      lng: center_lng
+      lat: originalLocations[0].lat, 
+      lng: originalLocations[0].lon
     },
     zoom: 16,
     fullscreenControl: true,
@@ -281,7 +281,8 @@ function initMap() {
   map.setMapTypeId(Store.get('map_style'));
   google.maps.event.addListener(map, 'idle', updateMap);
 
-  var marker = createSearchMarker();
+  // transform search locations to client side
+  searchMarkers = $.map(originalLocations, function (loc) { return createSearchMarker(loc.lat, loc.lon, loc.name); });
 
   addMyLocationButton();
   initSidebar();
@@ -295,15 +296,13 @@ function initMap() {
   });
 }
 
-function createSearchMarker() {
-  marker = new google.maps.Marker({ //need to keep reference.
-    position: {
-      lat: center_lat,
-      lng: center_lng
-    },
+function createSearchMarker(lat, lng, name) {
+  var marker = new google.maps.Marker({ //need to keep reference.
+    position: { lat: lat, lng: lng },
     map: map,
     animation: google.maps.Animation.DROP,
-    draggable: true
+    draggable: true,
+    title: name || (lat +', ' + lng)
   });
 
   var oldLocation = null;
@@ -313,8 +312,9 @@ function createSearchMarker() {
 
   google.maps.event.addListener(marker, 'dragend', function() {
     var newLocation = marker.getPosition();
-    changeSearchLocation(newLocation.lat(), newLocation.lng())
+    changeSearchLocation(newLocation.lat(), newLocation.lng(), oldLocation.lat(), oldLocation.lng())
       .done(function() {
+        buildSearchList();
         oldLocation = null;
       })
       .fail(function() {
@@ -337,7 +337,8 @@ function initSidebar() {
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
 
-  var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
+  var searchInput = document.getElementById('next-location');
+  var searchBox = new google.maps.places.SearchBox(searchInput);
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
 
   searchBox.addListener('places_changed', function() {
@@ -348,7 +349,8 @@ function initSidebar() {
     }
 
     var loc = places[0].geometry.location;
-    changeLocation(loc.lat(), loc.lng());
+    addLocation(loc.lat(), loc.lng(), places[0].name);
+    searchInput.value = '';
   });
 
   var icons = $('#pokemon-icons');
@@ -357,6 +359,8 @@ function initSidebar() {
   });
   icons.val((pokemon_sprites[Store.get('pokemonIcons')]) ? Store.get('pokemonIcons') : 'highres');
   $('#pokemon-icon-size').val(Store.get('iconSizeModifier'));
+
+  buildSearchList();
 }
 
 function pad(number) {
@@ -1036,10 +1040,7 @@ function addMyLocationButton() {
   locationMarker = new google.maps.Marker({
     map: map,
     animation: google.maps.Animation.DROP,
-    position: {
-      lat: center_lat,
-      lng: center_lng
-    },
+    position: searchMarkers[0].getPosition(),
     icon: {
       path: google.maps.SymbolPath.CIRCLE,
       fillOpacity: 1,
@@ -1063,16 +1064,35 @@ function addMyLocationButton() {
   });
 }
 
-function changeLocation(lat, lng) {
+function addLocation(lat, lng, name) {
   var loc = new google.maps.LatLng(lat, lng);
   changeSearchLocation(lat, lng).done(function() {
     map.setCenter(loc);
-    marker.setPosition(loc);
+    searchMarkers.push(createSearchMarker(lat, lng, name));
+    buildSearchList();
   });
 }
 
-function changeSearchLocation(lat, lng) {
-  return $.post("next_loc?lat=" + lat + "&lon=" + lng, {});
+function changeSearchLocation(lat, lng, last_lat, last_lng) {
+  return $.post("update_loc?last_lat=" + (last_lat || '') + "&last_lon=" + (last_lng || '') + "&lat=" + lat + "&lon=" + lng, {});
+}
+
+function removeLocation(lat, lng) {
+  removeSearchLocation(lat, lng).done(function() {
+    $.each($.grep(searchMarkers, function (searchMarker) { return searchMarker.getPosition().lat() == lat && searchMarker.getPosition().lng() == lng; }),
+      function (i, searchMarker) {
+        searchMarker.setMap(null);
+        var i = searchMarkers.indexOf(searchMarker);
+        if (i > -1) {
+          searchMarkers.splice(i, 1);
+        }
+      });
+    buildSearchList();
+  });
+}
+
+function removeSearchLocation(lat, lng) {
+  return $.post("remove_loc?lat=" + lat + "&lon=" + lng, {});
 }
 
 function centerMap(lat, lng, zoom) {
@@ -1083,6 +1103,14 @@ function centerMap(lat, lng, zoom) {
   if (zoom) {
     map.setZoom(zoom)
   }
+}
+
+function buildSearchList() {
+  var locationsList = $('#locationsList');
+  locationsList.html($.map(searchMarkers, function (searchMarker) { 
+    var position = searchMarker.getPosition();
+    return "<li><p>" + (searchMarker.getTitle() || (position.lat() +', ' + position.lng())) + (searchMarkers.length > 1 ? " (<a href='javascript: removeLocation(" + position.lat() + ", " + position.lng() + ")'><small>delete<small></a>)" : "") + "</p></li>";
+  }));
 }
 
 //
@@ -1170,11 +1198,11 @@ $(function() {
         var lon = position.coords.longitude;
 
         //the search function makes any small movements cause a loop. Need to increase resolution
-        if (getPointDistance(marker.getPosition(), (new google.maps.LatLng(lat, lon))) > 40) {
+        if (getPointDistance(searchMarkers[0].getPosition(), (new google.maps.LatLng(lat, lon))) > 40) {
           $.post(baseURL + "/next_loc?lat=" + lat + "&lon=" + lon).done(function() {
             var center = new google.maps.LatLng(lat, lon);
             map.panTo(center);
-            marker.setPosition(center);
+            searchMarkers[0].setPosition(center);
           });
         }
       });
