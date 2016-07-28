@@ -43,9 +43,16 @@
         </div>
     </div>
     <h1 id="seen_header"></h1>
-    <h3 id="seen_total">Total: {{total_seen}}</h3>
+    <h3 id="seen_total"></h3>
     <div class="container" id="seen_container">
     </div>
     <script src="static/js/statistics.js"></script>
+    <div id="location_details" class="overlay">
+        <div class="close" onclick="closeOverlay();"><img src="static/images/close.png" alt="Close" /></div>
+        <div class="content">
+            <h3 id="location_header"></h3>
+            <div id="location_content"></div>
+        </div>
+    </div>
 </body>
 </html>

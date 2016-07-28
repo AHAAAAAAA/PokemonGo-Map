@@ -105,6 +105,9 @@ class Pogom(Flask):
                     d['seen'] = Pokemon.get_seen(duration["value"])
                     break
 
+        if request.args.get('appearances', 'false') == 'true':
+            d['appearances'] = Pokemon.get_appearances(request.args.get('pokemonid'), request.args.get('last', type=float))
+
         return jsonify(d)
 
     def loc(self):

@@ -144,9 +144,15 @@ class Pokemon(BaseModel):
                      .dicts())
         else:
             query = (Pokemon
-                     .select(Pokemon.pokemon_id, fn.COUNT(Pokemon.pokemon_id).alias('count'))
+                     .select(Pokemon.pokemon_id,
+                             fn.COUNT(Pokemon.pokemon_id).alias('count'),
+                             Pokemon.disappear_time,
+                             Pokemon.longitude,
+                             Pokemon.latitude
+                             )
                      .where(Pokemon.disappear_time > datetime.utcnow() - timediff)
                      .group_by(Pokemon.pokemon_id)
+                     .having(Pokemon.disappear_time == fn.MAX(Pokemon.disappear_time))
                      .dicts())
         pokemons = []
         for p in query:
@@ -154,6 +160,23 @@ class Pokemon(BaseModel):
             pokemons.append(p)
 
         return pokemons
+
+    @classmethod
+    def get_appearances(cls, pokemon_id, last_appearance):
+        query = (Pokemon
+                 .select(Pokemon.disappear_time,
+                         Pokemon.latitude,
+                         Pokemon.longitude)
+                 .where((Pokemon.pokemon_id == pokemon_id) &
+                        (Pokemon.disappear_time > datetime.utcfromtimestamp(last_appearance/1000.0))
+                        )
+                 .order_by(Pokemon.disappear_time.asc())
+                 .dicts()
+                 )
+        appearances = []
+        for a in query:
+            appearances.append(a)
+        return appearances
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True, max_length=50)
