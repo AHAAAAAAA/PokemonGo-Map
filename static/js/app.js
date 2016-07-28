@@ -93,9 +93,10 @@
 
 	// Event: Hide on ESC.
 	window.addEventListener('keydown', function(event) {
-		if (event.keyCode == 27)
+		if (event.keyCode == 27) {
 			$nav.classList.remove('visible');
 			$stats.classList.remove('visible');
+                }
 	});
 
 	// Event: Hide nav on click.
