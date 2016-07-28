@@ -42,7 +42,10 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n',
-        sourceMap: true
+        sourceMap: true,
+        compress: {
+          unused: false
+        }
       },
       build: {
         files: {
