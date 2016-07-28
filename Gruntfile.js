@@ -6,10 +6,11 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         files: {
-          'static/dist/css/app.css': [
+          'static/dist/css/app.built.css': [
             'static/sass/main.scss',
             'static/sass/pokemon-sprite.scss'
-          ]
+          ],
+          'static/dist/css/mobile.built.css': 'static/sass/mobile.scss'
         }
       }
     },
@@ -32,8 +33,9 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'static/dist/js/app.js': 'static/js/app.js',
-          'static/dist/js/map.js': 'static/map.js' // Todo: move map.js into the js folder
+          'static/dist/js/app.built.js': 'static/js/app.js',
+          'static/dist/js/map.built.js': 'static/js/map.js',
+          'static/dist/js/mobile.built.js': 'static/js/mobile.js'
         }
       }
     },
@@ -44,8 +46,9 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/js/app.min.js': 'static/dist/js/app.js',
-          'static/dist/js/map.min.js': 'static/dist/js/map.js'
+          'static/dist/js/app.min.js': 'static/dist/js/app.built.js',
+          'static/dist/js/map.min.js': 'static/dist/js/map.built.js',
+          'static/dist/js/mobile.min.js': 'static/dist/js/mobile.built.js'
         }
       }
     },
@@ -61,12 +64,12 @@ module.exports = function(grunt) {
       js: {
         files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
         options: { livereload: true },
-        tasks: ['babel', 'uglify']
+        tasks: ['js-build']
       },
       css: {
         files: '**/*.scss',
         options: { livereload: true },
-        tasks: ['sass', 'cssmin']
+        tasks: ['css-build']
       }
     },
     cssmin: {
@@ -75,7 +78,8 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/css/app.min.css': 'static/dist/css/app.css'
+          'static/dist/css/app.min.css': 'static/dist/css/app.built.css',
+          'static/dist/css/mobile.min.css': 'static/dist/css/mobile.built.css'
         }
       }
     },
@@ -93,7 +97,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('build', ['jshint', 'sass', 'cssmin', 'babel', 'uglify']);
+  grunt.registerTask('js-build', ['jshint', 'babel', 'uglify']);
+  grunt.registerTask('css-build', ['sass', 'cssmin']);
+
+  grunt.registerTask('build', ['js-build', 'css-build']);
   grunt.registerTask('default', ['build', 'watch']);
 
 };
