@@ -98,7 +98,8 @@ def generate_location_steps(initial_location, num_steps):
                 if direction == 5:  # Right Up
                     lat_location += lat_gap_degrees
                     lng_location += lng_gap_degrees
-                yield (loc[0], loc[1], 0)
+                    
+                yield (lat_location, lng_location, 0)
         ring += 1
 
 
