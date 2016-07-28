@@ -52,6 +52,11 @@ module.exports = function(grunt) {
         }
       }
     },
+    clean: {
+      build: {
+        src: 'static/dist'
+      }
+    },
     watch: {
       options: {
         interval: 1000,
@@ -97,10 +102,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('js-build', ['jshint', 'babel', 'uglify']);
+  grunt.registerTask('js-build', ['babel', 'uglify']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
 
-  grunt.registerTask('build', ['js-build', 'css-build']);
+  grunt.registerTask('build', ['jshint', 'clean', 'js-build', 'css-build']);
   grunt.registerTask('default', ['build', 'watch']);
 
 };
