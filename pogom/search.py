@@ -55,6 +55,8 @@ def generate_location_steps(initial_location, num_steps):
  
     # Calculate the length of a degree of latitude and longitude in meters
     lat = math.radians(initial_location[0])
+    # All those numbers are not random. They are often used for calculations like this one and you can understand more on them here:
+    # https://gis.stackexchange.com/questions/75528/length-of-a-degree-where-do-the-terms-in-this-formula-come-from#75535
     meters_per_degree_lat = 111132.92 + (-559.82 * math.cos(2 * lat)) + (1.175 * math.cos(4 * lat)) + (-0.0023 * math.cos(6 * lat))
     meters_per_degree_lng  = (111412.84 * math.cos(lat)) + (-93.5 * math.cos(3 * lat)) + (0.118 * math.cos(5 * lat))
 
