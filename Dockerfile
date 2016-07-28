@@ -1,7 +1,7 @@
 # Basic docker image for PokemonGo-Map
 # Usage:
 #   docker build -t pokemongo-map .
-#   docker run -d -P pokemongo-map -a ptc -u YOURUSERNAME -p YOURPASSWORD -l "Seattle, WA" -st 10 --google-maps-key CHECKTHEWIKI
+#   docker run -d -P pokemongo-map -a ptc -u YOURUSERNAME -p YOURPASSWORD -l "Seattle, WA" -st 10 --gmaps-key CHECKTHEWIKI
 
 FROM python:2.7-alpine
 
