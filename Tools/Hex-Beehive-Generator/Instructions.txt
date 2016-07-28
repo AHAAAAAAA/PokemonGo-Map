@@ -1,3 +1,5 @@
+See the wiki for details on the Beehive method for searching
+
 https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/How-to-use-Hex-Beehive-Generator
 
 Location_generator.py creates a list of locations in a hexagonal grid pattern around a central point.
