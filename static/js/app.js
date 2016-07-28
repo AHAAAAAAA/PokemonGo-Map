@@ -38,13 +38,24 @@
 	var $list = document.querySelector('#list'),
 		$listToggle = document.querySelector('a[href="#list"]'),
 		$listClose;
-
+		
+	// Stats.
+	var	$stats = document.querySelector('#stats'),
+		$statsToggle = document.querySelector('a[href="#stats"]'),
+		$statsClose;
+	
 	// Event: Prevent clicks/taps inside the nav from bubbling.
 	addEventsListener($nav, 'click touchend', function(event) {
 		event.stopPropagation();
 	});
 	
 	addEventsListener($list, 'click touchend', function(event){
+		event.stopPropagation();	
+	});
+		
+	// Event: Prevent clicks/taps inside the stats from bubbling.
+	addEventsListener($stats, 'click touchend', function(event) {
+
 		event.stopPropagation();
 	});
 
@@ -54,8 +65,10 @@
 		// this function executes too, so if the target
 		// is the toggle button, exit this function
 		if (event.target.matches('a[href="#nav"]')) { return; }
+		if (event.target.matches('a[href="#stats]')) { return; }
 		$nav.classList.remove('visible');
 		$list.classList.remove('visible');
+		$stats.classList.remove('visible');
 	});
 
 	// Toggle.
@@ -74,10 +87,17 @@
 		$list.classList.toggle('visible');
 		$nav.classList.remove('visible');
 	});
+	
+	// Event: Toggle stats on click.
+	$statsToggle.addEventListener('click', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		$stats.classList.toggle('visible');
+	});
 
 	// Close.
 
-	// Create element.
+	// Create elements.
 	$navClose = document.createElement('a');
 	$navClose.href = '#';
 	$navClose.className = 'close';
@@ -89,12 +109,19 @@
 	$listClose.className = 'close';
 	$listClose.tabIndex = 0;
 	$list.appendChild($listClose);
+	
+	$statsClose = document.createElement('a');
+	$statsClose.href = '#';
+	$statsClose.className = 'close';
+	$statsClose.tabIndex = 0;
+	$stats.appendChild($statsClose);
 
 	// Event: Hide on ESC.
 	window.addEventListener('keydown', function(event) {
 		if (event.keyCode == 27) {
 			$nav.classList.remove('visible');
 			$list.classList.remove('visible');
+			$stats.classList.remove('visible');
 		}
 	});
 
@@ -103,6 +130,13 @@
 		event.preventDefault();
 		event.stopPropagation();
 		$nav.classList.remove('visible');
+	});
+	
+	// Event: Hide stats on click.
+	$statsClose.addEventListener('click', function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		$stats.classList.remove('visible');
 	});
 
 	$listClose.addEventListener('click', function(event){
