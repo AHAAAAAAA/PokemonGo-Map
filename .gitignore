@@ -9,3 +9,5 @@ static/dist/
 node_modules/
 venv/
 core
+
+Tools/genhex.py
