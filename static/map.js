@@ -140,6 +140,10 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
+  showStats: {
+	default: true,
+	type: StoreTypes.Boolean
+  },
   playSound: {
     default: false,
     type: StoreTypes.Boolean
@@ -336,7 +340,11 @@ function initSidebar() {
   $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
-
+  $('#stats-switch').prop('checked', Store.get('showStats'));
+  if(Store.get('showStats'))
+  { 
+	document.getElementById("statsToggle").innerHTML = "Stats";
+  }
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
 
@@ -903,6 +911,10 @@ function updateMap() {
     showInBoundsMarkers(map_data.pokestops);
     showInBoundsMarkers(map_data.scanned);
     clearStaleMarkers();
+	if(Store.get('showStats'))
+	{
+	  countMarkers();
+	}
   });
 }
 
@@ -1202,6 +1214,26 @@ $(function() {
   $('#gyms-switch').change(buildSwitchChangeListener(map_data, ["gyms"], "showGyms"));
   $('#pokemon-switch').change(buildSwitchChangeListener(map_data, ["pokemons", "lure_pokemons"], "showPokemon"));
   $('#scanned-switch').change(buildSwitchChangeListener(map_data, ["scanned"], "showScanned"));
+  $('#stats-switch').change(statsSwitchToggled());
+
+  function statsSwitchToggled() {
+    return function () {
+      Store.set('showStats', this.checked);
+	  if (this.checked) {
+		countMarkers();
+		document.getElementById("statsToggle").innerHTML = "Stats";
+	  } else {
+		document.getElementById("pokemonList").innerHTML = "";
+		document.getElementById("arenaList").innerHTML = "";
+		document.getElementById("pokestopList").innerHTML = "";
+		document.getElementById("stats-pkmn-label").innerHTML = "";
+		document.getElementById("stats-gym-label").innerHTML = "";
+		document.getElementById("stats-pkstop-label").innerHTML = "";
+		document.getElementById("statsToggle").innerHTML = "";
+		document.getElementById("stats").classList.remove('visible');
+	  }
+	}
+  }
 
   $('#pokestops-switch').change(function() {
     var options = {
