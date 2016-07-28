@@ -9,6 +9,8 @@ var $selectNotify;
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
 var i8ln_dictionary = {};
+var language_lookups = 0;
+var language_lookup_threshold = 3;
 
 var excludedPokemon = [];
 var notifiedPokemon = [];
@@ -1111,7 +1113,7 @@ function centerMap(lat, lng, zoom) {
 }
 
 function i8ln(word) {
-  if ($.isEmptyObject(i8ln_dictionary) && language != "en") {
+  if ($.isEmptyObject(i8ln_dictionary) && language != "en" && language_lookups < language_lookup_threshold) {
     $.ajax({
       url: "static/locales/" + language + ".json",
       dataType: 'json',
@@ -1120,8 +1122,8 @@ function i8ln(word) {
         i8ln_dictionary = data;
       },
       error: function(jqXHR, status, error) {
-        console.log('Error loading i8ln dictionary: ' + status);
-        console.log('Exception: ' + error);
+        console.log('Error loading i8ln dictionary: ' + error);
+        language_lookups++;
       }
     });
   }

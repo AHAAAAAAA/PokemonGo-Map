@@ -188,8 +188,12 @@ def i8ln(word):
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
             '{}.json'.format(config['LOCALE']))
-        with open(file_path, 'r') as f:
-            i8ln.dictionary = json.loads(f.read())
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as f:
+                i8ln.dictionary = json.loads(f.read())
+        else:
+            log.warning("Skipping translations - Unable to find locale file: %s", file_path)
+            return word
     if word in i8ln.dictionary:
         log.debug("Translation = %s", i8ln.dictionary[word])
         return i8ln.dictionary[word]
