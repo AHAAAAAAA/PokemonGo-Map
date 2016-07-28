@@ -46,13 +46,6 @@ if __name__ == '__main__':
         logging.getLogger("pgoapi").setLevel(logging.DEBUG)
         logging.getLogger("rpc_api").setLevel(logging.DEBUG)
 
-    db = init_database()
-    if args.clear_db:
-        if args.db_type == 'mysql':
-            drop_tables(db)
-        elif os.path.isfile(args.db):
-            os.remove(args.db)
-    create_tables(db)
 
     position = get_pos_by_name(args.location)
     if not any(position):
@@ -73,6 +66,15 @@ if __name__ == '__main__':
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
+    app = Pogom(__name__)
+    db = init_database(app)
+    if args.clear_db:
+        if args.db_type == 'mysql':
+            drop_tables(db)
+        elif os.path.isfile(args.db):
+            os.remove(args.db)
+    create_tables(db)
+
     if not args.only_server:
         # Gather the pokemons!
         if not args.mock:
@@ -87,8 +89,6 @@ if __name__ == '__main__':
         search_thread.daemon = True
         search_thread.name = 'search_thread'
         search_thread.start()
-
-    app = Pogom(__name__)
 
     if args.cors:
         CORS(app);
