@@ -58,12 +58,12 @@ module.exports = function(grunt) {
       js: {
         files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
         options: { livereload: true },
-        tasks: ['babel', 'uglify']
+        tasks: ['js-build']
       },
       css: {
         files: '**/*.scss',
         options: { livereload: true },
-        tasks: ['sass', 'cssmin']
+        tasks: ['css-build']
       }
     },
     cssmin: {
@@ -94,7 +94,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('build', ['jshint', 'sass', 'cssmin', 'uglify']);
+  grunt.registerTask('js-build', ['jshint', 'babel', 'uglify']);
+  grunt.registerTask('css-build', ['sass', 'cssmin']);
+
+  grunt.registerTask('build', ['js-build', 'css-build']);
   grunt.registerTask('default', ['build', 'watch']);
 
 };
