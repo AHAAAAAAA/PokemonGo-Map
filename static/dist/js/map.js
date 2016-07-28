@@ -470,13 +470,18 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
 }
 
 function setupGymMarker(item) {
+  var gymIcon = {
+	url: "static/forts/" + gym_types[item.team_id] + ".png",
+	scaledSize: new google.maps.Size(40, 40)
+  };
+  
   var marker = new google.maps.Marker({
     position: {
       lat: item.latitude,
       lng: item.longitude
     },
     map: map,
-    icon: 'static/forts/' + gym_types[item.team_id] + '.png'
+    icon: gymIcon
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
