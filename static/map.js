@@ -393,7 +393,7 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
       <a href='javascript:excludePokemon(${id})'>Exclude</a>&nbsp;&nbsp;
       <a href='javascript:notifyAboutPokemon(${id})'>Notify</a>&nbsp;&nbsp;
       <a href='javascript:removePokemonMarker("${encounter_id}")'>Remove</a>&nbsp;&nbsp;
-      <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}' target='_blank' title='View in Maps'>Get directions</a>
+      <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}?hl=en' target='_blank' title='View in Maps'>Get directions</a>
     </div>`;
   return contentstring;
 }
@@ -413,7 +413,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
             Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
           </div>
           <div>
-            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}' target='_blank' title='View in Maps'>Get directions</a>
+            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}?hl=en' target='_blank' title='View in Maps'>Get directions</a>
           </div>
         </center>
       </div>`;
@@ -440,7 +440,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
             Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
           </div>
           <div>
-            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}' target='_blank' title='View in Maps'>Get directions</a>
+            <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}?hl=en' target='_blank' title='View in Maps'>Get directions</a>
           </div>
         </center>
       </div>`;
@@ -481,7 +481,7 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
         Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
       </div>
       <div>
-        <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}' target='_blank' title='View in Maps'>Get directions</a>
+        <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}?hl=en' target='_blank' title='View in Maps'>Get directions</a>
       </div>`;
   } else {
     str = `
@@ -492,7 +492,7 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
         Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
       </div>
       <div>
-        <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}' target='_blank' title='View in Maps'>Get directions</a>
+        <a href='https://www.google.com/maps/dir/Current+Location/${latitude},${longitude}?hl=en' target='_blank' title='View in Maps'>Get directions</a>
       </div>`;
   }
 
