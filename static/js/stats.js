@@ -28,7 +28,7 @@ function countMarkers() {
 		});
 		pkmnCount.sort(sort_by('Name', false));
 		$.each(map_data.pokemons, function(key, value) {
-			var pkmnListString = "<table><thead><tr><th>Icon</th><th>Name</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td></td><td>Total</td><td>"+pkmnTotal+"</td></tr>";
+			var pkmnListString = "<table><thead><tr><th>Icon</th><th>Name</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td></td><td>Total</td><td>"+pkmnTotal+"</td><td></td></tr>";
 			for(var i=0;i < pkmnCount.length;i++) {
 				if (pkmnCount[i] != null && pkmnCount[i].Count > 0)
 				{
