@@ -32,6 +32,9 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
         data: pokeList
     });
 
+	
+	$selectExclude.val(excludedPokemon).trigger("change");
+	$selectNotify.val(notifiedPokemon).trigger("change");
     // recall saved lists
     if (localStorage['remember_select_exclude']) {
         $selectExclude.val(JSON.parse(localStorage.remember_select_exclude)).trigger("change");
@@ -41,9 +44,10 @@ $.getJSON("static/locales/pokemon." + document.documentElement.lang + ".json").d
     }
 });
 
-var excludedPokemon = [];
+//var excludedPokemon = [16, 19, 23, 27, 41, 46, 56, 58];
+//var notifiedPokemon = [1, 2, 3, 4, 5, 6, 7, 8, 9, 25, 26, 131, 143];
 var notifiedPokemon = [];
-
+var excludedPokemon = [];
 $selectExclude.on("change", function (e) {
     excludedPokemon = $selectExclude.val().map(Number);
     clearStaleMarkers();
@@ -112,11 +116,46 @@ function initMap() {
             lng: center_lng
         },
         map: map,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
+		draggable:true
     });
-
+	
+	google.maps.event.addListener(marker, 'dragend', function(){ 
+	 map.setOptions({ draggable: true }); // mapObj is the object of google map
+	geocodePosition(marker.getPosition()); 
+	});
+	
+	google.maps.event.addListener(marker, 'dragstart', function(){
+		map.setOptions({ draggable: false }); // mapObj is the object of google map
+	});
+ 
     initSidebar();
 };
+
+function geocodePosition(pos)
+{
+   geocoder = new google.maps.Geocoder();
+   geocoder.geocode
+    ({
+        latLng: pos
+    },
+        function(results, status)
+        {
+            if (status == google.maps.GeocoderStatus.OK)
+            {
+                //alert(pos.lat() + ' , ' + pos.lng());       
+				$.post("next_loc?lat=" + pos.lat() + "&lon=" + pos.lng(), {}).done(function (data) {
+					map.setCenter({ lat: pos.lat(), lng: pos.lng()});
+					marker.setPosition( { lat: pos.lat(), lng: pos.lng()}	);
+				});
+            }
+            else
+            {
+                alert('Cannot determine address at this location.'+status);
+            }
+        }
+    );
+}
 
 function initSidebar() {
     $('#gyms-switch').prop('checked', localStorage.showGyms === 'true');
@@ -525,6 +564,16 @@ $('#sound-switch').change(function() {
     localStorage["playSound"] = this.checked;
 });
 
+$('#enable-switch').change(function() {
+	var value = '';
+	if(this.checked){
+		value = 'true';
+	}
+	$.post("enable?toggle=" +  value, {});
+    
+});
+
+
 $('#scanned-switch').change(function() {
     localStorage["showScanned"] = this.checked;
     if (this.checked) {
@@ -535,6 +584,32 @@ $('#scanned-switch').change(function() {
         });
         map_scanned = {}
     }
+});
+
+$('#currentLocation').click(function() {
+  
+  
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported for this Browser/OS version yet.');
+	return;
+  }
+  
+  var geoSuccess = function(position) {
+    startPos = position;
+   
+	
+	$.post("next_loc?lat=" + startPos.coords.latitude + "&lon=" + startPos.coords.longitude, {}).done(function (data) {
+            map.setCenter({ lat: startPos.coords.latitude, lng: startPos.coords.longitude});
+			marker.setPosition( { lat: startPos.coords.latitude, lng: startPos.coords.longitude}	);
+            
+			           
+        });
+  };
+  navigator.geolocation.getCurrentPosition(geoSuccess);
+
+	
+	
+	
 });
 
 var updateLabelDiffTime = function() {
