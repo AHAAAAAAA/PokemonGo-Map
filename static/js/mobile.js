@@ -1,39 +1,30 @@
-var loadingMessage = document.getElementById('msg');
-
 var useLoc = document.getElementById('use-loc');
 useLoc.checked = localStorage.useLoc === 'true';
 useLoc.onchange = function() {
 	localStorage.useLoc = useLoc.checked;
 };
 
-var tm;
-var useTimer = document.getElementById('use-timer');
-useTimer.checked = localStorage.useTimer !== 'false';
-useTimer.onchange = function() {
-	localStorage.useTimer = useTimer.checked;
-	if (localStorage.useTimer === 'false') {
-		clearTimeout(tm);
-	}
-	else {
-		clearTimeout(tm);
-		updateTimes();
-	}
-};
 
-document.querySelector('#nav button').onclick = function() {
+var navBtn = document.querySelector('#nav button');
+navBtn.onclick = function() {
 	if (localStorage.useLoc !== 'true') {
+		navBtn.disabled = true;
 		return (location.href="/mobile");
 	}
 	else if ("geolocation" in navigator) {
-
 		// Getting the GPS position can be very slow on some devices
-		loadingMessage.innerText='Getting location...';
+		navBtn.disabled = true;
+		navBtn.innerText = 'Locating...';
+
+		// Get location and use it!
 		navigator.geolocation.getCurrentPosition(function(p) {
-			loadingMessage.innerText='Reloading...';
+			navBtn.innerText = 'Reloading...';
 			location.href='/mobile?lat='+p.coords.latitude+'&lon='+p.coords.longitude;
 
 		}, function(err) {
 			loadingMessage.innerText='';
+			navBtn.innerText = 'Reload';
+			navBtn.disabled = false;
 			alert('Failed to get location: ' + err.message);
 
 		}, {
@@ -53,7 +44,9 @@ function updateTimes() {
 	// Yes, this could be a smidge innaccurate, but not by
 	// more than 1 second or so which doesn't matter.
 	// And now we don't have to deal with timestamps and dates!
-	document.querySelectorAll('div.remain').forEach(function(element){
+	var remains = document.querySelectorAll('div.remain');
+	for (var i = 0; i < remains.length; ++i) {
+		var element = remains[i];
 		var now = new Date().getTime();
 		var secondsPassed = Math.floor((now - page_loaded)/1000);
 		var alivefor =  element.getAttribute('disappear');
@@ -61,12 +54,9 @@ function updateTimes() {
 		var min = Math.floor(remain / 60);
 		var sec = remain % 60;
 		element.innerText = (remain > 0) ? min + ' min ' + sec + ' sec' : '(expired)';
-	});
-	tm = setTimeout(updateTimes, 1000);
+	}
 };
-if (localStorage.useTimer !== 'false') {
-	updateTimes();
-}
+setInterval(updateTimes, 1000);
 
 document.querySelectorAll("li").forEach(function(listItem) {
 	listItem.onclick = function() {
