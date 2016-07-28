@@ -8,3 +8,4 @@ config/config.ini
 static/dist/
 node_modules/
 venv/
+core
