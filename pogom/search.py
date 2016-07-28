@@ -33,6 +33,9 @@ def calculate_lng_degrees(lat):
 
 def send_map_request(api, position):
     try:
+        if 'ENABLE_TOGGLE' in config and not config['ENABLE_TOGGLE']['toggle']:
+            return False
+    
         api.set_position(*position)
         api.get_map_objects(latitude=f2i(position[0]),
                             longitude=f2i(position[1]),
@@ -124,6 +127,7 @@ def search_thread(args):
                 sem.release()
         else:
             log.info('Map Download failed. Trying again.')
+            time.sleep(config['REQ_SLEEP'])
 
     time.sleep(config['REQ_SLEEP'])
 
@@ -192,5 +196,6 @@ def search_loop(args):
     # This seems appropriate
     except Exception as e:
         log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
+        logging.exception("message")
         time.sleep(args.scan_delay)
         search_loop(args)

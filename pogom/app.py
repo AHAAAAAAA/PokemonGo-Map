@@ -20,6 +20,7 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/enable", methods=['POST'])(self.enableSearch)
 
     def fullmap(self):
         return render_template('map.html',
@@ -61,6 +62,11 @@ class Pogom(Flask):
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             return 'ok'
 
+    def enableSearch(self):
+        toggle = request.args.get('toggle',type=bool)
+        config['ENABLE_TOGGLE'] = {'toggle': toggle}
+        return 'ok'
+    
     def list_pokemon(self):
         # todo: check if client is android/iOS/Desktop for geolink, currently only supports android
         pokemon_list = []
