@@ -1905,10 +1905,10 @@ body {
   -webkit-transform: translateX(25em);
   -ms-transform: translateX(25em);
   transform: translateX(25em);
-  -moz-transition: -moz-transform  ease, box-shadow  ease, visibility ;
-  -webkit-transition: -webkit-transform  ease, box-shadow  ease, visibility ;
-  -ms-transition: -ms-transform  ease, box-shadow  ease, visibility ;
-  transition: transform  ease, box-shadow  ease, visibility ;
+  -moz-transition: -moz-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  -webkit-transition: -webkit-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  -ms-transition: -ms-transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
+  transition: transform 0.5s ease, box-shadow 0.5s ease, visibility 0.5s;
   -webkit-overflow-scrolling: touch;
   background: #F8F8F8;
   box-shadow: none;
