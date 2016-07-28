@@ -902,7 +902,9 @@ function updateMap() {
     showInBoundsMarkers(map_data.pokestops);
     showInBoundsMarkers(map_data.scanned);
     clearStaleMarkers();
-    countMarkers();
+    if ($("#stats").hasClass("visible")) {
+      countMarkers();
+    }
   });
 }
 
