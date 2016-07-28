@@ -20,7 +20,7 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
-	self.route("/enable", methods=['POST'])(self.enableSearch)
+        self.route("/enable", methods=['POST'])(self.enableSearch)
 
     def fullmap(self):
         return render_template('map.html',

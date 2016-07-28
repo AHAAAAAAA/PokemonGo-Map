@@ -196,6 +196,6 @@ def search_loop(args):
     # This seems appropriate
     except Exception as e:
         log.info('Crashed, waiting {:d} seconds before restarting search.'.format(args.scan_delay))
-	logging.exception("message")
+        logging.exception("message")
         time.sleep(args.scan_delay)
         search_loop(args)
