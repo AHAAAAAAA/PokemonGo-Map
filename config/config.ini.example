@@ -26,3 +26,6 @@
 # Webserver settings
 #host:                  # address to listen on (default 127.0.0.1)
 #port:                  # port to listen on (default 5000)
+
+#Uncomment a line when you want to change its default value (Remove # at the beginning)
+#username, password, location and gmaps-key are required
