@@ -37,6 +37,7 @@
       <header id="header">
         <a href="#nav">Options</a>
         <h1><a href="#">Pokémon Go Map</a></h1>
+		<a href="#stats" id="statsToggle" class="statsNav" style="float: right;">Stats</a>
       </header>
       <!-- NAV -->
       <nav id="nav">
@@ -46,7 +47,7 @@
             <input id="next-location" type="text" name="next-location" placeholder="Change your location">
           </label>
         </div>
-        <div class="form-control switch-container">
+        <div class="form-control switch-container" style="display:{{is_fixed}}" >
           <h3>Follow location</h3>
 	  <div class="onoffswitch">
 	    <input id="geoloc-switch" type="checkbox" name="geoloc-switch" class="onoffswitch-checkbox" checked/>
@@ -57,7 +58,7 @@
 	  </div>
 	</div>
 
-	<hr width="100%">
+	<hr width="100%" style="display:{{is_fixed}}" >
 
         <p>Select markers to be visible on map.</p>
         <div class="form-control switch-container">
@@ -147,6 +148,22 @@
           </div>
         </div>
       </nav>
+	  <nav id="stats">
+		<div class="switch-container">
+		  <div class="switch-container">
+			<center><h1 id="stats-pkmn-label">Loading...</h1></center>
+		  </div>
+		  <div id="pokemonList" style="color: black;"></div>
+		  <div class="switch-container">
+			<center><h1 id="stats-gym-label"></h1></center>
+		  </div>
+		  <div id="arenaList" style="color: black;"></div>
+		  <div class="switch-container">
+			<center><h1 id="stats-pkstop-label"></h1></center>
+		  </div>
+		  <div id="pokestopList" style="color: black;"></div>
+		</div>
+	  </nav>
       <div id="map"></div>
     </div>
     <!-- Scripts -->
@@ -161,6 +178,7 @@
       var center_lng = {{lng}};
     </script>
     <script src="static/dist/js/map.js"></script>
+    <script src="static/dist/js/stats.js"></script>
     <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
   </body>
 </html>
