@@ -1,8 +1,8 @@
-/* Nav */
+/* Stats */
 
-	#nav {
-		@include vendor('transform', 'translateX(-18em)');
-		@include vendor('transition', ('transform #{_duration(nav)} ease', 'box-shadow #{_duration(nav)} ease', 'visibility #{_duration(nav)}'));
+	#stats {
+		@include vendor('transform', 'translateX(25em)');
+		@include vendor('transition', ('transform #{_duration(stats)} ease', 'box-shadow #{_duration(stats)} ease', 'visibility #{_duration(stats)}'));
 		-webkit-overflow-scrolling: touch;
 		background: #F8F8F8;
 		box-shadow: none;
@@ -13,9 +13,9 @@
 		padding: 1.5em 1.5em 4em 1.5em;
 		position: fixed;
 		top: 3.50em;
-		left: 0;
+		right: 0;
 		visibility: hidden;
-		width: 18em;
+		width: 25em;
 		z-index: 500;
 		h3 {
 			font-size: 18px;

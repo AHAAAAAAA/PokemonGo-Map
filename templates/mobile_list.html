@@ -1,15 +1,34 @@
-<table border="1">
-{% for pokemon in pokemon_list %}
-<tr>
-<td>
-<a href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
-<img height='60' width='80' src='static/pixel_icons/{{pokemon.id}}.png'>
-</a>
-</td>
-<td>{{pokemon.time_to_disappear}}</td>
-<td>{{pokemon.distance}}m ({{pokemon.card_dir}})</td>
-</tr>
+<html>
+<head>
+	<title>Nearby Pokémon</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script>var page_loaded = new Date().getTime();</script>
+	<link rel="stylesheet" href="static/dist/css/mobile.min.css" type="text/css" />
+</head>
+<body>
+	<h1>Nearby Pokémon <small id="msg"></small></h1>
+
+	<ol>
+{% for pokemon in pokemon_list[:20] %}
+		<li style="background-image: url('static/pixel_icons/{{pokemon.id}}.png')"
+			href='geo:0,0?q={{pokemon.latitude}},{{pokemon.longitude}}({{pokemon.name}})'>
+			<div class="name">{{pokemon.name}}</div>
+			<div class="dir"> - {{pokemon.distance}}m ({{pokemon.card_dir}}) - </div>
+			<div class="remain" disappear="{{pokemon.disappear_sec}}">{{pokemon.time_to_disappear}}</div>
+		</li>
 {% endfor %}
-<tr><td></td><td><b>low priority</b></td><td></td></tr>
-</table>
-<a href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>scan origin</a>
+	</ol>
+
+	<div id="nav">
+		<button>Refresh</button>
+		<div>
+			<label><input type="checkbox" id="use-loc">Device location</label>
+			<label><input type="checkbox" id="use-timer">Live countdown</label>
+		</div>
+	</div>
+
+	<a class="origin" href='geo:0,0?q={{origin_lat}},{{origin_lng}}(origin)'>origin location</a>
+
+	<script src="static/dist/js/mobile.min.js"></script>
+</body>
+</html>
