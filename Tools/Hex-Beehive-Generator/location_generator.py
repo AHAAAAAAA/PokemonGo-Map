@@ -30,9 +30,9 @@ wst = args.leaps
 if args.windows:
     # ferkin Windows
     preamble = "taskkill /IM python.exe /F"
-    pythonpath = "C:/Python27/Python.exe"
-    branchpath = "C:/PogoMap"
-    executable = "C:/PogoMap/runserver.py"
+    pythonpath = "C:\\Python27\\Python.exe"
+    branchpath = "C:\\PogoMap"
+    executable = "C:\\PogoMap\\runserver.py"
     actual_worker_params = "{auth} -ns -l '{lat} {lon}' -st {steps}"
     worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
         branchpath=branchpath,
