@@ -24,6 +24,8 @@
     "jshint-stylish": "latest"
   },
   "scripts": {
+    "build": "grunt build",
+    "lint": "grunt lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
