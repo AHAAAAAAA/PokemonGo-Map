@@ -77,7 +77,9 @@ class Slave(threading.Thread):
         self.total_seen = 0
         self.error_code = None
         self.running = True
+        center = self.points[0]
         self.api = PGoApi()
+        self.api.set_position(center[0], center[1], 100)  # lat, lon, alt
 
     def run(self):
         """Wrapper for self.main - runs it a few times before restarting
@@ -142,12 +144,12 @@ class Slave(threading.Thread):
             logger.info('Visiting point %d (%s %s)', i, point[0], point[1])
             self.api.set_position(point[0], point[1], 0)
             cell_ids = pgoapi_utils.get_cell_ids(point[0], point[1])
-            self.api.get_map_objects(
+            self.api.set_position(point[0], point[1], 100)
+            response_dict = self.api.get_map_objects(
                 latitude=pgoapi_utils.f2i(point[0]),
                 longitude=pgoapi_utils.f2i(point[1]),
                 cell_id=cell_ids
             )
-            response_dict = self.api.call()
             if response_dict is False:
                 raise CannotProcessStep
             now = time.time()
@@ -159,15 +161,15 @@ class Slave(threading.Thread):
                         pokemons.append(self.normalize_pokemon(pokemon, now))
             for raw_pokemon in pokemons:
                 db.add_sighting(session, raw_pokemon)
-                if self.worker_no != 2:
-                    self.seen_per_cycle += 1
-                    self.total_seen += 1
+                self.seen_per_cycle += 1
+                self.total_seen += 1
             logger.info('Point processed, %d Pokemons seen!', len(pokemons))
             session.commit()
             # Clear error code and let know that there are Pokemon
             if self.error_code and self.seen_per_cycle:
                 self.error_code = None
             self.step += 1
+            time.sleep(0.3)
         session.close()
         if self.seen_per_cycle == 0:
             self.error_code = 'NO POKEMON'
