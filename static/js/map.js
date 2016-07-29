@@ -8,6 +8,9 @@ var $selectNotify;
 
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
+var i8ln_dictionary = {};
+var language_lookups = 0;
+var language_lookup_threshold = 3;
 
 var excludedPokemon = [];
 var notifiedPokemon = [];
@@ -336,7 +339,6 @@ function initSidebar() {
   $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
-
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
 
@@ -363,8 +365,17 @@ function pad(number) {
   return number <= 99 ? ("0" + number).slice(-2) : number;
 }
 
-function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_id) {
-  var disappear_date = new Date(disappear_time)
+function getTypeSpan(type) {
+  return `<span style='padding: 2px 5px; text-transform: uppercase; color: white; margin-right: 2px; border-radius: 4px; font-size: 0.8em; vertical-align: text-bottom; background-color: ${type['color']}'>${type['type']}</span>`;
+}
+
+function pokemonLabel(name, rarity, types, disappear_time, id, latitude, longitude, encounter_id) {
+  var disappear_date = new Date(disappear_time);
+  var rarity_display = rarity ? '(' + rarity + ')' : "";
+  var types_display = "";
+  $.each(types, function(index, type) {
+    types_display += getTypeSpan(type);
+  });
 
   var contentstring = `
     <div>
@@ -373,6 +384,9 @@ function pokemonLabel(name, disappear_time, id, latitude, longitude, encounter_i
       <small>
         <a href='http://www.pokemon.com/us/pokedex/${id}' target='_blank' title='View in Pokedex'>#${id}</a>
       </small>
+      <span> ${rarity_display}</span>
+      <span> - </span>
+      <small>${types_display}</small>
     </div>
     <div>
       Disappears at ${pad(disappear_date.getHours())}:${pad(disappear_date.getMinutes())}:${pad(disappear_date.getSeconds())}
@@ -444,8 +458,14 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
 function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longitude) {
   var str;
   if (lured) {
-    var active_pokemon = idToPokemon[active_pokemon_id];
-
+    var active_pokemon_name = active_pokemon_id in idToPokemon ? idToPokemon[active_pokemon_id]['name'] : "";
+    var active_pokemon_rarity = active_pokemon_id in idToPokemon ? idToPokemon[active_pokemon_id]['rarity'] : "";
+    var active_pokemon_types = active_pokemon_id in idToPokemon ? idToPokemon[active_pokemon_id]['types'] : "";
+    var rarity_display = active_pokemon_rarity ? '(' + active_pokemon_rarity + ')' : "";
+    var types_display = "";
+    $.each(active_pokemon_types, function(index, type) {
+      types_display += getTypeSpan(type);
+    });
     var last_modified_date = new Date(last_modified);
     var current_date = new Date();
 
@@ -459,11 +479,14 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
         <b>Lured Pokéstop</b>
       </div>
       <div>
-        Lured Pokémon: ${active_pokemon}
+        Lured Pokémon: ${active_pokemon_name}
         <span> - </span>
         <small>
           <a href='http://www.pokemon.com/us/pokedex/${active_pokemon_id}' target='_blank' title='View in Pokedex'>#${active_pokemon_id}</a>
         </small>
+        <span> ${rarity_display}</span>
+        <span> - </span>
+        <span>${types_display}</span>
       </div>
       <div>
         Lure expires at ${pad(expire_date.getHours())}:${pad(expire_date.getMinutes())}:${pad(expire_date.getSeconds())}
@@ -553,7 +576,7 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
-    content: pokemonLabel(item.pokemon_name, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
+    content: pokemonLabel(item.pokemon_name, item.pokemon_rarity, item.pokemon_types, item.disappear_time, item.pokemon_id, item.latitude, item.longitude, item.encounter_id),
     disableAutoPan: true
   });
 
@@ -642,12 +665,12 @@ function setupScannedMarker(item) {
 }
 
 function clearSelection() {
-  if (document.selection) {
-    document.selection.empty();
-  } else if (window.getSelection) {
-    window.getSelection().removeAllRanges();
-  }
-}
+    if (document.selection ) {
+        document.selection.empty();
+    } else if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+};
 
 function addListeners(marker) {
   marker.addListener('click', function() {
@@ -754,6 +777,7 @@ function loadRawData() {
       'neLng': neLng
     },
     dataType: "json",
+    cache: false,
     beforeSend: function() {
       if (rawDataIsLoading) {
         return false;
@@ -821,7 +845,8 @@ function processLuredPokemon(i, item) {
     pokemon_id: item.active_pokemon_id,
     latitude: item.latitude + 0.00005,
     longitude: item.longitude + 0.00005,
-    pokemon_name: idToPokemon[item.active_pokemon_id],
+    pokemon_name: item.active_pokemon_id in idToPokemon ? idToPokemon[item.active_pokemon_id]['name'] : null,
+    pokemon_rarity: item.active_pokemon_id in idToPokemon ? idToPokemon[item.active_pokemon_id]['rarity'] : null,
     disappear_time: item.lure_expiration
   };
 
@@ -902,6 +927,9 @@ function updateMap() {
     showInBoundsMarkers(map_data.pokestops);
     showInBoundsMarkers(map_data.scanned);
     clearStaleMarkers();
+    if ($("#stats").hasClass("visible")) {
+      countMarkers();
+    }
   });
 }
 
@@ -1084,6 +1112,29 @@ function centerMap(lat, lng, zoom) {
   }
 }
 
+function i8ln(word) {
+  if ($.isEmptyObject(i8ln_dictionary) && language != "en" && language_lookups < language_lookup_threshold) {
+    $.ajax({
+      url: "static/locales/" + language + ".json",
+      dataType: 'json',
+      async: false,
+      success: function(data) {
+        i8ln_dictionary = data;
+      },
+      error: function(jqXHR, status, error) {
+        console.log('Error loading i8ln dictionary: ' + error);
+        language_lookups++;
+      }
+    });
+  }
+  if (word in i8ln_dictionary) {
+    return i8ln_dictionary[word];
+  } else {
+    // Word doesn't exist in dictionary return it as is
+    return word
+  }
+}
+
 //
 // Page Ready Exection
 //
@@ -1115,29 +1166,38 @@ $(function() {
   var numberOfPokemon = 151;
 
   // Load pokemon names and populate lists
-  $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
+  $.getJSON("static/locales/pokemon.json").done(function(data) {
     var pokeList = [];
-
-    idToPokemon = data;
 
     $.each(data, function(key, value) {
       if (key > numberOfPokemon) {
         return false;
       }
+      var _types = [];
       pokeList.push({
         id: key,
-        text: value + ' - #' + key
+        text: value['name'] + ' - #' + key
       });
+      value['name'] = i8ln(value['name']);
+      value['rarity'] = i8ln(value['rarity']);
+      $.each(value['types'], function(key, pokemon_type) {
+        _types.push({
+          "type": i8ln(pokemon_type['type']),
+          "color": pokemon_type['color']
+        });
+      });
+      value['types'] = _types;
+      idToPokemon[key] = value
     });
 
     // setup the filter lists
     $selectExclude.select2({
-      placeholder: "Select Pokémon",
+      placeholder: i8ln("Select Pokémon"),
       data: pokeList,
       templateResult: formatState
     });
     $selectNotify.select2({
-      placeholder: "Select Pokémon",
+      placeholder: i8ln("Select Pokémon"),
       data: pokeList,
       templateResult: formatState
     });
@@ -1179,7 +1239,7 @@ $(function() {
       });
     }
   }, 1000);
-  
+
   //Wipe off/restore map icons when switches are toggled
   function buildSwitchChangeListener(data, data_type, storageKey) {
     return function () {
