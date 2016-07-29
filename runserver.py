@@ -28,7 +28,12 @@ if __name__ == '__main__':
         log.setLevel(logging.DEBUG);
     else:
         log.setLevel(logging.INFO);
-
+    
+    # Let's not forget to run Grunt
+    if not os.path.exists('static/dist'):
+        log.critical('Please run "grunt build" before starting the server.');
+        sys.exit();
+    
     # These are very noisey, let's shush them up a bit
     logging.getLogger("peewee").setLevel(logging.INFO)
     logging.getLogger("requests").setLevel(logging.WARNING)
