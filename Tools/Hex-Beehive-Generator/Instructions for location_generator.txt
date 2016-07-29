@@ -6,6 +6,10 @@ It generates a script to run all the workers for you.
 If you have a list of accounts, it will put the login details into the worker commands, rotating through your list
 
 
+Experimental Windows support!  Use the --windows flag
+
+
+
 An example:
 
 python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts=/home/pika/accounts.csv
