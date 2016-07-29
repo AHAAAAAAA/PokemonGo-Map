@@ -31,3 +31,5 @@ usage: location_generator.py [-h] -lat LAT -lon LON [-st STEPS] [-lp LEAPS]
                         format
 
   --auth AUTH           Auth method (ptc or google)
+
+  -v, --verbose         Print lat/lng to stdout for debugging

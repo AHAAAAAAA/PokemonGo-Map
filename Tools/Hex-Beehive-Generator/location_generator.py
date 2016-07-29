@@ -11,6 +11,7 @@ parser.add_argument("-lp", "--leaps", help="like 'steps' but for workers instead
 parser.add_argument("-o", "--output", default="../../beehive.sh", help="output file for the script")
 parser.add_argument("--accounts", help="List of your accounts, in csv [username],[password] format", default=None)
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
+parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
 
 server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
 worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
@@ -100,4 +101,5 @@ location_and_auth = [(i, j) for i, j in itertools.izip(locations, itertools.cycl
 
 for location, auth in location_and_auth:
     output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth))
-
+    if args.verbose:
+        print("{}, {}".format(location.lat, location.lon))
