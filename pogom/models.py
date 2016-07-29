@@ -63,7 +63,7 @@ class Pokemon(BaseModel):
         return pokemons
 
     @classmethod
-    def get_all_p(cls):
+    def getAll(cls):
         query = (Pokemon
                  .select()
                  .dicts())
@@ -79,7 +79,25 @@ class Pokemon(BaseModel):
         return pokemons
 
     @classmethod
-    def get_p_by_type(cls,type):
+    def getAllById(cls,ids):
+        query = (Pokemon
+                 .select()
+                 .where(Pokemon.pokemon_id.in_(ids))
+                 .dicts())
+
+        pokemons = []
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            if args.china:
+                p['latitude'], p['longitude'] = \
+                    transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
+            pokemons.append(p)
+
+        return pokemons    
+        
+        
+    @classmethod
+    def getByType(cls,type):
 
         with open(os.path.join('static','locales',"type.eng.json")) as data_file:
             id_to_type = json.load(data_file)

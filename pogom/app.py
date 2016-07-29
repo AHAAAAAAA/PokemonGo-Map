@@ -31,8 +31,9 @@ class Pogom(Flask):
 
     def raw_pokemon(self):
         d = {}
+        req = request.args.get('ids')
         myPokemon = Pokemon()
-        d['pokemons'] = myPokemon.get_all_p()
+        d['pokemons'] = myPokemon.getAllById(req.split(','))
         return jsonify(d)
 
     def raw_data(self):

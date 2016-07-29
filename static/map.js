@@ -499,6 +499,7 @@ function updateHeatmap() {
         url: "raw_pokemon",
         type: 'GET',
         data: {
+			'ids': notifiedPokemon.join(","),
         },
         dataType: "json"
     }).done(function(result) {
@@ -543,7 +544,7 @@ function updateHeatmap() {
 			changeIntensity(3);
 		}
 		if(heatmapData.length >= 100){
-			changeIntensity(100);
+			changeIntensity(10);
 		}
 		
 		heatmap.setMap(map);
