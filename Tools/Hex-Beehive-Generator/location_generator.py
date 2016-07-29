@@ -37,7 +37,7 @@ if args.windows:
     auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
     actual_worker_params = '{auth} -ns -l "{lat} {lon}" -st {steps}'
     worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\ntimeout 1 > nul\n\n'.format(
-        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_actual_params=actual_worker_params
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params=actual_worker_params
     )
     actual_server_params = '-os -l "{lat} {lon}"'
     server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\ntimeout 1 > nul\n\n'.format(

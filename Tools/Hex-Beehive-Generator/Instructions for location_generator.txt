@@ -8,8 +8,6 @@ If you have a list of accounts, it will put the login details into the worker co
 
 Experimental Windows support!  Use the --windows flag
 
-
-
 An example (Linux):
     python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts /home/pika/accounts.csv
 An example (Windows):
