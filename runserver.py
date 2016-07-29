@@ -5,6 +5,8 @@ import os
 import sys
 import logging
 import time
+import socket
+import sys
 
 from threading import Thread
 from flask_cors import CORS
@@ -72,6 +74,15 @@ if __name__ == '__main__':
     config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
+
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.bind((args.host, args.port))
+        s.close()
+    except socket.error:
+        log.error('Could not bind to {:s}:{:d}. Is this a valid IP/port combination belonging to this machine?'.
+                  format(args.host, args.port))
+        sys.exit()
 
     if not args.only_server:
         # Gather the pokemons!
