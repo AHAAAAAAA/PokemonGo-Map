@@ -610,7 +610,7 @@ function setupPokestopMarker(item) {
     icon: 'static/forts/' + imagename + '.png',
   });
 
-  current_time = (new Date()).getTime();
+  var current_time = (new Date()).getTime();
   var dead = false;
   if((new Date(item.lure_expiration)).getTime() < current_time) {
     dead = true;
