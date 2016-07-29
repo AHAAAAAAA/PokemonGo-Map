@@ -13,14 +13,13 @@ parser.add_argument("-o", "--output", default="../../beehive.sh", help="output f
 parser.add_argument("--accounts", help="List of your accounts, in csv [username],[password] format", default=None)
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
 parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
-parser.add_argument("-s", "--system", help="operating system, win or linux, creating bat or sh files", default="linux")
+parser.add_argument("--windows", help="Generate a bat file for Windows", action='store_true', default=False)
+parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
 
-server_template_linux = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
-worker_template_linux = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
-server_template_win = "start /min python runserver.py -os -l \"{lat} {lon}\"\n"
-worker_template_win = "timeout 1 > nul\nstart /min python runserver.py -ns -l \"{lat} {lon}\"\n"
-
-auth_template = "-a {} -u {} -p {}"
+preamble = ""
+server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
+worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
+auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
 
 R = 6378137.0
 
@@ -30,12 +29,23 @@ args = parser.parse_args()
 st = args.steps
 wst = args.leaps
 
-if str(args.output).endswith(".bat"):
-    server_template = server_template_win
-    worker_template = worker_template_win
-else:
-    server_template = server_template_linux
-    worker_template = worker_template_linux
+if args.windows:
+    # ferkin Windows
+    preamble = "taskkill /IM python.exe /F"
+    pythonpath = "C:\\Python27\\Python.exe"
+    branchpath = args.installdir
+    executable = args.installdir + "\\runserver.py"
+    auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
+    actual_worker_params = '{auth} -ns -l "{lat} {lon}" -st {steps}'
+    worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\ntimeout 1 > nul\n\n'.format(
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params=actual_worker_params
+    )
+    actual_server_params = '-os -l "{lat} {lon}"'
+    server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\ntimeout 1 > nul\n\n'.format(
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params=actual_server_params
+    )
+    if args.output == "../../beehive.sh":
+        args.output = "../../beehive.bat"
 
 if args.accounts:
     print("Reading usernames/passwords from {}".format(args.accounts))
@@ -47,6 +57,7 @@ else:
 
 print("Generating beehive script to {}".format(args.output))
 output_fh = file(args.output, "wb")
+output_fh.write(preamble + "\n")
 output_fh.write(server_template.format(lat=args.lat, lon=args.lon))
 
 
@@ -111,7 +122,8 @@ for i in range(1, total_workers):
 # reusing accounts if required
 location_and_auth = [(i, j) for i, j in itertools.izip(locations, itertools.cycle(accounts))]
 
-for location, auth in location_and_auth:
-    output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth))
+for i, (location, auth) in enumerate(location_and_auth):
+    threadname = "Movable{}".format(i)
+    output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth, threadname=threadname))
     if args.verbose:
         print("{}, {}".format(location.lat, location.lon))
