@@ -27,6 +27,8 @@ var pGoStyleNoLabels=[{"featureType":"landscape.man_made","elementType":"geometr
 
 var selectedStyle = 'light';
 
+var localStorageSupported = true;
+
 var map_data = {
   pokemons: {},
   gyms: {},
@@ -164,30 +166,38 @@ var StoreOptions = {
 
 var Store = {
   getOption: function(key) {
-    var option = StoreOptions[key];
-    if (!option) {
-      throw "Store key was not defined " + key;
+    if (localStorageSupported) {
+      var option = StoreOptions[key];
+      if (!option) {
+        throw "Store key was not defined " + key;
+      }
+      return option;
     }
-    return option;
   },
   get: function(key) {
-    var option = this.getOption(key);
-    var optionType = option.type;
-    var rawValue = localStorage[key];
-    if (rawValue === null || rawValue === undefined) {
-      return option.default;
+    if (localStorageSupported) {
+      var option = this.getOption(key);
+      var optionType = option.type;
+      var rawValue = localStorage[key];
+      if (rawValue === null || rawValue === undefined) {
+        return option.default;
+      }
+      var value = optionType.parse(rawValue);
+      return value;
     }
-    var value = optionType.parse(rawValue);
-    return value;
   },
   set: function(key, value) {
-    var option = this.getOption(key);
-    var optionType = option.type || StoreTypes.String;
-    var rawValue = optionType.stringify(value);
-    localStorage[key] = rawValue;
+    if (localStorageSupported) {
+      var option = this.getOption(key);
+      var optionType = option.type || StoreTypes.String;
+      var rawValue = optionType.stringify(value);
+      localStorage[key] = rawValue;
+    }
   },
   reset: function(key) {
-    localStorage.removeItem(key);
+    if (localStorageSupported) {
+      localStorage.removeItem(key);
+    }
   }
 };
 
@@ -1117,6 +1127,8 @@ $(function() {
   $selectNotify = $("#notify-pokemon");
   var numberOfPokemon = 151;
 
+  localStorageSupported = isLocalStorageSupported();
+
   // Load pokemon names and populate lists
   $.getJSON("static/locales/pokemon." + language + ".json").done(function(data) {
     var pokeList = [];
@@ -1248,3 +1260,13 @@ $(function() {
       Store.set('geoLocate', this.checked);
   });
 });
+
+function isLocalStorageSupported()  {
+  try {
+    window.localStorage.setItem("test", "1");
+    window.localStorage.removeItem("test");
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
