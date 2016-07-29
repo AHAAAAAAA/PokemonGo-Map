@@ -126,6 +126,7 @@ class Pogom(Flask):
                 'time_to_disappear': '%d min %d sec' % (divmod((
                     pokemon['disappear_time']-datetime.utcnow()).seconds, 60)),
                 'disappear_time': pokemon['disappear_time'],
+                'disappear_sec': (pokemon['disappear_time']-datetime.utcnow()).seconds,
                 'latitude': pokemon['latitude'],
                 'longitude': pokemon['longitude']
             }

@@ -10,5 +10,6 @@ install:
   - npm install grunt-cli -g
   - npm install
 script:
-  - grunt build
+  - npm run lint
+  - npm run build
   - nosetests
