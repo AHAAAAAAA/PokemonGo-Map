@@ -134,6 +134,7 @@ class Slave(threading.Thread):
         """Heart of the worker - goes over each point and reports sightings"""
         session = db.Session()
         self.seen_per_cycle = 0
+        self.step = 0
         for i, point in enumerate(self.points):
             if not self.running:
                 return
