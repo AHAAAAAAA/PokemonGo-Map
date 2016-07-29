@@ -63,7 +63,7 @@ function processTotal(seen){
     for(var i = 0; i < seen.length; i++)
         total += seen[i].count;
 
-    document.getElementById("seen_total").innerHTML = 'Total: ' + total;
+    document.getElementById("seen_total").innerHTML = 'Total: ' + total.toLocaleString();
 }
 
 function processSeen(i, item) {
@@ -106,7 +106,7 @@ function processSeen(i, item) {
                                 </div>';
         document.getElementById('seen_container').appendChild(element);
     }
-    element.getElementsByClassName('seen')[0].innerHTML = 'Seen: ' + item.count + ' (' + percentage + '%)';
+    element.getElementsByClassName('seen')[0].innerHTML = 'Seen: ' + item.count.toLocaleString() + ' (' + percentage + '%)';
     element.getElementsByClassName('lastseen')[0].innerHTML = 'Last Seen: ' + lastSeen;
     element.getElementsByClassName('location')[0].innerHTML = 'Location: ' + location;
 }
