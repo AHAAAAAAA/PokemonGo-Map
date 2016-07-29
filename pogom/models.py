@@ -4,9 +4,13 @@
 import logging
 import os
 import time
-from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery,\
+import calendar
+from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
-                   DateTimeField, OperationalError
+                   DateTimeField, OperationalError, create_model_tables
+from playhouse.flask_utils import FlaskDB
+from playhouse.pool import PooledMySQLDatabase
+from playhouse.shortcuts import RetryOperationalError
 from datetime import datetime, timedelta
 from base64 import b64encode
 
@@ -18,31 +22,34 @@ from .customLog import printPokemon
 log = logging.getLogger(__name__)
 
 args = get_args()
-db = None
+flaskDb = FlaskDB()
 
 
-def init_database():
-    global db
-    if db is not None:
-        return db
+class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
+    pass
 
+
+def init_database(app):
     if args.db_type == 'mysql':
-        db = MySQLDatabase(
+        db = MyRetryDB(
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
-            host=args.db_host)
+            host=args.db_host,
+            max_connections=args.db_max_connections,
+            stale_timeout=300)
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)
         log.info('Connecting to local SQLLite database.')
 
+    app.config['DATABASE'] = db
+    flaskDb.init_app(app)
+
     return db
 
 
-class BaseModel(Model):
-    class Meta:
-        database = init_database()
+class BaseModel(flaskDb.Model):
 
     @classmethod
     def get_all(cls):
@@ -59,11 +66,14 @@ class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
     # because they are too big for sqlite to handle
     encounter_id = CharField(primary_key=True, max_length=50)
-    spawnpoint_id = CharField()
-    pokemon_id = IntegerField()
+    spawnpoint_id = CharField(index=True)
+    pokemon_id = IntegerField(index=True)
     latitude = DoubleField()
     longitude = DoubleField()
-    disappear_time = DateTimeField()
+    disappear_time = DateTimeField(index=True)
+
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
 
     @classmethod
     def get_active(cls, swLat, swLng, neLat, neLng):
@@ -127,9 +137,12 @@ class Pokestop(BaseModel):
     enabled = BooleanField()
     latitude = DoubleField()
     longitude = DoubleField()
-    last_modified = DateTimeField()
-    lure_expiration = DateTimeField(null=True)
+    last_modified = DateTimeField(index=True)
+    lure_expiration = DateTimeField(null=True, index=True)
     active_pokemon_id = IntegerField(null=True)
+
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
 
     @classmethod
     def get_stops(cls, swLat, swLng, neLat, neLng):
@@ -169,7 +182,10 @@ class Gym(BaseModel):
     enabled = BooleanField()
     latitude = DoubleField()
     longitude = DoubleField()
-    last_modified = DateTimeField()
+    last_modified = DateTimeField(index=True)
+
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
 
     @classmethod
     def get_gyms(cls, swLat, swLng, neLat, neLng):
@@ -197,7 +213,10 @@ class ScannedLocation(BaseModel):
     scanned_id = CharField(primary_key=True, max_length=50)
     latitude = DoubleField()
     longitude = DoubleField()
-    last_modified = DateTimeField()
+    last_modified = DateTimeField(index=True)
+
+    class Meta:
+        indexes = ((('latitude', 'longitude'), False),)
 
     @classmethod
     def get_recent(cls, swLat, swLng, neLat, neLng):
@@ -248,7 +267,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple())
+                    'disappear_time': calendar.timegm(d_t.timetuple())
                 }
 
                 send_to_webhook('pokemon', webhook_data)
@@ -321,10 +340,13 @@ def parse_map(map_dict, iteration_num, step, step_location):
     bulk_upsert(ScannedLocation, scanned)
 
 
+
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
     step = 120
+
+    flaskDb.connect_db()
 
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
@@ -336,8 +358,15 @@ def bulk_upsert(cls, data):
 
         i+=step
 
+    flaskDb.close_db(None)
+
 
 def create_tables(db):
     db.connect()
     db.create_tables([Pokemon, Pokestop, Gym, ScannedLocation], safe=True)
+    db.close()
+
+def drop_tables(db):
+    db.connect()
+    db.drop_tables([Pokemon, Pokestop, Gym, ScannedLocation], safe=True)
     db.close()

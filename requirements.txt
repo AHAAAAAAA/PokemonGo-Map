@@ -16,3 +16,4 @@ protobuf-to-dict==0.1.0
 PyMySQL==0.7.5
 flask-cors==2.1.2
 flask-compress==1.3.0
+LatLon==1.0.1
