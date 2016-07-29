@@ -17,14 +17,14 @@ li {
 	color: #444;
 	background-repeat: no-repeat;
 	background-size: 80px 60px;
-	background-position: -15px -10px;
-	padding-left: 50px;
+	background-position: 0px 0px;
+	padding-left: 80px;
 	margin: 5px 2px;
-	height: 50px;
+	height: 60px;
 	image-rendering: pixelated;
 	cursor: pointer;
 	> div {
-		margin: 15px 2px;
+		margin: 25px 2px 0px 2px;
 		float: left;
 	}
 }
