@@ -267,11 +267,13 @@ def spawn_workers(workers, status_bar=True):
     ]
     while True:
         now = time.time()
+        # Clean cache
         if now - last_cleaned_cache > (15 * 60):  # clean cache
             db.CACHE.clean_expired()
             last_cleaned_cache = now
-        if now - last_workers_checked > (1 * 30):  # check up on workers
-            # Check old workers and kill those not doing anything
+        # Check up on workers
+        if now - last_workers_checked > (5 * 60):
+            # Kill those not doing anything
             for worker, total_seen in workers_check:
                 if not worker.running:
                     continue
