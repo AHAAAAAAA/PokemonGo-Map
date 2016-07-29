@@ -123,7 +123,9 @@ class Slave(threading.Thread):
             self.cycle += 1
             if self.cycle <= config.CYCLES_PER_WORKER:
                 self.error_code = 'SLEEP'
+                self.running = False
                 time.sleep(random.randint(30, 60))
+                self.running = True
                 self.error_code = None
         self.error_code = 'RESTART'
         self.restart()
