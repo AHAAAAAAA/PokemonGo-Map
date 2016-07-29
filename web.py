@@ -197,11 +197,14 @@ def report_main():
     }
     session_stats = db.get_session_stats(session)
     session.close()
+
+    area = utils.get_scan_area()
+
     return render_template(
         'report.html',
         current_date=datetime.now(),
         city=u'Wrocław',
-        area=96,
+        area=area,
         total_spawn_count=session_stats['count'],
         spawns_per_hour=session_stats['per_hour'],
         session_start=session_stats['start'],
