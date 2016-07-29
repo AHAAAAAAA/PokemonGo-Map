@@ -25,7 +25,6 @@ Author: tjado <https://github.com/tejado>
 
 import re
 import json
-import logging
 import requests
 
 from auth import Auth
@@ -51,7 +50,12 @@ class AuthPtc(Auth):
         head = {'User-Agent': 'niantic'}
         r = self._session.get(self.PTC_LOGIN_URL, headers=head)
         
-        jdata = json.loads(r.content)
+        try:
+            jdata = json.loads(r.content)
+        except ValueError as e:
+            self.log.error('{}... server seems to be down :('.format(str(e)))
+            return False
+            
         data = {
             'lt': jdata['lt'],
             'execution': jdata['execution'],

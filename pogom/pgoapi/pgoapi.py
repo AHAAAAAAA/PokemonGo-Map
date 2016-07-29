@@ -24,15 +24,13 @@ Author: tjado <https://github.com/tejado>
 """
 
 import logging
-import re
-import requests
 
-from utilities import f2i, h2f
+from utilities import f2i
 
 from rpc_api import RpcApi
 from auth_ptc import AuthPtc
 from auth_google import AuthGoogle
-from exceptions import AuthException, NotLoggedInException, ServerBusyOrOfflineException
+from exceptions import AuthException, ServerBusyOrOfflineException
 
 import protos.RpcEnum_pb2 as RpcEnum
 
@@ -54,6 +52,17 @@ class PGoApi:
         self._position_alt = 0
 
         self._req_method_list = []
+
+    def copy(self):
+        other = PGoApi()
+        other.log = self.log
+        other._auth_provider = self._auth_provider
+        other._api_endpoint = self._api_endpoint
+        other._position_lat = self._position_lat
+        other._position_lng = self._position_lng
+        other._position_alt = self._position_alt
+        other._req_method_list = list(self._req_method_list)
+        return other
         
     def call(self):
         if not self._req_method_list:
@@ -163,12 +172,14 @@ class PGoApi:
         if 'api_url' in response:
             self._api_endpoint = ('https://{}/rpc'.format(response['api_url']))
             self.log.debug('Setting API endpoint to: %s', self._api_endpoint)
+        
+        elif 'auth_ticket' in response:
+            auth_ticket = response['auth_ticket']
+            self._auth_provider.set_ticket([auth_ticket['expire_timestamp_ms'], auth_ticket['start'], auth_ticket['end']])
+
         else:
             self.log.error('Login failed - unexpected server response!')
             return False
-        
-        if 'auth_ticket' in response:
-            self._auth_provider.set_ticket(response['auth_ticket'].values())
         
         self.log.info('Finished RPC login sequence (app simulation)')
         self.log.info('Login process completed') 
