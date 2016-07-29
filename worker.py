@@ -31,7 +31,7 @@ REQUIRED_SETTINGS = (
 )
 for setting_name in REQUIRED_SETTINGS:
     if not hasattr(config, setting_name):
-        raise RuntimeError('Please set "{}" in config')
+        raise RuntimeError('Please set "{}" in config'.format(setting_name))
 
 
 workers = {}
