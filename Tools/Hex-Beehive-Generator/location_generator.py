@@ -13,11 +13,12 @@ parser.add_argument("--accounts", help="List of your accounts, in csv [username]
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
 parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
 parser.add_argument("--windows", help="Generate a bat file for Windows", action='store_true', default=False)
+parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
 
 preamble = ""
 server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
 worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
-auth_template = "-a {} -u {} -p '{}'"
+auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
 
 R = 6378137.0
 
@@ -31,21 +32,16 @@ if args.windows:
     # ferkin Windows
     preamble = "taskkill /IM python.exe /F"
     pythonpath = "C:\\Python27\\Python.exe"
-    branchpath = "C:\\PogoMap"
-    executable = "C:\\PogoMap\\runserver.py"
-    actual_worker_params = "{auth} -ns -l '{lat} {lon}' -st {steps}"
+    branchpath = args.installdir
+    executable = args.installdir + "\\runserver.py"
+    auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
+    actual_worker_params = '{auth} -ns -l "{lat} {lon}" -st {steps}'
     worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
-        branchpath=branchpath,
-        pythonpath=pythonpath,
-        executable=executable,
-        actual_params = actual_worker_params
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_worker_params
     )
-    actual_server_params = "-os -l '{lat} {lon}'"
+    actual_server_params = '-os -l "{lat} {lon}"'
     server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
-        branchpath=branchpath,
-        pythonpath=pythonpath,
-        executable=executable,
-        actual_params = actual_server_params
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_server_params
     )
     if args.output == "../../beehive.sh":
         args.output = "../../beehive.bat"
