@@ -137,23 +137,20 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_seen(cls, timediff):
-        if timediff == 0:
-            query = (Pokemon
-                     .select(Pokemon.pokemon_id, fn.COUNT(Pokemon.pokemon_id).alias('count'))
-                     .group_by(Pokemon.pokemon_id)
-                     .dicts())
-        else:
-            query = (Pokemon
-                     .select(Pokemon.pokemon_id,
-                             fn.COUNT(Pokemon.pokemon_id).alias('count'),
-                             Pokemon.disappear_time,
-                             Pokemon.longitude,
-                             Pokemon.latitude
-                             )
-                     .where(Pokemon.disappear_time > datetime.utcnow() - timediff)
-                     .group_by(Pokemon.pokemon_id)
-                     .having(Pokemon.disappear_time == fn.MAX(Pokemon.disappear_time))
-                     .dicts())
+        if timediff:
+            timediff = datetime.utcnow() - timediff
+        query = (Pokemon
+                .select(Pokemon.pokemon_id,
+                       fn.COUNT(Pokemon.pokemon_id).alias('count'),
+                       Pokemon.disappear_time,
+                       Pokemon.longitude,
+                       Pokemon.latitude
+                       )
+                .where(Pokemon.disappear_time > timediff)
+                .group_by(Pokemon.pokemon_id)
+                .having(Pokemon.disappear_time == fn.MAX(Pokemon.disappear_time))
+                .dicts()
+                )
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
