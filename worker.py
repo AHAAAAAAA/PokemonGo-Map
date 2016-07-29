@@ -110,6 +110,11 @@ class Slave(threading.Thread):
             except pgoapi_exceptions.ServerSideRequestThrottlingException:
                 time.sleep(random.uniform(0.2, 0.5))
                 continue
+            except Exception:
+                logger.exception('A wild exception appeared!')
+                self.error_code = 'EXCEPTION'
+                self.restart()
+                return
             break
         while self.cycle <= config.CYCLES_PER_WORKER:
             if not self.running:
