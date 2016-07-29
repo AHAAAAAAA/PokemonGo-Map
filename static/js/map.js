@@ -1152,36 +1152,36 @@ $(function() {
 });
 
 $(function() {
-	// populate Navbar Style menu
-	$selectStyle = $("#map-style")
+    // populate Navbar Style menu
+    $selectStyle = $("#map-style")
 	
 	// Load Stylenames from locale and populate lists
 	$.getJSON("static/locales/mapstyle." + language + ".json").done(function(data){
-		var styleList = []
-		
-		$.each(data, function(key, value){
-			styleList.push( { id: key, text: value } );
-		});
-		
-		
-		// setup the stylelist
-		$selectStyle.select2({
-			placeholder: "Select Style",
-			data: styleList
-		});
+        var styleList = []
 
-		// setup the list change behavior
-		$selectStyle.on("change", function (e) {
-			selectedStyle = $selectStyle.val();
-			map.setMapTypeId(selectedStyle)
-			Store.set('map_style', selectedStyle)
-		});
+        $.each(data, function(key, value){
+            styleList.push( { id: key, text: value } );
+        });
 		
 		
-		// recall saved mapstyle
-		$selectStyle.val(Store.get('map_style')).trigger("change");
+        // setup the stylelist
+        $selectStyle.select2({
+            placeholder: "Select Style",
+            data: styleList
+        });
+
+        // setup the list change behavior
+        $selectStyle.on("change", function (e) {
+            selectedStyle = $selectStyle.val();
+            map.setMapTypeId(selectedStyle)
+        Store.set('map_style', selectedStyle)
+        });
 		
-	});
+		
+        // recall saved mapstyle
+        $selectStyle.val(Store.get('map_style')).trigger("change");
+
+    });
 
 });
 
