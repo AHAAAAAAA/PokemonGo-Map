@@ -1,0 +1,109 @@
+/* Stats */
+
+	#stats {
+		@include vendor('transform', 'translateX(25em)');
+		@include vendor('transition', ('transform #{_duration(stats)} ease', 'box-shadow #{_duration(stats)} ease', 'visibility #{_duration(stats)}'));
+		-webkit-overflow-scrolling: touch;
+		background: #F8F8F8;
+		box-shadow: none;
+		color: _palette(accent2, fg-bold);
+		height: 100%;
+		max-width: 80%;
+		overflow-y: auto;
+		padding: 1.5em 1.5em 4em 1.5em;
+		position: fixed;
+		top: 3.50em;
+		right: 0;
+		visibility: hidden;
+		width: 25em;
+		z-index: 500;
+		h3 {
+			font-size: 18px;
+			font-family: 'Muli', sans-serif;
+			color: darken(_palette(accent2, bg), 12);
+		}
+		p {
+			margin-bottom: 20px;
+			color: darken(_palette(accent2, bg), 12);
+		}
+		> ul {
+			margin: 0 0 (_size(element-margin) * 0.5) 0;
+
+			&.links {
+				list-style: none;
+				padding: 0;
+
+				> li {
+					padding: 0;
+
+					> a:not(.button) {
+						border: 0;
+						border-top: solid 1px _palette(accent2, border);
+						color: inherit;
+						display: block;
+						letter-spacing: _size(letter-spacing-alt);
+						line-height: 3.5em;
+						text-decoration: none;
+					}
+
+					> .button {
+						display: block;
+						margin: 0.5em 0 0 0;
+					}
+
+					&:first-child {
+						> a:not(.button) {
+							border-top: 0 !important;
+						}
+					}
+				}
+			}
+		}
+
+		.form-control > select {
+			float: right;
+			font-size: 18px;
+		}
+
+		.close {
+			@include icon('\f00d');
+			@include vendor('transition', 'color #{_duration(transition)} ease-in-out');
+			-webkit-tap-highlight-color: rgba(0,0,0,0);
+			border: 0;
+			color: _palette(accent2, fg-light);
+			cursor: pointer;
+			display: none;
+			height: 3.25em;
+			line-height: 3.25em;
+			padding-right: 1.25em;
+			position: absolute;
+			right: 0;
+			text-align: right;
+			top: 0;
+			vertical-align: middle;
+			width: 7em;
+
+			&:before {
+				font-size: 1.25em;
+			}
+
+			&:hover {
+				color: _palette(accent2, fg-bold);
+			}
+
+			@include breakpoint(small) {
+				height: 4em;
+				line-height: 4em;
+			}
+		}
+
+		&.visible {
+			@include vendor('transform', 'translateX(0)');
+			box-shadow: 0 0 1.5em 0 rgba(0,0,0,0.2);
+			visibility: visible;
+		}
+
+		@include breakpoint(small) {
+			padding: 2.5em 1.75em;
+		}
+	}

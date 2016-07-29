@@ -12,8 +12,9 @@ from flask_cors import CORS
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data
+
 from pogom.search import search_loop, create_search_threads, fake_search_loop
-from pogom.models import init_database, create_tables, Pokemon, Pokestop, Gym
+from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
@@ -27,6 +28,12 @@ if __name__ == '__main__':
         log.setLevel(logging.DEBUG);
     else:
         log.setLevel(logging.INFO);
+
+    # Let's not forget to run Grunt / Only needed when running with webserver
+    if not args.no_server:
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), 'static/dist')):
+            log.critical('Please run "grunt build" before starting the server.');
+            sys.exit();
 
     # These are very noisey, let's shush them up a bit
     logging.getLogger("peewee").setLevel(logging.INFO)
@@ -46,6 +53,11 @@ if __name__ == '__main__':
         logging.getLogger("rpc_api").setLevel(logging.DEBUG)
 
     db = init_database()
+    if args.clear_db:
+        if args.db_type == 'mysql':
+            drop_tables(db)
+        elif os.path.isfile(args.db):
+            os.remove(args.db)
     create_tables(db)
 
     position = get_pos_by_name(args.location)
