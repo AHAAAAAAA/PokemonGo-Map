@@ -100,7 +100,7 @@ def get_session_stats(session):
 def get_punch_card(session):
     query = session.execute('''
         SELECT
-            CAST((expire_timestamp / 300) AS SIGNED) ts_date,
+            CAST((expire_timestamp / 300) AS BIGINT) ts_date,
             COUNT(*) how_many
         FROM `sightings`
         GROUP BY ts_date ORDER BY ts_date
