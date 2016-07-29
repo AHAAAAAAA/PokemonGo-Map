@@ -22,7 +22,6 @@ navBtn.onclick = function() {
 			location.href='/mobile?lat='+p.coords.latitude+'&lon='+p.coords.longitude;
 
 		}, function(err) {
-			loadingMessage.innerText='';
 			navBtn.innerText = 'Reload';
 			navBtn.disabled = false;
 			alert('Failed to get location: ' + err.message);
