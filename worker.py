@@ -90,22 +90,27 @@ class Slave(threading.Thread):
         self.error_code = None
 
         service = config.ACCOUNTS[self.worker_no][2]
-        try:
-            self.api.login(
-                provider=service,
-                username=config.ACCOUNTS[self.worker_no][0],
-                password=config.ACCOUNTS[self.worker_no][1],
-            )
-        except pgoapi_exceptions.AuthException:
-            self.error_code = 'LOGIN FAIL'
-            return
-        except pgoapi_exceptions.NotLoggedInException:
-            self.error_code = 'BAD LOGIN'
-            return
-        except pgoapi_exceptions.ServerBusyOrOfflineException:
-            self.error_code = 'RETRYING'
-            self.restart()
-            return
+        while True:
+            try:
+                self.api.login(
+                    provider=service,
+                    username=config.ACCOUNTS[self.worker_no][0],
+                    password=config.ACCOUNTS[self.worker_no][1],
+                )
+            except pgoapi_exceptions.AuthException:
+                self.error_code = 'LOGIN FAIL'
+                return
+            except pgoapi_exceptions.NotLoggedInException:
+                self.error_code = 'BAD LOGIN'
+                return
+            except pgoapi_exceptions.ServerBusyOrOfflineException:
+                self.error_code = 'RETRYING'
+                self.restart()
+                return
+            except pgoapi_exceptions.ServerSideRequestThrottlingException:
+                time.sleep(random.uniform(0.2, 0.5))
+                continue
+            break
         while self.cycle <= config.CYCLES_PER_WORKER:
             if not self.running:
                 self.restart()
@@ -169,7 +174,7 @@ class Slave(threading.Thread):
             if self.error_code and self.seen_per_cycle:
                 self.error_code = None
             self.step += 1
-            time.sleep(0.3)
+            time.sleep(random.uniform(0.2, 0.5))
         session.close()
         if self.seen_per_cycle == 0:
             self.error_code = 'NO POKEMON'
