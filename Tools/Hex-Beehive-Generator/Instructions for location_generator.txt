@@ -25,7 +25,7 @@ usage: location_generator.py [-h] -lat LAT -lon LON [-st STEPS] [-lp LEAPS]
                         like 'steps' but for workers instead of scans
 
   -o OUTPUT, --output OUTPUT
-                        output file for the script
+                        output file for the script, set to extension to .bat for windows
 
   --accounts ACCOUNTS   List of your accounts, in csv [username],[password]
                         format

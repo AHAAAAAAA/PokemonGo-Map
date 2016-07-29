@@ -8,13 +8,18 @@ parser.add_argument("-lat", "--lat", help="latitude", type=float, required=True)
 parser.add_argument("-lon", "--lon", help="longitude", type=float, required=True)
 parser.add_argument("-st", "--steps", help="steps", default=5, type=int)
 parser.add_argument("-lp", "--leaps", help="like 'steps' but for workers instead of scans", default=3, type=int)
-parser.add_argument("-o", "--output", default="../../beehive.sh", help="output file for the script")
+parser.add_argument("-o", "--output", default="../../beehive.sh", help="output file for the script, "
+                                                                       "set to ../../beehive.bat for windows")
 parser.add_argument("--accounts", help="List of your accounts, in csv [username],[password] format", default=None)
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
 parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
+parser.add_argument("-s", "--system", help="operating system, win or linux, creating bat or sh files", default="linux")
 
-server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
-worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
+server_template_linux = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
+worker_template_linux = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
+server_template_win = "start /min python runserver.py -os -l \"{lat} {lon}\"\n"
+worker_template_win = "timeout 1 > nul\nstart /min python runserver.py -ns -l \"{lat} {lon}\"\n"
+
 auth_template = "-a {} -u {} -p {}"
 
 R = 6378137.0
@@ -24,6 +29,13 @@ r_hex = 75.0
 args = parser.parse_args()
 st = args.steps
 wst = args.leaps
+
+if str(args.output).endswith(".bat"):
+    server_template = server_template_win
+    worker_template = worker_template_win
+else:
+    server_template = server_template_linux
+    worker_template = worker_template_linux
 
 if args.accounts:
     print("Reading usernames/passwords from {}".format(args.accounts))
