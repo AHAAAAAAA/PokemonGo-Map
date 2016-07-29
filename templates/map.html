@@ -37,7 +37,7 @@
       <header id="header">
         <a href="#nav">Options</a>
         <h1><a href="#">Pokémon Go Map</a></h1>
-		<a href="#stats" id="statsToggle" class="statsNav" style="float: right;"></a>
+		<a href="#stats" id="statsToggle" class="statsNav" style="float: right;">Stats</a>
       </header>
       <!-- NAV -->
       <nav id="nav">
@@ -107,16 +107,6 @@
             </label>
           </div>
         </div>
-		<div class="form-control switch-container">
-		  <h3>Statistics</h3>
-		  <div class="onoffswitch">
-			<input id="stats-switch" type="checkbox" name="stats-switch" class="onoffswitch-checkbox" checked/>
-			<label class="onoffswitch-label" for="stats-switch">
-			<span class="switch-label" data-on="On" data-off="Off"></span>
-			<span class="switch-handle"></span>
-			</label>
-		  </div>
-		</div>
         <div class="form-control switch-container">
           <h3>Icons</h3>
           <select name="pokemon-icons" id="pokemon-icons"></select>
@@ -161,7 +151,7 @@
 	  <nav id="stats">
 		<div class="switch-container">
 		  <div class="switch-container">
-			<center><h1 id="stats-pkmn-label"></h1></center>
+			<center><h1 id="stats-pkmn-label">Loading...</h1></center>
 		  </div>
 		  <div id="pokemonList" style="color: black;"></div>
 		  <div class="switch-container">
@@ -188,7 +178,7 @@
       var center_lng = {{lng}};
     </script>
     <script src="static/dist/js/map.js"></script>
-	<script src="static/dist/js/stats.js"></script>
+    <script src="static/dist/js/stats.js"></script>
     <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
   </body>
 </html>

@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "description": "Pokemon Go Map - Live Visualization",
   "main": "Gruntfile.js",
-  "devDependencies": {
+  "dependencies": {
     "babel-preset-es2015": "^6.9.0",
     "grunt": "^0.4.5",
     "grunt-babel": "^6.0.0",
+    "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-connect": "latest",
@@ -24,7 +25,9 @@
     "jshint-stylish": "latest"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "./node_modules/.bin/grunt build",
+    "build": "./node_modules/.bin/grunt build",
+    "lint": "./node_modules/.bin/grunt lint"
   },
   "repository": {
     "type": "git",

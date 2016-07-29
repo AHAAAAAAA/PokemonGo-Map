@@ -28,7 +28,7 @@ function countMarkers() {
 		});
 		pkmnCount.sort(sort_by('Name', false));
 		$.each(map_data.pokemons, function(key, value) {
-			var pkmnListString = "<table><thead><tr><th>Icon</th><th>Name</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td></td><td>Total</td><td>"+pkmnTotal+"</td></tr>";
+			var pkmnListString = "<table><thead><tr><th>Icon</th><th>Name</th><th>Count</th><th>%</th></tr></thead><tbody><tr><td></td><td>Total</td><td>"+pkmnTotal+"</td><td></td></tr>";
 			for(var i=0;i < pkmnCount.length;i++) {
 				if (pkmnCount[i] != null && pkmnCount[i].Count > 0)
 				{
@@ -135,23 +135,6 @@ function countMarkers() {
 		document.getElementById("pokestopList").innerHTML = "PokéStops markers are disabled";
 	}
 };
-
-$('#stats-switch').change(function() {
-    Store.set('showStats', this.checked);
-    if (this.checked) {
-        countMarkers();
-		document.getElementById("statsToggle").innerHTML = "Stats";
-    } else {
-		document.getElementById("pokemonList").innerHTML = "";
-		document.getElementById("arenaList").innerHTML = "";
-		document.getElementById("pokestopList").innerHTML = "";
-		document.getElementById("stats-pkmn-label").innerHTML = "";
-		document.getElementById("stats-gym-label").innerHTML = "";
-		document.getElementById("stats-pkstop-label").innerHTML = "";
-		document.getElementById("statsToggle").innerHTML = "";
-		document.getElementById("stats").classList.remove('visible');
-    }
-});
 
 var sort_by = function(field, reverse, primer){
     var key = primer ? 
