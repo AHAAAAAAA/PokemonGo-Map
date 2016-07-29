@@ -13,7 +13,7 @@ from base64 import b64encode
 from . import config
 from .utils import get_pokemon_name, get_args, send_to_webhook
 from .transform import transform_from_wgs_to_gcj
-from .customLog import printPokemon
+from .customLog import printPokemon, pokeData
 
 log = logging.getLogger(__name__)
 
@@ -231,8 +231,11 @@ def parse_map(map_dict, iteration_num, step, step_location):
                 d_t = datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
                      p['time_till_hidden_ms']) / 1000.0)
+                desptime = p['time_till_hidden_ms'] / 1000.0
                 printPokemon(p['pokemon_data']['pokemon_id'], p['latitude'],
                              p['longitude'], d_t)
+                pokeData(p['pokemon_data']['pokemon_id'], p['latitude'],
+                         p['longitude'], desptime)
                 pokemons[p['encounter_id']] = {
                     'encounter_id': b64encode(str(p['encounter_id'])),
                     'spawnpoint_id': p['spawnpoint_id'],
