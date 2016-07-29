@@ -5,4 +5,4 @@ while read line || [[ -n "$line" ]]; do
 done < locations.txt
 echo "nohup python ../../runserver.py -os -l '$3, $4' &" >> beehive.sh
 chmod u+x beehive.sh
-echo "Beehive generated. Run ./beehive.sh to unleash the swarm."
+echo "Beehive generated. Run ../../beehive.sh to unleash the swarm."
