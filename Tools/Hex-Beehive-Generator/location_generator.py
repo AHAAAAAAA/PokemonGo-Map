@@ -52,22 +52,24 @@ for i in range(1, wst):
 locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * total_workers
 locations[0] = LatLon.LatLon(LatLon.Latitude(args.lat), LatLon.Longitude(args.lon))
 
-turn_steps = 0
-turn_steps_so_far = 0
-turn_count = 0
+turns = 0               # number of turns made in this ring (0 to 6)
+turn_steps = 0          # number of cells required to complete one turn of the ring
+turn_steps_so_far = 0   # current cell number in this side of the current ring
 
 jump_points = [0] * (wst + 1)
 jump_points[0] = 0
 jump_points[1] = 1
-turns = 0
 jump = 1
 for i in range(2, wst + 1):
     jump_points[i] = jump_points[i - 1] + 6 * (i - 1)
 
 for i in range(1, total_workers):
     if turns == 6 or turn_steps == 0:
+        # we have completed a ring (or are starting the very first ring)
+        turns = 0
         turn_steps += 1
         turn_steps_so_far = 0
+
     if turn_steps_so_far == 0:
         brng = brng_s
         loc = locations[0]
@@ -92,9 +94,10 @@ for i in range(1, total_workers):
         turns += 1
         turn_steps_so_far = 0
 
+# if accounts list was provided, match each location with an account
+# reusing accounts if required
 location_and_auth = [(i, j) for i, j in itertools.izip(locations, itertools.cycle(accounts))]
+
 for location, auth in location_and_auth:
-    location.auth = auth
-    location.steps = args.steps
-    output_fh.write(worker_template.format(**vars(location)))
+    output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth))
 
