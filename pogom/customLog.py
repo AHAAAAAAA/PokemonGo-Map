@@ -25,5 +25,9 @@ def printPokemon(id,lat,lng,itime):
         #        doPrint = False
         if doPrint:
             timeLeft = itime-datetime.utcnow()
-            print "======================================\n Name: %s\n Coord: (%f,%f)\n ID: %s \n Remaining Time: %s\n======================================" % (
-                pokemon_name.encode('utf-8'),lat,lng,pokemon_id,str(timeLeft))
+            print "======================================"
+            print "Name: %s" % (pokemon_name.encode('utf-8'))
+            print "Coord: (%f,%f)" % (lat, lng)
+            print "ID: %s" % (pokemon_id)
+            print "Remaining Time: %s" % (str(timeLeft))
+            print "======================================"
