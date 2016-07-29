@@ -34,7 +34,7 @@ def get_args():
     configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
     parser = configargparse.ArgParser(default_config_files=[configpath])
 
-    parser.add_argument('-a', '--auths', nargs='+', type=str.lower,
+    parser.add_argument('-a', '--auths', nargs='+',
                          help="One or more strings in the form auth_provider:username:password")
     parser.add_argument('-l', '--location', type=parse_unicode,
                         help='Location, can be an address or coordinates')
