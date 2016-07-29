@@ -19,6 +19,21 @@ import db
 import utils
 
 
+# Check whether config has all necessary attributes
+REQUIRED_SETTINGS = (
+    'DB_ENGINE',
+    'CYCLES_PER_WORKER',
+    'MAP_START',
+    'MAP_END',
+    'ACCOUNTS',
+    'LAT_GAIN',
+    'LON_GAIN',
+)
+for setting_name in REQUIRED_SETTINGS:
+    if not hasattr(config, setting_name):
+        raise RuntimeError('Please set "{}" in config')
+
+
 workers = {}
 local_data = threading.local()
 
@@ -58,8 +73,10 @@ class Slave(threading.Thread):
         self.count_points = len(self.points)
         self.step = 0
         self.cycle = 0
-        self.seen = 0
+        self.seen_per_cycle = 0
+        self.total_seen = 0
         self.error_code = None
+        self.running = True
         self.api = PGoApi()
 
     def run(self):
@@ -87,14 +104,24 @@ class Slave(threading.Thread):
             self.error_code = 'RETRYING'
             self.restart()
             return
-        while self.cycle <= 3:  # TODO: to config
+        while self.cycle <= config.CYCLES_PER_WORKER:
+            if not self.running:
+                self.restart()
+                return
             try:
                 self.main()
             except CannotProcessStep:
                 self.error_code = 'RESTART'
                 self.restart()
+            except Exception:
+                logger.exception('A wild exception appeared!')
+                self.error_code = 'EXCEPTION'
+                self.restart()
+            if not self.running:
+                self.restart()
+                return
             self.cycle += 1
-            if self.cycle <= 3:
+            if self.cycle <= config.CYCLES_PER_WORKER:
                 self.error_code = 'SLEEP'
                 time.sleep(random.randint(30, 60))
                 self.error_code = None
@@ -102,10 +129,12 @@ class Slave(threading.Thread):
         self.restart()
 
     def main(self):
-        """"""
+        """Heart of the worker - goes over each point and reports sightings"""
         session = db.Session()
-        self.seen = 0
+        self.seen_per_cycle = 0
         for i, point in enumerate(self.points):
+            if not self.running:
+                return
             logger.info('Visiting point %d (%s %s)', i, point[0], point[1])
             self.api.set_position(point[0], point[1], 0)
             cell_ids = pgoapi_utils.get_cell_ids(point[0], point[1])
@@ -126,15 +155,17 @@ class Slave(threading.Thread):
                         pokemons.append(self.normalize_pokemon(pokemon, now))
             for raw_pokemon in pokemons:
                 db.add_sighting(session, raw_pokemon)
-                self.seen += 1
+                if self.worker_no != 2:
+                    self.seen_per_cycle += 1
+                    self.total_seen += 1
             logger.info('Point processed, %d Pokemons seen!', len(pokemons))
             session.commit()
             # Clear error code and let know that there are Pokemon
-            if self.error_code and self.seen:
+            if self.error_code and self.seen_per_cycle:
                 self.error_code = None
             self.step += 1
         session.close()
-        if self.seen == 0:
+        if self.seen_per_cycle == 0:
             self.error_code = 'NO POKEMON'
 
     @staticmethod
@@ -157,7 +188,7 @@ class Slave(threading.Thread):
         else:
             msg = 'C{cycle},P{seen},{progress:.0f}%'.format(
                 cycle=self.cycle,
-                seen=self.seen,
+                seen=self.seen_per_cycle,
                 progress=(self.step / float(self.count_points) * 100)
             )
         return '[W{worker_no}: {msg}]'.format(
@@ -169,6 +200,14 @@ class Slave(threading.Thread):
         """Sleeps for a bit, then restarts"""
         time.sleep(random.randint(sleep_min, sleep_max))
         start_worker(self.worker_no, self.points)
+
+    def kill(self):
+        """Marks worker as not running
+
+        It should stop any operation as soon as possible and restart itself.
+        """
+        self.error_code = 'KILLED'
+        self.running = False
 
 
 def get_status_message(workers, count, start_time, points_stats):
@@ -183,6 +222,8 @@ def get_status_message(workers, count, start_time, points_stats):
             min=points_stats['min'],
             max=points_stats['max'],
         ),
+        '',
+        '{} threads active'.format(threading.active_count()),
         '',
     ]
     previous = 0
@@ -217,10 +258,28 @@ def spawn_workers(workers, status_bar=True):
         'avg': sum(lenghts) / float(len(lenghts)),
     }
     last_cleaned_cache = time.time()
+    last_workers_checked = time.time()
+    workers_check = [
+        (worker, worker.total_seen) for worker in workers.values()
+        if worker.running
+    ]
     while True:
         now = time.time()
-        if now - last_cleaned_cache > (15 * 60):
+        if now - last_cleaned_cache > (15 * 60):  # clean cache
             db.CACHE.clean_expired()
+            last_cleaned_cache = now
+        if now - last_workers_checked > (1 * 30):  # check up on workers
+            # Check old workers and kill those not doing anything
+            for worker, total_seen in workers_check:
+                if not worker.running:
+                    continue
+                if worker.total_seen <= total_seen:
+                    worker.kill()
+            # Prepare new list
+            workers_check = [
+                (worker, worker.total_seen) for worker in workers.values()
+            ]
+            last_workers_checked = now
         if status_bar:
             if sys.platform == 'win32':
                 _ = os.system('cls')
