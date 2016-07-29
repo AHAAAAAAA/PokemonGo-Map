@@ -24,9 +24,22 @@ RUN apk add --no-cache ca-certificates
 COPY requirements.txt /usr/src/app/
 
 # Install all prerequisites (build base used for gcc of some python modules)
-RUN apk add --no-cache build-base \
- && pip install --no-cache-dir -r requirements.txt \
- && apk del build-base
+RUN apk add --no-cache build-base nodejs \
+ && pip install --no-cache-dir -r requirements.txt
+ 
+COPY package.json /usr/src/app/
+
+RUN npm install
 
 # Add the rest of the app code
 COPY . /usr/src/app
+
+# Let grunt do its magic
+RUN npm install -g grunt \
+    && grunt jshint sass cssmin uglify \
+    && npm remove -g grunt \
+    && npm cache clean \
+    && rm -rf node_modules \
+    && apk del build-base
+    && rm package.json
+    && rm Gruntfile.js
