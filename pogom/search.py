@@ -31,6 +31,9 @@ log = logging.getLogger(__name__)
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
 api = PGoApi()
 
+## eww global state, refactor this whole file at some point
+stopping = False
+
 search_queue = Queue()
 
 
@@ -55,7 +58,7 @@ def send_map_request(api, position):
 def get_new_coords(init_loc, distance, bearing):
     """ Given an initial lat/lng, a distance(in kms), and a bearing (degrees),
     this will calculate the resulting lat/lng coordinates.
-    """ 
+    """
     R = 6378.1 #km radius of the earth
     bearing = math.radians(bearing)
 
@@ -82,7 +85,7 @@ def generate_location_steps(initial_loc, step_count):
 
     yield (initial_loc[0], initial_loc[1], 0) #insert initial location
 
-    ring = 1            
+    ring = 1
     loc = initial_loc
     while ring < step_count:
         #Set loc to start at top left
@@ -138,7 +141,8 @@ def search_thread(q):
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
     while True:
-
+        if stopping:
+            return
         # Get the next item off the queue (this blocks till there is something)
         i, step_location, step, lock = q.get()
 
@@ -182,7 +186,7 @@ def search_thread(q):
 #
 def search_loop(args):
     i = 0
-    while True:
+    while not stopping:
         log.info("Search loop {} starting".format(i))
         try:
             search(args, i)
@@ -245,3 +249,14 @@ def fake_search_loop():
     while True:
         log.info('Fake search loop running...')
         time.sleep(10)
+
+def search_loop_stop():
+    global stopping
+    """
+        stops the searching method after curent operation has completed
+    """
+    stopping = True
+
+def search_loop_start():
+    global stopping
+    stopping = False
