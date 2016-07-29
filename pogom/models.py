@@ -4,9 +4,11 @@
 import logging
 import os
 import time
-from peewee import Model, MySQLDatabase, SqliteDatabase, InsertQuery,\
+from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
-                   DateTimeField, OperationalError
+                   DateTimeField, OperationalError, create_model_tables
+from playhouse.flask_utils import FlaskDB
+from playhouse.pool import PooledMySQLDatabase
 from playhouse.shortcuts import RetryOperationalError
 from datetime import datetime, timedelta
 from base64 import b64encode
@@ -19,35 +21,34 @@ from .customLog import printPokemon
 log = logging.getLogger(__name__)
 
 args = get_args()
-db = None
+flaskDb = FlaskDB()
 
 
-class MyRetryDB(RetryOperationalError, MySQLDatabase):
+class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
     pass
 
 
-def init_database():
-    global db
-    if db is not None:
-        return db
-
+def init_database(app):
     if args.db_type == 'mysql':
         db = MyRetryDB(
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
-            host=args.db_host)
+            host=args.db_host,
+            max_connections=args.db_max_connections,
+            stale_timeout=300)
         log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
         db = SqliteDatabase(args.db)
         log.info('Connecting to local SQLLite database.')
 
+    app.config['DATABASE'] = db
+    flaskDb.init_app(app)
+
     return db
 
 
-class BaseModel(Model):
-    class Meta:
-        database = init_database()
+class BaseModel(flaskDb.Model):
 
     @classmethod
     def get_all(cls):
@@ -338,10 +339,13 @@ def parse_map(map_dict, iteration_num, step, step_location):
     bulk_upsert(ScannedLocation, scanned)
 
 
+
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
     step = 120
+
+    flaskDb.connect_db()
 
     while i < num_rows:
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
@@ -352,6 +356,8 @@ def bulk_upsert(cls, data):
             continue
 
         i+=step
+
+    flaskDb.close_db(None)
 
 
 def create_tables(db):
