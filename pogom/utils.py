@@ -33,10 +33,9 @@ def get_args():
     # fuck PEP8
     configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
     parser = configargparse.ArgParser(default_config_files=[configpath])
-    parser.add_argument('-a', '--auth-service', type=str.lower,
-                        help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username')
-    parser.add_argument('-p', '--password', help='Password')
+
+    parser.add_argument('-a', '--auths', nargs='+', type=str.lower,
+                         help="One or more strings in the form auth_provider:username:password")
     parser.add_argument('-l', '--location', type=parse_unicode,
                         help='Location, can be an address or coordinates')
     parser.add_argument('-st', '--step-limit', help='Steps', type=int,
@@ -115,15 +114,10 @@ def get_args():
             print sys.argv[0] + ': error: arguments -l/--location is required'
             sys.exit(1)
     else:
-        if (args.username is None or args.location is None or args.step_limit is None):
+        if (args.auths is None or args.location is None or args.step_limit is None):
             parser.print_usage()
-            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
+            print sys.argv[0] + ': error: arguments -a/--auths, -l/--location, -st/--step-limit are required'
             sys.exit(1)
-
-        if config["PASSWORD"] is None and args.password is None:
-            config["PASSWORD"] = args.password = getpass.getpass()
-        elif args.password is None:
-            args.password = config["PASSWORD"]
 
     return args
 
