@@ -11,11 +11,6 @@ EXPOSE 5000
 # Working directory for the application
 WORKDIR /usr/src/app
 
-# Set Entrypoint with hard-coded options
-ENTRYPOINT ["python", "./runserver.py", "--host", "0.0.0.0"]
-
-# Set default options when container is run without any command line arguments
-CMD ["-h"]
 
 # add certificates to talk to the internets
 RUN apk add --no-cache ca-certificates
@@ -27,6 +22,13 @@ COPY requirements.txt /usr/src/app/
 RUN apk add --no-cache build-base \
  && pip install --no-cache-dir -r requirements.txt \
  && apk del build-base
+
+# Set Entrypoint with hard-coded options
+ENTRYPOINT ["python", "./runserver.py", "--host", "0.0.0.0"]
+
+# Set default options when container is run without any command line arguments
+CMD ["-h"]
+
 
 # Add the rest of the app code
 COPY . /usr/src/app

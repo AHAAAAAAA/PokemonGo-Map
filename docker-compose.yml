@@ -1,0 +1,19 @@
+version: '2'
+services:
+  app:
+    build: ./
+    ports:
+      - "5000:5000"
+    command:
+      - "-k"
+      - "YOUR GMAPS KEY"
+      - "-u"
+      - "YOUR USERNAME"
+      - "-p"
+      - "YOUR PASSWORD"
+      - "-st"
+      - "STEP LIMIT"
+      - "-l"
+      - "Seattle, WA"
+      - "-a"
+      - "ptc"
