@@ -26,3 +26,7 @@
 # Webserver settings
 #host:                  # address to listen on (default 127.0.0.1)
 #port:                  # port to listen on (default 5000)
+
+# slack Settings
+#slack-key:             # slack api key
+#slack-channel:         # Slack chat channel to submit (default #general)

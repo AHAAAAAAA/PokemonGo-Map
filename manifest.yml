@@ -17,3 +17,5 @@ applications:
       PASSWORD: yourauthservicepassword
       LOCATION: "yourlocation"
       STEP_COUNT: 5
+      SLACK_KEY: yourslackapikey
+      SLACK_CHANNEL: "#general"

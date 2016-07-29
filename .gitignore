@@ -5,6 +5,7 @@
 *.sass-cache
 *.orig
 config/config.ini
+config/alarms.json
 static/dist/
 node_modules/
 venv/
