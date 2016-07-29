@@ -149,7 +149,7 @@ def insert_mock_data():
 
     detect_time = datetime.now()
 
-    for i in range(num_pokemon):
+    for i in range(1, num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
@@ -158,7 +158,7 @@ def insert_mock_data():
                        disappear_time=disappear_time,
                        detect_time=detect_time)
 
-    for i in range(num_pokestop):
+    for i in range(1, num_pokestop):
         Pokestop.create(pokestop_id=uuid.uuid4(),
                         enabled=True,
                         latitude=locations[i+num_pokemon][0],
@@ -169,7 +169,7 @@ def insert_mock_data():
                         active_pokemon_id=i
                         )
 
-    for i in range(num_gym):
+    for i in range(1, num_gym):
         Gym.create(gym_id=uuid.uuid4(),
                    team_id=i % 3,
                    guard_pokemon_id=(i+1) % 150,
@@ -180,19 +180,47 @@ def insert_mock_data():
                    gym_points=1000
                    )
 
-
-def get_pokemon_name(pokemon_id):
-    if not hasattr(get_pokemon_name, 'names'):
+def i8ln(word):
+    log.debug("Translating: %s", word)
+    if config['LOCALE'] == "en": return word
+    if not hasattr(i8ln, 'dictionary'):
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
-            'pokemon.{}.json'.format(config['LOCALE']))
+            '{}.json'.format(config['LOCALE']))
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as f:
+                i8ln.dictionary = json.loads(f.read())
+        else:
+            log.warning("Skipping translations - Unable to find locale file: %s", file_path)
+            return word
+    if word in i8ln.dictionary:
+        log.debug("Translation = %s", i8ln.dictionary[word])
+        return i8ln.dictionary[word]
+    else:
+        log.debug("Unable to find translation!")
+        return word
+
+def get_pokemon_data(pokemon_id):
+    if not hasattr(get_pokemon_data, 'pokemon'):
+        file_path = os.path.join(
+            config['ROOT_PATH'],
+            config['LOCALES_DIR'],
+            'pokemon.json')
 
         with open(file_path, 'r') as f:
-            get_pokemon_name.names = json.loads(f.read())
+            get_pokemon_data.pokemon = json.loads(f.read())
+    return get_pokemon_data.pokemon[str(pokemon_id)]
 
-    return get_pokemon_name.names[str(pokemon_id)]
+def get_pokemon_name(pokemon_id):
+    return i8ln(get_pokemon_data(pokemon_id)['name'])
 
+def get_pokemon_rarity(pokemon_id):
+    return i8ln(get_pokemon_data(pokemon_id)['rarity'])
+
+def get_pokemon_types(pokemon_id):
+    pokemon_types = get_pokemon_data(pokemon_id)['types']
+    return map(lambda x: {"type": i8ln(x['type']), "color": x['color']}, pokemon_types)
 
 def send_to_webhook(message_type, message):
     args = get_args()
