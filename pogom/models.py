@@ -4,6 +4,7 @@
 import logging
 import os
 import time
+import calendar
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError, create_model_tables
@@ -266,7 +267,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple())
+                    'disappear_time': calendar.timegm(d_t.timetuple())
                 }
 
                 send_to_webhook('pokemon', webhook_data)
