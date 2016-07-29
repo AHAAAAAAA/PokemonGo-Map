@@ -31,7 +31,8 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'static/dist/js/app.js': 'static/js/app.js',
-          'static/dist/js/map.js': 'static/map.js'
+          'static/dist/js/map.js': 'static/map.js',
+          'static/dist/js/stats.js': 'static/js/stats.js'
         }
       }
     },
@@ -94,10 +95,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('js-build', ['jshint', 'babel', 'uglify']);
+  grunt.registerTask('js-build', ['babel', 'uglify']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
+  grunt.registerTask('js-lint', ['jshint']);
 
   grunt.registerTask('build', ['js-build', 'css-build']);
-  grunt.registerTask('default', ['build', 'watch']);
+  grunt.registerTask('lint', ['js-lint']);
+  grunt.registerTask('default', ['lint', 'build', 'watch']);
 
 };
