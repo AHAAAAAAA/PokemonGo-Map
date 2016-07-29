@@ -1,9 +1,11 @@
 var rawDataIsLoading = false;
 var detailsLoading = false;
 var total = 0;
+var pageInterval = null;
 var detailInterval = null;
 var pokemonid = 0;
 var lastappearance = 1;
+var totalPokemon = 151;
 
 function loadRawData(){
     return $.ajax({
@@ -66,54 +68,10 @@ function processTotal(seen){
     document.getElementById("seen_total").innerHTML = 'Total: ' + total.toLocaleString();
 }
 
-function processSeen(i, item) {
+function processSeen(seen){
+    var total = 0;
     var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var percentage = (item.count / total * 100).toFixed(2);
-    var lastSeen = new Date(item.disappear_time);
-    lastSeen =  lastSeen.getHours() + ':' +
-                ("0" + lastSeen.getMinutes()).slice(-2) + ':' +
-                ("0" + lastSeen.getSeconds()).slice(-2) + ' ' +
-                lastSeen.getDate() + ' ' +
-                monthArray[lastSeen.getMonth()] + ' ' +
-                lastSeen.getFullYear();
-    var location = (item.latitude * 1).toFixed(7) + ', ' + (item.longitude * 1).toFixed(7);
-    var element = document.getElementById("seen_" + item.pokemon_id);
-    if(element == null){
-        element = document.createElement('div');
-        element.id = 'seen_' + item.pokemon_id;
-        element.className = 'item';
-        element.innerHTML = '   <div class="container">\
-                                    <div class="image">\
-                                        <img src="static/icons/' + item.pokemon_id + '.png"\
-                                             alt="Icon for ' + item.pokemon_name + '"\
-                                        >\
-                                    </div>\
-                                    <div class="info">\
-                                        <span class="name">\
-                                            <a href="http://www.pokemon.com/us/pokedex/' + item.pokemon_id + '" \
-                                               target="_blank" \
-                                               title="View in Pokedex"\
-                                            >' + item.pokemon_name + '</a>\
-                                        </span>\
-                                        <br />\
-                                        <span class="seen"></span>\
-                                    </div>\
-                                </div>\
-                                <div class="details">\
-                                    <span class="lastseen"></span><br />\
-                                    <span class="location"></span><br />\
-                                    <a href="#" onclick="return showDetails(this.parentElement.parentElement);">More Locations</a>\
-                                </div>';
-        document.getElementById('seen_container').appendChild(element);
-    }
-    element.getElementsByClassName('seen')[0].innerHTML = 'Seen: ' + item.count.toLocaleString() + ' (' + percentage + '%)';
-    element.getElementsByClassName('lastseen')[0].innerHTML = 'Last Seen: ' + lastSeen;
-    element.getElementsByClassName('location')[0].innerHTML = 'Location: ' + location;
-}
-
-function cleanAndSort(seen) {
-    //Clear those that aren't seen
-    var container = document.getElementById("seen_container");
+    var shown = Array();
 
     seen.sort(function(a, b){
         var sort = document.getElementById("sort");
@@ -141,29 +99,57 @@ function cleanAndSort(seen) {
 
     });
 
-    //Order all existing
+    for(var i = 0; i < seen.length; i++)
+        total += seen[i].count;
+
     for(var i = seen.length - 1; i >= 0; i--){
-        var node = document.getElementById('seen_' + seen[i].pokemon_id);
-        container.insertBefore(node, container.childNodes[0]);
+        var item = seen[i];
+        var percentage = (item.count / total * 100).toFixed(2);
+        var lastSeen = new Date(item.disappear_time);
+        lastSeen =  lastSeen.getHours() + ':' +
+                    ("0" + lastSeen.getMinutes()).slice(-2) + ':' +
+                    ("0" + lastSeen.getSeconds()).slice(-2) + ' ' +
+                    lastSeen.getDate() + ' ' +
+                    monthArray[lastSeen.getMonth()] + ' ' +
+                    lastSeen.getFullYear();
+        var location = (item.latitude * 1).toFixed(7) + ', ' + (item.longitude * 1).toFixed(7);
+        if(!$('#seen_' + item.pokemon_id).length)
+            addElement(item.pokemon_id, item.pokemon_name);
+        $('#count_' + item.pokemon_id).html('Seen: ' + item.count.toLocaleString() + ' (' + percentage + '%)');
+        $('#lastseen_' + item.pokemon_id).html('Last Seen: ' + lastSeen);
+        $('#location_' + item.pokemon_id).html('Location: ' + location);
+        $('#seen_' + item.pokemon_id).show();
+        //Reverting to classic javascript here as it's supposed to increase performance
+        document.getElementById('seen_container').insertBefore(document.getElementById('seen_' + item.pokemon_id), document.getElementById('seen_container').childNodes[0]);
+        shown.push(item.pokemon_id);
     }
 
-    //Remove any unneeded items
-    for(var i = seen.length; i < container.childNodes.length; i++){
-        var node = container.childNodes[i];
-        container.removeChild(node);
-        i--;
+    //Hide any unneeded items
+    for(var i = 1; i <= this.totalPokemon; i++){
+        if(shown.indexOf(i) < 0)
+            $('#seen_' + i).hide();
     }
+
+    document.getElementById("seen_total").innerHTML = 'Total: ' + total.toLocaleString();
 }
 
 function updatePage(){
-    loadRawData().done(function (result) {
-        processTotal(result.seen);
-        $.each(result.seen, processSeen);
-        cleanAndSort(result.seen);
-    });
-
     var duration = document.getElementById("duration");
-    document.getElementById("seen_header").innerHTML = 'Pokemon Seen in ' + duration.options[duration.selectedIndex].text;
+    var header = 'Pokemon Seen in ' + duration.options[duration.selectedIndex].text;
+    if($('#seen_header').html() != header){
+            $('#seen_container').hide();
+            $('#loading').show();
+            $('#seen_header').html('');
+            $('#seen_total').html('');
+    }
+    loadRawData().done(function (result) {
+        processSeen(result.seen);
+        if($('#seen_header').html() != header){
+            $('#seen_header').html(header);
+            $('#loading').hide();
+            $('#seen_container').show();
+        }
+    });
 }
 
 function processAppearance(i, appearance){
@@ -189,6 +175,7 @@ function updateDetails(){
 }
 
 function showDetails(container){
+    window.clearInterval(this.pageInterval); //Disable count updates while looking at specific details
     lastappearance = 0;
     document.getElementById("location_details").style.display = "block";
     pokemonid = container.id.replace(/^seen_/g, '');
@@ -204,8 +191,73 @@ function showDetails(container){
 function closeOverlay(){
     document.getElementById("location_details").style.display = "none";
     window.clearInterval(detailInterval)
+    pageInterval = window.setInterval(updatePage, 5000);
     return false;
 }
 
+function addElement(pokemon_id, name){
+    jQuery('<div/>', {
+        id: 'seen_' + pokemon_id,
+        class: 'item'
+    }).appendTo('#seen_container');
+
+    jQuery('<div/>',{
+        id: 'seen_' + pokemon_id + '_base',
+        class: 'container'
+    }).appendTo('#seen_' + pokemon_id);
+
+    var imageContainer = jQuery('<div/>',{
+                            class: 'image',
+                        }).appendTo('#seen_' + pokemon_id + '_base');
+
+    jQuery('<img/>', {
+        src: 'static/icons/' + pokemon_id + '.png',
+        alt: 'Image for Pokemon #' + pokemon_id
+    }).appendTo(imageContainer);
+
+    var baseDetailContainer = jQuery('<div/>', {
+                                    class: 'info'
+                                }).appendTo('#seen_' + pokemon_id + '_base');
+
+    jQuery('<div/>', {
+        id: 'name_' + pokemon_id,
+        class: 'name'
+    }).appendTo(baseDetailContainer);
+
+    jQuery('<a/>',{
+        id: 'link_' + pokemon_id,
+        href: 'http://www.pokemon.com/us/pokedex/' + pokemon_id,
+        target: '_blank',
+        title: 'View in Pokedex',
+        text: name
+    }).appendTo('#name_' + pokemon_id);
+
+    jQuery('<div/>', {
+        id: 'count_' + pokemon_id,
+        class: 'seen'
+    }).appendTo(baseDetailContainer);
+
+    jQuery('<div/>', {
+        id: 'seen_' + pokemon_id + '_details',
+        class: 'details',
+    }).appendTo('#seen_' + pokemon_id);
+
+    jQuery('<div/>', {
+        id: 'lastseen_' + pokemon_id,
+        class: 'lastseen'
+    }).appendTo('#seen_' + pokemon_id + '_details');
+
+    jQuery('<div/>',{
+        id: 'location_' + pokemon_id,
+        class: 'location'
+    }).appendTo('#seen_' + pokemon_id + '_details');
+
+    jQuery('<a/>',{
+        href: '#',
+        onclick: 'return showDetails(document.getElementById("seen_' + pokemon_id + '"));',
+        text: 'More Locations'
+    }).appendTo('#seen_' + pokemon_id + '_details');
+}
+
 updatePage();
-window.setInterval(updatePage, 5000);
+pageInterval = window.setInterval(updatePage, 5000);
