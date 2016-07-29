@@ -117,6 +117,7 @@ class Slave(threading.Thread):
                 logger.exception('A wild exception appeared!')
                 self.error_code = 'EXCEPTION'
                 self.restart()
+                return
             if not self.running:
                 self.restart()
                 return
