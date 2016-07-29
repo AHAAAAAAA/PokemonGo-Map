@@ -74,7 +74,7 @@ module.exports = function(grunt) {
       js: {
         files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
         options: { livereload: true },
-        tasks: ['js-build']
+        tasks: ['js-lint', 'js-build']
       },
       css: {
         files: '**/*.scss',
@@ -107,10 +107,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
 
-  grunt.registerTask('js-build', ['jshint', 'babel', 'uglify']);
+  grunt.registerTask('js-build', ['babel', 'uglify']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
+  grunt.registerTask('js-lint', ['jshint']);
 
   grunt.registerTask('build', ['clean', 'js-build', 'css-build']);
-  grunt.registerTask('default', ['build', 'watch']);
+  grunt.registerTask('lint', ['js-lint']);
+  grunt.registerTask('default', ['lint', 'build', 'watch']);
 
 };
