@@ -1,0 +1,21 @@
+# coding: utf-8
+
+DB_ENGINE = 'sqlite:///db.sqlite'
+AREA_NAME = u'Wrocław'
+MAP_START = (12.3456, 34.5678)
+MAP_END = (13.4567, 35.6789)
+GRID = (2, 2)  # row, column
+CYCLES_PER_WORKER = 3
+
+LAT_GAIN = 0.001
+LON_GAIN = 0.0015
+
+ACCOUNTS = [
+    ('ash_ketchum', 'pik4chu', 'ptc'),
+    ('ziemniak_kalafior', 'ogorek', 'google'),
+    ('noideawhattoputhere', 's3cr3t', 'ptc'),
+    ('whatever', 'mammoth', 'google'),
+]
+
+TRASH_IDS = [13, 16, 19, 21, 41, 96]
+STAGE2 = [94, 139, 141, 149]
