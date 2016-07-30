@@ -102,6 +102,8 @@ def get_args():
     parser.add_argument('--db-name', help='Name of the database to be used')
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
+    parser.add_argument('-pu','--page-user',help='username to protect your server, default admin',default='admin')
+    parser.add_argument('-pp','--page-pass',help='password for protecting your server')
     parser.add_argument('--db-host', help='IP or hostname for the database')
     parser.add_argument('--db-max_connections', help='Max connections for the database', type=int, default=5)
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
