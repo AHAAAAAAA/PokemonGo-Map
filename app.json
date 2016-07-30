@@ -27,5 +27,13 @@
       "description": "Any extra arguments that you want to pass to runserver.py.",
       "required": false
     }
-  }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
 }

@@ -16,6 +16,7 @@
 		top: 0;
 		width: 100%;
 		z-index: _misc(z-index-base) + 1;
+		@include noSelect();
 
 		> h1 {
 			color: _palette(accent2, fg-bold);
@@ -57,6 +58,7 @@
 			}
 
 			&[href="#stats"] {
+				@include icon('\f080');
 				-webkit-tap-highlight-color: rgba(0,0,0,0);
 
 				&:before {
