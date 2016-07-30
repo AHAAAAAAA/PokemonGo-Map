@@ -149,13 +149,17 @@ def get_session_stats(session):
 
 
 def get_punch_card(session):
+    if get_engine_name(session) == 'sqlite':
+        bigint = 'BIGINT'
+    else:
+        bigint = 'UNSIGNED'
     query = session.execute('''
         SELECT
-            CAST((expire_timestamp / 300) AS BIGINT) ts_date,
+            CAST((expire_timestamp / 300) AS {bigint}) ts_date,
             COUNT(*) how_many
         FROM `sightings`
         GROUP BY ts_date ORDER BY ts_date
-    ''')
+    '''.format(bigint=bigint))
     results = query.fetchall()
     results_dict = {r[0]: r[1] for r in results}
     filled = []

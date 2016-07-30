@@ -169,6 +169,11 @@ class Slave(threading.Thread):
             if map_objects.get('status') == 1:
                 for map_cell in map_objects['map_cells']:
                     for pokemon in map_cell.get('wild_pokemons', []):
+                        # Care only about 15 min spawns
+                        # 30 and 45 min ones will be just put after
+                        # time_till_hidden is below 15 min
+                        if pokemon['time_till_hidden_ms'] < 0:
+                            continue
                         pokemons.append(self.normalize_pokemon(pokemon, now))
             for raw_pokemon in pokemons:
                 db.add_sighting(session, raw_pokemon)
