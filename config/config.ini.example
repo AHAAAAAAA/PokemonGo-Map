@@ -27,5 +27,10 @@
 #host:                  # address to listen on (default 127.0.0.1)
 #port:                  # port to listen on (default 5000)
 
+# Integration Parameters for Pokelyzer (https://github.com/Brideau/pokelyzer/)
+#log-to-pokelyzer:      # Enable logging to Pokelyzer
+#pokel-pass:            # The password to your Pokelyzer database
+#pokel-era:             # The current Pokemon Go era, used for Pokelyzer
+
 #Uncomment a line when you want to change its default value (Remove # at the beginning)
 #username, password, location and gmaps-key are required
