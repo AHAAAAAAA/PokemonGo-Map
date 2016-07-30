@@ -27,8 +27,8 @@ st = args.steps
 wst = args.leaps
 
 if args.screen:
-    server_template = "screen -AmdS {screenname} -c \"python runserver.py -os -l '{lat} {lon}'\"\n"
-    worker_template = "sleep 0.5; screen -AmdS {screenname} -c \"python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth}\"\n"
+    server_template = "screen -AmdS {screenname} bash -c \"python runserver.py -os -l '{lat} {lon}'\"\n"
+    worker_template = "sleep 0.5; screen -AmdS {screenname} bash -c \"python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth}\"\n"
 else:
     server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
     worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
