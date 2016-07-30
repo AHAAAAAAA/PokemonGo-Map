@@ -5,6 +5,7 @@ config = {
     'LOCALE': 'en',
     'LOCALES_DIR': 'static/locales',
     'ROOT_PATH': '',
+    'DATA_DIR': 'static/data',
     'ORIGINAL_LATITUDE': None,
     'ORIGINAL_LONGITUDE': None,
     'GMAPS_KEY': None,

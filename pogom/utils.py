@@ -205,7 +205,7 @@ def get_pokemon_data(pokemon_id):
     if not hasattr(get_pokemon_data, 'pokemon'):
         file_path = os.path.join(
             config['ROOT_PATH'],
-            config['LOCALES_DIR'],
+            config['DATA_DIR'],
             'pokemon.json')
 
         with open(file_path, 'r') as f:
