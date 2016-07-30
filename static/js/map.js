@@ -152,10 +152,6 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
-  'playSound': {
-    default: false,
-    type: StoreTypes.Boolean
-  },
   'pokemonIcons': {
     default: 'highres',
     type: StoreTypes.String
