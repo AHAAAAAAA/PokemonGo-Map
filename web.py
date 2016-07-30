@@ -70,9 +70,13 @@ app = create_app()
 
 
 @app.route('/data')
-def data():
-    """Gets all the PokeMarkers via REST"""
+def pokemon_data():
     return json.dumps(get_pokemarkers())
+
+
+@app.route('/workers_data')
+def workers_data():
+    return json.dumps(get_worker_markers())
 
 
 @app.route('/config')
@@ -99,20 +103,6 @@ def fullmap():
 
 def get_pokemarkers():
     markers = []
-
-    total_workers = app_config.GRID[0] * app_config.GRID[1]
-    for worker_no in range(total_workers):
-        coords = utils.get_start_coords(worker_no)
-        markers.append({
-            'icon': icons.dots.red,
-            'lat': coords[0],
-            'lng': coords[1],
-            'infobox': 'Worker %d' % worker_no,
-            'type': 'custom',
-            'key': 'start-position-%d' % worker_no,
-            'disappear_time': -1
-        })
-
     session = db.Session()
     pokemons = db.get_sightings(session)
     session.close()
@@ -150,6 +140,33 @@ def get_pokemarkers():
             'infobox': label
         })
 
+    return markers
+
+
+def get_worker_markers():
+    markers = []
+    points = utils.get_points_per_worker()
+    # Worker start points
+    for worker_no, worker_points in enumerate(points):
+        coords = utils.get_start_coords(worker_no)
+        markers.append({
+            'icon': icons.dots.green,
+            'lat': coords[0],
+            'lng': coords[1],
+            'infobox': 'Worker %d' % worker_no,
+            'type': 'custom',
+            'subtype': 'worker',
+            'key': 'start-position-%d' % worker_no,
+            'disappear_time': -1
+        })
+        # Circles
+        for i, point in enumerate(worker_points):
+            markers.append({
+                'lat': point[0],
+                'lng': point[1],
+                'infobox': 'Worker %d point %d' % (worker_no, i),
+                'subtype': 'point',
+            })
     return markers
 
 

@@ -5,9 +5,46 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Pokeminer</title>
+        <style>
+            .floating-panel {
+                z-index: 1000;
+                position: absolute;
+                bottom: 30px;
+                left: 10px;
+                padding: 10px;
+                box-sizing: border-box;
+                background-color: rgba(255, 255, 255, 0.8);
+                background-image: url(/static/icons/137.png);
+                background-size: 24px 24px;
+                background-position: 4px 4px;
+                background-repeat: no-repeat;
+                text-align: center;
+                width: 32px;
+                height: 32px;
+                border-radius: 2px;
+            }
+            .floating-panel:hover {
+                background-image: none;
+                width: auto;
+                height: auto;
+            }
+            .floating-panel > div {
+                margin: 5px auto;
+                display: none;
+            }
+            .floating-panel:hover > div {
+                display: block;
+            }
+        </style>
     </head>
     <body>
         <h1>Loading!</h1>
+
+        <div class="floating-panel">
+            <div><button id="myLocation">My location</button></div>
+            <div><button id="toggleWorkers">Show workers</button></div>
+        </div>
+
         <div id="fullmap" style='height:100%;width:100%;top:0;left:0;position:absolute;z-index:200;'>
             {{ fullmap.html }}
         </div>
@@ -137,11 +174,11 @@
             }
         }
 
-        function updateMap(){
+        function updateMap (endpoint){
             // A new map is created because the original one isn't saved
             createMap();
             // Requests the data and populates the map
-            $.get(baseURL + "/data", function(response){
+            $.get(baseURL + '/data', function(response){
                 var json_obj = $.parseJSON(response);
                 var now = new Date();
                 var notifyList = [];
@@ -217,7 +254,109 @@
                 }
             });
         }
-        window.setInterval(updateMap, {{ auto_refresh }});
+        window.setInterval(function () { updateMap('data'); }, {{ auto_refresh }});
+
+        var workersData = {};
+        var workersHidden = true;
+        $('#toggleWorkers').on('click', function () {
+            $(this).text('¯\\_(ツ)_/¯');
+            if (typeof workersData.markers === 'undefined') {
+                $.get(baseURL + '/workers_data', function(response){
+                    var data = $.parseJSON(response);
+                    workersData.markers = [];
+                    workersData.circles = [];
+                    data.forEach(function (item) {
+                        if (item.subtype === 'worker') {
+                            var marker = new google.maps.Marker({
+                                position: new google.maps.LatLng(item.lat, item.lng),
+                                map: map,
+                                icon: item.icon,
+                                infoWindow: new google.maps.InfoWindow({
+                                    content: item.infobox
+                                })
+                            });
+                            (function(marker){
+                                marker.addListener('click', function() {
+                                    marker.infoWindow.open(map, marker);
+                                });
+                            })(marker);
+                            workersData.markers.push(marker);
+                        } else if (item.subtype === 'point') {
+                            var options = {
+                                strokeColor: '#00FF00',
+                                strokeOpacity: 0.7,
+                                strokeWeight: 1,
+                                fillColor: '#00FF00',
+                                fillOpacity: 0.35,
+                                center: {lat: item.lat, lng: item.lng},
+                                radius: 70,
+                                infoWindow: new google.maps.InfoWindow({
+                                    content: item.infobox,
+                                    position: new google.maps.LatLng(item.lat, item.lng),
+                                })
+                            };
+                            var circle = new google.maps.Circle(options);
+                            (function(circle){
+                                circle.addListener('click', function() {
+                                    circle.infoWindow.open(map);
+                                });
+                            })(circle);
+                            workersData.circles.push(circle);
+                        }
+                    });
+                    showHideWorkers();
+                });
+            } else {
+                showHideWorkers();
+            }
+        });
+
+        function showHideWorkers () {
+            var mapToSet, label;
+            if (workersHidden) {
+                mapToSet = map;
+                label = 'Hide workers';
+            } else {
+                mapToSet = null;
+                label = 'Show workers';
+            }
+            google.maps.event.addListenerOnce(map, 'idle', function() {
+                $('#toggleWorkers').text(label);
+                workersHidden = !workersHidden;
+            });
+            workersData.markers.forEach(function (item) {
+                item.setMap(mapToSet);
+            });
+            workersData.circles.forEach(function (item) {
+                item.setMap(mapToSet);
+            });
+            // Slightly move map to trigger idle event
+            var diff = (workersHidden ? 1 : -1) * 0.000000001;
+            map.setCenter(new google.maps.LatLng(
+                map.getCenter().lat(),
+                map.getCenter().lng() + diff
+            ));
+        }
+
+        function getMyLocation () {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                map.setCenter({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                });
+            }, function (error) {
+                console.error(error);
+            }, {
+                enableHighAccurracy: true
+            });
+        }
+        $('#myLocation').on('click', getMyLocation);
+
+        $(function () {
+            if(!('geolocation' in navigator)) {
+                $('#myLocation').remove();
+            }
+        });
     </script>
   {% endif %}
 </html>
