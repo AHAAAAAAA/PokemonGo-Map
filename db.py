@@ -23,6 +23,11 @@ except ImportError, AttributeError:
 def get_engine():
     return create_engine(DB_ENGINE)
 
+
+def get_engine_name(session):
+    return session.connection().engine.name
+
+
 Base = declarative_base()
 
 
@@ -188,9 +193,7 @@ def get_stage2_pokemon(session):
 
 def get_nonexistent_pokemon(session):
     result = []
-    query = session.execute('''
-        SELECT DISTINCT pokemon_id FROM sightings
-    ''')
+    query = session.execute('SELECT DISTINCT pokemon_id FROM sightings')
     db_ids = [r[0] for r in query.fetchall()]
     for pokemon_id in range(1, 152):
         if pokemon_id not in db_ids:
@@ -204,3 +207,39 @@ def get_all_sightings(session, pokemon_ids):
         .filter(Sighting.pokemon_id.in_(pokemon_ids)) \
         .all()
     return query
+
+
+def get_spawns_per_hour(session, pokemon_id):
+    if get_engine_name(session) == 'sqlite':
+        ts_hour = 'STRFTIME("%H", expire_timestamp)'
+    else:
+        ts_hour = 'HOUR(FROM_UNIXTIME(expire_timestamp))'
+    query = session.execute('''
+        SELECT
+            {ts_hour} AS ts_hour,
+            COUNT(*) AS how_many
+        FROM sightings
+        WHERE pokemon_id = {pokemon_id}
+        GROUP BY ts_hour
+        ORDER BY ts_hour
+    '''.format(pokemon_id=pokemon_id, ts_hour=ts_hour))
+    results = []
+    for result in query.fetchall():
+        results.append((
+            {
+                'v': [int(result[0]), 30, 0],
+                'f': '{}:00 - {}:00'.format(
+                    int(result[0]), int(result[0]) + 1
+                ),
+            },
+            result[1]
+        ))
+    return results
+
+
+def get_total_spawns_count(session, pokemon_id):
+    query = session.execute('''
+        SELECT COUNT(id) FROM sightings WHERE pokemon_id = {pokemon_id}
+    '''.format(pokemon_id=pokemon_id))
+    result = query.first()
+    return result[0]

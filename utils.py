@@ -11,6 +11,7 @@ def get_map_center():
     lon = (config.MAP_END[1] + config.MAP_START[1]) / 2
     return lat, lon
 
+
 def get_scan_area():
     """Returns the square kilometers for configured scan area"""
     lat1 = config.MAP_START[0]
@@ -22,10 +23,11 @@ def get_scan_area():
     p3 = Point(lat1, lon1)
     p4 = Point(lat2, lon1)
 
-    width = distance.distance(p1,p2).kilometers
-    height = distance.distance(p3,p4).kilometers
+    width = distance.distance(p1, p2).kilometers
+    height = distance.distance(p3, p4).kilometers
     area = int(width * height)
     return area
+
 
 def get_start_coords(worker_no):
     """Returns center of square for given worker"""

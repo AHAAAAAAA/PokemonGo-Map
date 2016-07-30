@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokeminer Report: {{ pokemon_name }} in {{ area_name }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <style>
+        .map {
+            height: 1000px;
+        }
+        .pokemon-image {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pokemon-image img {
+            width: 50%;
+        }
+    </style>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        var backendData = {{ js_data|tojson }};
+
+        function drawCharts () {
+            drawHoursChart(backendData.charts_data.hours);
+        }
+
+        function drawHoursChart (data) {
+            var combinedData = new google.visualization.DataTable();
+            combinedData.addColumn('timeofday', 'Hour');
+            combinedData.addColumn('number', 'Spawns seen');
+            combinedData.addRows(data);
+            var chart = new google.visualization.ColumnChart(document.getElementById('hourschart'));
+            chart.draw(combinedData, {
+                height: 300,
+                chartArea: {width: '70%', height: '80%'},
+                legend: {position: 'none'},
+                viewWindow: {
+                    min: [0, 0, 0],
+                    max: [23, 59, 0]
+                }
+            });
+        }
+
+        var maps = {heat: null};
+
+        function initMaps() {
+            Object.keys(maps).forEach(function (key) {
+                maps[key] = new google.maps.Map(document.getElementById(key + 'map'), {
+                    zoom: backendData.zoom,
+                    center: {lat: backendData.map_center[0], lng: backendData.map_center[1]},
+                    disableDefaultUI: true,
+                });
+            });
+        }
+
+        function displayHeatmap (points) {
+            var layer = new google.maps.visualization.HeatmapLayer({
+              data: points
+            });
+            layer.setMap(maps.heat);
+        }
+
+        $(function () {
+            var heatmapPoints;
+            $.get('/report/heatmap?id={{ pokemon_id }}').done(function (result) {
+                heatmapPoints = JSON.parse(result).map(function (elem) {
+                    return new google.maps.LatLng(elem[0], elem[1]);
+                });
+            });
+            $('#displayHeatmap').on('click', function () {
+                displayHeatmap(heatmapPoints);
+                $(this).parent().remove();
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Pokeminer Report: #{{ pokemon_id }} {{ pokemon_name }}</h1>
+        <h4>Generated on {{ current_date.strftime('%Y-%m-%d %H:%M:%S') }}</h4>
+
+        <p><b>Disclaimer:</b> data may be incomplete due to various issues that might have happened (bugs, unstable servers, bugs on the servers etc.). If there is data about a sighting of a Pokemon in given location at particular time, almost certainly such spawning happened. On the other hand, there is no guarantee that Pokeminer database contains <i>all</i> spawnings, so there might be wild Pokemon not contained in this report. Your mileage may vary.</p>
+
+        <p>This report contains statistics about data gathered during mining session for the city of {{ city }} for single species - {{ pokemon_name }}.</p>
+
+        <div class="pokemon-image">
+            <img src="/static/larger-icons/{{ pokemon_id }}.png" alt="{{ pokemon_name }}">
+        </div>
+
+        <p>During that session, <b> {{ total_spawn_count }}</b> sightings of {{ pokemon_name }} have been seen on an area of about <b>{{ area }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>.</p>
+
+        <h3>Heatmap</h3>
+
+        <p>All noticed spawn locations of {{ pokemon_name }}. The redder the point is, {{ pokemon_name }} spawned more often there.</p>
+
+        <p><button id="displayHeatmap">Display heatmap</button> (will slow down browser!)</p>
+
+        <div id="heatmap" class="map"></div>
+
+        <h3>Spawning hours</h3>
+
+        <p>At what time of the day has {{ pokemon_name }} been seen most number of times?</p>
+
+        <div id="hourschart"></div>
+
+        <h2>Footnotes</h2>
+
+        <p>This report was generated using pokeminer, a tool for gathering data about Pokemon Go.</p>
+
+        <p>Visit <a href="https://github.com/modrzew/pokeminer">https://github.com/modrzew/pokeminer</a> for more info.</p>
+
+        <p>This report is available under Creative Commons CC-BY-4.0 license: <a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a>.</p>
+    </div>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAy8rKI_g-dgYf9f7tMOafbNypeaJJvVeA&amp;libraries=visualization&amp;callback=initMaps">
+    </script>
+</body>
+</html>

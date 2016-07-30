@@ -17,6 +17,16 @@ import utils
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
+# Check whether config has all necessary attributes
+REQUIRED_SETTINGS = (
+    'MAP_GRID',
+    'AREA_NAME',
+)
+for setting_name in REQUIRED_SETTINGS:
+    if not hasattr(app_config, setting_name):
+        raise RuntimeError('Please set "{}" in config'.format(setting_name))
+
+
 with open('credentials.json') as f:
     credentials = json.load(f)
 
@@ -203,7 +213,7 @@ def report_main():
     return render_template(
         'report.html',
         current_date=datetime.now(),
-        city=u'Wrocław',
+        city=app_config.AREA_NAME,
         area=area,
         total_spawn_count=session_stats['count'],
         spawns_per_hour=session_stats['per_hour'],
@@ -212,6 +222,33 @@ def report_main():
         session_length_hours=int(session_stats['length_hours']),
         js_data=js_data,
         icons=icons,
+    )
+
+
+@app.route('/report/<int:pokemon_id>')
+def report_single(pokemon_id):
+    session = db.Session()
+    session_stats = db.get_session_stats(session)
+    js_data = {
+        'charts_data': {
+            'hours': db.get_spawns_per_hour(session, pokemon_id),
+        },
+        'map_center': utils.get_map_center(),
+        'zoom': 13,
+    }
+    session.close()
+    return render_template(
+        'report_single.html',
+        current_date=datetime.now(),
+        city=app_config.AREA_NAME,
+        area=utils.get_scan_area(),
+        pokemon_id=pokemon_id,
+        pokemon_name=pokemon_names[str(pokemon_id)],
+        total_spawn_count=db.get_total_spawns_count(session, pokemon_id),
+        session_start=session_stats['start'],
+        session_end=session_stats['end'],
+        session_length_hours=int(session_stats['length_hours']),
+        js_data=js_data,
     )
 
 
