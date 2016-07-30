@@ -2,6 +2,7 @@ import math
 import argparse
 import LatLon
 import itertools
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-lat", "--lat", help="latitude", type=float, required=True)
@@ -55,6 +56,7 @@ else:
 
 print("Generating beehive script to {}".format(args.output))
 output_fh = file(args.output, "wb")
+os.chmod(args.output, 0o755)
 output_fh.write(preamble + "\n")
 output_fh.write(server_template.format(lat=args.lat, lon=args.lon))
 
