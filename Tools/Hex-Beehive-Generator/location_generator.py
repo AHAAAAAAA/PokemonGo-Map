@@ -30,17 +30,17 @@ rings = args.leaps
 
 if args.windows:
     # ferkin Windows
-    preamble = "taskkill /IM python.exe /F"
+    preamble = "taskkill /IM python.exe /F /FI \"WindowTitle eq PokemonGo-Map-*\""
     pythonpath = "C:\\Python27\\Python.exe"
     branchpath = args.installdir
     executable = args.installdir + "\\runserver.py"
     auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
     actual_worker_params = '{auth} -ns -l "{lat} {lon}" -st {steps}'
-    worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
+    worker_template = 'Start "PokemonGo-Map-{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
         branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_worker_params
     )
     actual_server_params = '-os -l "{lat} {lon}"'
-    server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
+    server_template = 'Start "PokemonGo-Map-Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
         branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_server_params
     )
     if args.output == "../../beehive.sh":
