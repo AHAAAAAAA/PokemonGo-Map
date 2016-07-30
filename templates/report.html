@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pokeminer Report</title>
+    <title>Pokeminer Report - {{ area_name }}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
     <style>
@@ -103,9 +103,9 @@
 
         <p><b>Disclaimer:</b> data may be incomplete due to various issues that might have happened (bugs, unstable servers, bugs on the servers etc.). If there is data about a sighting of a Pokemon in given location at particular time, almost certainly such spawning happened. On the other hand, there is no guarantee that Pokeminer database contains <i>all</i> spawnings, so there might be wild Pokemon not contained in this report. Your mileage may vary.</p>
 
-        <p>This report contains statistics about data gathered during mining session for the city of {{ city }}.</p>
+        <p>This report contains statistics about data gathered during mining session for {{ area_name }}.</p>
 
-        <p>During that session, <b> {{ total_spawn_count }}</b> Pokemon have been seen on an area of about <b>{{ area }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>. There were {{ spawns_per_hour }} spawns per hour on average.</p>
+        <p>During that session, <b> {{ total_spawn_count }}</b> Pokemon have been seen on an area of about <b>{{ area_size }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>. There were {{ spawns_per_hour }} spawns per hour on average.</p>
 
         <p>Below chart shows number of spawns seen per 5 minutes blocks:</p>
 

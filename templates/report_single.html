@@ -87,13 +87,13 @@
 
         <p><b>Disclaimer:</b> data may be incomplete due to various issues that might have happened (bugs, unstable servers, bugs on the servers etc.). If there is data about a sighting of a Pokemon in given location at particular time, almost certainly such spawning happened. On the other hand, there is no guarantee that Pokeminer database contains <i>all</i> spawnings, so there might be wild Pokemon not contained in this report. Your mileage may vary.</p>
 
-        <p>This report contains statistics about data gathered during mining session for the city of {{ city }} for single species - {{ pokemon_name }}.</p>
+        <p>This report contains statistics about data gathered during mining session for {{ area_name }} for single species - {{ pokemon_name }}.</p>
 
         <div class="pokemon-image">
             <img src="/static/larger-icons/{{ pokemon_id }}.png" alt="{{ pokemon_name }}">
         </div>
 
-        <p>During that session, <b> {{ total_spawn_count }}</b> sightings of {{ pokemon_name }} have been seen on an area of about <b>{{ area }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>.</p>
+        <p>During that session, <b> {{ total_spawn_count }}</b> sightings of {{ pokemon_name }} have been seen on an area of about <b>{{ area_size }} square km</b>. Data gathering started on <b>{{ session_start.strftime('%Y-%m-%d %H:%M:%S') }}</b> and ended on <b>{{ session_end.strftime('%Y-%m-%d %H:%M:%S') }}</b>, lasting <b>{{ session_length_hours }} hours</b>.</p>
 
         <h3>Heatmap</h3>
 

@@ -213,8 +213,8 @@ def report_main():
     return render_template(
         'report.html',
         current_date=datetime.now(),
-        city=app_config.AREA_NAME,
-        area=area,
+        area_name=app_config.AREA_NAME,
+        area_size=area,
         total_spawn_count=session_stats['count'],
         spawns_per_hour=session_stats['per_hour'],
         session_start=session_stats['start'],
@@ -240,8 +240,8 @@ def report_single(pokemon_id):
     return render_template(
         'report_single.html',
         current_date=datetime.now(),
-        city=app_config.AREA_NAME,
-        area=utils.get_scan_area(),
+        area_name=app_config.AREA_NAME,
+        area_size=utils.get_scan_area(),
         pokemon_id=pokemon_id,
         pokemon_name=pokemon_names[str(pokemon_id)],
         total_spawn_count=db.get_total_spawns_count(session, pokemon_id),
