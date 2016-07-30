@@ -1113,7 +1113,7 @@ function centerMap(lat, lng, zoom) {
 function i8ln(word) {
   if ($.isEmptyObject(i8ln_dictionary) && language != "en" && language_lookups < language_lookup_threshold) {
     $.ajax({
-      url: "static/locales/" + language + ".json",
+      url: "static/dist/locales/" + language + ".min.json",
       dataType: 'json',
       async: false,
       success: function(data) {
@@ -1153,7 +1153,7 @@ $(function() {
   $selectStyle = $("#map-style")
 
   // Load Stylenames, translate entries, and populate lists
-  $.getJSON("static/data/mapstyle.json").done(function(data){
+  $.getJSON("static/dist/data/mapstyle.min.json").done(function(data){
     var styleList = []
 
     $.each(data, function(key, value){
@@ -1198,7 +1198,7 @@ $(function() {
   var numberOfPokemon = 151;
 
   // Load pokemon names and populate lists
-  $.getJSON("static/data/pokemon.json").done(function(data) {
+  $.getJSON("static/dist/data/pokemon.min.json").done(function(data) {
     var pokeList = [];
 
     $.each(data, function(key, value) {
