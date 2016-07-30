@@ -101,15 +101,18 @@ def main():
     config['REQ_SLEEP'] = args.scan_delay
 
     if args.no_server:
-        # This loop allows for ctrl-c interupts to work since flask won't be holding the program open
-        while True:
-            try:
-                time.sleep(60)
-            except KeyboardInterrupt:
-                control.stop()
-                break
+        wait_for_exit()
     else:
         app.run(threaded=True, use_reloader=False, debug=args.debug, host=args.host, port=args.port)
+
+# This loop allows for ctrl-c interupts to work since flask won't be holding the program open
+def wait_for_exit():
+    while True:
+        try:
+            time.sleep(60)
+        except KeyboardInterrupt:
+            control.stop()
+            break
 
 #method to start (or restart the search thread)
 def start_search_thread():
