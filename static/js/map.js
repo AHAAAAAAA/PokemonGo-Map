@@ -331,6 +331,16 @@ function createSearchMarker() {
   return marker;
 }
 
+var searchControlURI = 'search_control';
+function searchControl(action) {
+  $.post(searchControlURI + '?action='+encodeURIComponent(action));
+}
+function updateSearchStatus() {
+  $.getJSON(searchControlURI).then(function(data){
+    $('#search-switch').prop('checked', data.status);
+  })
+}
+
 function initSidebar() {
   $('#gyms-switch').prop('checked', Store.get('showGyms'));
   $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
@@ -342,6 +352,9 @@ function initSidebar() {
   $('#sound-switch').prop('checked', Store.get('playSound'));
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
+
+  updateSearchStatus();
+  setInterval(updateSearchStatus,5000);
 
   searchBox.addListener('places_changed', function() {
     var places = searchBox.getPlaces();
@@ -1336,4 +1349,9 @@ $(function() {
     else
       Store.set('geoLocate', this.checked);
   });
+
+  $('#search-switch').change(function() {
+    searchControl(this.checked?'on':'off');
+  });
+
 });
