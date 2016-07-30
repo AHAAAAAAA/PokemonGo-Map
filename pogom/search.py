@@ -188,7 +188,7 @@ def search_loop(args, search_control):
     while search_control.wait():
         log.info("Search loop {} starting".format(i))
         try:
-            search(args, i, search_control)
+            search(args, i)
             log.info("Search loop {} complete.".format(i))
             i += 1
         except Exception as e:
@@ -202,7 +202,7 @@ def search_loop(args, search_control):
 #
 # Overseer main logic
 #
-def search(args, i, search_control):
+def search(args, i):
     num_steps = args.step_limit
 
     # Update the location if needed
