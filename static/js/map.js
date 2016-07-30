@@ -662,6 +662,7 @@ function setupScannedMarker(item) {
 
   var marker = new google.maps.Circle({
     map: map,
+    clickable: false,
     center: circleCenter,
     radius: 70, // metres
     fillColor: getColorByDate(item.last_modified),
