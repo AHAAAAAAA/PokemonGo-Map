@@ -138,6 +138,8 @@ def get_session_stats(session):
     ''')
     min_max_result = min_max_query.first()
     length_hours = (min_max_result[1] - min_max_result[0]) // 3600
+    if length_hours == 0:
+        length_hours = 1
     # Convert to datetime
     return {
         'start': datetime.fromtimestamp(min_max_result[0]),
