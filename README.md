@@ -48,6 +48,7 @@ You need to have at least *rows* x *columns* accounts. So for below example, you
 
 ```py
 DB_ENGINE = 'sqlite:///db.sqlite'  # anything SQLAlchemy accepts
+AREA_NAME = u'Wrocław'
 MAP_START = (12.3456, 14.5)  # top left corner
 MAP_END = (13.4567, 15.321)  # bottom right corner
 GRID = (4, 5)  # row, column
@@ -56,6 +57,8 @@ GRID = (4, 5)  # row, column
 # differences in distance between degrees as you go north/south.
 LAT_GAIN = 0.0015
 LON_GAIN = 0.0025
+# How many times worker will visit all points before being restarted
+CYCLES_PER_WORKER = 3
 
 ACCOUNTS = [
     # username, password, service (google/ptc)

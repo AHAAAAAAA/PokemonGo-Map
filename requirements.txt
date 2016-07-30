@@ -8,4 +8,4 @@ gpsoauth==0.3.0
 coveralls==1.1
 werkzeug==0.11.10
 sqlalchemy==1.0.14
--e git://github.com/tejado/pgoapi.git@2440a56e50b5043712b4417457e1721124a26a4d#egg=pgoapi
+-e git+https://github.com/tejado/pgoapi.git@2440a56e50b5043712b4417457e1721124a26a4d#egg=pgoapi
