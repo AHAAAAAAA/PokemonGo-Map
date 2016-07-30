@@ -215,8 +215,7 @@ def search(args, i):
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
         if remaining_time > 60:
-            log.info("Skipping Pokemon Go login process since already logged in \
-                for another {:.2f} seconds".format(remaining_time))
+            log.info("Current login valid for {:.2f} seconds".format(remaining_time))
         else:
             login(args, position)
     else:
