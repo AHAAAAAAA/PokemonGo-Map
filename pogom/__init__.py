@@ -3,8 +3,9 @@
 
 config = {
     'LOCALE': 'en',
-    'LOCALES_DIR': 'static/locales',
+    'LOCALES_DIR': 'static/dist/locales',
     'ROOT_PATH': '',
+    'DATA_DIR': 'static/dist/data',
     'ORIGINAL_LATITUDE': None,
     'ORIGINAL_LONGITUDE': None,
     'GMAPS_KEY': None,

@@ -76,7 +76,7 @@ def generate_location_steps(initial_loc, step_count):
     SOUTH = 180
     WEST = 270
 
-    pulse_radius = 0.1                  # km - radius of players heartbeat is 100m
+    pulse_radius = 0.07                 # km - radius of players heartbeat is 70m
     xdist = math.sqrt(3)*pulse_radius   # dist between column centers
     ydist = 3*(pulse_radius/2)          # dist between row centers
 
@@ -215,8 +215,7 @@ def search(args, i):
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
         if remaining_time > 60:
-            log.info("Skipping Pokemon Go login process since already logged in \
-                for another {:.2f} seconds".format(remaining_time))
+            log.info("Current login valid for {:.2f} seconds".format(remaining_time))
         else:
             login(args, position)
     else:
