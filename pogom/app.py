@@ -9,7 +9,7 @@ from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
-from pogom.utils import get_args
+from pogom.utils import get_args, send_to_webhook
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
@@ -93,6 +93,7 @@ class Pogom(Flask):
             log.warning('Invalid next location: %s,%s' % (lat, lon))
             return 'bad parameters', 400
         else:
+            send_to_webhook('location', {'lat': lat, 'lon': lon})
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
             log.info('Changing next location: %s,%s' % (lat, lon))
             return 'ok'
