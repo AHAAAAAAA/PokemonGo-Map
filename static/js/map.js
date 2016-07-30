@@ -730,12 +730,12 @@ function showInBoundsMarkers(markers) {
     var marker = markers[key].marker;
     var show = false;
     if (!markers[key].hidden) {
-      if (typeof marker.getPosition === 'function') {
-        if (map.getBounds().contains(marker.getPosition())) {
+      if (typeof marker.getBounds === 'function') {
+        if (map.getBounds().intersects(marker.getBounds())) {
           show = true;
         }
-      } else if (typeof marker.getCenter === 'function') {
-        if (map.getBounds().contains(marker.getCenter())) {
+      } else if (typeof marker.getPosition === 'function') {
+        if (map.getBounds().contains(marker.getPosition())) {
           show = true;
         }
       }
