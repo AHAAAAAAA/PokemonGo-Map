@@ -25,6 +25,7 @@ REQUIRED_SETTINGS = (
     'CYCLES_PER_WORKER',
     'MAP_START',
     'MAP_END',
+    'GRID',
     'ACCOUNTS',
     'LAT_GAIN',
     'LON_GAIN',

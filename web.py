@@ -19,7 +19,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 # Check whether config has all necessary attributes
 REQUIRED_SETTINGS = (
-    'MAP_GRID',
+    'GRID',
     'AREA_NAME',
 )
 for setting_name in REQUIRED_SETTINGS:
