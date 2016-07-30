@@ -16,14 +16,16 @@ from flask_cors import CORS
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data
-
 from pogom.search import search_loop, create_search_threads, fake_search_loop
-from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
+from pogom.search import search_loop_stop, search_loop_start
+from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
 
-if __name__ == '__main__':
+def main():
+    global args
+    global control
     args = get_args()
 
     if args.debug:
@@ -85,18 +87,12 @@ if __name__ == '__main__':
 
     if not args.only_server:
         # Gather the pokemons!
-        if not args.mock:
-            log.debug('Starting a real search thread and {} search runner thread(s)'.format(args.num_threads))
-            create_search_threads(args.num_threads)
-            search_thread = Thread(target=search_loop, args=(args,))
-        else:
-            log.debug('Starting a fake search thread')
-            insert_mock_data()
-            search_thread = Thread(target=fake_search_loop)
+        start_search_thread()
 
-        search_thread.daemon = True
-        search_thread.name = 'search_thread'
-        search_thread.start()
+    app = Pogom(__name__)
+
+    control = SearchControl()
+    app.set_search_control(control)
 
     if args.cors:
         CORS(app);
@@ -106,8 +102,58 @@ if __name__ == '__main__':
     config['REQ_SLEEP'] = args.scan_delay
 
     if args.no_server:
-        # This loop allows for ctrl-c interupts to work since flask won't be holding the program open
-        while search_thread.is_alive():
-            time.sleep(60)
+        wait_for_exit()
     else:
         app.run(threaded=True, use_reloader=False, debug=args.debug, host=args.host, port=args.port)
+
+# This loop allows for ctrl-c interupts to work since flask won't be holding the program open
+def wait_for_exit():
+    while True:
+        try:
+            time.sleep(60)
+        except KeyboardInterrupt:
+            control.stop()
+            break
+
+#method to start (or restart the search thread)
+def start_search_thread():
+    global search_thread
+    search_loop_start()
+    if not args.mock:
+        log.debug('(re)Starting a real search thread and {} search runner thread(s)'.format(args.num_threads))
+        create_search_threads(args.num_threads)
+        search_thread = Thread(target=search_loop, args=(args,))
+    else:
+        log.debug('(re)Starting a fake search thread')
+        insert_mock_data()
+        search_thread = Thread(target=fake_search_loop)
+
+    search_thread.daemon = True
+    search_thread.name = 'search_thread'
+    search_thread.start()
+
+#class to handle controlling the search threads
+class SearchControl(object):
+    def __init__(self):
+        if args.search_control:
+            self.state = 'searching'
+        else:
+            self.state = 'disabled'
+        return
+    def start(self):
+        if self.state == 'searching' or self.state == 'disabled':
+            return
+        log.info('Start')
+        start_search_thread()
+        self.state = 'searching'
+    def stop(self):
+        if self.state == 'idle' or self.state == 'disabled':
+            return
+        log.info('Stop')
+        search_loop_stop()
+        self.state = 'idle'
+    def status(self):
+        return self.state
+
+if __name__ == '__main__':
+    main()

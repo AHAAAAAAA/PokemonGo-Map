@@ -331,6 +331,21 @@ function createSearchMarker() {
   return marker;
 }
 
+var searchControlURI = 'search_control';
+function searchControl(action) {
+  $.post(searchControlURI + '?action='+encodeURIComponent(action));
+}
+function searchControlStatus(callback) {
+  $.getJSON(searchControlURI).then(function(data){
+    callback(data.status);
+  })
+}
+function updateSearchStatus() {
+  searchControlStatus(function(status) {
+    $('#search-switch').prop('checked', status === 'searching');
+  });
+}
+
 function initSidebar() {
   $('#gyms-switch').prop('checked', Store.get('showGyms'));
   $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
@@ -340,6 +355,10 @@ function initSidebar() {
   $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
+
+  updateSearchStatus();
+  setInterval(updateSearchStatus,5000);
+
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
 
@@ -1335,5 +1354,9 @@ $(function() {
       this.checked = false;
     else
       Store.set('geoLocate', this.checked);
+  });
+
+  $('#search-switch').change(function() {
+    searchControl(this.checked?'start':'stop');
   });
 });
