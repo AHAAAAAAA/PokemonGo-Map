@@ -108,59 +108,59 @@ var StoreTypes = {
 };
 
 var StoreOptions = {
-  map_style: {
+  'map_style': {
     default: 'roadmap',
     type: StoreTypes.String
   },
-  remember_select_exclude: {
+  'remember_select_exclude': {
     default: [],
     type: StoreTypes.JSON
   },
-  remember_select_notify: {
+  'remember_select_notify': {
     default: [],
     type: StoreTypes.JSON
   },
-  showGyms: {
+  'showGyms': {
     default: false,
     type: StoreTypes.Boolean
   },
-  showPokemon: {
+  'showPokemon': {
     default: true,
     type: StoreTypes.Boolean
   },
-  showLuredPokemon: {
+  'showLuredPokemon': {
     default: true,
     type: StoreTypes.Boolean
   },
-  showPokestops: {
+  'showPokestops': {
     default: true,
     type: StoreTypes.Boolean
   },
-  showLuredPokestopsOnly: {
+  'showLuredPokestopsOnly': {
     default: 0,
     type: StoreTypes.Number
   },
-  showScanned: {
+  'showScanned': {
     default: false,
     type: StoreTypes.Boolean
   },
-  playSound: {
+  'playSound': {
     default: false,
     type: StoreTypes.Boolean
   },
-  geoLocate: {
+  'geoLocate': {
     default: false,
     type: StoreTypes.Boolean
   },
-  playSound: {
+  'playSound': {
     default: false,
     type: StoreTypes.Boolean
   },
-  pokemonIcons: {
+  'pokemonIcons': {
     default: 'highres',
     type: StoreTypes.String
   },
-  iconSizeModifier: {
+  'iconSizeModifier': {
     default: 0,
     type: StoreTypes.Number
   }
