@@ -105,7 +105,7 @@ def main():
         while True:
             try:
                 time.sleep(60)
-            except:
+            except KeyboardInterrupt:
                 control.stop()
                 break
     else:
@@ -113,7 +113,6 @@ def main():
 
 #method to start (or restart the search thread)
 def start_search_thread():
-    global args
     global search_thread
     search_loop_start()
     if not args.mock:
@@ -130,7 +129,7 @@ def start_search_thread():
     search_thread.start()
 
 #class to handle controlling the search threads
-class SearchControl():
+class SearchControl(object):
     def __init__(self):
         if args.search_control:
             self.state = 'searching'
