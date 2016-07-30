@@ -147,6 +147,13 @@
             </label>
           </div>
         </div>
+        <div class="form-control">
+          <hr width="100%">
+          <label for="map-style">
+            <h3>Map Style</h3>
+            <select id="map-style" style="min-width:100%;"></select>
+          </label>
+        </div>
       </nav>
 	  <nav id="stats">
 		<div class="switch-container">
@@ -177,8 +184,9 @@
       var center_lat = {{lat}};
       var center_lng = {{lng}};
     </script>
-    <script src="static/dist/js/map.js"></script>
-    <script src="static/dist/js/stats.js"></script>
+
+    <script src="static/dist/js/map.min.js"></script>
+    <script src="static/dist/js/stats.min.js"></script>
     <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
   </body>
 </html>

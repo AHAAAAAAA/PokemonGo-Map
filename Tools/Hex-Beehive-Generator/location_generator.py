@@ -2,6 +2,7 @@ import math
 import argparse
 import LatLon
 import itertools
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-lat", "--lat", help="latitude", type=float, required=True)
@@ -12,18 +13,38 @@ parser.add_argument("-o", "--output", default="../../beehive.sh", help="output f
 parser.add_argument("--accounts", help="List of your accounts, in csv [username],[password] format", default=None)
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
 parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
+parser.add_argument("--windows", help="Generate a bat file for Windows", action='store_true', default=False)
+parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
 
+preamble = "#!/usr/bin/env bash"
 server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
 worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
-auth_template = "-a {} -u {} -p {}"
+auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
 
 R = 6378137.0
-
-r_hex = 75.0
+r_hex = 52.5  # probably not correct
 
 args = parser.parse_args()
-st = args.steps
-wst = args.leaps
+steps = args.steps
+rings = args.leaps
+
+if args.windows:
+    # ferkin Windows
+    preamble = "taskkill /IM python.exe /F"
+    pythonpath = "C:\\Python27\\Python.exe"
+    branchpath = args.installdir
+    executable = args.installdir + "\\runserver.py"
+    auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
+    actual_worker_params = '{auth} -ns -l "{lat} {lon}" -st {steps}'
+    worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_worker_params
+    )
+    actual_server_params = '-os -l "{lat} {lon}"'
+    server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_server_params
+    )
+    if args.output == "../../beehive.sh":
+        args.output = "../../beehive.bat"
 
 if args.accounts:
     print("Reading usernames/passwords from {}".format(args.accounts))
@@ -35,19 +56,21 @@ else:
 
 print("Generating beehive script to {}".format(args.output))
 output_fh = file(args.output, "wb")
+os.chmod(args.output, 0o755)
+output_fh.write(preamble + "\n")
 output_fh.write(server_template.format(lat=args.lat, lon=args.lon))
 
-
-w_worker = (2 * st - 1) * r_hex
+w_worker = (2 * steps - 1) * r_hex
 d = 2.0 * w_worker / 1000.0
 d_s = d
+
 brng_s = 0.0
 brng = 0.0
-mod = math.degrees(math.atan(1.732 / (6 * (st - 1) + 3)))
+mod = math.degrees(math.atan(1.732 / (6 * (steps - 1) + 3)))
 
 total_workers = 1
 
-for i in range(1, wst):
+for i in range(1, rings):
     total_workers += 6 * i
 
 locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * total_workers
@@ -57,12 +80,6 @@ turns = 0               # number of turns made in this ring (0 to 6)
 turn_steps = 0          # number of cells required to complete one turn of the ring
 turn_steps_so_far = 0   # current cell number in this side of the current ring
 
-jump_points = [0] * (wst + 1)
-jump_points[0] = 0
-jump_points[1] = 1
-jump = 1
-for i in range(2, wst + 1):
-    jump_points[i] = jump_points[i - 1] + 6 * (i - 1)
 
 for i in range(1, total_workers):
     if turns == 6 or turn_steps == 0:
@@ -84,12 +101,14 @@ for i in range(1, total_workers):
         d = turn_steps * c * R / 2.0 / math.pi
         A = math.acos((math.cos(b) - math.cos(a) * math.cos(c)) / (math.sin(c) * math.sin(a)))
         brng = 60 * turns + math.degrees(A)
+
     loc = loc.offset(brng + mod, d)
     locations[i] = loc
     d = d_s
 
     turn_steps_so_far += 1
     if turn_steps_so_far >= turn_steps:
+        # make a turn
         brng_s += 60.0
         brng = brng_s
         turns += 1
@@ -99,7 +118,8 @@ for i in range(1, total_workers):
 # reusing accounts if required
 location_and_auth = [(i, j) for i, j in itertools.izip(locations, itertools.cycle(accounts))]
 
-for location, auth in location_and_auth:
-    output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth))
+for i, (location, auth) in enumerate(location_and_auth):
+    threadname = "Movable{}".format(i)
+    output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth, threadname=threadname))
     if args.verbose:
         print("{}, {}".format(location.lat, location.lon))
