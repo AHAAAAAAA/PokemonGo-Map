@@ -83,7 +83,7 @@ if __name__ == '__main__':
             os.remove(args.db)
     create_tables(db)
 
-    # Contro the search status (running or not) across threads
+    # Control the search status (running or not) across threads; set it "on"
     search_control = Event()
     search_control.set()
 
