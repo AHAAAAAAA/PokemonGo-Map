@@ -25,6 +25,7 @@ from pogom.pgoapi.utilities import get_pos_by_name
 
 def main():
     global args
+    global control
     args = get_args()
 
     if args.debug:
