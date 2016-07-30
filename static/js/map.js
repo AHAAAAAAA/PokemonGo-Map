@@ -5,6 +5,7 @@
 
 var $selectExclude;
 var $selectNotify;
+var $selectStyle;
 
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
@@ -224,7 +225,7 @@ function initMap() {
     zoom: 16,
     fullscreenControl: true,
     streetViewControl: false,
-    mapTypeControl: true,
+    mapTypeControl: false,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
       position: google.maps.ControlPosition.RIGHT_TOP,
@@ -1148,6 +1149,40 @@ $(function() {
   if (Notification.permission !== "granted") {
     Notification.requestPermission();
   }
+});
+
+$(function() {
+  // populate Navbar Style menu
+  $selectStyle = $("#map-style")
+	
+  // Load Stylenames from locale and populate lists
+  $.getJSON("static/locales/mapstyle." + language + ".json").done(function(data){
+    var styleList = []
+
+    $.each(data, function(key, value){
+    styleList.push( { id: key, text: value } );
+  });
+		
+		
+  // setup the stylelist
+  $selectStyle.select2({
+    placeholder: "Select Style",
+    data: styleList
+  });
+
+  // setup the list change behavior
+  $selectStyle.on("change", function (e) {
+    selectedStyle = $selectStyle.val();
+    map.setMapTypeId(selectedStyle);
+    Store.set('map_style', selectedStyle);
+  });
+		
+		
+  // recall saved mapstyle
+  $selectStyle.val(Store.get('map_style')).trigger("change");
+
+  });
+
 });
 
 $(function() {
