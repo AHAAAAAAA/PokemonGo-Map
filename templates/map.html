@@ -58,7 +58,6 @@
 	</div>
 
 	<hr width="100%">
-
         <p>Select markers to be visible on map.</p>
         <div class="form-control switch-container">
           <h3>Pokémon</h3>
@@ -120,6 +119,20 @@
           </select>
         </div>
         <hr width="100%">
+		<div class="form-control switch-container">
+			<h3>Heatmap</h3>
+			<div class="onoffswitch">
+				<input id="heatmap-switch" type="checkbox" name="heatmap-switch" class="onoffswitch-checkbox"/>
+				<label class="onoffswitch-label" for="heatmap-switch">
+					<span class="switch-label" data-on="On" data-off="Off"></span>
+					<span class="switch-handle"></span>
+				</label>
+			</div>
+		</div>
+		<div>
+			<h3>Heatmap Intensity</h3>
+			<input type="range" min="1" max="50" value="5" onchange="changeIntensity(this.value)" />
+		</div>
         <div class="form-control">
           <label for="exclude-pokemon">
             <h3>Hide Pokémon</h3>
@@ -161,6 +174,6 @@
       var center_lng = {{lng}};
     </script>
     <script src="static/dist/js/map.js"></script>
-    <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&callback=initMap&libraries=places,visualization,geometry"></script>
   </body>
 </html>

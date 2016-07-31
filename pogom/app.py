@@ -25,6 +25,7 @@ class Pogom(Flask):
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
+        self.route("/raw_pokemon", methods=['GET'])(self.raw_pokemon)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
@@ -42,6 +43,13 @@ class Pogom(Flask):
                                lang=config['LOCALE'],
                                is_fixed=display
                                )
+
+    def raw_pokemon(self):
+        d = {}
+        req = request.args.get('ids')
+        myPokemon = Pokemon()
+        d['pokemons'] = myPokemon.getAllById(req.split(','))
+        return jsonify(d)
 
     def raw_data(self):
         d = {}
