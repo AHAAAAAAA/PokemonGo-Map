@@ -152,6 +152,10 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
+  startAtUserLocation: {
+    default: false,
+    type: StoreTypes.Boolean
+  },
   playSound: {
     default: false,
     type: StoreTypes.Boolean
@@ -348,6 +352,7 @@ function initSidebar() {
   $('#lured-pokestops-only-switch').val(Store.get('showLuredPokestopsOnly'));
   $('#lured-pokestops-only-wrapper').toggle(Store.get('showPokestops'));
   $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
+  $('#start-at-user-location-switch').prop('checked', Store.get('startAtUserLocation'));
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
@@ -1040,34 +1045,36 @@ function myLocationButton(map, marker) {
   locationIcon.id = 'current-location';
   locationButton.appendChild(locationIcon);
 
-  locationButton.addEventListener('click', function() {
-    var currentLocation = document.getElementById('current-location');
-    var imgX = '0';
-    var animationInterval = setInterval(function() {
-      if (imgX == '-18') imgX = '0';
-      else imgX = '-18';
-      currentLocation.style.backgroundPosition = imgX + 'px 0';
-    }, 500);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        locationMarker.setVisible(true);
-        locationMarker.setOptions({
-          'opacity': 1
-        });
-        locationMarker.setPosition(latlng);
-        map.setCenter(latlng);
-        clearInterval(animationInterval);
-        currentLocation.style.backgroundPosition = '-144px 0px';
-      });
-    } else {
-      clearInterval(animationInterval);
-      currentLocation.style.backgroundPosition = '0px 0px';
-    }
-  });
+  locationButton.addEventListener('click', function() { centerMapOnLocation() });
 
   locationContainer.index = 1;
   map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationContainer);
+}
+
+function centerMapOnLocation() {
+  var currentLocation = document.getElementById('current-location');
+  var imgX = '0';
+  var animationInterval = setInterval(function() {
+    if (imgX == '-18') imgX = '0';
+    else imgX = '-18';
+    currentLocation.style.backgroundPosition = imgX + 'px 0';
+  }, 500);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      locationMarker.setVisible(true);
+      locationMarker.setOptions({
+        'opacity': 1
+      });
+      locationMarker.setPosition(latlng);
+      map.setCenter(latlng);
+      clearInterval(animationInterval);
+      currentLocation.style.backgroundPosition = '-144px 0px';
+    });
+  } else {
+    clearInterval(animationInterval);
+    currentLocation.style.backgroundPosition = '0px 0px';
+  }
 }
 
 function addMyLocationButton() {
@@ -1205,6 +1212,10 @@ $(function() {
     );
     return $state;
   };
+
+  if (Store.get('startAtUserLocation')) {
+    centerMapOnLocation();
+  }
 
   $selectExclude = $("#exclude-pokemon");
   $selectNotify = $("#notify-pokemon");
@@ -1352,6 +1363,10 @@ $(function() {
 
   $('#search-switch').change(function() {
     searchControl(this.checked?'on':'off');
+  });
+
+  $('#start-at-user-location-switch').change(function() {
+    Store.set("startAtUserLocation", this.checked);
   });
 
 });
