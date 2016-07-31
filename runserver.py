@@ -7,7 +7,7 @@ import logging
 import time
 
 # Moved here so logger is configured at load time
-logging.basicConfig(format='%(asctime)s [%(threadName)14s][%(module)14s] [%(levelname)7s] %(message)s')
+logging.basicConfig(format='%(asctime)s [%(threadName)16s][%(module)14s][%(levelname)8s] %(message)s')
 log = logging.getLogger()
 
 from threading import Thread, Event
