@@ -6,9 +6,9 @@ docker run --name pogo -p 1337:1337 -d pogo \
 --username jackdoanmapper \
 --password austin \
 --location "32.988221, -96.750848" \
---step-limit 5 \
+--step-limit 6 \
 --gmaps-key AIzaSyCr6MLrdDslwl9Wc4vwFJzOXP-uw9X3X04 \
 --display-in-console \
---num-threads 2 \
+--num-threads 3 \
 --port 1337 \
---scan-delay 2 \
+--scan-delay 3 \
