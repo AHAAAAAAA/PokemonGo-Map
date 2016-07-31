@@ -29,7 +29,7 @@ from .models import parse_map
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
-api = PGoApi()
+apis = []
 
 search_queue = Queue()
 
@@ -76,7 +76,7 @@ def generate_location_steps(initial_loc, step_count):
     SOUTH = 180
     WEST = 270
 
-    pulse_radius = 0.1                  # km - radius of players heartbeat is 100m
+    pulse_radius = 0.07                  # km - radius of players heartbeat is 70m
     xdist = math.sqrt(3)*pulse_radius   # dist between column centers
     ydist = 3*(pulse_radius/2)          # dist between row centers
 
@@ -110,12 +110,12 @@ def generate_location_steps(initial_loc, step_count):
         ring += 1
 
 
-def login(args, position):
+def login(args, api, auth_service, username, password, position):
     log.info('Attempting login to Pokemon Go.')
 
     api.set_position(*position)
 
-    while not api.login(args.auth_service, args.username, args.password):
+    while not api.login(auth_service, username, password):
         log.info('Failed to login to Pokemon Go. Trying again in {:g} seconds.'.format(args.login_delay))
         time.sleep(args.login_delay)
 
@@ -125,16 +125,22 @@ def login(args, position):
 #
 # Search Threads Logic
 #
-def create_search_threads(num):
+def create_search_threads(thread_count, api_count):
     search_threads = []
-    for i in range(num):
-        t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue,))
+    for i in range(thread_count):
+        api_idx = i % api_count
+        t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue, api_idx))
         t.daemon = True
         t.start()
         search_threads.append(t)
 
 
-def search_thread(q):
+def create_empty_apis(api_count):
+    for i in range(api_count):
+        apis.append(PGoApi())
+
+def search_thread(q, api_idx):
+    api = apis[api_idx]
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
     while True:
@@ -211,16 +217,19 @@ def search(args, i):
 
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
-    if api._auth_provider and api._auth_provider._ticket_expire:
-        remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
+    for i, auth in enumerate(args.auths):
+        api = apis[i]
+        auth_service, username, password = auth.split(':')
+        if api._auth_provider and api._auth_provider._ticket_expire:
+            remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
-        if remaining_time > 60:
-            log.info("Skipping Pokemon Go login process since already logged in \
-                for another {:.2f} seconds".format(remaining_time))
+            if remaining_time > 60:
+                log.info("Skipping Pokemon Go login for {} process since already logged in \
+                    for another {:.2f} seconds".format(username, remaining_time))
+            else:
+                login(args, api, auth_service, username, password, position)
         else:
-            login(args, position)
-    else:
-        login(args, position)
+            login(args, api, auth_service, username, password, position)
 
     lock = Lock()
 
