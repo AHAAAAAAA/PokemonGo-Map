@@ -25,7 +25,7 @@ def parse_unicode(bytestring):
 def verify_config_file_exists(filename):
     fullpath = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(fullpath):
-        log.info("Could not find " + filename + ", copying default")
+        log.info("Could not find %s, copying default", filename)
         shutil.copy2(fullpath + '.example', fullpath)
 
 
@@ -137,8 +137,8 @@ def insert_mock_data():
     num_pokestop = 6
     num_gym = 6
 
-    log.info('Creating fake: {} pokemon, {} pokestops, {} gyms'.format(
-        num_pokemon, num_pokestop, num_gym))
+    log.info('Creating fake: %d pokemon, %d pokestops, %d gyms',
+        num_pokemon, num_pokestop, num_gym)
 
     from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
@@ -201,7 +201,7 @@ def i8ln(word):
         log.debug("Translation = %s", i8ln.dictionary[word])
         return i8ln.dictionary[word]
     else:
-        log.debug("Unable to find translation!")
+        log.debug("Unable to find translation for '%s' in locale %s!", word, config['LOCALE'])
         return word
 
 def get_pokemon_data(pokemon_id):
@@ -240,6 +240,6 @@ def send_to_webhook(message_type, message):
             try:
                 requests.post(w, json=data, timeout=(None, 1))
             except requests.exceptions.ReadTimeout:
-                log.debug('Could not receive response from webhook')
+                log.debug('Response timeout on webhook endpoint %s', w)
             except requests.exceptions.RequestException as e:
                 log.debug(e)

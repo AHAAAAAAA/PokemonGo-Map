@@ -60,8 +60,9 @@ if __name__ == '__main__':
         log.error('Could not get a position by name, aborting.')
         sys.exit()
 
-    log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
-             format(*position))
+    log.info('Parsed location is: %.4f/%.4f/%.4f (lat/lng/alt)',
+             position[0], position[1], position[2])
+
     if args.no_pokemon:
         log.info('Parsing of Pokemon disabled.')
     if args.no_pokestops:
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     if not args.only_server:
         # Gather the pokemons!
         if not args.mock:
-            log.debug('Starting a real search thread and {} search runner thread(s)'.format(args.num_threads))
+            log.debug('Starting a real search thread and %d search runner thread(s)', args.num_threads)
             create_search_threads(args.num_threads, search_control)
             search_thread = Thread(target=search_loop, args=(args,search_control,))
         else:

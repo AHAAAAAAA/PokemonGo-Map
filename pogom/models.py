@@ -37,7 +37,7 @@ def init_database(app):
             host=args.db_host,
             max_connections=args.db_max_connections,
             stale_timeout=300)
-        log.info('Connecting to MySQL database on {}.'.format(args.db_host))
+        log.info('Connecting to MySQL database on %s.', args.db_host)
     else:
         db = SqliteDatabase(args.db)
         log.info('Connecting to local SQLLite database.')
@@ -327,10 +327,10 @@ def parse_map(map_dict, iteration_num, step, step_location):
         log.debug("Upserting {} gyms".format(len(gyms)))
         bulk_upsert(Gym, gyms)
 
-    log.info("Upserted {} pokemon, {} pokestops, and {} gyms".format(
-      pokemons_upserted,
-      pokestops_upserted,
-      gyms_upserted))
+    log.info("Upserted %d pokemon, %d pokestops, and %d gyms",
+        pokemons_upserted,
+        pokestops_upserted,
+        gyms_upserted)
 
     scanned[0] = {
         'scanned_id': str(step_location[0])+','+str(step_location[1]),
@@ -351,7 +351,7 @@ def bulk_upsert(cls, data):
     flaskDb.connect_db()
 
     while i < num_rows:
-        log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
+        log.debug("Inserting items %d to %d", i, min(i+step, num_rows))
         try:
             InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         except OperationalError as e:
