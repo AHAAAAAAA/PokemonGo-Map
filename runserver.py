@@ -78,6 +78,7 @@ if __name__ == '__main__':
     app = Pogom(__name__)
     db = init_database(app)
     if args.clear_db:
+        log.info('Clearing database')
         if args.db_type == 'mysql':
             drop_tables(db)
         elif os.path.isfile(args.db):
