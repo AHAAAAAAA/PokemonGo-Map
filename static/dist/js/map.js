@@ -142,6 +142,10 @@ var StoreOptions = {
 		default: false,
 		type: StoreTypes.Boolean
 	},
+	showHeatmap: {
+		default: false,
+		type: StoreTypes.Boolean
+	},
 	playSound: {
 		default: false,
 		type: StoreTypes.Boolean
@@ -336,7 +340,7 @@ function initSidebar() {
 	$('#geoloc-switch').prop('checked', Store.get('geoLocate'));
 	$('#scanned-switch').prop('checked', Store.get('showScanned'));
 	$('#sound-switch').prop('checked', Store.get('playSound'));
-	$('#heatmap-switch').prop('checked', localStorage.showHeatmap === 'false');
+	$('#heatmap-switch').prop('checked', Store.get('showHeatmap'));
 
 	var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 	$("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
@@ -765,7 +769,7 @@ function loadRawData() {
 		complete: function() {
 			rawDataIsLoading = false;
 		}
-	})
+	});
 }
 
 function processPokemons(i, item) {
@@ -906,15 +910,15 @@ function updateHeatmap() {
 					if (!localStorage.showHeatmap) {
 							return false; // in case the checkbox was unchecked in the meantime.
 					}
-					if (!(item.encounter_id in map_pokemons) &&
-										excludedPokemon.indexOf(item.pokemon_id) < 0) {
+					if (!(item.encounter_id in map_data.pokemons) &&
+						excludedPokemon.indexOf(item.pokemon_id) < 0) {
 						// add marker to map and item to dict
 								
 					}
 			if(notifiedPokemon.indexOf(item.pokemon_id) >= 0){
 				heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
 			}
-				});
+		});
 		
 		var gradient = [
 			'rgba(0, 255, 255, 0)',
@@ -955,10 +959,12 @@ function updateHeatmap() {
 
 function deleteHeatmap() {
 	heatmap.setMap(null);
+	console.log("delete heatmap");
 }
 
 function changeIntensity(intensity) {
 	heatmap.set('maxIntensity', intensity);
+}
 
 function updateMap() {
 	loadRawData().done(function(result) {
@@ -1307,8 +1313,8 @@ $(function() {
 	});
 	
 	$('#heatmap-switch').change(function() {
-		Store.set("showHeatmap", this.value);
-		if (this.value) {
+		Store.set("showHeatmap", this.checked);
+		if (this.checked) {
 			updateHeatmap();
 		} else {
 			deleteHeatmap();
