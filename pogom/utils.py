@@ -190,7 +190,7 @@ def i8ln(word):
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
-            '{}.json'.format(config['LOCALE']))
+            '{}.min.json'.format(config['LOCALE']))
         if os.path.isfile(file_path):
             with open(file_path, 'r') as f:
                 i8ln.dictionary = json.loads(f.read())
@@ -209,7 +209,7 @@ def get_pokemon_data(pokemon_id):
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['DATA_DIR'],
-            'pokemon.json')
+            'pokemon.min.json')
 
         with open(file_path, 'r') as f:
             get_pokemon_data.pokemon = json.loads(f.read())
