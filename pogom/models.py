@@ -314,17 +314,14 @@ def parse_map(map_dict, iteration_num, step, step_location):
 
     if pokemons and config['parse_pokemon']:
         pokemons_upserted = len(pokemons)
-        log.debug("Upserting {} pokemon".format(len(pokemons)))
         bulk_upsert(Pokemon, pokemons)
 
     if pokestops and config['parse_pokestops']:
         pokestops_upserted = len(pokestops)
-        log.debug("Upserting {} pokestops".format(len(pokestops)))
         bulk_upsert(Pokestop, pokestops)
 
     if gyms and config['parse_gyms']:
         gyms_upserted = len(gyms)
-        log.debug("Upserting {} gyms".format(len(gyms)))
         bulk_upsert(Gym, gyms)
 
     log.info("Upserted %d pokemon, %d pokestops, and %d gyms",
