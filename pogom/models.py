@@ -341,6 +341,16 @@ def parse_map(map_dict, iteration_num, step, step_location):
 
     bulk_upsert(ScannedLocation, scanned)
 
+    clean_database()
+
+def clean_database():
+    flaskDb.connect_db()
+    query = (ScannedLocation
+            .delete()
+            .where((ScannedLocation.last_modified <
+                (datetime.utcnow() - timedelta(minutes=30)))))
+    query.execute()
+    flaskDb.close_db(None)
 
 
 def bulk_upsert(cls, data):
