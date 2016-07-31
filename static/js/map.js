@@ -211,6 +211,17 @@ function notifyAboutPokemon(id) {
   ).trigger('change')
 }
 
+function addAllToNotify() {
+  //Sets selectNotify to be every Pokemmon except those in the hide list.
+  var toAdd = [1, 2, 3, 4, 5, 6, 7, 8, 9, 24, 25, 26, 28, 31, 34, 35, 36, 37, 38, 40, 43, 44, 45, 51, 53, 56, 57, 58, 59, 62, 64, 65, 66, 67, 68, 70, 71, 74, 75, 76, 77, 78, 80, 81, 82, 83, 86, 87, 88, 89, 90, 91, 93, 94, 95, 97, 100, 101, 103, 105, 107, 108, 106, 110, 112, 113, 114, 115, 122, 123, 124, 125, 126, 128, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 147, 148, 149]; 
+  $selectNotify.val(toAdd).trigger("change");
+}
+
+function clearNotify() {
+  $selectNotify.val([]).trigger("change");
+}
+
+
 function removePokemonMarker(encounter_id) {
   map_data.pokemons[encounter_id].marker.setMap(null);
   map_data.pokemons[encounter_id].hidden = true;
@@ -1195,6 +1206,8 @@ $(function() {
 
   $selectExclude = $("#exclude-pokemon");
   $selectNotify = $("#notify-pokemon");
+  $('#add-all-notify').click(addAllToNotify);
+  $('#del-all-notify').click(clearNotify);
   var numberOfPokemon = 151;
 
   // Load pokemon names and populate lists
@@ -1249,7 +1262,6 @@ $(function() {
     $selectExclude.val(Store.get('remember_select_exclude')).trigger("change");
     $selectNotify.val(Store.get('remember_select_notify')).trigger("change");
   });
-
   // run interval timers to regularly update map and timediffs
   window.setInterval(updateLabelDiffTime, 1000);
   window.setInterval(updateMap, 5000);
