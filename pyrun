@@ -1,0 +1,11 @@
+python ./runserver.py \
+--debug \
+--auth-service ptc \
+--username jackdoanmapper \
+--password austin \
+--location "32.986906, -96.748927" \
+--step-limit 6 \
+--gmaps-key AIzaSyCr6MLrdDslwl9Wc4vwFJzOXP-uw9X3X04 \
+--display-in-console \
+--port 5000 \
+--host 0.0.0.0 \
