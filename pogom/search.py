@@ -49,7 +49,7 @@ def send_map_request(api, position):
                                  cell_id=get_cellid(position[0], position[1]))
         return api_copy.call()
     except Exception as e:
-        log.warning("Uncaught exception when downloading map " + str(e))
+        log.warning("Uncaught exception when downloading map: %s", e)
         return False
 
 def get_new_coords(init_loc, distance, bearing):
