@@ -55,7 +55,7 @@ def send_map_request(api, position):
 def get_new_coords(init_loc, distance, bearing):
     """ Given an initial lat/lng, a distance(in kms), and a bearing (degrees),
     this will calculate the resulting lat/lng coordinates.
-    """ 
+    """
     R = 6378.1 #km radius of the earth
     bearing = math.radians(bearing)
 
@@ -82,7 +82,7 @@ def generate_location_steps(initial_loc, step_count):
 
     yield (initial_loc[0], initial_loc[1], 0) #insert initial location
 
-    ring = 1            
+    ring = 1
     loc = initial_loc
     while ring < step_count:
         #Set loc to start at top left
