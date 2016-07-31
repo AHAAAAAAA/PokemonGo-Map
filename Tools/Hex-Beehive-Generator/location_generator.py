@@ -97,7 +97,7 @@ for i in range(1, total_workers):
         C = math.radians(60.0)#inside angle of a regular hexagon
         a = d_s / R * 2.0 * math.pi #in radians get the arclength of the unit circle covered by d_s
         b = turn_steps_so_far * d_s / turn_steps / R * 2.0 * math.pi #percentage of a
-        c = math.acos(math.cos(a) * math.cos(b) + math.sin(a) * math.sin(b) * math.cos(C))) #the first spherical law of cosines gives us the length of side c from known angle C
+        c = math.acos(math.cos(a) * math.cos(b) + math.sin(a) * math.sin(b) * math.cos(C)) #the first spherical law of cosines gives us the length of side c from known angle C
         d = turn_steps * c * R / 2.0 / math.pi #turnsteps here represents ring number because yay coincidence always the same. multiply by derived arclength and convert to meters
         A = math.acos((math.cos(b) - math.cos(a) * math.cos(c)) / (math.sin(c) * math.sin(a))) #from the first spherical law of cosines we get the angle A from the side lengths a b c
         brng = 60 * turns + math.degrees(A)
