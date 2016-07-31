@@ -49,7 +49,7 @@ def send_map_request(api, position):
                                  cell_id=get_cellid(position[0], position[1]))
         return api_copy.call()
     except Exception as e:
-        log.warning("Uncaught exception when downloading map: %s", e)
+        log.warning('Uncaught exception when downloading map: %s', e)
         return False
 
 def get_new_coords(init_loc, distance, bearing):
@@ -136,7 +136,7 @@ def create_search_threads(num, search_control):
 
 def search_thread(q, search_control):
     threadname = threading.currentThread().getName()
-    log.debug("Search thread %s: started and waiting", threadname)
+    log.debug('Search thread %s: started and waiting', threadname)
     while True:
 
         # Get the next item off the queue (this blocks till there is something)
@@ -147,11 +147,11 @@ def search_thread(q, search_control):
 
         # If a new location has been set, just mark done and continue
         if 'NEXT_LOCATION' in config:
-            log.debug("%s: new location waiting, flushing queue", threadname)
+            log.debug('%s: new location waiting, flushing queue', threadname)
             q.task_done()
             continue
 
-        log.debug("%s: processing iteration %d step %d", threadname, i, step)
+        log.debug('%s: processing iteration %d step %d', threadname, i, step)
         response_dict = {}
         failed_consecutive = 0
         while not response_dict:
@@ -160,7 +160,7 @@ def search_thread(q, search_control):
                 with lock:
                     try:
                         parse_map(response_dict, i, step, step_location)
-                        log.debug("%s: iteration %d step %d complete", threadname, i, step)
+                        log.debug('%s: iteration %d step %d complete', threadname, i, step)
                     except KeyError:
                         log.error('Search thread failed: response dictionary key error')
                         log.debug('%s: iteration %d step %d failed: response dictionary key error', threadname, i, step)
@@ -185,10 +185,10 @@ def search_thread(q, search_control):
 def search_loop(args, search_control):
     i = 0
     while search_control.wait():
-        log.info("Search loop %d starting", i)
+        log.info('Search loop %d starting', i)
         try:
             search(args, i)
-            log.info("Search loop %d complete", i)
+            log.info('Search loop %d complete', i)
             i += 1
         except Exception as e:
             err = 'Scanning error @ {0.__class__.__name__}: {0}'.format(e)
@@ -218,7 +218,7 @@ def search(args, i):
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
         if remaining_time > 60:
-            log.info("Current login valid for %.2f seconds", remaining_time)
+            log.info('Current login valid for %.2f seconds', remaining_time)
         else:
             login(args, position)
     else:
@@ -227,13 +227,13 @@ def search(args, i):
     lock = Lock()
 
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
-        log.debug("Queue search iteration %d, step %d", i, step)
+        log.debug('Queue search iteration %d, step %d', i, step)
         search_args = (i, step_location, step, lock)
         search_queue.put(search_args)
 
     # Wait until this scan itteration queue is empty (not nessearily done)
     while not search_queue.empty():
-        log.debug("Waiting for current search queue to complete (remaining: %d)", search_queue.qsize())
+        log.debug('Waiting for current search queue to complete (remaining: %d)', search_queue.qsize())
         time.sleep(1)
 
     # Don't let this method exit until the last item has ACTUALLY finished

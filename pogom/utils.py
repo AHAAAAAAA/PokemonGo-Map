@@ -25,7 +25,7 @@ def parse_unicode(bytestring):
 def verify_config_file_exists(filename):
     fullpath = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(fullpath):
-        log.info("Could not find %s, copying default", filename)
+        log.info('Could not find %s, copying default', filename)
         shutil.copy2(fullpath + '.example', fullpath)
 
 
@@ -195,12 +195,12 @@ def i8ln(word):
             with open(file_path, 'r') as f:
                 i8ln.dictionary = json.loads(f.read())
         else:
-            log.warning("Skipping translations - Unable to find locale file: %s", file_path)
+            log.warning('Skipping translations - Unable to find locale file: %s', file_path)
             return word
     if word in i8ln.dictionary:
         return i8ln.dictionary[word]
     else:
-        log.debug("Unable to find translation for '%s' in locale %s!", word, config['LOCALE'])
+        log.debug('Unable to find translation for '%s' in locale %s!', word, config['LOCALE'])
         return word
 
 def get_pokemon_data(pokemon_id):

@@ -324,7 +324,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
         gyms_upserted = len(gyms)
         bulk_upsert(Gym, gyms)
 
-    log.info("Upserted %d pokemon, %d pokestops, and %d gyms",
+    log.info('Upserted %d pokemon, %d pokestops, and %d gyms',
         pokemons_upserted,
         pokestops_upserted,
         gyms_upserted)
@@ -348,11 +348,11 @@ def bulk_upsert(cls, data):
     flaskDb.connect_db()
 
     while i < num_rows:
-        log.debug("Inserting items %d to %d", i, min(i+step, num_rows))
+        log.debug('Inserting items %d to %d', i, min(i+step, num_rows))
         try:
             InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         except OperationalError as e:
-            log.warning("%s... Retrying", e)
+            log.warning('%s... Retrying', e)
             continue
 
         i+=step
