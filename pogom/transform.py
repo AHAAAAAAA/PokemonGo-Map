@@ -19,7 +19,7 @@ def transform_from_wgs_to_gcj(latitude, longitude):
         adjust_lon = (adjust_lon * 180.0) / (a / sqrt_magic * cos(rad_lat) * pi)
         adjust_lat += latitude
         adjust_lon += longitude
-    #print 'transfromed from ', wgs_loc, ' to ', adjust_loc
+    #  print 'transfromed from ', wgs_loc, ' to ', adjust_loc
     return adjust_lat, adjust_lon
 
 
