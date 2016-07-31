@@ -184,8 +184,8 @@ def insert_mock_data():
                    )
 
 def i8ln(word):
-    log.debug("Translating: %s", word)
-    if config['LOCALE'] == "en": return word
+    if config['LOCALE'] == "en":
+        return word
     if not hasattr(i8ln, 'dictionary'):
         file_path = os.path.join(
             config['ROOT_PATH'],
@@ -198,7 +198,6 @@ def i8ln(word):
             log.warning("Skipping translations - Unable to find locale file: %s", file_path)
             return word
     if word in i8ln.dictionary:
-        log.debug("Translation = %s", i8ln.dictionary[word])
         return i8ln.dictionary[word]
     else:
         log.debug("Unable to find translation for '%s' in locale %s!", word, config['LOCALE'])
