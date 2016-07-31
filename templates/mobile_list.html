@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="static/dist/css/mobile.min.css" type="text/css" />
 </head>
 <body>
-	<h1>Nearby Pokémon <small id="msg"></small></h1>
+	<h1>Nearby Pokémon</h1>
 
 	<ol>
 {% for pokemon in pokemon_list[:20] %}
@@ -22,8 +22,7 @@
 	<div id="nav">
 		<button>Refresh</button>
 		<div>
-			<label><input type="checkbox" id="use-loc">Device location</label>
-			<label><input type="checkbox" id="use-timer">Live countdown</label>
+			<label><input type="checkbox" id="use-loc">Use device location</label>
 		</div>
 	</div>
 
