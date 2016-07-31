@@ -1,0 +1,71 @@
+body {
+	font-family: sans-serif;
+}
+h1 {
+	margin: 5px 0 65px 0;
+}
+ol {
+	margin: 0 -4px;
+	padding: 0;
+}
+li {
+	border: solid 1px #aaa;
+	border-radius: 2px;
+	box-shadow: 2px 2px 2px #eee;
+	font-family: sans-serif;
+	text-decoration: none;
+	color: #444;
+	background-repeat: no-repeat;
+	background-size: 80px 60px;
+	background-position: 0px 0px;
+	padding-left: 80px;
+	margin: 5px 2px;
+	height: 60px;
+	image-rendering: pixelated;
+	cursor: pointer;
+	> div {
+		margin: 25px 2px 0px 2px;
+		float: left;
+	}
+}
+.origin {
+	position: relative;
+	top: 20px;
+	padding-bottom: 10px;
+}
+#nav {
+	position: absolute;
+	top: 55px;
+	left: 10px;
+	button {
+		float: left;
+		padding: .7em 1em;
+		border: solid 1px #ddd;
+		background: white;
+		font-size: 17px;
+		border-radius: 3px;
+		color: #333;
+		cursor: pointer;
+		width: 140px;
+	}
+	> div {
+		display: inline-block;
+		float: left;
+		text-align: middle;
+	}
+	label {
+		display: block;
+		cursor: pointer;
+		padding: 2px 0;
+		input {
+			margin-top: 15px;
+			margin-left: 10px;
+		}
+	}
+}
+.name {
+	font-weight: bold;
+}
+.remain {
+	color: #999;
+}
