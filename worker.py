@@ -100,16 +100,18 @@ class Slave(threading.Thread):
                 )
             except pgoapi_exceptions.AuthException:
                 self.error_code = 'LOGIN FAIL'
+                self.restart()
                 return
             except pgoapi_exceptions.NotLoggedInException:
                 self.error_code = 'BAD LOGIN'
+                self.restart()
                 return
             except pgoapi_exceptions.ServerBusyOrOfflineException:
                 self.error_code = 'RETRYING'
                 self.restart()
                 return
             except pgoapi_exceptions.ServerSideRequestThrottlingException:
-                time.sleep(random.uniform(0.2, 0.5))
+                time.sleep(random.uniform(1, 5))
                 continue
             except Exception:
                 logger.exception('A wild exception appeared!')
@@ -185,7 +187,7 @@ class Slave(threading.Thread):
             if self.error_code and self.seen_per_cycle:
                 self.error_code = None
             self.step += 1
-            time.sleep(random.uniform(0.2, 0.5))
+            time.sleep(random.uniform(5, 7))
         session.close()
         if self.seen_per_cycle == 0:
             self.error_code = 'NO POKEMON'
