@@ -60,8 +60,8 @@ os.chmod(args.output, 0o755)
 output_fh.write(preamble + "\n")
 output_fh.write(server_template.format(lat=args.lat, lon=args.lon))
 
-w_worker = (2 * steps - 1) * r_hex
-d = 2.0 * w_worker / 1000.0
+w_worker = (2 * steps - 1) * r_hex #convert the step limit of the worker into the r radius of the hexagon in meters?
+d = 2.0 * w_worker / 1000.0 #convert that into a diameter and convert to gps scale
 d_s = d
 
 brng_s = 0.0
@@ -94,12 +94,12 @@ for i in range(1, total_workers):
         d = turn_steps * d
     else:
         loc = locations[0]
-        C = math.radians(60.0)
-        a = d_s / R * 2.0 * math.pi
-        b = turn_steps_so_far * d_s / turn_steps / R * 2.0 * math.pi
-        c = math.acos(math.cos(a) * math.cos(b) + math.sin(a) * math.sin(b) * math.cos(C))
-        d = turn_steps * c * R / 2.0 / math.pi
-        A = math.acos((math.cos(b) - math.cos(a) * math.cos(c)) / (math.sin(c) * math.sin(a)))
+        C = math.radians(60.0)#inside angle of a regular hexagon
+        a = d_s / R * 2.0 * math.pi #in radians get the arclength of the unit circle covered by d_s
+        b = turn_steps_so_far * d_s / turn_steps / R * 2.0 * math.pi #percentage of a
+        c = math.acos(math.cos(a) * math.cos(b) + math.sin(a) * math.sin(b) * math.cos(C)) )#the first spherical law of cosines gives us the length of side c from known angle C
+        d = turn_steps * c * R / 2.0 / math.pi #turnsteps here represents ring number because yay coincidence always the same. multiply by derived arclength and convert to meters
+        A = math.acos((math.cos(b) - math.cos(a) * math.cos(c)) / (math.sin(c) * math.sin(a)))#from the first spherical law of cosines we get the angle A from the side lengths a b c
         brng = 60 * turns + math.degrees(A)
 
     loc = loc.offset(brng + mod, d)
