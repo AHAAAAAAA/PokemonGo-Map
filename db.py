@@ -93,6 +93,21 @@ def normalize_timestamp(timestamp):
     return int(float(timestamp) / 120.0) * 120
 
 
+def get_since():
+    """Returns 'since' timestamp that should be used for filtering"""
+    return time.mktime(config.REPORT_SINCE.timetuple())
+
+
+def get_since_query_part(where=True):
+    """Returns WHERE part of query filtering records before set date"""
+    if config.REPORT_SINCE:
+        return '{noun} expire_timestamp > {since}'.format(
+            noun='WHERE' if where else 'AND',
+            since=get_since(),
+        )
+    return ''
+
+
 def add_sighting(session, pokemon):
     obj = Sighting(
         pokemon_id=pokemon['pokemon_id'],
@@ -129,13 +144,17 @@ def get_sightings(session):
 
 
 def get_session_stats(session):
-    min_max_query = session.execute('''
+    query = '''
         SELECT
             MIN(expire_timestamp) ts_min,
             MAX(expire_timestamp) ts_max,
             COUNT(*)
-        FROM `sightings`;
-    ''')
+        FROM `sightings`
+        {report_since}
+    '''
+    min_max_query = session.execute(query.format(
+        report_since=get_since_query_part()
+    ))
     min_max_result = min_max_query.first()
     length_hours = (min_max_result[1] - min_max_result[0]) // 3600
     if length_hours == 0:
@@ -160,8 +179,10 @@ def get_punch_card(session):
             CAST((expire_timestamp / 300) AS {bigint}) ts_date,
             COUNT(*) how_many
         FROM `sightings`
-        GROUP BY ts_date ORDER BY ts_date
-    '''.format(bigint=bigint))
+        {report_since}
+        GROUP BY ts_date
+        ORDER BY ts_date
+    '''.format(bigint=bigint, report_since=get_since_query_part()))
     results = query.fetchall()
     results_dict = {r[0]: r[1] for r in results}
     filled = []
@@ -177,10 +198,11 @@ def get_top_pokemon(session, count=30, order='DESC'):
             pokemon_id,
             COUNT(*) how_many
         FROM sightings
+        {report_since}
         GROUP BY pokemon_id
         ORDER BY how_many {order}
         LIMIT {count}
-    '''.format(order=order, count=count))
+    '''.format(order=order, count=count, report_since=get_since_query_part()))
     return query.fetchall()
 
 
@@ -189,9 +211,11 @@ def get_stage2_pokemon(session):
     if not hasattr(config, 'STAGE2'):
         return []
     for pokemon_id in config.STAGE2:
-        count = session.query(Sighting) \
-            .filter(Sighting.pokemon_id == pokemon_id) \
-            .count()
+        query = session.query(Sighting) \
+            .filter(Sighting.pokemon_id == pokemon_id)
+        if config.REPORT_SINCE:
+            query = query.filter(Sighting.expire_timestamp > get_since())
+        count = query.count()
         if count > 0:
             result.append((pokemon_id, count))
     return result
@@ -199,7 +223,10 @@ def get_stage2_pokemon(session):
 
 def get_nonexistent_pokemon(session):
     result = []
-    query = session.execute('SELECT DISTINCT pokemon_id FROM sightings')
+    query = session.execute('''
+        SELECT DISTINCT pokemon_id FROM sightings
+        {report_since}
+    '''.format(report_since=get_since_query_part()))
     db_ids = [r[0] for r in query.fetchall()]
     for pokemon_id in range(1, 152):
         if pokemon_id not in db_ids:
@@ -210,9 +237,10 @@ def get_nonexistent_pokemon(session):
 def get_all_sightings(session, pokemon_ids):
     # TODO: rename this and get_sightings
     query = session.query(Sighting) \
-        .filter(Sighting.pokemon_id.in_(pokemon_ids)) \
-        .all()
-    return query
+        .filter(Sighting.pokemon_id.in_(pokemon_ids))
+    if config.REPORT_SINCE:
+        query = query.filter(Sighting.expire_timestamp > get_since())
+    return query.all()
 
 
 def get_spawns_per_hour(session, pokemon_id):
@@ -226,9 +254,14 @@ def get_spawns_per_hour(session, pokemon_id):
             COUNT(*) AS how_many
         FROM sightings
         WHERE pokemon_id = {pokemon_id}
+        {report_since}
         GROUP BY ts_hour
         ORDER BY ts_hour
-    '''.format(pokemon_id=pokemon_id, ts_hour=ts_hour))
+    '''.format(
+        pokemon_id=pokemon_id,
+        ts_hour=ts_hour,
+        report_since=get_since_query_part(where=False)
+    ))
     results = []
     for result in query.fetchall():
         results.append((
@@ -245,7 +278,22 @@ def get_spawns_per_hour(session, pokemon_id):
 
 def get_total_spawns_count(session, pokemon_id):
     query = session.execute('''
-        SELECT COUNT(id) FROM sightings WHERE pokemon_id = {pokemon_id}
-    '''.format(pokemon_id=pokemon_id))
+        SELECT COUNT(id)
+        FROM sightings
+        WHERE pokemon_id = {pokemon_id}
+        {report_since}
+    '''.format(
+        pokemon_id=pokemon_id,
+        report_since=get_since_query_part(where=False)
+    ))
     result = query.first()
     return result[0]
+
+
+def get_all_spawn_coords(session, pokemon_id=None):
+    points = session.query(Sighting.lat, Sighting.lon)
+    if pokemon_id:
+        points = points.filter(Sighting.pokemon_id == int(pokemon_id))
+    if config.REPORT_SINCE:
+        points = points.filter(Sighting.expire_timestamp > get_since())
+    return points.all()

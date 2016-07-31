@@ -21,6 +21,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 REQUIRED_SETTINGS = (
     'GRID',
     'AREA_NAME',
+    'REPORT_SINCE',
 )
 for setting_name in REQUIRED_SETTINGS:
     if not hasattr(app_config, setting_name):
@@ -280,11 +281,8 @@ def sighting_to_marker(sighting):
 @app.route('/report/heatmap')
 def report_heatmap():
     session = db.Session()
-    points = session.query(db.Sighting.lat, db.Sighting.lon)
     pokemon_id = request.args.get('id')
-    if pokemon_id:
-        points = points.filter(db.Sighting.pokemon_id == int(pokemon_id))
-    points = points.all()
+    points = db.get_all_spawn_coords(session, pokemon_id=pokemon_id)
     session.close()
     return json.dumps(points)
 
