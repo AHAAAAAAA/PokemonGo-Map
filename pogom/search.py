@@ -145,11 +145,7 @@ def create_empty_apis(api_count):
     for i in range(api_count):
         apis.append(PGoApi())
 
-<<<<<<< HEAD
 def search_thread(q, api_idx, search_control):
-=======
-def search_thread(q, api_idx):
->>>>>>> 63e74bdb0cba94d78630432f84e2479c60ae507c
     api = apis[api_idx]
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
