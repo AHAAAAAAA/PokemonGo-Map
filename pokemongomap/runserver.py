@@ -37,6 +37,12 @@ if __name__ == '__main__':
             log.critical('Please run "grunt build" before starting the server.');
             sys.exit();
 
+    main()
+
+def main():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(module)11s] [%(levelname)7s] %(message)s')
+
+
     # These are very noisey, let's shush them up a bit
     logging.getLogger("peewee").setLevel(logging.INFO)
     logging.getLogger("requests").setLevel(logging.WARNING)
