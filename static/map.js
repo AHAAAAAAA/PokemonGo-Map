@@ -1307,12 +1307,11 @@ $(function() {
 	});
 	
 	$('#heatmap-switch').change(function() {
-	console.log('changed Heatmap');
-		localStorage["showHeatmap"] = this.checked;
-		if (this.checked) {
-				updateHeatmap();
+		Store.set("showHeatmap", this.value);
+		if (this.value) {
+			updateHeatmap();
 		} else {
-		deleteHeatmap();
+			deleteHeatmap();
 		}
 	});
 
