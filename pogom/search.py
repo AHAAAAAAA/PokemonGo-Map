@@ -110,10 +110,16 @@ def generate_location_steps(initial_loc, step_count):
         ring += 1
 
 
-def login(args, api, auth_service, username, password, position):
+def login(args, i, position):
     log.info('Attempting login to Pokemon Go.')
 
+    api = apis[i]
+
     api.set_position(*position)
+
+    auth_service = args.auth_service[i]
+    username = args.username[i]
+    password = args.password[i]
 
     while not api.login(auth_service, username, password):
         log.info('Failed to login to Pokemon Go. Trying again in {:g} seconds.'.format(args.login_delay))
@@ -220,19 +226,17 @@ def search(args, i):
 
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
-    for i, auth in enumerate(args.auths):
+    for i in range(len(args.username)):
         api = apis[i]
-        auth_service, username, password = auth.split(':')
         if api._auth_provider and api._auth_provider._ticket_expire:
             remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
             if remaining_time > 60:
-                log.info("Skipping Pokemon Go login for {} process since already logged in \
-                    for another {:.2f} seconds".format(username, remaining_time))
+                log.info("Current login ({}) valid for {:.2f} seconds".format(args.username[i], remaining_time))
             else:
-                login(args, api, auth_service, username, password, position)
+                login(args, i, position)
         else:
-            login(args, api, auth_service, username, password, position)
+            login(args, i, position)
 
     lock = Lock()
 
