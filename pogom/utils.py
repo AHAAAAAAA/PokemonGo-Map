@@ -33,10 +33,13 @@ def get_args():
     # fuck PEP8
     configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
     parser = configargparse.ArgParser(default_config_files=[configpath])
-    parser.add_argument('-a', '--auth-service', type=str.lower,
-                        help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username')
-    parser.add_argument('-p', '--password', help='Password')
+    parser.add_argument('-a', '--auth-service', type=str.lower, action='append',
+                        help='Auth Services, either one for all accounts or one per account. \
+                        ptc or google. Defaults all to ptc.')
+    parser.add_argument('-u', '--username', action='append',
+                        help='Usernames, one per account.')
+    parser.add_argument('-p', '--password', action='append',
+                        help='Passwords, either single one for all accounts or one per account.')
     parser.add_argument('-l', '--location', type=parse_unicode,
                         help='Location, can be an address or coordinates')
     parser.add_argument('-st', '--step-limit', help='Steps', type=int,
@@ -124,10 +127,36 @@ def get_args():
             print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
             sys.exit(1)
 
-        if config["PASSWORD"] is None and args.password is None:
-            config["PASSWORD"] = args.password = getpass.getpass()
-        elif args.password is None:
-            args.password = config["PASSWORD"]
+        if args.auth_service is None:
+            args.auth_service = ['ptc']
+
+        if args.password is None:
+            if config['PASSWORD'] is None:
+                config['PASSWORD'] = getpass.getpass()
+            args.password = [config['PASSWORD']]
+
+        num_username = len(args.username)
+
+        # If there are multiple usernames, then we either need one passwords that we use for all,
+        # or equal amount so that they match 1:1. Same for authentication services.
+        if num_username > 1:
+            num_passwd = len(args.password)
+            if (num_passwd == 1):
+                log.debug('More than one username and one password given. Using same password for all accounts.')
+                args.password = args.password * num_username
+            elif (num_passwd > 1 and num_username != num_passwd):
+                print sys.argv[0] + ': error: number of usernames ({}) does not match the number of passwords ({})' \
+                                    .format(num_username, num_passwd)
+                sys.exit(1);
+
+            num_auth = len(args.auth_service)
+            if (num_auth == 1):
+                log.debug('More than one username and one auth service given. Using same auth service for all accounts.')
+                args.auth_service = args.auth_service * num_username
+            if (num_auth > 1 and num_username != num_auth):
+                print sys.argv[0] + ': error: number of usernames ({}) does not match the number of auth providers ({})' \
+                                    .format(num_username, num_auth)
+                sys.exit(1);
 
     return args
 

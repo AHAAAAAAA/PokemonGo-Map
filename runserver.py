@@ -17,7 +17,7 @@ from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data
 
-from pogom.search import search_loop, create_search_threads, fake_search_loop
+from pogom.search import search_loop, create_empty_apis, create_search_threads, fake_search_loop
 from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
@@ -91,7 +91,8 @@ if __name__ == '__main__':
         # Gather the pokemons!
         if not args.mock:
             log.debug('Starting a real search thread and {} search runner thread(s)'.format(args.num_threads))
-            create_search_threads(args.num_threads, search_control)
+            create_empty_apis(len(args.username))
+            create_search_threads(args.num_threads, len(args.username), search_control)
             search_thread = Thread(target=search_loop, args=(args,search_control,))
         else:
             log.debug('Starting a fake search thread')

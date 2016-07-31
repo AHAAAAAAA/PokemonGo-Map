@@ -29,7 +29,7 @@ from .models import parse_map
 log = logging.getLogger(__name__)
 
 TIMESTAMP = '\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000'
-api = PGoApi()
+apis = []
 
 search_queue = Queue()
 
@@ -110,12 +110,18 @@ def generate_location_steps(initial_loc, step_count):
         ring += 1
 
 
-def login(args, position):
+def login(args, i, position):
     log.info('Attempting login to Pokemon Go.')
+
+    api = apis[i]
 
     api.set_position(*position)
 
-    while not api.login(args.auth_service, args.username, args.password):
+    auth_service = args.auth_service[i]
+    username = args.username[i]
+    password = args.password[i]
+
+    while not api.login(auth_service, username, password):
         log.info('Failed to login to Pokemon Go. Trying again in {:g} seconds.'.format(args.login_delay))
         time.sleep(args.login_delay)
 
@@ -125,16 +131,22 @@ def login(args, position):
 #
 # Search Threads Logic
 #
-def create_search_threads(num, search_control):
+def create_search_threads(thread_count, api_count, search_control):
     search_threads = []
-    for i in range(num):
-        t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue,search_control,))
+    for i in range(thread_count):
+        api_idx = i % api_count
+        t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue, api_idx, search_control,))
         t.daemon = True
         t.start()
         search_threads.append(t)
 
 
-def search_thread(q, search_control):
+def create_empty_apis(api_count):
+    for i in range(api_count):
+        apis.append(PGoApi())
+
+def search_thread(q, api_idx, search_control):
+    api = apis[api_idx]
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
     while True:
@@ -214,15 +226,17 @@ def search(args, i):
 
     position = (config['ORIGINAL_LATITUDE'], config['ORIGINAL_LONGITUDE'], 0)
 
-    if api._auth_provider and api._auth_provider._ticket_expire:
-        remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
+    for i in range(len(args.username)):
+        api = apis[i]
+        if api._auth_provider and api._auth_provider._ticket_expire:
+            remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
 
-        if remaining_time > 60:
-            log.info("Current login valid for {:.2f} seconds".format(remaining_time))
+            if remaining_time > 60:
+                log.info("Current login ({}) valid for {:.2f} seconds".format(args.username[i], remaining_time))
+            else:
+                login(args, i, position)
         else:
-            login(args, position)
-    else:
-        login(args, position)
+            login(args, i, position)
 
     lock = Lock()
 
