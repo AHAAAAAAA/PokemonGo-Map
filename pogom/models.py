@@ -348,7 +348,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
-    step = 120
+    step = 1
 
     flaskDb.connect_db()
 
