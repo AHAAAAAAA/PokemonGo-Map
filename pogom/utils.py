@@ -101,7 +101,6 @@ def get_args():
     parser.add_argument('--db-host', help='IP or hostname for the database')
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
                         nargs='*', default=False, dest='webhooks')
-    parser.add_argument('--pokel-pass', help='Password for Pokelize database')
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
