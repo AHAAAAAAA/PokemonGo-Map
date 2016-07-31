@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Let's not forget to run Grunt / Only needed when running with webserver
     if not args.no_server:
         if not os.path.exists(os.path.join(os.path.dirname(__file__), 'static/dist')):
-            log.critical('Please run "grunt build" before starting the server.');
+            log.critical('Please run "grunt build" before starting the server');
             sys.exit();
 
     # These are very noisey, let's shush them up a bit
@@ -57,18 +57,18 @@ if __name__ == '__main__':
 
     position = get_pos_by_name(args.location)
     if not any(position):
-        log.error('Could not get a position by name, aborting.')
+        log.error('Could not get a position by name, aborting')
         sys.exit()
 
     log.info('Parsed location is: %.4f/%.4f/%.4f (lat/lng/alt)',
              position[0], position[1], position[2])
 
     if args.no_pokemon:
-        log.info('Parsing of Pokemon disabled.')
+        log.info('Parsing of Pokemon disabled')
     if args.no_pokestops:
-        log.info('Parsing of Pokestops disabled.')
+        log.info('Parsing of Pokestops disabled')
     if args.no_gyms:
-        log.info('Parsing of Gyms disabled.')
+        log.info('Parsing of Gyms disabled')
 
     config['ORIGINAL_LATITUDE'] = position[0]
     config['ORIGINAL_LONGITUDE'] = position[1]

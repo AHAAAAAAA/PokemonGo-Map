@@ -111,15 +111,15 @@ def generate_location_steps(initial_loc, step_count):
 
 
 def login(args, position):
-    log.info('Attempting login to Pokemon Go.')
+    log.info('Attempting login to Pokemon Go')
 
     api.set_position(*position)
 
     while not api.login(args.auth_service, args.username, args.password):
-        log.info('Failed to login to Pokemon Go. Trying again in %g seconds.', args.login_delay)
+        log.info('Failed to login to Pokemon Go; trying again in %g seconds', args.login_delay)
         time.sleep(args.login_delay)
 
-    log.info('Login to Pokemon Go successful.')
+    log.info('Login to Pokemon Go successful')
 
 
 #
@@ -162,11 +162,11 @@ def search_thread(q, search_control):
                         parse_map(response_dict, i, step, step_location)
                         log.debug("%s: iteration %d step %d complete", threadname, i, step)
                     except KeyError:
-                        log.error('Search thread failed. Response dictionary key error')
-                        log.debug('%s: iteration %d step %d failed. Response dictionary key error.', threadname, i, step)
+                        log.error('Search thread failed: response dictionary key error')
+                        log.debug('%s: iteration %d step %d failed: response dictionary key error', threadname, i, step)
                         failed_consecutive += 1
                         if(failed_consecutive >= config['REQ_MAX_FAILED']):
-                            log.error('Niantic servers under heavy load. Waiting before trying again')
+                            log.error('Niantic servers under heavy load; waiting %g seconds before trying again', config['REQ_HEAVY_SLEEP'])
                             time.sleep(config['REQ_HEAVY_SLEEP'])
                             failed_consecutive = 0
                         response_dict = {}
@@ -188,14 +188,14 @@ def search_loop(args, search_control):
         log.info("Search loop %d starting", i)
         try:
             search(args, i)
-            log.info("Search loop %d complete.", i)
+            log.info("Search loop %d complete", i)
             i += 1
         except Exception as e:
             err = 'Scanning error @ {0.__class__.__name__}: {0}'.format(e)
             log.error(err)
         finally:
             if args.thread_delay > 0:
-                log.info('Waiting %g seconds before beginning new scan.', args.thread_delay)
+                log.info('Waiting %g seconds before beginning new scan', args.thread_delay)
                 time.sleep(args.thread_delay)
 
 
@@ -245,5 +245,5 @@ def search(args, i):
 #
 def fake_search_loop():
     while True:
-        log.info('Fake search loop running...')
+        log.info('Fake search loop running')
         time.sleep(10)
