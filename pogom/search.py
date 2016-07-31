@@ -125,22 +125,25 @@ def login(args, position):
 #
 # Search Threads Logic
 #
-def create_search_threads(num):
+def create_search_threads(num, search_control):
     search_threads = []
     for i in range(num):
-        t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue,))
+        t = Thread(target=search_thread, name='search_thread-{}'.format(i), args=(search_queue,search_control,))
         t.daemon = True
         t.start()
         search_threads.append(t)
 
 
-def search_thread(q):
+def search_thread(q, search_control):
     threadname = threading.currentThread().getName()
     log.debug("Search thread {}: started and waiting".format(threadname))
     while True:
 
         # Get the next item off the queue (this blocks till there is something)
         i, step_location, step, lock = q.get()
+
+        # Pause if searching is disabled
+        search_control.wait()
 
         # If a new location has been set, just mark done and continue
         if 'NEXT_LOCATION' in config:
@@ -180,9 +183,9 @@ def search_thread(q):
 #
 # Search Overseer
 #
-def search_loop(args):
+def search_loop(args, search_control):
     i = 0
-    while True:
+    while search_control.wait():
         log.info("Search loop {} starting".format(i))
         try:
             search(args, i)
