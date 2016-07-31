@@ -356,7 +356,7 @@ def bulk_upsert(cls, data):
         log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
         try:
             InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
-        except OperationalError as e:
+        except Exception as e:
             log.warning("%s... Retrying", e)
             continue
 
