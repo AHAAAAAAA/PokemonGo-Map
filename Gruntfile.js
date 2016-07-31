@@ -57,6 +57,20 @@ module.exports = function(grunt) {
         }
       }
     },
+    minjson: {
+      build: {
+        files: {
+          'static/dist/data/pokemon.min.json': 'static/data/pokemon.json',
+          'static/dist/data/mapstyle.min.json': 'static/data/mapstyle.json',
+          'static/dist/locales/de.min.json': 'static/locales/de.json',
+          'static/dist/locales/fr.min.json': 'static/locales/fr.json',
+          'static/dist/locales/pt_br.min.json': 'static/locales/pt_br.json',
+          'static/dist/locales/ru.min.json': 'static/locales/ru.json',
+          'static/dist/locales/zh_cn.min.json': 'static/locales/zh_cn.json',
+          'static/dist/locales/zh_hk.min.json': 'static/locales/zh_hk.json'
+        }
+      }
+    },
     clean: {
       build: {
         src: 'static/dist'
@@ -72,7 +86,7 @@ module.exports = function(grunt) {
         options: { livereload: true }
       },
       js: {
-        files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
+        files: ['**/*.js', '**/*.json', '!node_modules/**/*.js', '!static/dist/**/*.js', '!static/dist/**/*.json'],
         options: { livereload: true },
         tasks: ['js-lint', 'js-build']
       },
@@ -106,8 +120,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-minjson');
 
-  grunt.registerTask('js-build', ['babel', 'uglify']);
+  grunt.registerTask('js-build', ['babel', 'uglify', 'minjson']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
   grunt.registerTask('js-lint', ['jshint']);
 

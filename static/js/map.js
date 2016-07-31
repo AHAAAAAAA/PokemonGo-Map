@@ -152,6 +152,10 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
+  startAtUserLocation: {
+    default: false,
+    type: StoreTypes.Boolean
+  },
   playSound: {
     default: false,
     type: StoreTypes.Boolean
@@ -342,6 +346,16 @@ function createSearchMarker() {
   return marker;
 }
 
+var searchControlURI = 'search_control';
+function searchControl(action) {
+  $.post(searchControlURI + '?action='+encodeURIComponent(action));
+}
+function updateSearchStatus() {
+  $.getJSON(searchControlURI).then(function(data){
+    $('#search-switch').prop('checked', data.status);
+  })
+}
+
 function initSidebar() {
   $('#gyms-switch').prop('checked', Store.get('showGyms'));
   $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
@@ -349,10 +363,14 @@ function initSidebar() {
   $('#lured-pokestops-only-switch').val(Store.get('showLuredPokestopsOnly'));
   $('#lured-pokestops-only-wrapper').toggle(Store.get('showPokestops'));
   $('#geoloc-switch').prop('checked', Store.get('geoLocate'));
+  $('#start-at-user-location-switch').prop('checked', Store.get('startAtUserLocation'));
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
+
+  updateSearchStatus();
+  setInterval(updateSearchStatus,5000);
 
   searchBox.addListener('places_changed', function() {
     var places = searchBox.getPlaces();
@@ -1038,34 +1056,36 @@ function myLocationButton(map, marker) {
   locationIcon.id = 'current-location';
   locationButton.appendChild(locationIcon);
 
-  locationButton.addEventListener('click', function() {
-    var currentLocation = document.getElementById('current-location');
-    var imgX = '0';
-    var animationInterval = setInterval(function() {
-      if (imgX == '-18') imgX = '0';
-      else imgX = '-18';
-      currentLocation.style.backgroundPosition = imgX + 'px 0';
-    }, 500);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        locationMarker.setVisible(true);
-        locationMarker.setOptions({
-          'opacity': 1
-        });
-        locationMarker.setPosition(latlng);
-        map.setCenter(latlng);
-        clearInterval(animationInterval);
-        currentLocation.style.backgroundPosition = '-144px 0px';
-      });
-    } else {
-      clearInterval(animationInterval);
-      currentLocation.style.backgroundPosition = '0px 0px';
-    }
-  });
+  locationButton.addEventListener('click', function() { centerMapOnLocation() });
 
   locationContainer.index = 1;
   map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationContainer);
+}
+
+function centerMapOnLocation() {
+  var currentLocation = document.getElementById('current-location');
+  var imgX = '0';
+  var animationInterval = setInterval(function() {
+    if (imgX == '-18') imgX = '0';
+    else imgX = '-18';
+    currentLocation.style.backgroundPosition = imgX + 'px 0';
+  }, 500);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      locationMarker.setVisible(true);
+      locationMarker.setOptions({
+        'opacity': 1
+      });
+      locationMarker.setPosition(latlng);
+      map.setCenter(latlng);
+      clearInterval(animationInterval);
+      currentLocation.style.backgroundPosition = '-144px 0px';
+    });
+  } else {
+    clearInterval(animationInterval);
+    currentLocation.style.backgroundPosition = '0px 0px';
+  }
 }
 
 function addMyLocationButton() {
@@ -1124,7 +1144,7 @@ function centerMap(lat, lng, zoom) {
 function i8ln(word) {
   if ($.isEmptyObject(i8ln_dictionary) && language != "en" && language_lookups < language_lookup_threshold) {
     $.ajax({
-      url: "static/locales/" + language + ".json",
+      url: "static/dist/locales/" + language + ".min.json",
       dataType: 'json',
       async: false,
       success: function(data) {
@@ -1164,7 +1184,7 @@ $(function() {
   $selectStyle = $("#map-style")
 
   // Load Stylenames, translate entries, and populate lists
-  $.getJSON("static/data/mapstyle.json").done(function(data){
+  $.getJSON("static/dist/data/mapstyle.min.json").done(function(data){
     var styleList = []
 
     $.each(data, function(key, value){
@@ -1204,6 +1224,10 @@ $(function() {
     return $state;
   };
 
+  if (Store.get('startAtUserLocation')) {
+    centerMapOnLocation();
+  }
+
   $selectExclude = $("#exclude-pokemon");
   $selectNotify = $("#notify-pokemon");
   $('#add-all-notify').click(addAllToNotify);
@@ -1211,7 +1235,7 @@ $(function() {
   var numberOfPokemon = 151;
 
   // Load pokemon names and populate lists
-  $.getJSON("static/data/pokemon.json").done(function(data) {
+  $.getJSON("static/dist/data/pokemon.min.json").done(function(data) {
     var pokeList = [];
 
     $.each(data, function(key, value) {
@@ -1348,4 +1372,13 @@ $(function() {
     else
       Store.set('geoLocate', this.checked);
   });
+
+  $('#search-switch').change(function() {
+    searchControl(this.checked?'on':'off');
+  });
+
+  $('#start-at-user-location-switch').change(function() {
+    Store.set("startAtUserLocation", this.checked);
+  });
+
 });
