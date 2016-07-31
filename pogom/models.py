@@ -17,6 +17,7 @@ from . import config
 from .utils import get_pokemon_name, get_pokemon_rarity, get_pokemon_types, get_args, send_to_webhook
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
+from .pokelyzer import logPokemonDb
 
 log = logging.getLogger(__name__)
 
@@ -255,6 +256,10 @@ def parse_map(map_dict, iteration_num, step, step_location):
                      p['time_till_hidden_ms']) / 1000.0)
                 printPokemon(p['pokemon_data']['pokemon_id'], p['latitude'],
                              p['longitude'], d_t)
+
+                if args.log_to_pokelyzer:
+                    logPokemonDb(p)
+
                 pokemons[p['encounter_id']] = {
                     'encounter_id': b64encode(str(p['encounter_id'])),
                     'spawnpoint_id': p['spawnpoint_id'],
@@ -270,7 +275,9 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple())
+                    'disappear_time': time.mktime(d_t.timetuple()),
+                    'last_modified_time': p['last_modified_timestamp_ms'],
+                    'time_until_hidden_ms': p['time_till_hidden_ms']
                 }
 
                 send_to_webhook('pokemon', webhook_data)
