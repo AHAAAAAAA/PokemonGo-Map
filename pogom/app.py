@@ -38,6 +38,9 @@ class Pogom(Flask):
         return jsonify({'status': self.search_control.is_set()})
 
     def post_search_control(self):
+        args = get_args()
+        if not args.search_control:
+            return 'Search control is disabled', 403
         action = request.args.get('action','none')
         if action == 'on':
             self.search_control.set()
