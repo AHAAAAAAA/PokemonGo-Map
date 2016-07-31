@@ -68,11 +68,38 @@ table td{
     z-index: 10;
     display: none;
     background-color: rgba(0,0,0,0.5);
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     min-height: 100%;
+}
+
+#location_map{
+    height: 100%;
+}
+
+#times_list{
+    float: left;
+    background: white;
+    position: fixed;
+    top: 60px;
+    bottom: 60px;
+    width: 200px;
+    z-index: 9999;
+    overflow: auto;
+}
+
+#times_list div{
+    padding-bottom: 2px;
+}
+
+#times_list .row0{
+    background: #f1f1f1;
+}
+
+#times_list .row1{
+    background: #f8f8f8;
 }
 
 .overlay .close{
@@ -90,4 +117,9 @@ table td{
     border-radius: 10px;
     -moz-border-radius: 10px;
     padding: 10px;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
 }

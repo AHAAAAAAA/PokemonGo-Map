@@ -168,9 +168,7 @@ class Pokemon(BaseModel):
     @classmethod
     def get_appearances(cls, pokemon_id, last_appearance):
         query = (Pokemon
-                 .select(Pokemon.disappear_time,
-                         Pokemon.latitude,
-                         Pokemon.longitude)
+                 .select()
                  .where((Pokemon.pokemon_id == pokemon_id) &
                         (Pokemon.disappear_time > datetime.utcfromtimestamp(last_appearance/1000.0))
                         )

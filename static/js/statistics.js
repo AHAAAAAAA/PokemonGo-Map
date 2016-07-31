@@ -3,9 +3,13 @@ var detailsLoading = false;
 var total = 0;
 var pageInterval = null;
 var detailInterval = null;
-var pokemonid = 0;
 var lastappearance = 1;
 var totalPokemon = 151;
+var pokemonid = 0;
+var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var mapLoaded = false;
+var detailsPersist = false;
+map_data.appearances = {};
 
 function loadRawData(){
     return $.ajax({
@@ -60,6 +64,37 @@ function loadDetails(){
     })
 }
 
+function showTimes(marker){
+    uuid = marker.position.lat().toFixed(7) + "_" + marker.position.lng().toFixed(7);
+    $('#times_list').html(appearanceLabel(map_data.appearances[uuid]));
+    $('#times_list').show();
+}
+
+function closeTimes(){
+    $('#times_list').hide();
+    detailsPersist = false;
+}
+
+//Overrides addListeners in map.js
+function addListeners(marker){
+
+    marker.addListener('click', function() {
+        showTimes(marker);
+        detailsPersist = true;
+      });
+
+      marker.addListener('mouseover', function() {
+        showTimes(marker);
+      });
+
+      marker.addListener('mouseout', function() {
+        if(!detailsPersist)
+            $('#times_list').hide();
+      });
+
+    return marker;
+}
+
 function processTotal(seen){
     total = 0;
     for(var i = 0; i < seen.length; i++)
@@ -70,7 +105,6 @@ function processTotal(seen){
 
 function processSeen(seen){
     var total = 0;
-    var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var shown = Array();
 
     seen.sort(function(a, b){
@@ -133,7 +167,8 @@ function processSeen(seen){
     document.getElementById("seen_total").innerHTML = 'Total: ' + total.toLocaleString();
 }
 
-function updatePage(){
+//Override UpdateMap in map.js to take advantage of a pre-existing interval.
+function updateMap(){
     var duration = document.getElementById("duration");
     var header = 'Pokemon Seen in ' + duration.options[duration.selectedIndex].text;
     if($('#seen_header').html() != header){
@@ -152,20 +187,54 @@ function updatePage(){
     });
 }
 
-function processAppearance(i, appearance){
-    var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var saw = new Date(appearance.disappear_time);
-    var detailContainer = document.getElementById("location_content");
-    detailContainer.innerHTML = saw.getHours() + ":" +
-                                ("0" + saw.getMinutes()).slice(-2) + ":" +
-                                ("0" + saw.getSeconds()).slice(-2) + " " +
-                                saw.getDate() + " " +
-                                monthArray[saw.getMonth()] + " " +
-                                saw.getFullYear() + " at " +
-                                (appearance.latitude).toFixed(7) + ", " +
-                                (appearance.longitude).toFixed(7) +
-                                '<br />' + detailContainer.innerHTML;
-    lastappearance = Math.max(lastappearance, appearance.disappear_time);
+function appearanceLabel(item){
+    var times = '';
+
+    $.each(item.times, function(key, value){
+        times = '<div class="row' + (key % 2) + '">' + value + '</div>' + times;
+    });
+
+    return `<div>
+                <a href="javascript:closeTimes();">Close this tab</a>
+            </div>
+            <div class="row1">
+                <strong>Lat:</strong> ${item.latitude.toFixed(7)}
+            </div>
+            <div class="row0">
+                <strong>Long:</strong> ${item.longitude.toFixed(7)}
+            </div>
+            <div class="row1">
+              <strong>Appearances:</strong> ${item.count.toLocaleString()}
+            </div>
+            <div class="row0"><strong>Times:</strong></div>
+            <div>
+                ${times}
+            </div>`;
+}
+
+function processAppearance(i, item){
+    var saw = new Date(item.disappear_time);
+    saw =   saw.getHours() + ":" +
+            ("0" + saw.getMinutes()).slice(-2) + ":" +
+            ("0" + saw.getSeconds()).slice(-2) + " " +
+            saw.getDate() + " " +
+            monthArray[saw.getMonth()] + " " +
+            saw.getFullYear();
+    var uuid = item.latitude.toFixed(7) + "_" + item.longitude.toFixed(7);
+    if(!((uuid) in map_data.appearances)){
+        if (item.marker) item.marker.setMap(null);
+          item.count = 1;
+          item.times = [saw];
+          item.uuid = uuid;
+          item.marker = setupPokemonMarker(item, true);
+
+          map_data.appearances[item.uuid] = item;
+    }else{
+        map_data.appearances[uuid].count++;
+        map_data.appearances[uuid].times.push(saw);
+    }
+
+    lastappearance = Math.max(lastappearance, item.disappear_time);
 }
 
 function updateDetails(){
@@ -174,17 +243,25 @@ function updateDetails(){
     });
 }
 
-function showDetails(container){
+function clearMarkers(){
+    $.each(map_data.appearances, function(key, value) {
+          map_data.appearances[key].marker.setMap(null);
+          delete map_data.appearances[key];
+    });
+}
+
+function showDetails(id){
+    //Only load google maps once, and only if requested
+    if(!this.mapLoaded)
+        initMap();
+    clearMarkers();
     window.clearInterval(this.pageInterval); //Disable count updates while looking at specific details
     lastappearance = 0;
+    pokemonid = id;
     document.getElementById("location_details").style.display = "block";
-    pokemonid = container.id.replace(/^seen_/g, '');
-    document.getElementById("location_header").innerHTML = 'Appearances of ' +
-                                                            container.getElementsByClassName("name")[0].innerHTML +
-                                                            '(#' + pokemonid + ')';
-    document.getElementById("location_content").innerHTML = '';
     detailInterval = window.setInterval(updateDetails, 5000);
     updateDetails();
+
     return false;
 }
 
@@ -253,11 +330,52 @@ function addElement(pokemon_id, name){
     }).appendTo('#seen_' + pokemon_id + '_details');
 
     jQuery('<a/>',{
-        href: '#',
-        onclick: 'return showDetails(document.getElementById("seen_' + pokemon_id + '"));',
-        text: 'More Locations'
+        href: 'javascript:showDetails(' + pokemon_id + ');',
+        text: 'All Locations'
     }).appendTo('#seen_' + pokemon_id + '_details');
 }
 
-updatePage();
-pageInterval = window.setInterval(updatePage, 5000);
+function redrawAppearances(appearances){
+    $.each(appearances, function(key, value) {
+        var item = appearances[key];
+        if (!item.hidden) {
+          var new_marker = setupPokemonMarker(item, true);
+          item.marker.setMap(null);
+          appearances[key].marker = new_marker;
+        }
+    });
+}
+
+//Override map.js initMap
+function initMap(){
+    map = new google.maps.Map(document.getElementById('location_map'), {
+        zoom: 16,
+        center: {lat: center_lat, lng: center_lng},
+        fullscreenControl: false,
+        streetViewControl: false,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+          style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+          position: google.maps.ControlPosition.RIGHT_TOP,
+          mapTypeIds: [
+            google.maps.MapTypeId.ROADMAP,
+            google.maps.MapTypeId.SATELLITE,
+            'nolabels_style',
+            'dark_style',
+            'style_light2',
+            'style_pgo',
+            'dark_style_nl',
+            'style_light2_nl',
+            'style_pgo_nl'
+          ]
+        }
+  });
+
+  this.mapLoaded = true;
+
+  google.maps.event.addListener(map, 'zoom_changed', function() {
+    redrawAppearances(map_data.appearances);
+  });
+}
+
+updateMap();

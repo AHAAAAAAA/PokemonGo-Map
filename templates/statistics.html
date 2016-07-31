@@ -25,9 +25,16 @@
     <link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
 
     <link rel="stylesheet" href="static/css/statistics.css">
-
+    <script src="static/js/vendor/modernizr.custom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script>
+      var center_lat = {{lat}};
+      var center_lng = {{lng}};
+    </script>
+    <script src="static/dist/js/map.min.js"></script>
 </head>
 <body>
     <div class="filter">
@@ -50,9 +57,12 @@
     <script src="static/js/statistics.js"></script>
     <div id="location_details" class="overlay">
         <div class="close" onclick="closeOverlay();"><img src="static/images/close.png" alt="Close" /></div>
+        <div class="location_header"><h3 id="location_header"></h3></div>
         <div class="content">
-            <h3 id="location_header"></h3>
-            <div id="location_content"></div>
+            <div id="times_list" style="display: none;"></div>
+            <div id="location_map">
+                <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}"></script>
+            </div>
         </div>
     </div>
 </body>
