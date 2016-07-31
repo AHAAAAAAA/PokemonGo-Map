@@ -44,10 +44,10 @@ class Pogom(Flask):
         action = request.args.get('action','none')
         if action == 'on':
             self.search_control.set()
-            log.info('Search thread turned resumed')
+            log.info('Search thread resumed')
         elif action == 'off':
             self.search_control.clear()
-            log.info('Search thread turned paused')
+            log.info('Search thread paused')
         else:
             return jsonify({'message':'invalid use of api'})
         return self.get_search_control()
