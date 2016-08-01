@@ -1,7 +1,7 @@
 *.pyc
 *.idea
 *.db
-*.db-journal
+*.db-*
 *.sass-cache
 *.orig
 config/config.ini
