@@ -4,7 +4,6 @@
 import calendar
 import logging
 import os
-import time
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError, create_model_tables
@@ -284,7 +283,6 @@ def parse_map(map_dict, iteration_num, step, step_location):
                         lure_expiration = datetime.utcfromtimestamp(
                             f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
                         active_pokemon_id = f['lure_info']['active_pokemon_id']
-
                         webhook_data = {
                             'pokestop_id': b64encode(str(f['id'])),
                             'pokemon_id': active_pokemon_id,
