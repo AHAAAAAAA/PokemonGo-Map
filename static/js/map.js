@@ -208,16 +208,30 @@ function excludePokemon(id) {
 }
 
 function notifyAboutPokemon(id) {
+  id = [].concat(id);
+  console.log(id.toString())
+  var toAdd = [];
   for(var i = 0; i < id.length ; i++) {
-    
+    if(excludedPokemon.indexOf(id[i]) == -1) {
+      toAdd.push(id[i]);
+      console.log(id[i] + " added!");
+    }
+    else {
+      console.log(id[i] + " rejected!");
+    }
   }
-  $selectNotify.val($selectNotify.val().concat(id)).trigger('change')
+  console.log(toAdd);
+  $selectNotify.val($selectNotify.val().concat(toAdd)).trigger('change')
 }
 
 function addAllToNotify() {
   //Sets selectNotify to be every Pokemmon except those in the hide list.
-  var toAdd = [1, 2, 3, 4, 5, 6, 7, 8, 9, 24, 25, 26, 28, 31, 34, 35, 36, 37, 38, 40, 43, 44, 45, 51, 53, 56, 57, 58, 59, 62, 64, 65, 66, 67, 68, 70, 71, 74, 75, 76, 77, 78, 80, 81, 82, 83, 86, 87, 88, 89, 90, 91, 93, 94, 95, 97, 100, 101, 103, 105, 107, 108, 106, 110, 112, 113, 114, 115, 122, 123, 124, 125, 126, 128, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 147, 148, 149]; 
-  $selectNotify.val(toAdd).trigger("change");
+  //var toAdd = [1, 2, 3, 4, 5, 6, 7, 8, 9, 24, 25, 26, 28, 31, 34, 35, 36, 37, 38, 40, 43, 44, 45, 51, 53, 56, 57, 58, 59, 62, 64, 65, 66, 67, 68, 70, 71, 74, 75, 76, 77, 78, 80, 81, 82, 83, 86, 87, 88, 89, 90, 91, 93, 94, 95, 97, 100, 101, 103, 105, 107, 108, 106, 110, 112, 113, 114, 115, 122, 123, 124, 125, 126, 128, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 147, 148, 149]; 
+  var toAdd = []
+  for(var i = 1; i <= 151; i++){
+    toAdd.push(i);
+  }
+  notifyAboutPokemon(toAdd)
 }
 
 function clearNotify() {
