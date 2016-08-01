@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import calendar
 import logging
 import os
 import time
@@ -270,7 +271,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple()),
+                    'disappear_time': calendar.timegm(d_t.timetuple()),
                     'last_modified_time': p['last_modified_timestamp_ms'],
                     'time_until_hidden_ms': p['time_till_hidden_ms']
                 }
@@ -289,7 +290,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                             'pokemon_id': active_pokemon_id,
                             'latitude': f['latitude'],
                             'longitude': f['longitude'],
-                            'disappear_time': time.mktime(lure_expiration.timetuple()),
+                            'disappear_time': calendar.timegm(d_t.timetuple()),
                             'last_modified_time': f['last_modified_timestamp_ms']
                         }
                         send_to_webhook('pokemon', webhook_data)
