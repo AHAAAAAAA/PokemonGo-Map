@@ -113,11 +113,11 @@ class Pogom(Flask):
             lon = request.form.get('lon', type=float)
 
         if not (lat and lon):
-            log.warning('Invalid next location: %s,%s' % (lat, lon))
+            log.warning('Invalid next location: %s,%s', lat, lon)
             return 'bad parameters', 400
         else:
             config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            log.info('Changing next location: %s,%s' % (lat, lon))
+            log.info('Changing next location: %s,%s', lat, lon)
             return 'ok'
 
     def list_pokemon(self):
