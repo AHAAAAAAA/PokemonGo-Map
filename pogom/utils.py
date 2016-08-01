@@ -31,8 +31,8 @@ def verify_config_file_exists(filename):
 
 def get_args():
     # fuck PEP8
-    configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
-    parser = configargparse.ArgParser(default_config_files=[configpath])
+    parser = configargparse.ArgParser()
+    parser.add_argument('-cf', '--config-file', is_config_file=True, help='Config file path', default=os.path.join(os.path.dirname(__file__), '../config/config.ini'))
     parser.add_argument('-a', '--auth-service', type=str.lower,
                         help='Auth Service', default='ptc')
     parser.add_argument('-u', '--username', help='Username')
