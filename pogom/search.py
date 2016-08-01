@@ -3,42 +3,18 @@
 
 '''
 Search Architecture:
- - Create a Queue
-   - Holds a list of locations to scan
- - Create N search threads
-   - Each search thread will be responsible for hitting the API for a given scan location
- - Create a "overseer" loop
-   - Creates/updates the search grid, populates the Queue, and waits for the current search itteration to complete
-   -
-
-
-- One Queue for "locations to search"
-- One Event to control search running or paused
-- Single search_overseer:
-  - populate the Queue from the current location
-  - receive and obey "new location" directives
-  - can clear the Queue upon "new location"
-- Multiple search_threads:
-  - on instance per login
-  - manage own api instance and login
-  - process search requests from a queue
-  - can pause searching as needed
-    - upon resumption, login may need a refresh
-
-
-Search a given location with multiple accounts.
-Can be retargeted at any time
-Can be paused
-
-Single Location
-Multiple Accounts
-
-foreach account
-  create a search_thread
-
-
-
-
+ - Have a list of accounts
+ - Create an "overseer" thread
+ - Search Overseer:
+   - Tracks incoming new location values
+   - Tracks "paused state"
+   - During pause or new location will clears current search queue
+   - Starts search_worker threads
+ - Search Worker Threads each:
+   - Have a unique API login
+   - Listens to the same Queue for areas to scan
+   - Can re-login as needed
+   - Shares a global lock for map parsing
 '''
 
 import logging
