@@ -601,10 +601,13 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
 
   if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
     if (!skipNotification) {
-      if (Store.get('playSound')) {
-        audio.play();
+      var now = new Date();
+      if (now < item.disappear_time) {
+        if (Store.get('playSound')) {
+          audio.play();
+        }
+        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
       }
-      sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude, item.dissappear_time);
     }
     if (marker.animationDisabled != true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -994,9 +997,8 @@ function getPointDistance(pointA, pointB) {
   return google.maps.geometry.spherical.computeDistanceBetween(pointA, pointB);
 }
 
-function sendNotification(title, text, icon, lat, lng, disappearTime) {
-  var now = new Date();
-  if (!("Notification" in window) || (disappearTime < now)) {
+function sendNotification(title, text, icon, lat, lng) {
+  if (!("Notification" in window)) {
     // Notifications are not present in browser, or this one has expired
     return false;
   }
