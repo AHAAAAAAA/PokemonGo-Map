@@ -30,56 +30,18 @@
     <link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
     <link rel="stylesheet" href="static/dist/css/app.min.css">
     <script src="static/js/vendor/modernizr.custom.js"></script>
+
   </head>
   <body id="top">
     <div class="wrapper">
       <!-- Header -->
       <header id="header">
         <a href="#nav">Options</a>
-        <h1><a href="#">Pokémon Go Map</a></h1>
-		<a href="#stats" id="statsToggle" class="statsNav" style="float: right;">Stats</a>
+        <h1><a href="#">Pokémon Go Map - Yooqe - Champagne-Ardenne</a></h1>
       </header>
       <!-- NAV -->
       <nav id="nav">
-        <div class="form-control switch-container" style="display:{{is_fixed}}" >
-          <label for="next-location">
-            <h3>Change scan location</h3>
-            <input id="next-location" type="text" name="next-location" placeholder="Change your location">
-          </label>
-        </div>
-        <div class="form-control switch-container" style="display:{{is_fixed}}" >
-          <h3>Scan follows location</h3>
-	  <div class="onoffswitch">
-	    <input id="geoloc-switch" type="checkbox" name="geoloc-switch" class="onoffswitch-checkbox" checked/>
-	    <label class="onoffswitch-label" for="geoloc-switch">
-	    <span class="switch-label" data-on="On" data-off="Off"></span>
-	    <span class="switch-handle"></span>
-	    </label>
-	  </div>
-	</div>
-        <div class="form-control switch-container" >
-          <h3>Start at user's location</h3>
-          <div class="onoffswitch">
-            <input id="start-at-user-location-switch" type="checkbox" name="start-at-user-location-switch" class="onoffswitch-checkbox" checked/>
-            <label class="onoffswitch-label" for="start-at-user-location-switch">
-            <span class="switch-label" data-on="On" data-off="Off"></span>
-            <span class="switch-handle"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-control switch-container" style="display:{{search_control}}">
-          <h3>Search</h3>
-          <div class="onoffswitch">
-            <input id="search-switch" type="checkbox" name="search-switch" class="onoffswitch-checkbox" checked/>
-            <label class="onoffswitch-label" for="search-switch">
-              <span class="switch-label" data-on="On" data-off="Off"></span>
-              <span class="switch-handle"></span>
-            </label>
-          </div>
-        </div>
-
-	<hr width="100%" style="display:{{is_fixed}}" >
+	<hr width="100%">
 
         <p>Select markers to be visible on map.</p>
         <div class="form-control switch-container">
@@ -117,16 +79,6 @@
             <option value="0">All</option>
             <option value="1">Only Lured</option>
           </select>
-        </div>
-        <div class="form-control switch-container">
-          <h3>Scanned Locations</h3>
-          <div class="onoffswitch">
-            <input id="scanned-switch" type="checkbox" name="scanned-switch" class="onoffswitch-checkbox">
-            <label class="onoffswitch-label" for="scanned-switch">
-            <span class="switch-label" data-on="On" data-off="Off"></span>
-            <span class="switch-handle"></span>
-            </label>
-          </div>
         </div>
         <div class="form-control switch-container">
           <h3>Icons</h3>
@@ -168,30 +120,7 @@
             </label>
           </div>
         </div>
-        <div class="form-control">
-          <hr width="100%">
-          <label for="map-style">
-            <h3>Map Style</h3>
-            <select id="map-style" style="min-width:100%;"></select>
-          </label>
-        </div>
       </nav>
-	  <nav id="stats">
-		<div class="switch-container">
-		  <div class="switch-container">
-			<center><h1 id="stats-pkmn-label">Loading...</h1></center>
-		  </div>
-		  <div id="pokemonList" style="color: black;"></div>
-		  <div class="switch-container">
-			<center><h1 id="stats-gym-label"></h1></center>
-		  </div>
-		  <div id="arenaList" style="color: black;"></div>
-		  <div class="switch-container">
-			<center><h1 id="stats-pkstop-label"></h1></center>
-		  </div>
-		  <div id="pokestopList" style="color: black;"></div>
-		</div>
-	  </nav>
       <div id="map"></div>
     </div>
     <!-- Scripts -->
@@ -202,12 +131,21 @@
     <script src="static/dist/js/app.min.js"></script>
     <script src="static/js/vendor/classie.js"></script>
     <script>
+
       var center_lat = {{lat}};
       var center_lng = {{lng}};
+
+      if (navigator.geolocation)
+      {
+        navigator.geolocation.getCurrentPosition(function(position)
+        {
+          var center_lat = position.coords.latitude;
+          var center_lng = position.coords.longitude;
+        });
+      }
     </script>
 
-    <script src="static/dist/js/map.min.js"></script>
-    <script src="static/dist/js/stats.min.js"></script>
+    <script src="static/dist/js/map.js"></script>
     <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
   </body>
 </html>
