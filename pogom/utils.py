@@ -229,7 +229,7 @@ def i8ln(word):
     if word in i8ln.dictionary:
         return i8ln.dictionary[word]
     else:
-        log.debug('Unable to find translation for '%s' in locale %s!', word, config['LOCALE'])
+        log.debug('Unable to find translation for "%s" in locale %s!', word, config['LOCALE'])
         return word
 
 def get_pokemon_data(pokemon_id):
