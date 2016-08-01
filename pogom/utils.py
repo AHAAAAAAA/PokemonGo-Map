@@ -184,12 +184,12 @@ def insert_mock_data(position):
 
     for i in range(1, num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
-                      spawnpoint_id='sp{}'.format(i),
-                      pokemon_id=(i+1) % 150,
-                      latitude=locations[i][0],
-                      longitude=locations[i][1],
-                      disappear_time=disappear_time,
-                      detect_time=detect_time)
+                       spawnpoint_id='sp{}'.format(i),
+                       pokemon_id=(i+1) % 150,
+                       latitude=locations[i][0],
+                       longitude=locations[i][1],
+                       disappear_time=disappear_time,
+                       detect_time=detect_time)
 
     for i in range(1, num_pokestop):
         Pokestop.create(pokestop_id=uuid.uuid4(),
@@ -204,14 +204,14 @@ def insert_mock_data(position):
 
     for i in range(1, num_gym):
         Gym.create(gym_id=uuid.uuid4(),
-                  team_id=i % 3,
-                  guard_pokemon_id=(i+1) % 150,
-                  latitude=locations[i + num_pokemon + num_pokestop][0],
-                  longitude=locations[i + num_pokemon + num_pokestop][1],
-                  last_modified=datetime.now(),
-                  enabled=True,
-                  gym_points=1000
-                  )
+                   team_id=i % 3,
+                   guard_pokemon_id=(i+1) % 150,
+                   latitude=locations[i + num_pokemon + num_pokestop][0],
+                   longitude=locations[i + num_pokemon + num_pokestop][1],
+                   last_modified=datetime.now(),
+                   enabled=True,
+                   gym_points=1000
+                   )
 
 def i8ln(word):
     if config['LOCALE'] == "en":
