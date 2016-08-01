@@ -11,13 +11,14 @@ logging.basicConfig(format='%(asctime)s [%(threadName)16s][%(module)14s][%(level
 log = logging.getLogger()
 
 from threading import Thread, Event
+from queue import Queue
 from flask_cors import CORS
 
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data
 
-from pogom.search import search_loop, create_empty_apis, create_search_threads, fake_search_loop
+from pogom.search import search_overseer_thread, fake_search_loop
 from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
@@ -70,8 +71,6 @@ if __name__ == '__main__':
     if args.no_gyms:
         log.info('Parsing of Gyms disabled')
 
-    config['ORIGINAL_LATITUDE'] = position[0]
-    config['ORIGINAL_LONGITUDE'] = position[1]
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
@@ -85,20 +84,24 @@ if __name__ == '__main__':
             os.remove(args.db)
     create_tables(db)
 
-    # Control the search status (running or not) across threads; set it "on"
-    search_control = Event()
-    search_control.set()
+    app.set_current_location(position);
+
+    # Control the search status (running or not) across threads
+    pause_bit = Event()
+    pause_bit.clear()
+
+    # Setup the location tracking queue and push the first location on
+    new_location_queue = Queue()
+    new_location_queue.put(position)
 
     if not args.only_server:
         # Gather the pokemons!
         if not args.mock:
-            log.debug('Starting a real search thread and %s search runner thread(s)', args.num_threads)
-            create_empty_apis(len(args.username))
-            create_search_threads(args.num_threads, len(args.username), search_control)
-            search_thread = Thread(target=search_loop, args=(args,search_control,))
+            log.debug('Starting a real search thread')
+            search_thread = Thread(target=search_overseer_thread, args=(args, new_location_queue, pause_bit))
         else:
             log.debug('Starting a fake search thread')
-            insert_mock_data()
+            insert_mock_data(position)
             search_thread = Thread(target=fake_search_loop)
 
         search_thread.daemon = True
@@ -108,7 +111,8 @@ if __name__ == '__main__':
     if args.cors:
         CORS(app);
 
-    app.set_search_control(search_control)
+    app.set_search_control(pause_bit)
+    app.set_location_queue(new_location_queue)
 
     config['ROOT_PATH'] = app.root_path
     config['GMAPS_KEY'] = args.gmaps_key
