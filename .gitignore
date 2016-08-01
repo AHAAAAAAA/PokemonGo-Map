@@ -8,8 +8,4 @@ config/config.ini
 static/dist/
 node_modules/
 venv/
-dev
-run
-pyrun
-build
 core

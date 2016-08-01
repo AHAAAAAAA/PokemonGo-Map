@@ -175,7 +175,7 @@ def search_thread(q, api_idx, search_control):
                         log.debug("{}: itteration {} step {} complete".format(threadname, i, step))
                     except KeyError:
                         log.error('Search thread failed. Response dictionary key error')
-                        log.debug('{}: iteration {} step {} failed. Response dictionary\
+                        log.debug('{}: itteration {} step {} failed. Response dictionary\
                             key error.'.format(threadname, i, step))
                         failed_consecutive += 1
                         if(failed_consecutive >= config['REQ_MAX_FAILED']):
@@ -241,7 +241,7 @@ def search(args, i):
     lock = Lock()
 
     for step, step_location in enumerate(generate_location_steps(position, num_steps), 1):
-        log.debug("Queue search iteration {}, step {}".format(i, step))
+        log.debug("Queue search itteration {}, step {}".format(i, step))
         search_args = (i, step_location, step, lock)
         search_queue.put(search_args)
 

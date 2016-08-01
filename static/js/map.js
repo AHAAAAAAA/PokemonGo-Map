@@ -204,24 +204,22 @@ var Store = {
 //
 
 function excludePokemon(id) {
-  $selectExclude.val($selectExclude.val().concat(id)).trigger('change')
+  $selectExclude.val(
+    $selectExclude.val().concat(id)
+  ).trigger('change')
 }
 
 function notifyAboutPokemon(id) {
   id = [].concat(id);
-  console.log(id.toString())
   var toAdd = [];
   for(var i = 0; i < id.length ; i++) {
     if(excludedPokemon.indexOf(id[i]) == -1) {
       toAdd.push(id[i]);
-      console.log(id[i] + " added!");
-    }
-    else {
-      console.log(id[i] + " rejected!");
     }
   }
-  console.log(toAdd);
-  $selectNotify.val($selectNotify.val().concat(toAdd)).trigger('change')
+  $selectNotify.val(
+    $selectNotify.val().concat(toAdd)
+  ).trigger('change')
 }
 
 function addAllToNotify() {

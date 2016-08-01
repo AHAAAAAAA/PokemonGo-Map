@@ -29,7 +29,6 @@ RUN apk add --no-cache build-base \
 COPY package.json Gruntfile.js /usr/src/app/
 COPY static /usr/src/app/static
 
-
 RUN apk add --no-cache build-base nodejs \
  && npm install -g grunt-cli \
  && npm install \
