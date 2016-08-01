@@ -347,7 +347,6 @@ def parse_map(map_dict, step_location):
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
-    db_retry = 0
     step = 120
 
     flaskDb.connect_db()
@@ -357,16 +356,11 @@ def bulk_upsert(cls, data):
         try:
             InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
         except Exception as e:
-            # TODO: make the db_retry threshold configurable
-            if 'MySQL server has gone away' in str(e) and db_retry < 25:
+            if 'MySQL server has gone away' in str(e):
                 init_database()
-                db_retry += 1
-            else:
-                log.warning("%s... Retrying", e)
+            log.warning('%s... Retrying', e)
             continue
 
-        # Successful upsert, reset db_retry
-        db_retry = 0
         i += step
 
     flaskDb.close_db(None)
