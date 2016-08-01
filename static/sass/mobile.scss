@@ -5,7 +5,7 @@ h1 {
 	margin: 5px 0 65px 0;
 }
 ol {
-	margin: 0 -5px;
+	margin: 0 -4px;
 	padding: 0;
 }
 li {
@@ -17,16 +17,14 @@ li {
 	color: #444;
 	background-repeat: no-repeat;
 	background-size: 80px 60px;
-	background-position: -15px -10px;
-	padding-left: 50px;
+	background-position: 0px 0px;
+	padding-left: 80px;
 	margin: 5px 2px;
-	height: 50px;
+	height: 60px;
 	image-rendering: pixelated;
-	list-style: none;
 	cursor: pointer;
-	overflow: scroll;
 	> div {
-		margin: 15px 2px;
+		margin: 25px 2px 0px 2px;
 		float: left;
 	}
 }
@@ -60,14 +58,10 @@ li {
 		cursor: pointer;
 		padding: 2px 0;
 		input {
-			margin-top: 1px;
+			margin-top: 15px;
 			margin-left: 10px;
 		}
 	}
-}
-#msg {
-	color: #ddd;
-	font-size: 70%;
 }
 .name {
 	font-weight: bold;
