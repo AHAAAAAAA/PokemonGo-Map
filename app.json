@@ -26,6 +26,15 @@
     "EXTRA_ARGS": {
       "description": "Any extra arguments that you want to pass to runserver.py.",
       "required": false
+    },
+    "SLACK_KEY": {
+      "description": "Slack Api Key to push alerts to slack.",
+      "required": false
+    },
+    "SLACK_CHANNEL": {
+      "description": "The Slack chat room to publish to",
+      "value": "#general",
+      "required": false
     }
   }
 }
