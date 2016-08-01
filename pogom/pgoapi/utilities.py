@@ -70,18 +70,15 @@ def get_class(cls):
     return class_
     
 def get_cellid(lat, long):
-    origin = CellId.from_lat_lng(LatLng.from_degrees(lat, long)).parent(15)
-    walk = [origin.id()]
+    origin_cell = CellId.from_lat_lng(LatLng.from_degrees(lat, long)).parent(15)
+    walk = [origin_cell.id()]
 
-    # 10 before and 10 after
-    next = origin.next()
-    prev = origin.prev()
-    for i in range(10):
-        walk.append(prev.id())
-        walk.append(next.id())
-        next = next.next()
-        prev = prev.prev()
-    return ''.join(map(encode, sorted(walk)))
+    for direct_neighbor in origin_cell.get_all_neighbors(15):
+        walk.append(direct_neighbor.id())
+        for indirect_neighbor in direct_neighbor.get_edge_neighbors():
+            walk.append(indirect_neighbor.id())
+
+    return ''.join(map(encode, sorted(set(walk))))
 
 def encode(cellid):
     output = []
