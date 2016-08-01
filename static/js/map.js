@@ -226,7 +226,6 @@ function notifyAboutPokemon(id) {
 
 function addAllToNotify() {
   //Sets selectNotify to be every Pokemmon except those in the hide list.
-  //var toAdd = [1, 2, 3, 4, 5, 6, 7, 8, 9, 24, 25, 26, 28, 31, 34, 35, 36, 37, 38, 40, 43, 44, 45, 51, 53, 56, 57, 58, 59, 62, 64, 65, 66, 67, 68, 70, 71, 74, 75, 76, 77, 78, 80, 81, 82, 83, 86, 87, 88, 89, 90, 91, 93, 94, 95, 97, 100, 101, 103, 105, 107, 108, 106, 110, 112, 113, 114, 115, 122, 123, 124, 125, 126, 128, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 147, 148, 149]; 
   var toAdd = []
   for(var i = 1; i <= 151; i++){
     toAdd.push(i);
@@ -447,10 +446,9 @@ function pokemonLabel(name, rarity, types, disappear_time, id, latitude, longitu
   return contentstring;
 }
 
-function gymLabel(team_name, team_id, gym_points, latitude, longitude, guard) {
+function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
   var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
   var str;
-  var icon = getGoogleSprite(guard - 1, pokemon_sprites['highres'], 2);
   if (team_id == 0) {
     str = `
       <div>
@@ -458,7 +456,6 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude, guard) {
           <div>
             <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
             <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
-            <!--img height='70px' style='padding: 5px;' src='static/icons/${guard}.png'> -->
           </div>
           <div>
             Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
@@ -482,8 +479,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude, guard) {
           </div>
           <div>
             <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
-            <!---<img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>--->
-            <img height='70px' style='padding: 5px;' src='static/icons/${guard}.png'>
+            <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
           </div>
           <div>
             Level: ${gym_level} | Prestige: ${gym_points}
@@ -653,7 +649,7 @@ function setupGymMarker(item) {
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
-    content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude, item.guard_pokemon_id),
+    content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
     disableAutoPan: true
   });
 
@@ -663,7 +659,7 @@ function setupGymMarker(item) {
 
 function updateGymMarker(item, marker) {
   marker.setIcon('static/forts/' + gym_types[item.team_id] + '.png');
-  marker.infoWindow.setContent(gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude, item.guard_pokemon_id));
+  marker.infoWindow.setContent(gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude));
   return marker;
 }
 
