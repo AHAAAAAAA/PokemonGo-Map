@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import calendar
 import logging
 import os
-import time
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError, create_model_tables
@@ -270,7 +270,7 @@ def parse_map(map_dict, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple()),
+                    'disappear_time': calendar.timegm(d_t.timetuple()),
                     'last_modified_time': p['last_modified_timestamp_ms'],
                     'time_until_hidden_ms': p['time_till_hidden_ms']
                 }
@@ -283,6 +283,15 @@ def parse_map(map_dict, step_location):
                     lure_expiration = datetime.utcfromtimestamp(
                         f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
                     active_pokemon_id = f['lure_info']['active_pokemon_id']
+                    webhook_data = {
+                        'pokestop_id': b64encode(str(f['id'])),
+                        'pokemon_id': active_pokemon_id,
+                        'latitude': f['latitude'],
+                        'longitude': f['longitude'],
+                        'disappear_time': calendar.timegm(lure_expiration.timetuple()),
+                        'last_modified_time': f['last_modified_timestamp_ms']
+                    }
+                    send_to_webhook('lured_pokemon', webhook_data)
                 else:
                     lure_expiration, active_pokemon_id = None, None
 
