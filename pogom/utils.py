@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import getpass
 import configargparse
 import uuid
 import os
@@ -25,7 +24,7 @@ def parse_unicode(bytestring):
 def verify_config_file_exists(filename):
     fullpath = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(fullpath):
-        log.info("Could not find " + filename + ", copying default")
+        log.info('Could not find %s, copying default', filename)
         shutil.copy2(fullpath + '.example', fullpath)
 
 
@@ -46,9 +45,6 @@ def get_args():
                         default=12)
     parser.add_argument('-sd', '--scan-delay',
                         help='Time delay between requests in scan threads',
-                        type=float, default=5)
-    parser.add_argument('-td', '--thread-delay',
-                        help='Time delay between each scan thread loop',
                         type=float, default=5)
     parser.add_argument('-ld', '--login-delay',
                         help='Time delay between each login attempt',
@@ -93,7 +89,6 @@ def get_args():
     parser.add_argument('-cd', '--clear-db',
                         help='Deletes the existing database before starting the Webserver.',
                         action='store_true', default=False)
-    parser.add_argument('-t', '--num-threads', help='Number of search threads', type=int, default=1)
     parser.add_argument('-np', '--no-pokemon',
                         help='Disables Pokemon from the map (including parsing them into local db)',
                         action='store_true', default=False)
@@ -122,61 +117,67 @@ def get_args():
             print sys.argv[0] + ': error: arguments -l/--location is required'
             sys.exit(1)
     else:
-        if (args.username is None or args.location is None or args.step_limit is None):
-            parser.print_usage()
-            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
-            sys.exit(1)
+        errors = []
+
+        if (args.username is None):
+            errors.append('Missing `username` either as -u/--username or in config')
+
+        if (args.location is None):
+            errors.append('Missing `location` either as -l/--location or in config')
+
+        if (args.password is None):
+            errors.append('Missing `password` either as -p/--password or in config')
+
+        if (args.step_limit is None):
+            errors.append('Missing `step_limit` either as -st/--step-limit or in config')
 
         if args.auth_service is None:
             args.auth_service = ['ptc']
 
-        if args.password is None:
-            if config['PASSWORD'] is None:
-                config['PASSWORD'] = getpass.getpass()
-            args.password = [config['PASSWORD']]
+        num_auths = len(args.auth_service)
+        num_usernames = len(args.username)
+        num_passwords = len(args.password)
+        if num_usernames > 1:
+            if num_passwords > 1 and num_usernames != num_passwords:
+                errors.append('The number of provided passwords ({}) must match the username count ({})'.format(num_passwords, num_usernames))
+            if num_auths > 1 and num_usernames != num_auths:
+                errors.append('The number of provided auth ({}) must match the username count ({})'.format(num_auths, num_usernames))
 
-        num_username = len(args.username)
+        if len(errors) > 0:
+            parser.print_usage()
+            print sys.argv[0] + ": errors: \n - " + "\n - ".join(errors)
+            sys.exit(1)
 
-        # If there are multiple usernames, then we either need one passwords that we use for all,
-        # or equal amount so that they match 1:1. Same for authentication services.
-        if num_username > 1:
-            num_passwd = len(args.password)
-            if (num_passwd == 1):
-                log.debug('More than one username and one password given. Using same password for all accounts.')
-                args.password = args.password * num_username
-            elif (num_passwd > 1 and num_username != num_passwd):
-                print sys.argv[0] + ': error: number of usernames ({}) does not match the number of passwords ({})' \
-                                    .format(num_username, num_passwd)
-                sys.exit(1);
+        # Fill the pass/auth if set to a single value
+        if num_passwords == 1:
+            args.password = [ args.password[0] ] * num_usernames
+        if num_auths == 1:
+            args.auth_service = [ args.auth_service[0] ] * num_usernames
 
-            num_auth = len(args.auth_service)
-            if (num_auth == 1):
-                log.debug('More than one username and one auth service given. Using same auth service for all accounts.')
-                args.auth_service = args.auth_service * num_username
-            if (num_auth > 1 and num_username != num_auth):
-                print sys.argv[0] + ': error: number of usernames ({}) does not match the number of auth providers ({})' \
-                                    .format(num_username, num_auth)
-                sys.exit(1);
+        # Make our accounts list
+        args.accounts = []
+
+        # Make the accounts list
+        for i, username in enumerate(args.username):
+            args.accounts.append({'username': username, 'password': args.password[i], 'auth_service': args.auth_service[i]})
 
     return args
 
 
-def insert_mock_data():
+def insert_mock_data(position):
     num_pokemon = 6
     num_pokestop = 6
     num_gym = 6
 
-    log.info('Creating fake: {} pokemon, {} pokestops, {} gyms'.format(
-        num_pokemon, num_pokestop, num_gym))
+    log.info('Creating fake: %d pokemon, %d pokestops, %d gyms',
+        num_pokemon, num_pokestop, num_gym)
 
     from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
-    latitude, longitude = float(config['ORIGINAL_LATITUDE']),\
-        float(config['ORIGINAL_LONGITUDE'])
+    latitude, longitude = float(position[0]), float(position[1])
 
-    locations = [l for l in generate_location_steps((latitude, longitude),
-                 num_pokemon)]
+    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemon)]
     disappear_time = datetime.now() + timedelta(hours=1)
 
     detect_time = datetime.now()
@@ -213,8 +214,8 @@ def insert_mock_data():
                    )
 
 def i8ln(word):
-    log.debug("Translating: %s", word)
-    if config['LOCALE'] == "en": return word
+    if config['LOCALE'] == "en":
+        return word
     if not hasattr(i8ln, 'dictionary'):
         file_path = os.path.join(
             config['ROOT_PATH'],
@@ -224,13 +225,12 @@ def i8ln(word):
             with open(file_path, 'r') as f:
                 i8ln.dictionary = json.loads(f.read())
         else:
-            log.warning("Skipping translations - Unable to find locale file: %s", file_path)
+            log.warning('Skipping translations - Unable to find locale file: %s', file_path)
             return word
     if word in i8ln.dictionary:
-        log.debug("Translation = %s", i8ln.dictionary[word])
         return i8ln.dictionary[word]
     else:
-        log.debug("Unable to find translation!")
+        log.debug('Unable to find translation for "%s" in locale %s!', word, config['LOCALE'])
         return word
 
 def get_pokemon_data(pokemon_id):
@@ -269,6 +269,6 @@ def send_to_webhook(message_type, message):
             try:
                 requests.post(w, json=data, timeout=(None, 1))
             except requests.exceptions.ReadTimeout:
-                log.debug('Could not receive response from webhook')
+                log.debug('Response timeout on webhook endpoint %s', w)
             except requests.exceptions.RequestException as e:
                 log.debug(e)

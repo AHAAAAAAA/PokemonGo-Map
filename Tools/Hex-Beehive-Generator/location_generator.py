@@ -17,8 +17,8 @@ parser.add_argument("--windows", help="Generate a bat file for Windows", action=
 parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
 
 preamble = "#!/usr/bin/env bash"
-server_template = "nohup python runserver.py -os -l '{lat} {lon}' &\n"
-worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat} {lon}' -st {steps} {auth} &\n"
+server_template = "nohup python runserver.py -os -l '{lat}, {lon}' &\n"
+worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat}, {lon}' -st {steps} {auth} &\n"
 auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
 
 R = 6378137.0
@@ -35,11 +35,11 @@ if args.windows:
     branchpath = args.installdir
     executable = args.installdir + "\\runserver.py"
     auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
-    actual_worker_params = '{auth} -ns -l "{lat} {lon}" -st {steps}'
+    actual_worker_params = '{auth} -ns -l "{lat}, {lon}" -st {steps}'
     worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
         branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_worker_params
     )
-    actual_server_params = '-os -l "{lat} {lon}"'
+    actual_server_params = '-os -l "{lat}, {lon}"'
     server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
         branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_server_params
     )
@@ -60,8 +60,8 @@ os.chmod(args.output, 0o755)
 output_fh.write(preamble + "\n")
 output_fh.write(server_template.format(lat=args.lat, lon=args.lon))
 
-w_worker = (2 * steps - 1) * r_hex
-d = 2.0 * w_worker / 1000.0
+w_worker = (2 * steps - 1) * r_hex #convert the step limit of the worker into the r radius of the hexagon in meters?
+d = 2.0 * w_worker / 1000.0 #convert that into a diameter and convert to gps scale
 d_s = d
 
 brng_s = 0.0
@@ -70,11 +70,13 @@ mod = math.degrees(math.atan(1.732 / (6 * (steps - 1) + 3)))
 
 total_workers = 1
 
+locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * ((((rings * (rings - 1)) / 2) * 6) + 1) #this calculates how many workers there will be and initialises the list
+locations[0] = LatLon.LatLon(LatLon.Latitude(args.lat), LatLon.Longitude(args.lon)) #set the latlon for worker 0 from cli args
+
 for i in range(1, rings):
     total_workers += 6 * i
 
-locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * total_workers
-locations[0] = LatLon.LatLon(LatLon.Latitude(args.lat), LatLon.Longitude(args.lon))
+
 
 turns = 0               # number of turns made in this ring (0 to 6)
 turn_steps = 0          # number of cells required to complete one turn of the ring
@@ -94,12 +96,15 @@ for i in range(1, total_workers):
         d = turn_steps * d
     else:
         loc = locations[0]
-        C = math.radians(60.0)
-        a = d_s / R * 2.0 * math.pi
-        b = turn_steps_so_far * d_s / turn_steps / R * 2.0 * math.pi
+        C = math.radians(60.0)#inside angle of a regular hexagon
+        a = d_s / R * 2.0 * math.pi #in radians get the arclength of the unit circle covered by d_s
+        b = turn_steps_so_far * d_s / turn_steps / R * 2.0 * math.pi #percentage of a
+         #the first spherical law of cosines gives us the length of side c from known angle C
         c = math.acos(math.cos(a) * math.cos(b) + math.sin(a) * math.sin(b) * math.cos(C))
+         #turnsteps here represents ring number because yay coincidence always the same. multiply by derived arclength and convert to meters
         d = turn_steps * c * R / 2.0 / math.pi
-        A = math.acos((math.cos(b) - math.cos(a) * math.cos(c)) / (math.sin(c) * math.sin(a)))
+        #from the first spherical law of cosines we get the angle A from the side lengths a b c
+        A = math.acos((math.cos(b) - math.cos(a) * math.cos(c)) / (math.sin(c) * math.sin(a))) 
         brng = 60 * turns + math.degrees(A)
 
     loc = loc.offset(brng + mod, d)
