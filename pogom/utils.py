@@ -267,7 +267,7 @@ def send_to_webhook(message_type, message):
 
         for w in webhooks:
             try:
-                requests.post(w, json=data, timeout=(None, 1))
+                requests.post(w, json=data, timeout=(None, 5))
             except requests.exceptions.ReadTimeout:
                 log.debug('Could not receive response from webhook')
             except requests.exceptions.RequestException as e:
