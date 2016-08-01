@@ -204,15 +204,14 @@ var Store = {
 //
 
 function excludePokemon(id) {
-  $selectExclude.val(
-    $selectExclude.val().concat(id)
-  ).trigger('change')
+  $selectExclude.val($selectExclude.val().concat(id)).trigger('change')
 }
 
 function notifyAboutPokemon(id) {
-  $selectNotify.val(
-    $selectNotify.val().concat(id)
-  ).trigger('change')
+  for(var i = 0; i < id.length ; i++) {
+    
+  }
+  $selectNotify.val($selectNotify.val().concat(id)).trigger('change')
 }
 
 function addAllToNotify() {
@@ -434,9 +433,10 @@ function pokemonLabel(name, rarity, types, disappear_time, id, latitude, longitu
   return contentstring;
 }
 
-function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
+function gymLabel(team_name, team_id, gym_points, latitude, longitude, guard) {
   var gym_color = ["0, 0, 0, .4", "74, 138, 202, .6", "240, 68, 58, .6", "254, 217, 40, .6"];
   var str;
+  var icon = getGoogleSprite(guard - 1, pokemon_sprites['highres'], 2);
   if (team_id == 0) {
     str = `
       <div>
@@ -444,6 +444,7 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
           <div>
             <b style='color:rgba(${gym_color[team_id]})'>${team_name}</b><br>
             <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
+            <!--img height='70px' style='padding: 5px;' src='static/icons/${guard}.png'> -->
           </div>
           <div>
             Location: ${latitude.toFixed(6)}, ${longitude.toFixed(7)}
@@ -467,7 +468,8 @@ function gymLabel(team_name, team_id, gym_points, latitude, longitude) {
           </div>
           <div>
             <b style='color:rgba(${gym_color[team_id]})'>Team ${team_name}</b><br>
-            <img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>
+            <!---<img height='70px' style='padding: 5px;' src='static/forts/${team_name}_large.png'>--->
+            <img height='70px' style='padding: 5px;' src='static/icons/${guard}.png'>
           </div>
           <div>
             Level: ${gym_level} | Prestige: ${gym_points}
@@ -637,7 +639,7 @@ function setupGymMarker(item) {
   });
 
   marker.infoWindow = new google.maps.InfoWindow({
-    content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude),
+    content: gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude, item.guard_pokemon_id),
     disableAutoPan: true
   });
 
@@ -647,7 +649,7 @@ function setupGymMarker(item) {
 
 function updateGymMarker(item, marker) {
   marker.setIcon('static/forts/' + gym_types[item.team_id] + '.png');
-  marker.infoWindow.setContent(gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude));
+  marker.infoWindow.setContent(gymLabel(gym_types[item.team_id], item.team_id, item.gym_points, item.latitude, item.longitude, item.guard_pokemon_id));
   return marker;
 }
 

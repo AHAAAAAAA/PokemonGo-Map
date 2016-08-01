@@ -1,7 +1,0 @@
-docker build -f Dockerfile.dev -t pgodev .
-docker run -td -v `pwd`:/usr/src/app -p 5000:5000 --name pgd pgodev
-docker exec -ti pgd npm install
-docker exec -ti pgd pip install -r requirements.txt --upgrade
-docker exec -ti pgd grunt
-docker exec -ti pgd sh
-
