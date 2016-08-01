@@ -284,13 +284,12 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     lure_expiration = datetime.utcfromtimestamp(
                         f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
                     active_pokemon_id = f['lure_info']['active_pokemon_id']
-
                     webhook_data = {
                         'pokestop_id': b64encode(str(f['id'])),
                         'pokemon_id': active_pokemon_id,
                         'latitude': f['latitude'],
                         'longitude': f['longitude'],
-                        'disappear_time': calendar.timegm(d_t.timetuple()),
+                        'disappear_time': calendar.timegm(lure_expiration.timetuple()),
                         'last_modified_time': f['last_modified_timestamp_ms']
                     }
                     send_to_webhook('pokemon', webhook_data)
