@@ -1,3 +1,7 @@
+#Uncomment a line when you want to change its default value (Remove # at the beginning)
+#username, password, location and gmaps-key are required so must be uncommented and filled in.
+
+
 # Authentication settings
 #auth-service:          # ptc (default) or google
 #username:
@@ -16,16 +20,13 @@
 #no-pokemon:            # disables pokemon scanning (default false)
 #no-pokestops:          # disables pokestop scanning (default false)
 #num-threads:           # number of search threads (default 1)
-#scan-delay:            # default 5
-#step-limit:            # default 12
+#scan-delay:            # number of seconds between searches (lower than 1 will cause problems) (default 5)
+#step-limit:            # search radius (default 12)
 
 # Misc
-#gmaps-key:             # your Google Maps API key
+#gmaps-key:             # your Google Maps API key (see: https://jonaharagon.github.io/PoGoMapWiki/#!GoogleMaps.md)
 #webhook:               # webhook URL (including http://)
 
 # Webserver settings
 #host:                  # address to listen on (default 127.0.0.1)
-#port:                  # port to listen on (default 5000)
-
-#Uncomment a line when you want to change its default value (Remove # at the beginning)
-#username, password, location and gmaps-key are required
+#port:                  # port to listen on (use 80 if you want it to be directly accessible on the IP) (default 5000) 
