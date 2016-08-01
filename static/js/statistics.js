@@ -1,7 +1,6 @@
 var rawDataIsLoading = false;
 var detailsLoading = false;
 var total = 0;
-var pageInterval = null;
 var detailInterval = null;
 var lastappearance = 1;
 var totalPokemon = 151;
@@ -255,7 +254,6 @@ function showDetails(id){
     if(!this.mapLoaded)
         initMap();
     clearMarkers();
-    window.clearInterval(this.pageInterval); //Disable count updates while looking at specific details
     lastappearance = 0;
     pokemonid = id;
     document.getElementById("location_details").style.display = "block";
@@ -268,7 +266,6 @@ function showDetails(id){
 function closeOverlay(){
     document.getElementById("location_details").style.display = "none";
     window.clearInterval(detailInterval)
-    pageInterval = window.setInterval(updatePage, 5000);
     return false;
 }
 

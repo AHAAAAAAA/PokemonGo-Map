@@ -41,7 +41,7 @@
         <div class="options">
             {% for name, item in valid_input.items() %}
                 <span class="label">{{item.display}}</span>
-                <select id="{{name}}" name="{{name}}" class="input" onChange="updatePage();">
+                <select id="{{name}}" name="{{name}}" class="input" onChange="updateMap();">
                     {% for value, entry in item["items"].items() %}
                         <option value="{{value}}" {{entry.selected}}>{{entry.display}}</option>
                     {% endfor %}
