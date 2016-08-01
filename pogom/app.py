@@ -30,6 +30,8 @@ class Pogom(Flask):
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
         self.route("/search_control", methods=['GET'])(self.get_search_control)
         self.route("/search_control", methods=['POST'])(self.post_search_control)
+        self.route("/step_limit", methods=['GET'])(self.get_step_limit)
+        self.route("/step_limit", methods=['POST'])(self.post_step_limit)
 
     def set_search_control(self, control):
         self.search_control = control
@@ -51,6 +53,23 @@ class Pogom(Flask):
         else:
             return jsonify({'message':'invalid use of api'})
         return self.get_search_control()
+
+    def get_step_limit(self):
+        return jsonify({'limit': config['STEP_LIMIT']})
+
+    def post_step_limit(self):
+        if request.args:
+            limit = request.args.get('limit', type=int)
+            if (limit and limit > 0):
+                config['STEP_LIMIT'] = limit
+                log.info('Step limit changed to: {}'.format(config['STEP_LIMIT']))
+                # some dirty workaround to restart search thread
+                config['NEXT_LOCATION'] = {'lat': config['ORIGINAL_LATITUDE'], 'lon': config['ORIGINAL_LONGITUDE']}
+            else:
+                return jsonify({'message':'invalid step limit'})
+        else:
+            return jsonify({'message':'invalid use of api'})
+        return self.get_step_limit()
 
     def fullmap(self):
         args = get_args()

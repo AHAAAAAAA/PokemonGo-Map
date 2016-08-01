@@ -345,6 +345,16 @@ function updateSearchStatus() {
   })
 }
 
+var stepLimitURI = 'step_limit';
+function changeStepLimit(value) {
+  $.post(stepLimitURI + '?limit='+encodeURIComponent(value));
+}
+function updateStepLimit() {
+  $.getJSON(stepLimitURI).then(function(data){
+    $('#step-limit').prop('value', data.limit);
+  })
+}
+
 function initSidebar() {
   $('#gyms-switch').prop('checked', Store.get('showGyms'));
   $('#pokemon-switch').prop('checked', Store.get('showPokemon'));
@@ -360,6 +370,8 @@ function initSidebar() {
 
   updateSearchStatus();
   setInterval(updateSearchStatus,5000);
+  
+  updateStepLimit();
 
   searchBox.addListener('places_changed', function() {
     var places = searchBox.getPlaces();
@@ -1363,6 +1375,10 @@ $(function() {
 
   $('#search-switch').change(function() {
     searchControl(this.checked?'on':'off');
+  });
+
+  $('#step-limit').change(function() {
+    changeStepLimit(this.value);
   });
 
   $('#start-at-user-location-switch').change(function() {

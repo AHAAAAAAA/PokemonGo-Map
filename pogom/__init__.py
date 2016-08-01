@@ -12,5 +12,6 @@ config = {
     'REQ_SLEEP': 5,
     'REQ_HEAVY_SLEEP': 30,
     'REQ_MAX_FAILED': 5,
-    'PASSWORD': None
+    'PASSWORD': None,
+    'STEP_LIMIT': 12
 }
