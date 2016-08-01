@@ -4,7 +4,6 @@
 import calendar
 import logging
 import os
-import time
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError, create_model_tables
