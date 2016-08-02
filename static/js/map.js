@@ -1262,7 +1262,9 @@ $(function() {
     $selectExclude.on("change", function(e) {
       excludedPokemon = $selectExclude.val().map(Number);
       clearStaleMarkers();
-      Store.set('remember_select_exclude', excludedPokemon);
+      if(!$('#hidden-pokemons-switch').is(':checked')){
+        Store.set('remember_select_exclude', excludedPokemon);  
+      }
     });
     $selectNotify.on("change", function(e) {
       notifiedPokemon = $selectNotify.val().map(Number);
@@ -1367,6 +1369,16 @@ $(function() {
 
   $('#start-at-user-location-switch').change(function() {
     Store.set("startAtUserLocation", this.checked);
+  });
+  
+    $('#hidden-pokemons-switch').change(function() {
+    if(this.checked){
+        $selectExclude.val([]).trigger("change");
+        $('.hide-pokemons').hide();
+    }else{
+        $selectExclude.val(Store.get('remember_select_exclude')).trigger("change");
+        $('.hide-pokemons').show();
+    }
   });
 
 });
