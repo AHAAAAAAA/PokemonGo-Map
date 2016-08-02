@@ -13,6 +13,7 @@ var excludedPokemon = [];
 var notifiedPokemon = [];
 
 var map;
+var heatmap;
 var rawDataIsLoading = false;
 var locationMarker;
 var marker;
@@ -34,6 +35,7 @@ var map_data = {
   lure_pokemons: {},
   scanned: {}
 };
+var heat_map_data;
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('static/sounds/ding.mp3');
 var pokemon_sprites = {
@@ -213,6 +215,7 @@ function removePokemonMarker(encounter_id) {
 }
 
 function initMap() {
+  heat_map_data = new google.maps.MVCArray();
   map = new google.maps.Map(document.getElementById('map'), {
     center: {
       lat: center_lat,
@@ -292,6 +295,11 @@ function initMap() {
   google.maps.event.addListener(map, 'zoom_changed', function() {
     redrawPokemon(map_data.pokemons);
     redrawPokemon(map_data.lure_pokemons);
+  });
+  
+  heatmap = new google.maps.visualization.HeatmapLayer({
+  data: heat_map_data,
+  map: map
   });
 }
 
@@ -779,6 +787,7 @@ function processPokemons(i, item) {
     if (!item.hidden) {
       item.marker = setupPokemonMarker(item);
       map_data.pokemons[item.encounter_id] = item;
+      heat_map_data.push(new google.maps.LatLng(item.latitude, item.longitude));
     }
   }
 }
@@ -834,6 +843,7 @@ function processLuredPokemon(i, item) {
     if (!item2.hidden) {
       item2.marker = setupPokemonMarker(item2);
       map_data.lure_pokemons[item2.pokestop_id] = item2;
+      heat_map_data.push(new google.maps.LatLng(item2.latitude, item2.longitude));
     }
 
   }
@@ -843,6 +853,7 @@ function processLuredPokemon(i, item) {
     if (!item2.hidden) {
       item2.marker = setupPokemonMarker(item2);
       map_data.lure_pokemons[item2.pokestop_id] = item2;
+      heat_map_data.push(new google.maps.LatLng(item2.latitude, item2.longitude));
     }
   }
 }
