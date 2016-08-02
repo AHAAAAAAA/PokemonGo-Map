@@ -36,6 +36,7 @@ var map_data = {
   scanned: {}
 };
 var heat_map_data;
+var heat_map_keys;
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('static/sounds/ding.mp3');
 var pokemon_sprites = {
@@ -216,6 +217,7 @@ function removePokemonMarker(encounter_id) {
 
 function initMap() {
   heat_map_data = new google.maps.MVCArray();
+  heat_map_keys = {};
   map = new google.maps.Map(document.getElementById('map'), {
     center: {
       lat: center_lat,
@@ -786,7 +788,9 @@ function processPokemons(i, item) {
     if (!item.hidden) {
       item.marker = setupPokemonMarker(item);
       map_data.pokemons[item.encounter_id] = item;
-      heat_map_data.push({location: new google.maps.LatLng(item.latitude, item.longitude), encounter_id: item.encounter_id});
+      if (!(item.encounter_id in heat_map_keys))
+        heat_map_data.push({location: new google.maps.LatLng(item.latitude, item.longitude), encounter_id: item.encounter_id});
+        heat_map_keys[item.encounter_id] = new google.maps.LatLng(item.latitude, item.longitude);
     }
   }
 }
