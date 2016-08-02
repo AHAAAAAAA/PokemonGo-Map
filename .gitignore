@@ -9,3 +9,5 @@ static/dist/
 node_modules/
 venv/
 core
+_build
+_build_html
