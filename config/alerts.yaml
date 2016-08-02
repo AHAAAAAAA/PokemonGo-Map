@@ -1,0 +1,18 @@
+---
+# Pokemon (Name,ID or Rarity) you ONLY want to alert on
+# Pokemon that are ignored below can be overridden here
+# Ex: You can ignore Pokemon with a common rarity but
+# still alert on individual Pokemon from that rarity class
+only:
+  - pidgey
+  - rare
+  - uncommon
+
+# Pokemon (Name,ID or Rarity) you DON'T want to alert on
+ignore:
+  - common
+
+# Slack Configuration Settings
+slack:
+  api_key: 'XXXXXXX-XXXXXXX-XXXXXXXX'
+  channel: '#pokemongo'
