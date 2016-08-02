@@ -216,8 +216,8 @@ class Pogom(Flask):
 
     def get_stats(self):
         return render_template('statistics.html',
-                               lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'],
+                               lat=self.current_location[0],
+                               lng=self.current_location[1],
                                gmaps_key=config['GMAPS_KEY'],
                                valid_input=self.get_valid_stat_input()
                                )

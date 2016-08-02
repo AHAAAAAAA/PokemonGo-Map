@@ -8,6 +8,10 @@ var pokemonid = 0;
 var monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var mapLoaded = false;
 var detailsPersist = false;
+var map = null;
+var heatmap = null;
+var heatmap_numPoints = 0;
+var heatmapPoints = [];
 map_data.appearances = {};
 
 function loadRawData(){
@@ -233,6 +237,7 @@ function processAppearance(i, item){
         map_data.appearances[uuid].times.push(saw);
     }
 
+    heatmapPoints.push(new google.maps.LatLng(item.latitude, item.longitude));
     lastappearance = Math.max(lastappearance, item.disappear_time);
 }
 
@@ -240,6 +245,20 @@ function updateDetails(){
     loadDetails().done(function (result) {
         $.each(result.appearances, processAppearance)
     });
+
+    //Redraw the heatmap with all the new appearances
+    if(heatmap_numPoints != heatmapPoints.length){
+        if(heatmap){
+            heatmap.setMap(null);
+            delete heatmap;
+        }
+        heatmap = new google.maps.visualization.HeatmapLayer({
+                            data: heatmapPoints,
+                            map: map,
+                            radius: 50
+                        });
+        heatmap_numPoints = heatmapPoints.length;
+    }
 }
 
 function clearMarkers(){
@@ -254,6 +273,12 @@ function showDetails(id){
     if(!this.mapLoaded)
         initMap();
     clearMarkers();
+    heatmapPoints = [];
+    heatmap_numPoints = 0;
+    if(heatmap){
+        heatmap.setMap(null);
+        delete heatmap;
+    }
     lastappearance = 0;
     pokemonid = id;
     document.getElementById("location_details").style.display = "block";
