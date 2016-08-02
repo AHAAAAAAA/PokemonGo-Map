@@ -107,6 +107,16 @@
           </div>
         </div>
         <div class="form-control switch-container">
+          <h3>Heatmap</h3>
+          <div class="onoffswitch">
+            <input id="heatmap-switch" type="checkbox" name="scanned-switch" class="onoffswitch-checkbox">
+            <label class="onoffswitch-label" for="heatmap-switch">
+            <span class="switch-label" data-on="On" data-off="Off"></span>
+            <span class="switch-handle"></span>
+            </label>
+          </div>
+        </div>
+        <div class="form-control switch-container">
           <h3>Icons</h3>
           <select name="pokemon-icons" id="pokemon-icons"></select>
         </div>
@@ -161,6 +171,6 @@
       var center_lng = {{lng}};
     </script>
     <script src="static/dist/js/map.js"></script>
-    <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry,visualization"></script>
   </body>
 </html>

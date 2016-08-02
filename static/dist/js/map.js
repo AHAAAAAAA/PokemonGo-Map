@@ -13,6 +13,7 @@ var excludedPokemon = [];
 var notifiedPokemon = [];
 
 var map;
+var heatmap;
 var rawDataIsLoading = false;
 var locationMarker;
 var marker;
@@ -34,6 +35,8 @@ var map_data = {
   lure_pokemons: {},
   scanned: {}
 };
+var heat_map_data;
+var heat_map_keys;
 var gym_types = ["Uncontested", "Mystic", "Valor", "Instinct"];
 var audio = new Audio('static/sounds/ding.mp3');
 var pokemon_sprites = {
@@ -213,6 +216,8 @@ function removePokemonMarker(encounter_id) {
 }
 
 function initMap() {
+  heat_map_data = new google.maps.MVCArray();
+  heat_map_keys = {};
   map = new google.maps.Map(document.getElementById('map'), {
     center: {
       lat: center_lat,
@@ -292,6 +297,10 @@ function initMap() {
   google.maps.event.addListener(map, 'zoom_changed', function() {
     redrawPokemon(map_data.pokemons);
     redrawPokemon(map_data.lure_pokemons);
+  });
+  
+  heatmap = new google.maps.visualization.HeatmapLayer({
+  data: heat_map_data,
   });
 }
 
@@ -779,6 +788,9 @@ function processPokemons(i, item) {
     if (!item.hidden) {
       item.marker = setupPokemonMarker(item);
       map_data.pokemons[item.encounter_id] = item;
+      if (!(item.encounter_id in heat_map_keys))
+        heat_map_data.push({location: new google.maps.LatLng(item.latitude, item.longitude), encounter_id: item.encounter_id});
+        heat_map_keys[item.encounter_id] = new google.maps.LatLng(item.latitude, item.longitude);
     }
   }
 }
@@ -915,6 +927,7 @@ function redrawPokemon(pokemon_list) {
       var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
       item.marker.setMap(null);
       pokemon_list[key].marker = new_marker;
+      heat_map_data.push(new google.maps.LatLng(item.latitude, item.longitude));
     }
   });
 };
@@ -1244,4 +1257,14 @@ $(function() {
     else
       Store.set('geoLocate', this.checked);
   });
+
+  $('#heatmap-switch').change(function() {
+    if (this.checked){
+        heatmap.setMap(map);
+    } else {
+        heatmap.setMap(null);
+        //heatmap.setMap(map);
+    }
+  });
+
 });
