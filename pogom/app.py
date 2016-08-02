@@ -101,7 +101,14 @@ class Pogom(Flask):
 
     def raw_pokemons_history(self):
         d = {}
-        d['pokemons'] = Pokemon().get_all()
+        myPokemon = Pokemon()
+        notified = request.args.get('notified_ids')
+        excluded = request.args.get('excluded_ids')
+        # @todo support excluded_ids as well
+        if notified:
+            d['pokemons'] = myPokemon.get_all_by_id(notified.split(','), excluded.split(','))
+        else:
+            d['pokemons'] = myPokemon.get_all()
         return jsonify(d)
 
     def loc(self):

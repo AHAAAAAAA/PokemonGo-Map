@@ -145,10 +145,18 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
- 	showHeatmap: {
-  	default: false,
- 		type: StoreTypes.Boolean
- 	},
+  showHeatmap: {
+    default: false,
+    type: StoreTypes.Boolean
+  },
+  heatmapRadius: {
+    default: 50,
+    type: StoreTypes.Number
+  },
+  heatmapIntensity: {
+    default: 5,
+    type: StoreTypes.Number
+  },
   playSound: {
     default: false,
     type: StoreTypes.Boolean
@@ -158,10 +166,6 @@ var StoreOptions = {
     type: StoreTypes.Boolean
   },
   startAtUserLocation: {
-    default: false,
-    type: StoreTypes.Boolean
-  },
-  playSound: {
     default: false,
     type: StoreTypes.Boolean
   },
@@ -935,39 +939,35 @@ function processScanned(i, item) {
 }
 
 function updateHeatmap() {
-  var heatmapData = [];
+  let heatmapData = [];
   localStorage.showHeatmap = localStorage.showHeatmap || false;
   $.ajax({
     url: "raw_pokemons_history",
+    data: {
+      excluded_ids: excludedPokemon.join(','),
+      notified_ids: notifiedPokemon.join(',')
+    },
     dataType: "json"
   }).done(function (result) {
     if (!localStorage.showHeatmap) {
       return false;
     }
+    heatmapData = [];
     $.each(result.pokemons, function(index, item) {
       heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
     });
     heatmap.set('data', heatmapData);
+    heatmap.getMap() || heatmap.setMap(map);
   });
-
   heatmap = heatmap || new google.maps.visualization.HeatmapLayer({
-    radius: 50,
+    radius: Store.get('heatmapRadius'),
+    maxIntensity: Store.get('heatmapIntensity'),
     map: map
   });
-
-  changeIntensity(heatmapData.length < 100 ? 3 : 10);
 }
 
 function deleteHeatmap() {
   heatmap.setMap(null);
-}
-
-function changeHeatmapRadius(radius) {
-  heatmap.set('radius', radius);
-}
-
-function changeIntensity(intensity) {
-  heatmap.set('maxIntensity', intensity);
 }
 
 function updateMap() {
@@ -1392,10 +1392,27 @@ $(function() {
     redrawPokemon(map_data.lure_pokemons);
   });
 
-  $('#heatmap-switch').change(function() {
-    Store.set("showHeatmap", this.checked);
-    this.checked ? updateHeatmap() : deleteHeatmap();
-  });
+  $('#heatmap-switch')
+    .val(Store.get('showHeatmap'))
+    .change(function() {
+    console.log(this.checked);
+      Store.set("showHeatmap", this.checked);
+      this.checked ? updateHeatmap() : deleteHeatmap();
+    });
+
+  $('#heatmap-intensity')
+    .val(Store.get('heatmapIntensity'))
+    .change(function () {
+      Store.set('heatmapIntensity', this.value);
+      heatmap.set('maxIntensity', this.value);
+    });
+
+  $('#heatmap-radius')
+    .val(Store.get('heatmapRadius'))
+    .change(function () {
+      Store.set('heatmapRadius', this.value);
+      heatmap.set('radius', this.value);
+    })
 
   $('#geoloc-switch').change(function() {
     $("#next-location").prop("disabled", this.checked);
