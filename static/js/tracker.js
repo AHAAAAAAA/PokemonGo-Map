@@ -15,6 +15,7 @@ $(function () {
 
       var currentLatLng = ko.observable();
       var lastLatLng;
+      var missingPokemon = ko.observable();
 
       function Pokemon(data) {
         var self = this;
@@ -24,14 +25,14 @@ $(function () {
         self.num = data.pokemon_id;
         self.sprite = (function () {
           var i = data.pokemon_id - 1;
-          var excludedPokemon = JSON.parse(localStorage["remember_select_notify"] || "[]");
-          debugger;
           return {
             poisition_x: (i % 7) * -65,
             poisition_y: Math.floor(i / 7) * -65,
             icon_width: 65,
             icon_height: 65,
-            shadow: $.inArray(data.pokemon_id, excludedPokemon) >= 0
+            shadow: ko.computed(function () {
+              return $.inArray(data.pokemon_id, missingPokemon()) >= 0;
+            })
           }
         })();
         self.name = data.pokemon_name;
@@ -119,6 +120,7 @@ $(function () {
 
         window.setInterval(function () {
           loadRawData(lastLatLng);
+          missingPokemon(JSON.parse(localStorage["remember_select_notify"] || "[]"));
         }, 5000);
         loadRawData(lastLatLng);
       };
