@@ -8,6 +8,7 @@ var $selectNotify;
 var $selectStyle;
 var $selectIconResolution;
 var $selectIconSize;
+var $selectLuredPokestopsOnly;
 
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
@@ -1230,6 +1231,18 @@ $(function() {
     redrawPokemon(map_data.lure_pokemons);
   });
 
+  $selectLuredPokestopsOnly = $('#lured-pokestops-only-switch');
+
+  $selectLuredPokestopsOnly.select2({
+    placeholder: "Only Show Lured Pokestops",
+    minimumResultsForSearch: Infinity,
+  });
+
+  $selectLuredPokestopsOnly.on("change", function() {
+    Store.set("showLuredPokestopsOnly", this.value);
+    updateMap();
+  });
+
 });
 
 $(function() {
@@ -1359,11 +1372,6 @@ $(function() {
       wrapper.hide(options);
     }
     return buildSwitchChangeListener(map_data, ["pokestops"], "showPokestops").bind(this)();
-  });
-
-  $('#lured-pokestops-only-switch').change(function() {
-    Store.set("showLuredPokestopsOnly", this.value);
-    updateMap();
   });
 
   $('#sound-switch').change(function() {
