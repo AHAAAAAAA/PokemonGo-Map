@@ -947,10 +947,10 @@ function updateHeatmap() {
     $.each(result.pokemons, function(index, item) {
       heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
     });
+    heatmap.set('data', heatmapData);
   });
 
-  heatmap = new google.maps.visualization.HeatmapLayer({
-    data: heatmapData,
+  heatmap = heatmap || new google.maps.visualization.HeatmapLayer({
     radius: 50,
     map: map
   });
