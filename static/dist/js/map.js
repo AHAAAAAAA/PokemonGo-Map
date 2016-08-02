@@ -299,7 +299,6 @@ function initMap() {
   
   heatmap = new google.maps.visualization.HeatmapLayer({
   data: heat_map_data,
-  map: map
   });
 }
 
@@ -1255,4 +1254,14 @@ $(function() {
     else
       Store.set('geoLocate', this.checked);
   });
+
+  $('#heatmap-switch').change(function() {
+    if (this.checked){
+        heatmap.setMap(map);
+    } else {
+        heatmap.setMap(null);
+        //heatmap.setMap(map);
+    }
+  });
+
 });
