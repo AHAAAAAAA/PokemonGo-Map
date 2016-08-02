@@ -603,8 +603,8 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
     if (!skipNotification) {
       if (Store.get('playSound')) {
       audio.play();
-      sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
       }
+      sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
     if (marker.animationDisabled != true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
