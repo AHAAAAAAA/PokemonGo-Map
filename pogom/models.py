@@ -159,11 +159,13 @@ class Pokemon(BaseModel):
                  .dicts()
                  )
         pokemons = []
+        total = 0
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             pokemons.append(p)
+            total += p['count']
 
-        return pokemons
+        return {'pokemon': pokemons, 'total': total}
 
     @classmethod
     def get_appearances(cls, pokemon_id, last_appearance):

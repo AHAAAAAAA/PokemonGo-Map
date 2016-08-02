@@ -54,16 +54,16 @@
     <div id="loading"><img src="static/images/loading.gif" alt="Loading"/></div>
     <div class="container" id="seen_container">
     </div>
-    <script src="static/js/statistics.js"></script>
     <div id="location_details" class="overlay">
         <div class="close" onclick="closeOverlay();"><img src="static/images/close.png" alt="Close" /></div>
         <div class="location_header"><h3 id="location_header"></h3></div>
         <div class="content">
             <div id="times_list" style="display: none;"></div>
             <div id="location_map">
-                <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&libraries=visualization"></script>
+                <script src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&libraries=visualization"></script>
             </div>
         </div>
     </div>
+    <script src="static/js/statistics.js"></script>
 </body>
 </html>
