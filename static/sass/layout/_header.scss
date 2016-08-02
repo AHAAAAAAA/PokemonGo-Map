@@ -16,6 +16,7 @@
 		top: 0;
 		width: 100%;
 		z-index: _misc(z-index-base) + 1;
+		@include noSelect();
 
 		> h1 {
 			color: _palette(accent2, fg-bold);

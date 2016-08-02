@@ -6,9 +6,14 @@ It generates a script to run all the workers for you.
 If you have a list of accounts, it will put the login details into the worker commands, rotating through your list
 
 
-An example:
+Experimental Windows support!  Use the --windows flag
 
-python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts=/home/pika/accounts.csv
+
+
+An example (Linux):
+    python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts /home/pika/accounts.csv
+An example (Windows):
+    python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts C:\Documents\accounts.csv --windows --installdir="C:\Downloads\PokemonGo-Map"
 
 
 usage: location_generator.py [-h] -lat LAT -lon LON [-st STEPS] [-lp LEAPS]
@@ -33,3 +38,8 @@ usage: location_generator.py [-h] -lat LAT -lon LON [-st STEPS] [-lp LEAPS]
   --auth AUTH           Auth method (ptc or google)
 
   -v, --verbose         Print lat/lng to stdout for debugging
+
+  --windows             Generate a bat file for Windows
+
+  --installdir INSTALLDIR
+                        Installation directory (only used for Windows)

@@ -6,8 +6,11 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         files: {
-          'static/css/main.css' : 'static/sass/main.scss',
-          'static/css/mobile.css': 'static/sass/mobile.scss'
+          'static/dist/css/app.built.css': [
+            'static/sass/main.scss',
+            'static/sass/pokemon-sprite.scss'
+          ],
+          'static/dist/css/mobile.built.css': 'static/sass/mobile.scss'
         }
       }
     },
@@ -30,21 +33,47 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'static/dist/js/app.js': 'static/js/app.js',
-          'static/dist/js/map.js': 'static/map.js',
-          'static/dist/js/stats.js': 'static/js/stats.js'
+          'static/dist/js/app.built.js': 'static/js/app.js',
+          'static/dist/js/map.built.js': 'static/js/map.js',
+          'static/dist/js/mobile.built.js': 'static/js/mobile.js',
+          'static/dist/js/stats.built.js': 'static/js/stats.js'
         }
       }
     },
     uglify: {
       options: {
-        banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n'
+        banner: '/*\n <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> \n*/\n',
+        sourceMap: true,
+        compress: {
+          unused: false
+        }
       },
       build: {
         files: {
-          'static/dist/js/app.min.js': 'static/dist/js/app.js',
-          'static/dist/js/mobile.min.js': 'static/js/mobile.js'
+          'static/dist/js/app.min.js': 'static/dist/js/app.built.js',
+          'static/dist/js/map.min.js': 'static/dist/js/map.built.js',
+          'static/dist/js/mobile.min.js': 'static/dist/js/mobile.built.js',
+          'static/dist/js/stats.min.js': 'static/dist/js/stats.built.js'
         }
+      }
+    },
+    minjson: {
+      build: {
+        files: {
+          'static/dist/data/pokemon.min.json': 'static/data/pokemon.json',
+          'static/dist/data/mapstyle.min.json': 'static/data/mapstyle.json',
+          'static/dist/locales/de.min.json': 'static/locales/de.json',
+          'static/dist/locales/fr.min.json': 'static/locales/fr.json',
+          'static/dist/locales/pt_br.min.json': 'static/locales/pt_br.json',
+          'static/dist/locales/ru.min.json': 'static/locales/ru.json',
+          'static/dist/locales/zh_cn.min.json': 'static/locales/zh_cn.json',
+          'static/dist/locales/zh_hk.min.json': 'static/locales/zh_hk.json'
+        }
+      }
+    },
+    clean: {
+      build: {
+        src: 'static/dist'
       }
     },
     watch: {
@@ -57,9 +86,9 @@ module.exports = function(grunt) {
         options: { livereload: true }
       },
       js: {
-        files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
+        files: ['**/*.js', '**/*.json', '!node_modules/**/*.js', '!static/dist/**/*.js', '!static/dist/**/*.json'],
         options: { livereload: true },
-        tasks: ['js-build']
+        tasks: ['js-lint', 'js-build']
       },
       css: {
         files: '**/*.scss',
@@ -73,14 +102,11 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'static/dist/css/app.min.css': [
-              'static/css/main.css',
-              'static/css/pokemon-sprites.css'
-          ],
-          'static/dist/css/mobile.min.css': 'static/css/mobile.css'
+          'static/dist/css/app.min.css': 'static/dist/css/app.built.css',
+          'static/dist/css/mobile.min.css': 'static/dist/css/mobile.built.css'
         }
       }
-    },
+    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -94,12 +120,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-minjson');
 
-  grunt.registerTask('js-build', ['babel', 'uglify']);
+  grunt.registerTask('js-build', ['babel', 'uglify', 'minjson']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
   grunt.registerTask('js-lint', ['jshint']);
 
-  grunt.registerTask('build', ['js-build', 'css-build']);
+  grunt.registerTask('build', ['clean', 'js-build', 'css-build']);
   grunt.registerTask('lint', ['js-lint']);
   grunt.registerTask('default', ['lint', 'build', 'watch']);
 
