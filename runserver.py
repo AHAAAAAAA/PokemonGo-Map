@@ -35,8 +35,7 @@ from pogom.utils import get_args, insert_mock_data
 from pogom.search import search_overseer_thread, fake_search_loop
 from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
 
-from pogom.utils import get_pos_by_name
-
+from pgoapi import utilities as util
 
 if __name__ == '__main__':
     args = get_args()
@@ -70,7 +69,7 @@ if __name__ == '__main__':
         logging.getLogger('rpc_api').setLevel(logging.DEBUG)
 
 
-    position = get_pos_by_name(args.location)
+    position = util.get_pos_by_name(args.location)
     if not any(position):
         log.error('Could not get a position by name, aborting')
         sys.exit()

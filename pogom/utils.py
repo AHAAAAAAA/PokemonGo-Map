@@ -290,12 +290,3 @@ def get_cell_ids(lat, long):
         next = next.next()
         prev = prev.prev()
     return sorted(walk)
-
-def get_pos_by_name(location_name):
-    geolocator = GoogleV3()
-    loc = geolocator.geocode(location_name)
-
-    log.info('Your given location: %s', loc.address.encode('utf-8'))
-    log.info('lat/long/alt: %s %s %s', loc.latitude, loc.longitude, loc.altitude)
-
-    return (loc.latitude, loc.longitude, loc.altitude)
