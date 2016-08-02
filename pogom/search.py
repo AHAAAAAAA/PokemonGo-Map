@@ -28,6 +28,7 @@ from queue import Queue, Empty
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i
 from utils import get_cell_ids
+from pgoapi import utilities as util
 
 from . import config
 from .models import parse_map
@@ -232,7 +233,9 @@ def check_login(args, account, api):
             return
 
     # Ohhh, not good-to-go, getter' fixed up
-    while not api.login(account['auth_service'], account['username'], account['password']):
+    position = util.get_pos_by_name(args.location)
+    api.set_position(*position)
+    while not api.login(account['auth_service'], account['username'], account['password'], position[0], position[1], position[2], False):
         log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
         time.sleep(args.login_delay)
 
@@ -241,14 +244,10 @@ def check_login(args, account, api):
 
 def map_request(api, position):
     try:
-        api.set_position(*position)
-        cell_ids = get_cell_ids(position[0], position[1])
-        timestamps = [0,] * len(cell_ids)
-        api.get_map_objects(latitude=f2i(position[0]),
-                            longitude=f2i(position[1]),
-                            since_timestamp_ms=timestamps,
-                            cell_id=cell_ids)
-        return api.call()
+        req = api.create_request()
+        req.get_player()
+        req.get_inventory()
+        return req.call()
     except Exception as e:
         log.warning('Exception while downloading map: %s', e)
         return False
