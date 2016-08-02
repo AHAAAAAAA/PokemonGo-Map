@@ -112,4 +112,24 @@
 			padding-bottom: 0.5em;
 			padding-left: 0.5em;
 		}
+		.ui-state-active,
+		.onoffswitch-checkbox:checked+.onoffswitch-label {
+			border-color: #3b3b3b;
+			background-color: #3b3b3b;
+		}
+		.onoffswitch-checkbox:checked+.onoffswitch-label:before {
+			border-color: #c0c0c0;
+		}
+		.ui-accordion-header.ui-state-active {
+			color: #d6d6d6;
+		}
+		.ui-corner-all {
+			border-top-left-radius: 0px;
+			border-top-right-radius: 0px;
+			border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+		}
+		.ui-state-focus {
+			outline: none;
+		}
 	}
