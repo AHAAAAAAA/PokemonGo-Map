@@ -1,3 +1,5 @@
+# Nginx
+
 If you do not want to expose pokemongo-map to the web directly or you want to place it under a prefix, follow this guide:
 
 Assuming the following:

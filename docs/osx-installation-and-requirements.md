@@ -1,7 +1,7 @@
+# PokemonGo-Map: Macintosh Installation
+
 In order to run the project, you will need Python, pip and the project dependencies.
 Version 2.7 is what we usually test against. You can use 3.x but no support will be given. 
-
-### PokemonGo-Map: Macintosh Installation
 
 ---
 

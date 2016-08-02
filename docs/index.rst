@@ -9,7 +9,7 @@ Welcome to PokemonGo-Map's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Install Guides
 
    digital-ocean
@@ -18,12 +18,32 @@ Contents:
    heroku
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Local Install Guides
 
    osx-installation-and-requirements
    windows-installation-and-requirements
    docker
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Other Stuff
+
+   development
+   beehive
+   bluemix
+   contributing
+   environment-variables-fix
+   external
+   faq
+   google-maps
+   installation
+   mysql
+   navigation
+   nginx
+   supervisord-config-files
+   usage
+   workers
 
 
 Indices and tables

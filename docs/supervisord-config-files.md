@@ -1,4 +1,6 @@
-# Assuming:
+# Running PokemonGo-Map under supervisord
+
+## Assuming:
 
 * You are running on Linux
 * You have installed [supervisord](http://supervisord.org/)
@@ -7,7 +9,7 @@
 * You understand worker separation
 * You can tie your own shoelaces
 
-# The good stuff
+## The good stuff
 
 Create directory `~/supervisor`, and `~/supervisor/procs.d`
 

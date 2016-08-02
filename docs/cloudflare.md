@@ -9,7 +9,7 @@
 
 First, sign up for an account at [cloudflare.com](https://www.cloudflare.com/a/sign-up). Get signed in and click "Add Site" at the top of the page to get started.
 
-![](https://i.imgur.com/KxDz8Ik.png)
+![](_static/img/KxDz8Ik.png)
 
 Enter your website in the text field and press "Begin Scan," when that finishes click Continue Setup next to your Domain.
 

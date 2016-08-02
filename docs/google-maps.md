@@ -1,4 +1,4 @@
-#How to get your own Google Maps key and use it for this project
+# How to get your own Google Maps key and use it for this project
 
 This project uses Google Maps. There's one map coupled with the project, but as it gets more popular we'll definitely hit the rate-limit making the map unusable.
 

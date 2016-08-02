@@ -1,3 +1,5 @@
+# Behive
+
 ## Setting up
 
 **Note:** This guide runs on Windows with Python and Git installed.
