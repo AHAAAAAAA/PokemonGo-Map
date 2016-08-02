@@ -24,12 +24,14 @@ $(function () {
         self.num = data.pokemon_id;
         self.sprite = (function () {
           var i = data.pokemon_id - 1;
+          var excludedPokemon = JSON.parse(localStorage["remember_select_notify"] || "[]");
+          debugger;
           return {
             poisition_x: (i % 7) * -65,
             poisition_y: Math.floor(i / 7) * -65,
             icon_width: 65,
             icon_height: 65,
-            css: 'icons-high-res'
+            shadow: $.inArray(data.pokemon_id, excludedPokemon) >= 0
           }
         })();
         self.name = data.pokemon_name;
