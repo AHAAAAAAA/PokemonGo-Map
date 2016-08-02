@@ -79,10 +79,10 @@
           </div>
         </div>
 		
-		<div class="form-control switch-container" style="display:{{is_fixed}}" >
+		<div class="form-control switch-container" style="display:{{step_control}}" >
           <label for="step-limit">
             <h3>Search step limit</h3>
-            <input id="step-limit" type="text" name="step-limit" placeholder="Change step limit" style="color: #000000;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+            <input id="step-limit" type="text" name="step-limit" placeholder="Change step limit" style="color: #000000;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 13">
           </label>
         </div>
 

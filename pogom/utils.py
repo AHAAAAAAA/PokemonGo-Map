@@ -76,6 +76,9 @@ def get_args():
     parser.add_argument('-nsc','--no-search-control',
                         help='Disables search control',
                         action='store_false', dest='search_control', default=True)
+    parser.add_argument('-nst','--no-step-control',
+                        help='Disables step limit control',
+                        action='store_false', dest='step_control', default=True)
     parser.add_argument('-fl', '--fixed-location',
                         help='Hides the search bar for use in shared maps.',
                         action='store_true', default=False)
