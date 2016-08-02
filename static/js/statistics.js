@@ -69,14 +69,14 @@ function addElement(pokemon_id, name){
     }).appendTo('#name_' + pokemon_id);
 
     jQuery('<div/>', {
-        id: 'count_' + pokemon_id,
-        class: 'seen'
-    }).appendTo(baseDetailContainer);
-
-    jQuery('<div/>', {
         id: 'seen_' + pokemon_id + '_details',
         class: 'details',
     }).appendTo('#seen_' + pokemon_id);
+
+    jQuery('<div/>', {
+        id: 'count_' + pokemon_id,
+        class: 'seen'
+    }).appendTo('#seen_' + pokemon_id + '_details');
 
     jQuery('<div/>', {
         id: 'lastseen_' + pokemon_id,
@@ -137,9 +137,9 @@ function processSeen(seen){
         var location = (item.latitude * 1).toFixed(7) + ', ' + (item.longitude * 1).toFixed(7);
         if(!$('#seen_' + item.pokemon_id).length)
             addElement(item.pokemon_id, item.pokemon_name);
-        $('#count_' + item.pokemon_id).html('Seen: ' + item.count.toLocaleString() + ' (' + percentage + '%)');
-        $('#lastseen_' + item.pokemon_id).html('Last Seen: ' + lastSeen);
-        $('#location_' + item.pokemon_id).html('Location: ' + location);
+        $('#count_' + item.pokemon_id).html('<strong>Seen:</strong> ' + item.count.toLocaleString() + ' (' + percentage + '%)');
+        $('#lastseen_' + item.pokemon_id).html('<strong>Last Seen:</strong> ' + lastSeen);
+        $('#location_' + item.pokemon_id).html('<strong>Location:</strong> ' + location);
         $('#seen_' + item.pokemon_id).show();
         //Reverting to classic javascript here as it's supposed to increase performance
         document.getElementById('seen_container').insertBefore(document.getElementById('seen_' + item.pokemon_id), document.getElementById('seen_container').childNodes[0]);
@@ -147,7 +147,7 @@ function processSeen(seen){
     }
 
     //Hide any unneeded items
-    for(var i = 1; i <= this.totalPokemon; i++){
+    for(var i = 1; i <= totalPokemon; i++){
         if(shown.indexOf(i) < 0)
             $('#seen_' + i).hide();
     }
@@ -218,7 +218,7 @@ function loadDetails(){
 }
 
 function showTimes(marker){
-    uuid = marker.position.lat().toFixed(7) + "_" + marker.position.lng().toFixed(7);
+    var uuid = marker.position.lat().toFixed(7) + "_" + marker.position.lng().toFixed(7);
     $('#times_list').html(appearanceTab(map_data.appearances[uuid]));
     $('#times_list').show();
 }
@@ -273,7 +273,49 @@ function initMap(){
         }
   });
 
-  this.mapLoaded = true;
+  var style_NoLabels = new google.maps.StyledMapType(noLabelsStyle, {
+    name: "No Labels"
+  });
+  map.mapTypes.set('nolabels_style', style_NoLabels);
+
+  var style_dark = new google.maps.StyledMapType(darkStyle, {
+    name: "Dark"
+  });
+  map.mapTypes.set('dark_style', style_dark);
+
+  var style_light2 = new google.maps.StyledMapType(light2Style, {
+    name: "Light2"
+  });
+  map.mapTypes.set('style_light2', style_light2);
+
+  var style_pgo = new google.maps.StyledMapType(pGoStyle, {
+    name: "PokemonGo"
+  });
+  map.mapTypes.set('style_pgo', style_pgo);
+
+  var style_dark_nl = new google.maps.StyledMapType(darkStyleNoLabels, {
+    name: "Dark (No Labels)"
+  });
+  map.mapTypes.set('dark_style_nl', style_dark_nl);
+
+  var style_light2_nl = new google.maps.StyledMapType(light2StyleNoLabels, {
+    name: "Light2 (No Labels)"
+  });
+  map.mapTypes.set('style_light2_nl', style_light2_nl);
+
+  var style_pgo_nl = new google.maps.StyledMapType(pGoStyleNoLabels, {
+    name: "PokemonGo (No Labels)"
+  });
+  map.mapTypes.set('style_pgo_nl', style_pgo_nl);
+
+  map.addListener('maptypeid_changed', function(s) {
+    Store.set('map_style', this.mapTypeId);
+  });
+
+  map.setMapTypeId(Store.get('map_style'));
+  google.maps.event.addListener(map, 'idle', updateMap);
+
+  mapLoaded = true;
 
   google.maps.event.addListener(map, 'zoom_changed', function() {
     redrawAppearances(map_data.appearances);
@@ -290,7 +332,6 @@ function resetMap(){
     heatmap_numPoints = 0;
     if(heatmap){
         heatmap.setMap(null);
-        delete heatmap;
     }
 
     lastappearance = 0;
@@ -298,7 +339,7 @@ function resetMap(){
 
 function showOverlay(id){
     //Only load google maps once, and only if requested
-    if(!this.mapLoaded)
+    if(!mapLoaded)
         initMap();
     resetMap();
     pokemonid = id;
@@ -313,6 +354,7 @@ function showOverlay(id){
 function closeOverlay(){
     $('#location_details').hide();
     window.clearInterval(detailInterval);
+    closeTimes();
     location.hash = '';
     return false;
 }
@@ -387,7 +429,6 @@ function updateDetails(){
         if(heatmap_numPoints != heatmapPoints.length){
             if(heatmap){
                 heatmap.setMap(null);
-                delete heatmap;
             }
             heatmap = new google.maps.visualization.HeatmapLayer({
                                 data: heatmapPoints,

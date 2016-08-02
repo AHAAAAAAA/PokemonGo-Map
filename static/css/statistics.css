@@ -3,6 +3,7 @@
 body{
     background: #f1f1f1;
     z-index: 0;
+    overflow: auto;
 }
 
 table{
@@ -33,12 +34,23 @@ table td{
     font-weight: bold;
 }
 
+.totals{
+    margin-top: 3.5em;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-transform: uppercase;
+}
+
 .options{
     padding-bottom: 5px;
 }
 
 .container{
     overflow: auto;
+    line-height: 20px;
+    font-size: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .container .item{
@@ -50,7 +62,7 @@ table td{
     margin: 0px 5px 5px 0px;
     padding: 5px;
     overflow: auto;
-    height: 100px;
+    height: 130px;
     min-width: 260px;
 }
 
@@ -60,12 +72,17 @@ table td{
     text-align: center;
 }
 
-.container .item .info{
-    float: left;
+.container .item .name{
+    height: 30px;
+    line-height: 30px;
+}
+
+.container .item .name a{
+    font-weight: bold;
 }
 
 .overlay{
-    z-index: 10;
+    z-index: 100000;
     display: none;
     background-color: rgba(0,0,0,0.5);
     position: fixed;
@@ -122,4 +139,18 @@ table td{
     bottom: 0px;
     left: 0px;
     right: 0px;
+}
+
+#loading{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+}
+
+#loading img{
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    position: absolute;
 }
