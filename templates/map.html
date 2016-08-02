@@ -43,7 +43,29 @@
       <!-- NAV -->
       <nav id="nav">
         <div id="nav-accordion">
-          <h3>Location/Map Settings</h3>
+          <h3>Style Settings</h3>
+          <div>
+            <div class="form-control">
+              <label for="map-style">
+                <h3>Map Style</h3>
+                <select id="map-style" style="min-width:100%;"></select>
+              </label>
+            </div>
+            <div class="form-control switch-container">
+              <h3>Icons</h3>
+              <select name="pokemon-icons" id="pokemon-icons"></select>
+            </div>
+            <div class="form-control switch-container">
+              <h3>Icon Size</h3>
+              <select name="pokemon-icon-size" id="pokemon-icon-size">
+                <option value="-8">Small</option>
+                <option value="0">Normal</option>
+                <option value="10">Large</option>
+                <option value="20">X-Large</option>
+              </select>
+            </div>
+          </div>
+          <h3>Location Settings</h3>
           <div>
             <div class="form-control switch-container" style="display:{{is_fixed}}" >
               <label for="next-location">
@@ -80,12 +102,6 @@
                 <span class="switch-handle"></span>
                 </label>
               </div>
-            </div>
-            <div class="form-control">
-              <label for="map-style">
-                <h3>Map Style</h3>
-                <select id="map-style" style="min-width:100%;"></select>
-              </label>
             </div>
           </div>
 
@@ -136,19 +152,6 @@
                 <span class="switch-handle"></span>
                 </label>
               </div>
-            </div>
-            <div class="form-control switch-container">
-              <h3>Icons</h3>
-              <select name="pokemon-icons" id="pokemon-icons"></select>
-            </div>
-            <div class="form-control switch-container">
-              <h3>Icon Size</h3>
-              <select name="pokemon-icon-size" id="pokemon-icon-size">
-                <option value="-8">Small</option>
-                <option value="0">Normal</option>
-                <option value="10">Large</option>
-                <option value="20">X-Large</option>
-              </select>
             </div>
             <div class="form-control">
               <label for="exclude-pokemon">
