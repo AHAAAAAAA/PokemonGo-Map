@@ -27,7 +27,7 @@ from queue import Queue, Empty
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i
-from utils import get_cell_ids, get_pos_by_name
+from utils import get_cell_ids
 
 from . import config
 from .models import parse_map

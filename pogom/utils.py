@@ -277,25 +277,6 @@ def send_to_webhook(message_type, message):
             except requests.exceptions.RequestException as e:
                 log.debug(e)
 
-def get_pos_by_name(location_name):
-    prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
-    res = prog.match(location_name)
-    latitude, longitude, altitude = None, None, None
-    if res:
-        latitude, longitude, altitude = float(res.group(1)), float(res.group(2)), 0
-    elif location_name:
-        geolocator = GoogleV3()
-        loc = geolocator.geocode(location_name)
-        if loc:
-            latitude, longitude, altitude = loc.latitude, loc.longitude, loc.altitude
-
-    return (latitude, longitude, altitude)
-
-def get_class(cls):
-    module_, class_ = cls.rsplit('.', 1)
-    class_ = getattr(import_module(module_), class_)
-    return class_
-
 def get_cell_ids(lat, long):
     origin = CellId.from_lat_lng(LatLng.from_degrees(lat, long)).parent(15)
     walk = [origin.id()]
@@ -309,3 +290,12 @@ def get_cell_ids(lat, long):
         next = next.next()
         prev = prev.prev()
     return sorted(walk)
+
+def get_pos_by_name(location_name):
+    geolocator = GoogleV3()
+    loc = geolocator.geocode(location_name)
+
+    log.info('Your given location: %s', loc.address.encode('utf-8'))
+    log.info('lat/long/alt: %s %s %s', loc.latitude, loc.longitude, loc.altitude)
+
+    return (loc.latitude, loc.longitude, loc.altitude)
