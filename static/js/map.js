@@ -1369,4 +1369,7 @@ $(function() {
     Store.set("startAtUserLocation", this.checked);
   });
 
+  $("#nav-accordion").accordion({
+  });
+
 });
