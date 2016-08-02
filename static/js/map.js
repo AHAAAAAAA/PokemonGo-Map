@@ -947,28 +947,11 @@ function updateHeatmap() {
     $.each(result.pokemons, function(index, item) {
       heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
     });
-  })
-  var gradient = [
-    'rgba(0, 255, 255, 0)',
-    'rgba(0, 255, 255, 1)',
-    'rgba(0, 191, 255, 1)',
-    'rgba(0, 127, 255, 1)',
-    'rgba(0, 63, 255, 1)',
-    'rgba(0, 0, 255, 1)',
-    'rgba(0, 0, 223, 1)',
-    'rgba(0, 0, 191, 1)',
-    'rgba(0, 0, 159, 1)',
-    'rgba(0, 0, 127, 1)',
-    'rgba(63, 0, 91, 1)',
-    'rgba(127, 0, 63, 1)',
-    'rgba(191, 0, 31, 1)',
-    'rgba(255, 0, 0, 1)'
-  ];
+  });
 
   heatmap = new google.maps.visualization.HeatmapLayer({
     data: heatmapData,
-//    gradient: gradient,
-    radius: 60,
+    radius: 50,
     map: map
   });
 
@@ -979,8 +962,12 @@ function deleteHeatmap() {
   heatmap.setMap(null);
 }
 
+function changeHeatmapRadius(radius) {
+  heatmap.set('radius', radius);
+}
+
 function changeIntensity(intensity) {
-  heatmap.set('maxIntesity', intensity);
+  heatmap.set('maxIntensity', intensity);
 }
 
 function updateMap() {
@@ -1405,9 +1392,9 @@ $(function() {
     redrawPokemon(map_data.lure_pokemons);
   });
 
- 	$('#heatmap-switch').change(function() {
-  	Store.set("showHeatmap", this.checked);
- 		this.checked ? updateHeatmap() : deleteHeatmap();
+  $('#heatmap-switch').change(function() {
+    Store.set("showHeatmap", this.checked);
+    this.checked ? updateHeatmap() : deleteHeatmap();
   });
 
   $('#geoloc-switch').change(function() {
