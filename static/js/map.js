@@ -629,7 +629,7 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
   if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
     if (!skipNotification) {
       if (Store.get('playSound')) {
-      audio.play();
+        audio.play();
       }
       sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
