@@ -195,7 +195,8 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
                 time.sleep(config['REQ_HEAVY_SLEEP'])
                 failed_consecutive = 0
 
-            position = util.get_pos_by_name(args.location)
+            #position = util.get_pos_by_name(args.location)
+            position = step_location
             api.set_position(*position)
 
             # Ok, let's get started -- check our login status
