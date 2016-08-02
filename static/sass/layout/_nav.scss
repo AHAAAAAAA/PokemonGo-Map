@@ -59,9 +59,9 @@
 			}
 		}
 
-		.form-control > select {
+		.form-control > select,
+		.form-control > span {
 			float: right;
-			font-size: 18px;
 		}
 
 		.close {

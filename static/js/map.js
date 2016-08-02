@@ -6,6 +6,8 @@
 var $selectExclude;
 var $selectNotify;
 var $selectStyle;
+var $selectIconResolution;
+var $selectIconSize;
 
 var language = document.documentElement.lang == "" ? "en" : document.documentElement.lang;
 var idToPokemon = {};
@@ -1201,6 +1203,33 @@ $(function() {
 
   });
 
+  $selectIconResolution =  $('#pokemon-icons');
+
+  $selectIconResolution.select2({
+    placeholder: "Select Icon Resolution",
+    minimumResultsForSearch: Infinity,
+  });
+
+  $selectIconResolution.on("change", function() {
+    Store.set('pokemonIcons', this.value);
+    redrawPokemon(map_data.pokemons);
+    redrawPokemon(map_data.lure_pokemons);
+  });
+
+
+  $selectIconSize = $('#pokemon-icon-size');
+
+  $selectIconSize.select2({
+    placeholder: "Select Icon Size",
+    minimumResultsForSearch: Infinity,
+  });
+
+  $selectIconSize.on("change", function() {
+    Store.set('iconSizeModifier', this.value);
+    redrawPokemon(map_data.pokemons);
+    redrawPokemon(map_data.lure_pokemons);
+  });
+
 });
 
 $(function() {
@@ -1339,18 +1368,6 @@ $(function() {
 
   $('#sound-switch').change(function() {
     Store.set("playSound", this.checked);
-  });
-
-  $('#pokemon-icons').change(function() {
-    Store.set('pokemonIcons', this.value);
-    redrawPokemon(map_data.pokemons);
-    redrawPokemon(map_data.lure_pokemons);
-  });
-
-  $('#pokemon-icon-size').change(function() {
-    Store.set('iconSizeModifier', this.value);
-    redrawPokemon(map_data.pokemons);
-    redrawPokemon(map_data.lure_pokemons);
   });
 
   $('#geoloc-switch').change(function() {
