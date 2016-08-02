@@ -31,3 +31,26 @@ html, body {
 	bottom: 0px;
   width: 100%;
 }
+
+.fab {
+  background: darken(_palette(accent2, bg), 12);
+  color: _palette(accent2, fg);
+  width:30px;
+  height:30px;
+  border-radius:100%;
+  border:none;
+  outline:none;
+  font-size:19px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  transition:.3s;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  text-align: center;
+  @include icon('\f05b');
+}
+
+#scan-here {
+  position: fixed;
+  left: 50%;
+  margin-left: -15px;
+  bottom: 1.5em;
+}
