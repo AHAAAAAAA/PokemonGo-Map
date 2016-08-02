@@ -310,7 +310,7 @@ def spawn_workers(workers, status_bar=True):
                 _ = os.system('cls')
             else:
                 _ = os.system('clear')
-            print get_status_message(workers, count, start_date, points_stats)
+            print(get_status_message(workers, count, start_date, points_stats))
         time.sleep(0.5)
 
 

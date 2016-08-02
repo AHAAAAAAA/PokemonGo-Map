@@ -16,7 +16,7 @@ with open('locales/pokemon.en.json') as f:
 try:
     import config
     DB_ENGINE = config.DB_ENGINE
-except ImportError, AttributeError:
+except (ImportError, AttributeError):
     DB_ENGINE = 'sqlite:///db.sqlite'
 
 
