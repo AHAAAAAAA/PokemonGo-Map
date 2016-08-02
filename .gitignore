@@ -9,3 +9,4 @@ static/dist/
 node_modules/
 venv/
 core
+src/
