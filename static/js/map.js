@@ -628,13 +628,10 @@ function setupPokemonMarker(item, skipNotification, isBounceDisabled) {
 
   if (notifiedPokemon.indexOf(item.pokemon_id) > -1) {
     if (!skipNotification) {
-      var now = new Date();
-      if (now < item.disappear_time) {
-        if (Store.get('playSound')) {
-          audio.play();
-        }
-        sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
+      if (Store.get('playSound')) {
+      audio.play();
       }
+      sendNotification('A wild ' + item.pokemon_name + ' appeared!', 'Click to load map', 'static/icons/' + item.pokemon_id + '.png', item.latitude, item.longitude);
     }
     if (marker.animationDisabled != true) {
       marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -851,9 +848,10 @@ function processPokemons(i, item) {
   if (!Store.get('showPokemon')) {
     return false; // in case the checkbox was unchecked in the meantime.
   }
-
+  var now = new Date();
   if (!(item.encounter_id in map_data.pokemons) &&
-    excludedPokemon.indexOf(item.pokemon_id) < 0) {
+    (excludedPokemon.indexOf(item.pokemon_id) < 0) &&
+    (now < item.disappear_time)) {
     // add marker to map and item to dict
     if (item.marker) item.marker.setMap(null);
     if (!item.hidden) {
