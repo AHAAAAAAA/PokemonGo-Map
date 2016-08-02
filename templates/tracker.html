@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>Nearby Pokémon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        body { margin: 0 33%; height: 100%; }
+        @media (max-width: 1200px) {
+          body {
+            margin: 0 20%;
+          }
+        }
+        @media (max-width: 600px) {
+          body {
+            margin: 0 8px;
+          }
+        }
+        h1 { font-family: 'Lato', sans-serif; font-size: 1.6em; text-align: center; text-transform: uppercase; border-bottom: 2px solid black; margin: 0 25% 24px 25%; padding: 12px 0; font-weight: 100; }
+        .cell { float: left; text-align: center; height: 25%; width: 33%; }
+        .paw { display: inline-block; width: 16px; height: 16px; -webkit-transform: rotate(90deg); -moz-transform: rotate(90deg); -o-transform: rotate(90deg); -ms-transform: rotate(90deg); transform: rotate(90deg); background-size: 100%; background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDQ4LjgzOSA0OC44MzkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ4LjgzOSA0OC44Mzk7IiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMzJweCIgaGVpZ2h0PSIzMnB4Ij4KPGc+Cgk8cGF0aCBkPSJNMzkuMDQxLDM2Ljg0M2MyLjA1NCwzLjIzNCwzLjAyMiw0Ljk1MSwzLjAyMiw2Ljc0MmMwLDMuNTM3LTIuNjI3LDUuMjUyLTYuMTY2LDUuMjUyICAgYy0xLjU2LDAtMi41NjctMC4wMDItNS4xMTItMS4zMjZjMCwwLTEuNjQ5LTEuNTA5LTUuNTA4LTEuMzU0Yy0zLjg5NS0wLjE1NC01LjU0NSwxLjM3My01LjU0NSwxLjM3MyAgIGMtMi41NDUsMS4zMjMtMy41MTYsMS4zMDktNS4wNzQsMS4zMDljLTMuNTM5LDAtNi4xNjgtMS43MTMtNi4xNjgtNS4yNTJjMC0xLjc5MSwwLjk3MS0zLjUwNiwzLjAyNC02Ljc0MiAgIGMwLDAsMy44ODEtNi40NDUsNy4yNDQtOS40NzdjMi40My0yLjE4OCw1Ljk3My0yLjE4LDUuOTczLTIuMThoMS4wOTN2LTAuMDAxYzAsMCwzLjY5OC0wLjAwOSw1Ljk3NiwyLjE4MSAgIEMzNS4wNTksMzAuNTEsMzkuMDQxLDM2Ljg0NCwzOS4wNDEsMzYuODQzeiBNMTYuNjMxLDIwLjg3OGMzLjcsMCw2LjY5OS00LjY3NCw2LjY5OS0xMC40MzlTMjAuMzMxLDAsMTYuNjMxLDAgICBTOS45MzIsNC42NzQsOS45MzIsMTAuNDM5UzEyLjkzMSwyMC44NzgsMTYuNjMxLDIwLjg3OHogTTEwLjIxMSwzMC45ODhjMi43MjctMS4yNTksMy4zNDktNS43MjMsMS4zODgtOS45NzEgICBzLTUuNzYxLTYuNjcyLTguNDg4LTUuNDE0cy0zLjM0OCw1LjcyMy0xLjM4OCw5Ljk3MUMzLjY4NCwyOS44MjIsNy40ODQsMzIuMjQ1LDEwLjIxMSwzMC45ODh6IE0zMi4yMDYsMjAuODc4ICAgYzMuNywwLDYuNy00LjY3NCw2LjctMTAuNDM5UzM1LjkwNiwwLDMyLjIwNiwwcy02LjY5OSw0LjY3NC02LjY5OSwxMC40MzlDMjUuNTA3LDE2LjIwNCwyOC41MDYsMjAuODc4LDMyLjIwNiwyMC44Nzh6ICAgIE00NS43MjcsMTUuNjAyYy0yLjcyOC0xLjI1OS02LjUyNywxLjE2NS04LjQ4OCw1LjQxNHMtMS4zMzksOC43MTMsMS4zODksOS45NzJjMi43MjgsMS4yNTgsNi41MjctMS4xNjYsOC40ODgtNS40MTQgICBTNDguNDU1LDE2Ljg2MSw0NS43MjcsMTUuNjAyeiIgZmlsbD0iIzMzMzMzMyIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=); }
+        .paw.offset { position: relative; bottom: -8px; }
+        .icons-high-res { margin: 0 auto; margin-bottom: 12px; background-repeat: no-repeat; background: url('/static/icons-large-sprite.png'); }
+    </style>
+</head>
+<body>
+    <h1>Nearby</h1>
+
+    <div data-bind="foreach: $data">
+        <div class="cell">
+            <div data-bind="css: sprite.css, style: { height: sprite.icon_height, width: sprite.icon_width, backgroundPosition: sprite.poisition_x + 'px ' + sprite.poisition_y + 'px' }"></div>
+            <div style="display: none;" data-bind="visible: true">
+                <span data-bind="visible: dist() > 40" class="paw"></span>
+                <span data-bind="visible: dist() > 75" class="paw offset"></span>
+                <span data-bind="visible: dist() > 150" class="paw"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script src="static/dist/js/tracker.min.js"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;libraries=places,geometry"></script>
+</body>
+</html>

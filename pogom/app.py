@@ -33,6 +33,7 @@ class Pogom(Flask):
         self.route("/search_control", methods=['GET'])(self.get_search_control)
         self.route("/search_control", methods=['POST'])(self.post_search_control)
         self.route("/stats", methods=['GET'])(self.get_stats)
+        self.route("/tracker", methods=['GET'])(self.tracker)
 
     def set_search_control(self, control):
         self.search_control = control
@@ -178,6 +179,9 @@ class Pogom(Flask):
                                origin_lat=lat,
                                origin_lng=lon)
 
+    def tracker(self):
+        return render_template('tracker.html', gmaps_key=config['GMAPS_KEY'])
+        
     def get_valid_stat_input(self):
         duration = request.args.get("duration", type=str)
         sort = request.args.get("sort", type=str)
