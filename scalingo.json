@@ -26,6 +26,10 @@
     "EXTRA_ARGS": {
       "description": "Any extra arguments that you want to pass to runserver.py.",
       "required": false
+    },
+    "BUILDPACK_URL": {
+      "description": "Internal variable to build with node and python",
+      "value": "https://github.com/Scalingo/multi-buildpack.git"
     }
   }
 }
