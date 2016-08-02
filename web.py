@@ -22,6 +22,7 @@ REQUIRED_SETTINGS = (
     'GRID',
     'AREA_NAME',
     'REPORT_SINCE',
+    'SCAN_RADIUS',
 )
 for setting_name in REQUIRED_SETTINGS:
     if not hasattr(app_config, setting_name):

@@ -8,8 +8,7 @@ MAP_END = (13.4567, 35.6789)
 GRID = (2, 2)  # row, column
 CYCLES_PER_WORKER = 3
 
-LAT_GAIN = 0.001
-LON_GAIN = 0.0015
+SCAN_RADIUS = 70
 
 ACCOUNTS = [
     ('ash_ketchum', 'pik4chu', 'ptc'),

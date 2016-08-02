@@ -1,6 +1,5 @@
 import math
-from geopy import distance
-from geopy import Point
+from geopy import distance, Point
 
 import config
 
@@ -55,11 +54,27 @@ def float_range(start, end, step):
             start += step
 
 
+def get_gains():
+    """Returns lat and lon gain
+
+    Gain is space between circles.
+    """
+    start = Point(*get_map_center())
+    base = config.SCAN_RADIUS * math.sqrt(3)
+    height = base * math.sqrt(3) / 2
+    dis_a = distance.VincentyDistance(meters=base)
+    dis_h = distance.VincentyDistance(meters=height)
+    lon_gain = dis_a.destination(point=start, bearing=90).longitude
+    lat_gain = dis_h.destination(point=start, bearing=0).latitude
+    return abs(start.latitude - lat_gain), abs(start.longitude - lon_gain)
+
+
 def get_points_per_worker():
     """Returns all points that should be visited for whole grid"""
     total_workers = config.GRID[0] * config.GRID[1]
-    lat_gain = getattr(config, 'LAT_GAIN', 0.0015)
-    lon_gain = getattr(config, 'LON_GAIN', 0.0025)
+
+    lat_gain, lon_gain = get_gains()
+
     points = [[] for _ in range(total_workers)]
     total_rows = math.ceil(
         abs(config.MAP_START[0] - config.MAP_END[0]) / lat_gain
@@ -70,12 +85,18 @@ def get_points_per_worker():
     for map_row, lat in enumerate(
         float_range(config.MAP_START[0], config.MAP_END[0], lat_gain)
     ):
+        row_start_lon = config.MAP_START[1]
+        odd = map_row % 2 != 0
+        if odd:
+            row_start_lon -= 0.5 * lon_gain
         for map_col, lon in enumerate(
-            float_range(config.MAP_START[1], config.MAP_END[1], lon_gain)
+            float_range(row_start_lon, config.MAP_END[1], lon_gain)
         ):
             # Figure out which worker this should go to
             grid_row = int(map_row / float(total_rows) * config.GRID[0])
             grid_col = int(map_col / float(total_columns) * config.GRID[1])
+            if map_col >= total_columns:  # should happen only once per 2 rows
+                grid_col -= 1
             worker_no = grid_row * config.GRID[1] + grid_col
             points[worker_no].append((lat, lon))
     points = [

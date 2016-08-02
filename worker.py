@@ -27,8 +27,7 @@ REQUIRED_SETTINGS = (
     'MAP_END',
     'GRID',
     'ACCOUNTS',
-    'LAT_GAIN',
-    'LON_GAIN',
+    'SCAN_RADIUS',
 )
 for setting_name in REQUIRED_SETTINGS:
     if not hasattr(config, setting_name):
