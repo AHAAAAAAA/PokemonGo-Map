@@ -195,11 +195,14 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
                 time.sleep(config['REQ_HEAVY_SLEEP'])
                 failed_consecutive = 0
 
+            position = util.get_pos_by_name(args.location)
+            api.set_position(*position)
+
             # Ok, let's get started -- check our login status
-            check_login(args, account, api)
+            check_login(args, account, api, position)
 
             # Make the actual request (finally!)
-            response_dict = map_request(api, step_location)
+            response_dict = map_request(api, position)
 
             # G'damnit, nothing back. Mark it up, sleep, carry on
             if not response_dict:
@@ -222,7 +225,7 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
         search_items_queue.task_done()
 
 
-def check_login(args, account, api):
+def check_login(args, account, api, position):
 
     # Logged in? Enough time left? Cool!
     if api._auth_provider and api._auth_provider._ticket_expire:
@@ -232,8 +235,6 @@ def check_login(args, account, api):
             return
 
     # Ohhh, not good-to-go, getter' fixed up
-    position = util.get_pos_by_name(args.location)
-    api.set_position(*position)
     while not api.login(account['auth_service'], account['username'], account['password'], position[0], position[1], position[2], False):
         log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
         time.sleep(args.login_delay)
@@ -243,10 +244,12 @@ def check_login(args, account, api):
 
 def map_request(api, position):
     try:
-        req = api.create_request()
-        req.get_player()
-        req.get_inventory()
-        return req.call()
+        cell_ids = util.get_cell_ids(position[0], position[1])
+        timestamps = [0,] * len(cell_ids)
+        return api.get_map_objects(latitude=f2i(position[0]),
+                            longitude=f2i(position[1]),
+                            since_timestamp_ms=timestamps,
+                            cell_id=cell_ids)
     except Exception as e:
         log.warning('Exception while downloading map: %s', e)
         return False
