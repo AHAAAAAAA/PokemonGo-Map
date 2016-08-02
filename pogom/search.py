@@ -27,7 +27,6 @@ from queue import Queue, Empty
 
 from pgoapi import PGoApi
 from pgoapi.utilities import f2i
-from utils import get_cell_ids
 from pgoapi import utilities as util
 
 from . import config

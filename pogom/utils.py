@@ -276,17 +276,3 @@ def send_to_webhook(message_type, message):
                 log.debug('Response timeout on webhook endpoint %s', w)
             except requests.exceptions.RequestException as e:
                 log.debug(e)
-
-def get_cell_ids(lat, long):
-    origin = CellId.from_lat_lng(LatLng.from_degrees(lat, long)).parent(15)
-    walk = [origin.id()]
-
-    # 10 before and 10 after
-    next = origin.next()
-    prev = origin.prev()
-    for i in range(10):
-        walk.append(prev.id())
-        walk.append(next.id())
-        next = next.next()
-        prev = prev.prev()
-    return sorted(walk)
