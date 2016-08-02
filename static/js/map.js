@@ -1184,7 +1184,8 @@ $(function() {
   // setup the stylelist
   $selectStyle.select2({
     placeholder: "Select Style",
-    data: styleList
+    data: styleList,
+    minimumResultsForSearch: Infinity,
   });
 
   // setup the list change behavior
@@ -1370,6 +1371,8 @@ $(function() {
   });
 
   $("#nav-accordion").accordion({
+    active: false,
+    collapsible: true,
   });
 
 });

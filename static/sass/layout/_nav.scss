@@ -105,4 +105,11 @@
 		@include breakpoint(small) {
 			padding: 2.5em 1.75em;
 		}
+
+		.ui-accordion-content {
+			padding-top: 0.5em;
+			padding-right: 0.5em;
+			padding-bottom: 0.5em;
+			padding-left: 0.5em;
+		}
 	}
