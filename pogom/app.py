@@ -4,7 +4,7 @@
 import calendar
 import logging
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, session, redirect
 from flask.json import JSONEncoder
 from flask_compress import Compress
 from datetime import datetime
@@ -24,6 +24,8 @@ class Pogom(Flask):
         compress.init_app(self)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
+        self.route("/auth", methods=['GET'])(self.get_auth_page)
+        self.route("/auth", methods=['POST'])(self.authenticate_session)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
@@ -43,6 +45,30 @@ class Pogom(Flask):
     def get_search_control(self):
         return jsonify({'status': not self.search_control.is_set()})
 
+    def get_auth_page(self):
+        args = get_args()
+
+        if 'authenticated' not in session:
+            session['authenticated'] = False
+
+        if not args.secure or session['authenticated']:
+            return redirect('/')
+
+        return render_template('auth.html')
+
+    def authenticate_session(self):
+        args = get_args()
+
+        if not args.secure or session['authenticated']:
+            return redirect('/')
+        
+        if request.form['secure'] != args.secure:
+            return redirect('/auth')
+
+        session['authenticated'] = True
+
+        return redirect('/')
+
     def post_search_control(self):
         args = get_args()
         if not args.search_control:
@@ -60,6 +86,12 @@ class Pogom(Flask):
 
     def fullmap(self):
         args = get_args()
+
+        if 'authenticated' not in session:
+            session['authenticated'] = False
+
+        if args.secure and not session['authenticated']:
+            return redirect('/auth')
         fixed_display = "none" if args.fixed_location else "inline"
         search_display = "inline" if args.search_control else "none"
 
