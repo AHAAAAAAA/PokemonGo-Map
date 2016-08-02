@@ -54,8 +54,8 @@ if __name__ == '__main__':
     # These are very noisey, let's shush them up a bit
     logging.getLogger('peewee').setLevel(logging.INFO)
     logging.getLogger('requests').setLevel(logging.WARNING)
-    logging.getLogger('pogom.pgoapi.pgoapi').setLevel(logging.WARNING)
-    logging.getLogger('pogom.pgoapi.rpc_api').setLevel(logging.INFO)
+    logging.getLogger('pgoapi.pgoapi').setLevel(logging.WARNING)
+    logging.getLogger('pgoapi.rpc_api').setLevel(logging.INFO)
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
     config['parse_pokemon'] = not args.no_pokemon
