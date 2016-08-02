@@ -142,7 +142,19 @@
           </select>
         </div>
         <hr width="100%">
-        <div class="form-control">
+        <!--control to show hidden pokemons -->
+        <div class="form-control switch-container">
+          <h3>Show Hidden Poke-ns</h3>
+          <div class="onoffswitch">
+            <input id="hidden-pokemons-switch" type="checkbox" name="hidden-pokemons-switch" class="onoffswitch-checkbox">
+            <label class="onoffswitch-label" for="hidden-pokemons-switch">
+            <span class="switch-label" data-on="On" data-off="Off"></span>
+            <span class="switch-handle"></span>
+            </label>
+          </div>
+        </div>
+        <!-- end control-->
+        <div class="form-control hide-pokemons">
           <label for="exclude-pokemon">
             <h3>Hide Pokémon</h3>
             <div style="max-height:165px;overflow-y:auto";>
