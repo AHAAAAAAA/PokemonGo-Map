@@ -786,7 +786,7 @@ function processPokemons(i, item) {
     if (!item.hidden) {
       item.marker = setupPokemonMarker(item);
       map_data.pokemons[item.encounter_id] = item;
-      heat_map_data.push(new google.maps.LatLng(item.latitude, item.longitude));
+      heat_map_data.push({location: new google.maps.LatLng(item.latitude, item.longitude), encounter_id: item.encounter_id});
     }
   }
 }
@@ -842,7 +842,6 @@ function processLuredPokemon(i, item) {
     if (!item2.hidden) {
       item2.marker = setupPokemonMarker(item2);
       map_data.lure_pokemons[item2.pokestop_id] = item2;
-      heat_map_data.push(new google.maps.LatLng(item2.latitude, item2.longitude));
     }
 
   }
@@ -852,7 +851,6 @@ function processLuredPokemon(i, item) {
     if (!item2.hidden) {
       item2.marker = setupPokemonMarker(item2);
       map_data.lure_pokemons[item2.pokestop_id] = item2;
-      heat_map_data.push(new google.maps.LatLng(item2.latitude, item2.longitude));
     }
   }
 }
@@ -925,6 +923,7 @@ function redrawPokemon(pokemon_list) {
       var new_marker = setupPokemonMarker(item, skipNotification, this.marker.animationDisabled);
       item.marker.setMap(null);
       pokemon_list[key].marker = new_marker;
+      heat_map_data.push(new google.maps.LatLng(item.latitude, item.longitude));
     }
   });
 };
