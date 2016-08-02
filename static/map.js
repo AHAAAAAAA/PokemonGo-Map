@@ -13,6 +13,7 @@ var excludedPokemon = [];
 var notifiedPokemon = [];
 
 var map;
+var heatmap;
 var rawDataIsLoading = false;
 var locationMarker;
 var marker;
@@ -140,6 +141,10 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
+ 	showHeatmap: {
+  	default: false,
+ 		type: StoreTypes.Boolean
+ 	},
   playSound: {
     default: false,
     type: StoreTypes.Boolean
@@ -888,6 +893,54 @@ function processScanned(i, item) {
   }
 }
 
+function updateHeatmap() {
+  var heatmapData = [];
+  localStorage.showHeatmap = localStorage.showHeatmap || false;
+  $.ajax({
+    url: "raw_pokemons_history",
+    dataType: "json"
+  }).done(function (result) {
+    if (!localStorage.showHeatmap) {
+      return false;
+    }
+    $.each(result.pokemons, function(index, item) {
+      heatmapData.push(new google.maps.LatLng(item.latitude, item.longitude));
+    });
+  })
+  var gradient = [
+    'rgba(0, 255, 255, 0)',
+    'rgba(0, 255, 255, 1)',
+    'rgba(0, 191, 255, 1)',
+    'rgba(0, 127, 255, 1)',
+    'rgba(0, 63, 255, 1)',
+    'rgba(0, 0, 255, 1)',
+    'rgba(0, 0, 223, 1)',
+    'rgba(0, 0, 191, 1)',
+    'rgba(0, 0, 159, 1)',
+    'rgba(0, 0, 127, 1)',
+    'rgba(63, 0, 91, 1)',
+    'rgba(127, 0, 63, 1)',
+    'rgba(191, 0, 31, 1)',
+    'rgba(255, 0, 0, 1)'
+  ];
+
+  heatmap = new google.maps.visualization.HeatmapLayer({
+    data: heatmapData,
+//    gradient: gradient,
+    radius: 60,
+    map: map
+  });
+
+  changeIntensity(heatmapData.length < 100 ? 3 : 10);
+}
+
+function deleteHeatmap() {
+  heatmap.setMap(null);
+}
+
+function changeIntensity(intensity) {
+  heatmap.set('maxIntesity', intensity);
+}
 
 function updateMap() {
   loadRawData().done(function(result) {
@@ -1237,6 +1290,11 @@ $(function() {
     Store.set('iconSizeModifier', this.value);
     redrawPokemon(map_data.pokemons);
     redrawPokemon(map_data.lure_pokemons);
+  });
+
+ 	$('#heatmap-switch').change(function() {
+  	Store.set("showHeatmap", this.checked);
+ 		this.checked ? updateHeatmap() : deleteHeatmap();
   });
 
   $('#geoloc-switch').change(function() {

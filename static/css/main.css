@@ -1764,7 +1764,16 @@ body {
       padding-left: 1.25em;
       margin-left: 0.5em; }
     #header > a[href="#stats"] {
+      text-decoration: none;
       -webkit-tap-highlight-color: transparent; }
+      #header > a[href="#stats"]:before {
+        content: "";
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-family: FontAwesome;
+        font-style: normal;
+        font-weight: normal;
+        text-transform: none !important; }
       #header > a[href="#stats"]:before {
         margin: 0 0.5em 0 0; }
     #header > a + a[href="#stats"]:last-child {
