@@ -20,20 +20,20 @@ directory='/path/to/your/runserver/directory/'
 # Check to see if supervisor folder/subfolder exists if not make it
 if [ ! -d ~/supervisor ]; then
   mkdir -p supervisor/procs.d
-done
+fi
 
 # Copy supervisor files to ~/supervisor
 if [ ! -f ~/supervisor/supervisord.conf ]; then
   cp supervisord.conf ~/supervisor/supervisord.conf
-  sed -i "s,DIRECTORY,$directory," "~/supervisor/supervisord.conf"
-done
+  sed -i "s,DIRECTORY,$directory," "$HOME/supervisor/supervisord.conf"
+fi
 
 if [ ! -f ~/supervisor/template.ini ]; then
   cp template.ini ~/supervisor/template.ini
-done
+fi
 
 # Change Directory to ~/supervisor
-cd ~/supervisor
+cd "$HOME/supervisor" || echo "cd to $HOME/supervisor failed" && exit 1
 
 # Cleaning up directory
 rm -f procs.d/*.ini
@@ -62,4 +62,4 @@ while read -r line; do
 done < $coords
 
 cp supervisord.conf ~/supervisor/supervisord.conf
-sed -i "s,DIRECTORY,$directory," "~/supervisord.conf"
+sed -i "s,DIRECTORY,$directory," "$HOME/supervisord.conf"
