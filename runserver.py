@@ -28,15 +28,15 @@ if __name__ == '__main__':
     args = get_args()
 
     if args.debug:
-        log.setLevel(logging.DEBUG)
+        log.setLevel(logging.DEBUG);
     else:
-        log.setLevel(logging.INFO)
+        log.setLevel(logging.INFO);
 
     # Let's not forget to run Grunt / Only needed when running with webserver
     if not args.no_server:
         if not os.path.exists(os.path.join(os.path.dirname(__file__), 'static/dist')):
-            log.critical('Please run "grunt build" before starting the server')
-            sys.exit()
+            log.critical('Please run "grunt build" before starting the server');
+            sys.exit();
 
     # These are very noisey, let's shush them up a bit
     logging.getLogger('peewee').setLevel(logging.INFO)
@@ -54,6 +54,7 @@ if __name__ == '__main__':
         logging.getLogger('requests').setLevel(logging.DEBUG)
         logging.getLogger('pgoapi').setLevel(logging.DEBUG)
         logging.getLogger('rpc_api').setLevel(logging.DEBUG)
+
 
     position = get_pos_by_name(args.location)
     if not any(position):
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     new_location_queue.put(position)
 
     if not args.only_server:
-        # Gather the pokemon!
+        # Gather the pokemons!
         if not args.mock:
             log.debug('Starting a real search thread')
             search_thread = Thread(target=search_overseer_thread, args=(args, new_location_queue, pause_bit))
@@ -108,7 +109,7 @@ if __name__ == '__main__':
         search_thread.start()
 
     if args.cors:
-        CORS(app)
+        CORS(app);
 
     app.set_search_control(pause_bit)
     app.set_location_queue(new_location_queue)

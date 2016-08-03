@@ -36,7 +36,6 @@ import protos.RpcEnum_pb2 as RpcEnum
 
 logger = logging.getLogger(__name__)
 
-
 class PGoApi:
 
     API_ENTRY = 'https://pgorelease.nianticlabs.com/plfe/rpc'
@@ -47,7 +46,6 @@ class PGoApi:
 
         self._auth_provider = None
         self._api_endpoint = None
-        self._proxy = None
         
         self._position_lat = 0
         self._position_lng = 0
@@ -60,7 +58,6 @@ class PGoApi:
         other.log = self.log
         other._auth_provider = self._auth_provider
         other._api_endpoint = self._api_endpoint
-        other._proxy = self._proxy
         other._position_lat = self._position_lat
         other._position_lng = self._position_lng
         other._position_alt = self._position_alt
@@ -76,8 +73,8 @@ class PGoApi:
             return False
         
         player_position = self.get_position()
-
-        request = RpcApi(self._auth_provider, self._proxy)
+        
+        request = RpcApi(self._auth_provider)
         
         if self._api_endpoint:
             api_endpoint = self._api_endpoint
@@ -116,9 +113,6 @@ class PGoApi:
         self._position_lng = f2i(lng)
         self._position_alt = f2i(alt)
 
-    def set_proxy(self, proxy_config):
-        self._proxy = proxy_config
-
     def __getattr__(self, func):
         def function(**kwargs):
         
@@ -140,7 +134,8 @@ class PGoApi:
             return function
         else:
             raise AttributeError
-
+            
+        
     def login(self, provider, username, password):
     
         if not isinstance(username, basestring) or not isinstance(password, basestring):
@@ -190,3 +185,4 @@ class PGoApi:
         self.log.info('Login process completed') 
         
         return True
+        
