@@ -66,6 +66,7 @@ class Pogom(Flask):
         fixed_display = "none" if args.fixed_location else "inline"
         search_display = "inline" if args.search_control else "none"
         geo_server = args.geo_server if args.geo_server else ""
+
         return render_template('map.html',
                                lat=self.current_location[0],
                                lng=self.current_location[1],
