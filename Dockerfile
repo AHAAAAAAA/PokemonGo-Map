@@ -19,6 +19,7 @@ CMD ["-h"]
 
 # Install required system packages
 RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache bash git openssh
 
 COPY requirements.txt /usr/src/app/
 
