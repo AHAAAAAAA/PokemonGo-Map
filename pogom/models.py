@@ -357,7 +357,7 @@ def parse_map(map_dict, step_location):
                     'last_modified': datetime.utcfromtimestamp(
                         f['last_modified_timestamp_ms'] / 1000.0),
                 }
-=======
+
         if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
                 if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops
@@ -403,7 +403,6 @@ def parse_map(map_dict, step_location):
                             'last_modified': datetime.utcfromtimestamp(
                                 f['last_modified_timestamp_ms'] / 1000.0),
                         }
->>>>>>> record lured pokemon in db for future data mining analysis.
 
     pokemons_upserted = 0
     pokestops_upserted = 0
