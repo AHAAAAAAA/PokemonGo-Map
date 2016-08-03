@@ -331,6 +331,8 @@ def parse_map(map_dict, step_location):
                     lure_expiration = datetime.utcfromtimestamp(
                         f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
                     active_pokemon_id = f['lure_info']['active_pokemon_id']
+                    # unknown2 is actually encounter_id in the newer protos
+                    # It will have to be corrected when we update our pgoapi
                     encounter_id = f['lure_info']['unknown2']
                     webhook_data = {
                         'encounter_id': b64encode(str(encounter_id)),
