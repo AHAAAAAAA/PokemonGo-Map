@@ -101,18 +101,26 @@ def get_args():
     parser.add_argument('-nk', '--no-pokestops',
                         help='Disables PokeStops from the map (including parsing them into local db)',
                         action='store_true', default=False)
+    parser.add_argument('-px', '--proxy', help='Proxy url (e.g. socks5://127.0.0.1:9050)')
     parser.add_argument('--db-type', help='Type of database to be used (default: sqlite)',
                         default='sqlite')
     parser.add_argument('--db-name', help='Name of the database to be used')
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('--db-port', help='Port for the database', type=int, default=3306)
     parser.add_argument('--db-max_connections', help='Max connections for the database', type=int, default=5)
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
                         nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
+
+    if args.proxy is not None:
+        args.proxy = {
+            'http': args.proxy,
+            'https': args.proxy
+        }
 
     if args.only_server:
         if args.location is None:
@@ -122,16 +130,16 @@ def get_args():
     else:
         errors = []
 
-        if (args.username is None):
+        if args.username is None:
             errors.append('Missing `username` either as -u/--username or in config')
 
-        if (args.location is None):
+        if args.location is None:
             errors.append('Missing `location` either as -l/--location or in config')
 
-        if (args.password is None):
+        if args.password is None:
             errors.append('Missing `password` either as -p/--password or in config')
 
-        if (args.step_limit is None):
+        if args.step_limit is None:
             errors.append('Missing `step_limit` either as -st/--step-limit or in config')
 
         if args.auth_service is None:
@@ -216,6 +224,7 @@ def insert_mock_data(position):
                    gym_points=1000
                    )
 
+
 def i8ln(word):
     if config['LOCALE'] == "en":
         return word
@@ -236,6 +245,7 @@ def i8ln(word):
         log.debug('Unable to find translation for "%s" in locale %s!', word, config['LOCALE'])
         return word
 
+
 def get_pokemon_data(pokemon_id):
     if not hasattr(get_pokemon_data, 'pokemon'):
         file_path = os.path.join(
@@ -247,15 +257,19 @@ def get_pokemon_data(pokemon_id):
             get_pokemon_data.pokemon = json.loads(f.read())
     return get_pokemon_data.pokemon[str(pokemon_id)]
 
+
 def get_pokemon_name(pokemon_id):
     return i8ln(get_pokemon_data(pokemon_id)['name'])
+
 
 def get_pokemon_rarity(pokemon_id):
     return i8ln(get_pokemon_data(pokemon_id)['rarity'])
 
+
 def get_pokemon_types(pokemon_id):
     pokemon_types = get_pokemon_data(pokemon_id)['types']
     return map(lambda x: {"type": i8ln(x['type']), "color": x['color']}, pokemon_types)
+
 
 def send_to_webhook(message_type, message):
     args = get_args()

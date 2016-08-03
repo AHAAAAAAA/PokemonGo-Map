@@ -89,10 +89,12 @@
     event.stopPropagation();
   });
 
-  // Event: Prevent clicks/taps inside the stats from bubbling.
-  addEventsListener($stats, 'click touchend', function(event) {
-    event.stopPropagation();
-  });
+  if($stats){
+    // Event: Prevent clicks/taps inside the stats from bubbling.
+    addEventsListener($stats, 'click touchend', function(event) {
+      event.stopPropagation();
+    });
+  }
 
   // Event: Hide nav on body click/tap.
   addEventsListener($body, 'click touchend', function(event) {
@@ -102,11 +104,12 @@
     if (event.target.matches('a[href="#nav"]')) {
       return;
     }
-    if (event.target.matches('a[href="#stats]')) {
+    if ($stats && event.target.matches('a[href="#stats]')) {
       return;
     }
     $nav.classList.remove('visible');
-    $stats.classList.remove('visible');
+    if($stats)
+      $stats.classList.remove('visible');
   });
 
   // Toggle.
@@ -119,11 +122,13 @@
   });
 
   // Event: Toggle stats on click.
-  $statsToggle.addEventListener('click', function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    $stats.classList.toggle('visible');
-  });
+  if($statsToggle){
+    $statsToggle.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      $stats.classList.toggle('visible');
+    });
+  }
 
   // Close.
 
@@ -134,17 +139,20 @@
   $navClose.tabIndex = 0;
   $nav.appendChild($navClose);
 
-  $statsClose = document.createElement('a');
-  $statsClose.href = '#';
-  $statsClose.className = 'close';
-  $statsClose.tabIndex = 0;
-  $stats.appendChild($statsClose);
+  if($stats){
+    $statsClose = document.createElement('a');
+    $statsClose.href = '#';
+    $statsClose.className = 'close';
+    $statsClose.tabIndex = 0;
+    $stats.appendChild($statsClose);
+  }
 
   // Event: Hide on ESC.
   window.addEventListener('keydown', function(event) {
     if (event.keyCode == 27) {
       $nav.classList.remove('visible');
-      $stats.classList.remove('visible');
+      if($stats)
+        $stats.classList.remove('visible');
     }
   });
 
@@ -155,11 +163,12 @@
     $nav.classList.remove('visible');
   });
 
-  // Event: Hide stats on click.
-  $statsClose.addEventListener('click', function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    $stats.classList.remove('visible');
-  });
-
+  if($statsClose){
+    // Event: Hide stats on click.
+    $statsClose.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      $stats.classList.remove('visible');
+    });
+  }
 })();

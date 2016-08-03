@@ -10,7 +10,8 @@ module.exports = function(grunt) {
             'static/sass/main.scss',
             'static/sass/pokemon-sprite.scss'
           ],
-          'static/dist/css/mobile.built.css': 'static/sass/mobile.scss'
+          'static/dist/css/mobile.built.css': 'static/sass/mobile.scss',
+          'static/dist/css/statistics.built.css': 'static/css/statistics.css'
         }
       }
     },
@@ -36,7 +37,8 @@ module.exports = function(grunt) {
           'static/dist/js/app.built.js': 'static/js/app.js',
           'static/dist/js/map.built.js': 'static/js/map.js',
           'static/dist/js/mobile.built.js': 'static/js/mobile.js',
-          'static/dist/js/stats.built.js': 'static/js/stats.js'
+          'static/dist/js/stats.built.js': 'static/js/stats.js',
+          'static/dist/js/statistics.built.js': 'static/js/statistics.js'
         }
       }
     },
@@ -53,7 +55,8 @@ module.exports = function(grunt) {
           'static/dist/js/app.min.js': 'static/dist/js/app.built.js',
           'static/dist/js/map.min.js': 'static/dist/js/map.built.js',
           'static/dist/js/mobile.min.js': 'static/dist/js/mobile.built.js',
-          'static/dist/js/stats.min.js': 'static/dist/js/stats.built.js'
+          'static/dist/js/stats.min.js': 'static/dist/js/stats.built.js',
+          'static/dist/js/statistics.min.js': 'static/dist/js/statistics.built.js'
         }
       }
     },
@@ -103,7 +106,8 @@ module.exports = function(grunt) {
       build: {
         files: {
           'static/dist/css/app.min.css': 'static/dist/css/app.built.css',
-          'static/dist/css/mobile.min.css': 'static/dist/css/mobile.built.css'
+          'static/dist/css/mobile.min.css': 'static/dist/css/mobile.built.css',
+          'static/dist/css/statistics.min.css': 'static/dist/css/statistics.built.css'
         }
       }
     }

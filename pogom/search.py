@@ -175,6 +175,7 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
 
     # Create the API instance this will use
     api = PGoApi()
+    api.set_proxy(args.proxy)
 
     # The forever loop for the thread
     while True:
