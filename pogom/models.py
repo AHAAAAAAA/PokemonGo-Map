@@ -311,6 +311,7 @@ def parse_map(map_dict, step_location):
                     'disappear_time': d_t
                 }
 
+<<<<<<< 04ed6db6c52dbed01d9f5ff320e858f21ca2a30d
                 webhook_data = {
                     'encounter_id': b64encode(str(p['encounter_id'])),
                     'spawnpoint_id': p['spawn_point_id'],
@@ -356,6 +357,53 @@ def parse_map(map_dict, step_location):
                     'last_modified': datetime.utcfromtimestamp(
                         f['last_modified_timestamp_ms'] / 1000.0),
                 }
+=======
+        if iteration_num > 0 or step > 50:
+            for f in cell.get('forts', []):
+                if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops
+                        if 'lure_info' in f:
+                            lure_expiration = datetime.utcfromtimestamp(
+                                f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
+                            active_pokemon_id = f['lure_info']['active_pokemon_id']
+
+                            # create fake encounter_id for lured pokemon and store in db, info to be used in data mining
+                            fake_encounter_id = '{}-{}'.format(f['id'], f['lure_info']['lure_expires_timestamp_ms'])
+                            pokemons[fake_encounter_id] = {
+                                'encounter_id': b64encode(fake_encounter_id),
+                                'spawnpoint_id': f['id'],
+                                'pokemon_id': active_pokemon_id,
+                                'latitude': f['latitude'],
+                                'longitude': f['longitude'],
+                                'disappear_time': lure_expiration
+                            }
+
+                        else:
+                            lure_expiration, active_pokemon_id = None, None
+
+                        pokestops[f['id']] = {
+                            'pokestop_id': f['id'],
+                            'enabled': f['enabled'],
+                            'latitude': f['latitude'],
+                            'longitude': f['longitude'],
+                            'last_modified': datetime.utcfromtimestamp(
+                                f['last_modified_timestamp_ms'] / 1000.0),
+                            'lure_expiration': lure_expiration,
+                            'active_pokemon_id': active_pokemon_id
+                    }
+
+                elif config['parse_gyms'] and f.get('type') == None:  # Currently, there are only stops and gyms
+                        gyms[f['id']] = {
+                            'gym_id': f['id'],
+                            'team_id': f.get('owned_by_team', 0),
+                            'guard_pokemon_id': f.get('guard_pokemon_id', 0),
+                            'gym_points': f.get('gym_points', 0),
+                            'enabled': f['enabled'],
+                            'latitude': f['latitude'],
+                            'longitude': f['longitude'],
+                            'last_modified': datetime.utcfromtimestamp(
+                                f['last_modified_timestamp_ms'] / 1000.0),
+                        }
+>>>>>>> record lured pokemon in db for future data mining analysis.
 
     pokemons_upserted = 0
     pokestops_upserted = 0
