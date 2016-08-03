@@ -7,6 +7,9 @@ import shutil
 import logging
 import time
 
+# Currently supported pgoapi
+pgoapi_version = "1.1.6"
+
 # Moved here so logger is configured at load time
 logging.basicConfig(format='%(asctime)s [%(threadName)16s][%(module)14s][%(levelname)8s] %(message)s')
 log = logging.getLogger()
@@ -21,9 +24,14 @@ if os.path.isdir(oldpgoapiPath):
     log.info("Done!")
 
 # Ensure user has updated to the new api
-newpgoapiPath = os.path.join(os.path.dirname(__file__), "src/pgoapi")
-if not os.path.isdir(newpgoapiPath):
-    log.critical("It appears you're coming from an old version. You must run pip install -r requirements.txt again")
+try:
+    import pgoapi
+except:
+    log.critical("Was not able to import pgoapi. Try running pip install -r requirements.txt")
+    sys.exit(1)
+
+if pgoapi.__version__ != pgoapi_version:
+    log.critical("Your pgoapi version (%s) appears to be out of date. Try running pip install -r requirements.txt", pgoapi.__version__)
     sys.exit(1)
 
 from threading import Thread, Event
