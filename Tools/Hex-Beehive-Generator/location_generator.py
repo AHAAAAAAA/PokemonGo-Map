@@ -135,4 +135,4 @@ for i, (location, auth) in enumerate(location_and_auth):
     threadname = "Movable{}".format(i)
     output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth, threadname=threadname))
     if args.verbose:
-        print("{}, {}".format(location.lat, location.lon)
+        print("{}, {}".format(location.lat, location.lon))
