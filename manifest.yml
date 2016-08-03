@@ -1,19 +1,17 @@
-# Edit the env and host fields below. Insert your own values.
-# For host you should choose something unique
-# like: "username-pokemongo-map" (without the quotes)
-# auth service can either be "google" or "PTC"
+# Edit env fields below
 ---
 applications:
-- name: pokemongo-map
-  memory: 256M
-  host: yourchosenservicename
-  disk_quota: 200M
+- path: .
+  command: python runserver.py -a "$AUTH_SERVICE" -u "$USERNAME" -p "$PASSWORD" -l "$LOCATION" -st $STEP_COUNT -H 0.0.0.0 -P $PORT -k $GMAPS_KEY
+  buildpack: https://github.com/cloudfoundry/python-buildpack
+  memory: 512M
   instances: 1
-  buildpack: https://github.com/cloudfoundry/buildpack-python.git
-  env:
-      AUTH_SERVICE: yourchosenauthservice
-      GMAPS_KEY: yourgmapsapikey
-      USERNAME: yourauthserviceusername
-      PASSWORD: yourauthservicepassword
-      LOCATION: "yourlocation"
-      STEP_COUNT: 5
+  domain: mybluemix.net
+  disk_quota: 1024M
+  # env:
+  #   AUTH_SERVICE: yourchosenauthservice
+  #   GMAPS_KEY: yourgmapsapikey
+  #   USERNAME: yourauthserviceusername
+  #   PASSWORD: yourauthservicepassword
+  #   LOCATION: "yourlocation"
+  #   STEP_COUNT: 5
