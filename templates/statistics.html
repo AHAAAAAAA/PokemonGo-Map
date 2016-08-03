@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokemon Go Map - Statistics</title>
+
+    <!-- Fav- & Apple-Touch-Icons -->
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="static/appicons/favicon.ico" type="image/x-icon">
+    <!-- non-retina iPhone pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/114x114.png" sizes="57x57">
+    <!-- non-retina iPad pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/144x144.png" sizes="72x72">
+    <!-- non-retina iPad iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="76x76">
+    <!-- retina iPhone pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/114x114.png" sizes="114x114">
+    <!-- retina iPhone iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/120x120.png" sizes="120x120">
+    <!-- retina iPad pre iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/144x144.png" sizes="144x144">
+    <!-- retina iPad iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/152x152.png" sizes="152x152">
+    <!-- retina iPhone 6 iOS 7 -->
+    <link rel="apple-touch-icon" href="static/appicons/180x180.png" sizes="180x180">
+
+    <link rel="stylesheet" href="static/dist/css/app.min.css">
+    <link rel="stylesheet" href="static/dist/css/statistics.min.css">
+    <script src="static/js/vendor/modernizr.custom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script>
+      var center_lat = {{lat}};
+      var center_lng = {{lng}};
+    </script>
+    <script src="static/dist/js/map.min.js"></script>
+</head>
+<body>
+        <!-- Header -->
+        <header id="header">
+            <a href="#nav">Options</a>
+            <h1><a href="..">Pokémon Go Map</a></h1>
+        </header>
+        <nav id="nav">
+            {% for name, item in valid_input.items() %}
+                <div class="form-control">
+                  <label for="{{name}}">
+                    <h3>{{item.display}}</h3>
+                    <select id="{{name}}" name="{{name}}" class="input" onChange="updateMap();">
+                        {% for value, entry in item["items"].items() %}
+                            <option value="{{value}}" {{entry.selected}}>{{entry.display}}</option>
+                        {% endfor %}
+                    </select>
+                  </label>
+                </div>
+            {% endfor %}
+        </nav>
+        <div class="totals">
+            <h3 id="seen_header"></h3>
+            <h1 id="seen_total"></h1>
+        </div>
+        <div id="loading"><img src="static/images/loading.gif" alt="Loading"/></div>
+        <div class="container" id="seen_container">
+        </div>
+        <div id="location_details" class="overlay">
+            <div class="close" onclick="closeOverlay();"><img src="static/images/close.png" alt="Close" /></div>
+            <div class="location_header"><h3 id="location_header"></h3></div>
+            <div class="content">
+                <div id="times_list" style="display: none;"></div>
+                <div id="location_map">
+                    <script src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&libraries=visualization"></script>
+                </div>
+            </div>
+        </div>
+    <script src="static/dist/js/app.min.js"></script>
+    <script src="static/dist/js/statistics.min.js"></script>
+</body>
+</html>
