@@ -69,7 +69,7 @@ brng_s = 0.0
 brng = 0.0
 mod = math.degrees(math.atan(1.732 / (6 * (steps - 1) + 3)))
 
-total_workers = ((((rings * (rings - 1)) / 2) * 6) + 1) # this mathamtically calculates the total number of workers
+total_workers = (((rings * (rings - 1)) *3) + 1) # this mathamtically calculates the total number of workers
 
 locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * total_workers #this initialises the list
 locations[0] = LatLon.LatLon(LatLon.Latitude(args.lat), LatLon.Longitude(args.lon)) #set the latlon for worker 0 from cli args
