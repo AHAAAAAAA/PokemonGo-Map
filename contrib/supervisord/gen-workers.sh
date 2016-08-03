@@ -33,7 +33,7 @@ if [ ! -f ~/supervisor/template.ini ]; then
 fi
 
 # Change Directory to ~/supervisor
-cd "$HOME/supervisor" || echo "cd to $HOME/supervisor failed" && exit 1
+cd "$HOME/supervisor" || exit 1
 
 # Cleaning up directory
 rm -f procs.d/*.ini
@@ -62,4 +62,4 @@ while read -r line; do
 done < $coords
 
 cp supervisord.conf ~/supervisor/supervisord.conf
-sed -i "s,DIRECTORY,$directory," "$HOME/supervisord.conf"
+sed -i "s,DIRECTORY,$directory," "$HOME/supervisor/supervisord.conf"
