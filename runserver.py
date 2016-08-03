@@ -23,15 +23,17 @@ if os.path.isdir(oldpgoapiPath):
     shutil.rmtree(oldpgoapiPath)
     log.info("Done!")
 
-# Ensure user has updated to the new api
+# Assert pgoapi is installed
 try:
     import pgoapi
-except:
-    log.critical("Was not able to import pgoapi. Try running pip install -r requirements.txt")
+except ImportError:
+    log.critical("It seems `pgoapi` is not installed. You must run pip install -r requirements.txt again")
     sys.exit(1)
 
-if pgoapi.__version__ != pgoapi_version:
-    log.critical("Your pgoapi version (%s) appears to be out of date. Try running pip install -r requirements.txt", pgoapi.__version__)
+# Assert pgoapi >= 1.1.6 is installed
+from distutils.version import StrictVersion
+if not hasattr(pgoapi, "__version__") or StrictVersion(pgoapi.__version__) < StrictVersion(pgoapi_version):
+    log.critical("It seems `pgoapi` is not up-to-date. You must run pip install -r requirements.txt again")
     sys.exit(1)
 
 from threading import Thread, Event
