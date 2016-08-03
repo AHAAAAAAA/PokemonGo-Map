@@ -17,8 +17,8 @@ parser.add_argument("--windows", help="Generate a bat file for Windows", action=
 parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
 
 preamble = "#!/usr/bin/env bash"
-server_template = "nohup python runserver.py -os -l '{lat}, {lon}' &\n"
-worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat}, {lon}' -st {steps} {auth} &\n"
+server_template = "nohup python runserver.py -os --latitude {lat} --longitude {lon} &\n"
+worker_template = "sleep 0.5; nohup python runserver.py -ns --longitude {lat} --longitude {lon} -st {steps} {auth} &\n"
 auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
 
 R = 6378137.0
