@@ -34,7 +34,7 @@ def verify_config_file_exists(filename):
 
 def get_args():
     # fuck PEP8
-    configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
+    configpath = os.environ.get('POGOMAP_CONFIG', os.path.join(os.path.dirname(__file__), '../config/config.ini'))
     parser = configargparse.ArgParser(default_config_files=[configpath])
     parser.add_argument('-a', '--auth-service', type=str.lower, action='append',
                         help='Auth Services, either one for all accounts or one per account. \
