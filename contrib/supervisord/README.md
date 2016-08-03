@@ -8,7 +8,7 @@ Features:
 * Per worker logs
 * Web interface
 
-![supervisord website](http://supervisord.org)
+[supervisord website](http://supervisord.org)
 
 
 ## How to setup
