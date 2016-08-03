@@ -14,6 +14,9 @@ WORKDIR /usr/src/app
 # Set Entrypoint with hard-coded options
 ENTRYPOINT ["python", "./runserver.py", "--host", "0.0.0.0"]
 
+# Define how python should be stopped (Docker sends a SIGTERM by default and the server doesn't answer it)
+STOPSIGNAL SIGINT
+
 # Set default options when container is run without any command line arguments
 CMD ["-h"]
 
