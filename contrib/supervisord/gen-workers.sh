@@ -3,6 +3,8 @@
 # Name of coords file
 coords="coords.txt"
 
+# Webserver Location
+initloc="Dallas, TX"
 # Account name without numbers
 pre="accountname"
 
@@ -63,3 +65,4 @@ done < $coords
 
 cp supervisord.conf ~/supervisor/supervisord.conf
 sed -i "s,DIRECTORY,$directory," "$HOME/supervisor/supervisord.conf"
+sed -i "s/LOC/$initloc/" "$HOME/supervisor/supervisord.conf"
