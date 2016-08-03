@@ -7,17 +7,18 @@ import logging
 import time
 
 # Moved here so logger is configured at load time
-logging.basicConfig(format='%(asctime)s [%(threadName)14s][%(module)14s] [%(levelname)7s] %(message)s')
+logging.basicConfig(format='%(asctime)s [%(threadName)16s][%(module)14s][%(levelname)8s] %(message)s')
 log = logging.getLogger()
 
-from threading import Thread
+from threading import Thread, Event
+from queue import Queue
 from flask_cors import CORS
 
 from pogom import config
 from pogom.app import Pogom
 from pogom.utils import get_args, insert_mock_data
 
-from pogom.search import search_loop, create_search_threads, fake_search_loop
+from pogom.search import search_overseer_thread, fake_search_loop
 from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
 
 from pogom.pgoapi.utilities import get_pos_by_name
@@ -34,14 +35,14 @@ if __name__ == '__main__':
     # Let's not forget to run Grunt / Only needed when running with webserver
     if not args.no_server:
         if not os.path.exists(os.path.join(os.path.dirname(__file__), 'static/dist')):
-            log.critical('Please run "grunt build" before starting the server.');
+            log.critical('Please run "grunt build" before starting the server');
             sys.exit();
 
     # These are very noisey, let's shush them up a bit
-    logging.getLogger("peewee").setLevel(logging.INFO)
-    logging.getLogger("requests").setLevel(logging.WARNING)
-    logging.getLogger("pogom.pgoapi.pgoapi").setLevel(logging.WARNING)
-    logging.getLogger("pogom.pgoapi.rpc_api").setLevel(logging.INFO)
+    logging.getLogger('peewee').setLevel(logging.INFO)
+    logging.getLogger('requests').setLevel(logging.WARNING)
+    logging.getLogger('pogom.pgoapi.pgoapi').setLevel(logging.WARNING)
+    logging.getLogger('pogom.pgoapi.rpc_api').setLevel(logging.INFO)
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
     config['parse_pokemon'] = not args.no_pokemon
@@ -50,48 +51,57 @@ if __name__ == '__main__':
 
     # Turn these back up if debugging
     if args.debug:
-        logging.getLogger("requests").setLevel(logging.DEBUG)
-        logging.getLogger("pgoapi").setLevel(logging.DEBUG)
-        logging.getLogger("rpc_api").setLevel(logging.DEBUG)
+        logging.getLogger('requests').setLevel(logging.DEBUG)
+        logging.getLogger('pgoapi').setLevel(logging.DEBUG)
+        logging.getLogger('rpc_api').setLevel(logging.DEBUG)
 
 
     position = get_pos_by_name(args.location)
     if not any(position):
-        log.error('Could not get a position by name, aborting.')
+        log.error('Could not get a position by name, aborting')
         sys.exit()
 
-    log.info('Parsed location is: {:.4f}/{:.4f}/{:.4f} (lat/lng/alt)'.
-             format(*position))
-    if args.no_pokemon:
-        log.info('Parsing of Pokemon disabled.')
-    if args.no_pokestops:
-        log.info('Parsing of Pokestops disabled.')
-    if args.no_gyms:
-        log.info('Parsing of Gyms disabled.')
+    log.info('Parsed location is: %.4f/%.4f/%.4f (lat/lng/alt)',
+             position[0], position[1], position[2])
 
-    config['ORIGINAL_LATITUDE'] = position[0]
-    config['ORIGINAL_LONGITUDE'] = position[1]
+    if args.no_pokemon:
+        log.info('Parsing of Pokemon disabled')
+    if args.no_pokestops:
+        log.info('Parsing of Pokestops disabled')
+    if args.no_gyms:
+        log.info('Parsing of Gyms disabled')
+
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
 
     app = Pogom(__name__)
     db = init_database(app)
     if args.clear_db:
+        log.info('Clearing database')
         if args.db_type == 'mysql':
             drop_tables(db)
         elif os.path.isfile(args.db):
             os.remove(args.db)
     create_tables(db)
 
+    app.set_current_location(position);
+
+    # Control the search status (running or not) across threads
+    pause_bit = Event()
+    pause_bit.clear()
+
+    # Setup the location tracking queue and push the first location on
+    new_location_queue = Queue()
+    new_location_queue.put(position)
+
     if not args.only_server:
         # Gather the pokemons!
         if not args.mock:
-            log.debug('Starting a real search thread and {} search runner thread(s)'.format(args.num_threads))
-            create_search_threads(args.num_threads)
-            search_thread = Thread(target=search_loop, args=(args,))
+            log.debug('Starting a real search thread')
+            search_thread = Thread(target=search_overseer_thread, args=(args, new_location_queue, pause_bit))
         else:
             log.debug('Starting a fake search thread')
-            insert_mock_data()
+            insert_mock_data(position)
             search_thread = Thread(target=fake_search_loop)
 
         search_thread.daemon = True
@@ -100,6 +110,9 @@ if __name__ == '__main__':
 
     if args.cors:
         CORS(app);
+
+    app.set_search_control(pause_bit)
+    app.set_location_queue(new_location_queue)
 
     config['ROOT_PATH'] = app.root_path
     config['GMAPS_KEY'] = args.gmaps_key

@@ -50,7 +50,7 @@ def to_camel_case(value):
     return "".join(c.next()(x) if x else '_' for x in value.split("_"))
 
 def get_pos_by_name(location_name):
-    prog = re.compile("^(\-?\d+\.\d+)?,\s*(\-?\d+\.\d+?)$")
+    prog = re.compile("^(\-?\d+\.\d+)[,\s]\s*(\-?\d+\.\d+?)$")
     res = prog.match(location_name)
     latitude, longitude, altitude = None, None, None
     if res:
