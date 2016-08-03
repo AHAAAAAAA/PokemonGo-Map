@@ -13,8 +13,11 @@
   },
   "globals": {
     "google": true,
+    "mapData": true,
+    "Store": true,
     "centerLat": true,
-    "centerLng": true
+    "centerLng": true,
+    "pageLoaded": true
   },
   "rules": {
     "semi": 0
