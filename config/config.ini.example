@@ -20,6 +20,7 @@
 
 # Misc
 #gmaps-key:             # your Google Maps API key
+#proxy:                 # Proxy URL e.g. socks5://127.0.0.1:9050
 #webhook:               # webhook URL (including http://)
 
 # Webserver settings

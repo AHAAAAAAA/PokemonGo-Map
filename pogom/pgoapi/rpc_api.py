@@ -24,30 +24,36 @@ Author: tjado <https://github.com/tejado>
 """
 
 import logging
-import requests
 import subprocess
+import requesocks
+import requests
 
 from exceptions import NotLoggedInException, ServerBusyOrOfflineException
 
 from google.protobuf.message import DecodeError
 from protobuf_to_dict import protobuf_to_dict
-from utilities   import h2f, to_camel_case, get_class
+from utilities import to_camel_case, get_class
 
 import protos.RpcEnum_pb2 as RpcEnum
 import protos.RpcEnvelope_pb2 as RpcEnvelope
 
 class RpcApi:
     
-    def __init__(self, auth_provider):
+    def __init__(self, auth_provider, proxy_config=None):
     
         self.log = logging.getLogger(__name__)
-    
-        self._session = requests.session()
+
+        if proxy_config is None:
+            self._session = requests.session()
+        else:
+            self._session = requesocks.session()
+            self._session.proxies = proxy_config
+
         self._session.headers.update({'User-Agent': 'Niantic App'})
         self._session.verify = True
         
         self._auth_provider = auth_provider
-    
+
     def get_rpc_id(self):
         return 8145806132888207460
 
@@ -67,7 +73,7 @@ class RpcApi:
         request_proto_serialized = request_proto_plain.SerializeToString()
         try:
             http_response = self._session.post(endpoint, data=request_proto_serialized)
-        except requests.exceptions.ConnectionError as e:
+        except (requests.exceptions.ConnectionError, requesocks.exceptions.ConnectionError):
             raise ServerBusyOrOfflineException
         
         return http_response
@@ -148,8 +154,7 @@ class RpcApi:
                 raise Exception('Unknown value in request list')
     
         return mainrequest
-        
-    
+
     def _parse_main_request(self, response_raw, subrequests):
         self.log.debug('Parsing main RPC response...')
         
