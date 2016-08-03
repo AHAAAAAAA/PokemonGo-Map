@@ -74,6 +74,13 @@ if __name__ == '__main__':
     config['CHINA'] = args.china
 
     app = Pogom(__name__)
+
+    if args.secure and not args.secret_key:
+        log.critical('Secret key not set for sessions')
+        sys.exit()
+    elif args.secret_key:
+        app.secret_key = args.secret_key
+
     db = init_database(app)
     if args.clear_db:
         log.info('Clearing database')
