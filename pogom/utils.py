@@ -11,6 +11,10 @@ import logging
 import shutil
 import requests
 
+from importlib import import_module
+from s2sphere import LatLng, CellId
+from geopy.geocoders import GoogleV3
+
 from . import config
 
 log = logging.getLogger(__name__)
@@ -49,6 +53,12 @@ def get_args():
     parser.add_argument('-ld', '--login-delay',
                         help='Time delay between each login attempt',
                         type=float, default=5)
+    parser.add_argument('-lr', '--login-retries',
+                        help='Number of logins attempts before refreshing a thread',
+                        type=int, default=3)
+    parser.add_argument('-sr', '--scan-retries',
+                        help='Number of retries for a given scan cell',
+                        type=int, default=5)
     parser.add_argument('-dc', '--display-in-console',
                         help='Display Found Pokemon in Console',
                         action='store_true', default=False)
