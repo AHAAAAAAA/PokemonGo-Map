@@ -35,7 +35,7 @@ if args.windows:
     pythonpath = "C:\\Python27\\Python.exe"
     branchpath = args.installdir
     executable = args.installdir + "\\runserver.py"
-    auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
+    auth_template = '-a {} -u {} -p "{}" '  # windows people want double-quoted passwords -fook windows again!
     actual_worker_params = '{auth}-ns -l "{lat}, {lon}" -st {steps}'
     worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format( #these are the templates for windows stuff
         branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_worker_params
