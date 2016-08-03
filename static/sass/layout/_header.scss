@@ -43,7 +43,7 @@
 			}
 
 			&[href="#nav"] {
-				@include icon('\f0b0');
+				@include icon('\f013');
 				-webkit-tap-highlight-color: rgba(0,0,0,0);
 
 				&:before {
@@ -72,10 +72,6 @@
 				margin-left: 0.5em;
 			}
 
-			&:last-child {
-				padding-right: 1.25em;
-			}
-
 			@include breakpoint(small) {
 				padding: 0 0.5em;
 
@@ -83,14 +79,16 @@
 					padding-left: 1em;
 					margin-left: 0.25em;
 				}
-				
+
 				& + a[href="#stats"]:last-child {
 					padding-left: 1em;
 					margin-left: 0.25em;
 				}
+			}
 
-				&:last-child {
-					padding-right: 1em;
+			@include breakpoint(xsmall) {
+				& > .label {
+					display: none;
 				}
 			}
 		}

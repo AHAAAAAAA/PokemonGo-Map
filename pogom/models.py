@@ -3,7 +3,7 @@
 
 import logging
 import os
-import time
+import calendar
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError, create_model_tables
@@ -30,12 +30,13 @@ class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
 
 def init_database(app):
     if args.db_type == 'mysql':
-        log.info('Connecting to MySQL database on %s', args.db_host)
+        log.info('Connecting to MySQL database on %s:%i', args.db_host, args.db_port)
         db = MyRetryDB(
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
             host=args.db_host,
+            port=args.db_port,
             max_connections=args.db_max_connections,
             stale_timeout=300)
     else:
@@ -301,7 +302,7 @@ def parse_map(map_dict, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple()),
+                    'disappear_time': calendar.timegm(d_t.timetuple()),
                     'last_modified_time': p['last_modified_timestamp_ms'],
                     'time_until_hidden_ms': p['time_till_hidden_ms']
                 }
