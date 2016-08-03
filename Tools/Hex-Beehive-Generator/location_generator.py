@@ -120,7 +120,6 @@ for i in range(1, total_workers):
 
 #make a list of exactly the right number of accounts
 accountsNeeded = [(j) for i,j in itertools.izip(range(0,int(args.thread)*total_workers),itertools.cycle(accounts))]
-
 #group those accounts, concatenate the details into a single string per worker
 accountStack=[""]*total_workers
 for i in range(0,total_workers):    
