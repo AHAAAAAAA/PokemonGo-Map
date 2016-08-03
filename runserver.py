@@ -2,27 +2,29 @@
 # -*- coding: utf-8 -*-
 
 import os
-
-
-# Make sure pogom/pgoapi is actually removed if it is an empty directory
-# This is a leftover directory from the time pgoapi was embedded in PokemonGo-Map
-# The empty directory will cause problems with `import pgoapi` so it needs to go
-pgoapiPath = os.path.join(os.path.dirname(__file__), "pogom/pgoapi")
-if os.path.isdir(pgoapiPath):
-    if os.listdir(pgoapiPath) == []:
-        os.rmdir(pgoapiPath)
-    else:
-        print("Warning: pogom/pgoapi exists and could cause problems while importing pgoapi. " +
-              "Please consider removing it.")
-
-
 import sys
+import shutil
 import logging
 import time
 
 # Moved here so logger is configured at load time
 logging.basicConfig(format='%(asctime)s [%(threadName)16s][%(module)14s][%(levelname)8s] %(message)s')
 log = logging.getLogger()
+
+# Make sure pogom/pgoapi is actually removed if it is an empty directory
+# This is a leftover directory from the time pgoapi was embedded in PokemonGo-Map
+# The empty directory will cause problems with `import pgoapi` so it needs to go
+oldpgoapiPath = os.path.join(os.path.dirname(__file__), "pogom/pgoapi")
+if os.path.isdir(oldpgoapiPath):
+    log.info("I found %s, but its no longer used. Going to remove it...", oldpgoapiPath)
+    shutil.rmtree(oldpgoapiPath)
+    log.info("Done!")
+
+# Ensure user has updated to the new api
+newpgoapiPath = os.path.join(os.path.dirname(__file__), "src/pgoapi")
+if not os.path.isdir(newpgoapiPath):
+    log.critical("It appears you're coming from an old version. You must run pip install -r requirements.txt again")
+    sys.exit(1)
 
 from threading import Thread, Event
 from queue import Queue
