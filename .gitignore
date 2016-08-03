@@ -4,7 +4,7 @@
 *.db-*
 *.sass-cache
 *.orig
-config/config.ini
+config/
 static/dist/
 node_modules/
 venv/
