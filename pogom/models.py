@@ -6,7 +6,7 @@ import os
 import calendar
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
-                   DateTimeField, OperationalError, create_model_tables
+                   DateTimeField, OperationalError, create_model_tables, fn
 from playhouse.flask_utils import FlaskDB
 from playhouse.pool import PooledMySQLDatabase
 from playhouse.shortcuts import RetryOperationalError
@@ -30,12 +30,13 @@ class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
 
 def init_database(app):
     if args.db_type == 'mysql':
-        log.info('Connecting to MySQL database on %s', args.db_host)
+        log.info('Connecting to MySQL database on %s:%i', args.db_host, args.db_port)
         db = MyRetryDB(
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
             host=args.db_host,
+            port=args.db_port,
             max_connections=args.db_max_connections,
             stale_timeout=300)
     else:
@@ -74,8 +75,8 @@ class Pokemon(BaseModel):
     class Meta:
         indexes = ((('latitude', 'longitude'), False),)
 
-    @classmethod
-    def get_active(cls, swLat, swLng, neLat, neLng):
+    @staticmethod
+    def get_active(swLat, swLng, neLat, neLng):
         if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Pokemon
                      .select()
@@ -103,8 +104,8 @@ class Pokemon(BaseModel):
 
         return pokemons
 
-    @classmethod
-    def get_active_by_id(cls, ids, swLat, swLng, neLat, neLng):
+    @staticmethod
+    def get_active_by_id(ids, swLat, swLng, neLat, neLng):
         if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Pokemon
                      .select()
@@ -134,6 +135,52 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    @classmethod
+    def get_seen(cls, timediff):
+        if timediff:
+            timediff = datetime.utcnow() - timediff
+        pokemon_count_query = (Pokemon
+                               .select(Pokemon.pokemon_id,
+                                       fn.COUNT(Pokemon.pokemon_id).alias('count'),
+                                       fn.MAX(Pokemon.disappear_time).alias('lastappeared')
+                                       )
+                               .where(Pokemon.disappear_time > timediff)
+                               .group_by(Pokemon.pokemon_id)
+                               .alias('counttable')
+                               )
+        query = (Pokemon
+                 .select(Pokemon.pokemon_id,
+                         Pokemon.disappear_time,
+                         Pokemon.latitude,
+                         Pokemon.longitude,
+                         pokemon_count_query.c.count)
+                 .join(pokemon_count_query, on=(Pokemon.pokemon_id == pokemon_count_query.c.pokemon_id))
+                 .where(Pokemon.disappear_time == pokemon_count_query.c.lastappeared)
+                 .dicts()
+                 )
+        pokemons = []
+        total = 0
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemons.append(p)
+            total += p['count']
+
+        return {'pokemon': pokemons, 'total': total}
+
+    @classmethod
+    def get_appearances(cls, pokemon_id, last_appearance):
+        query = (Pokemon
+                 .select()
+                 .where((Pokemon.pokemon_id == pokemon_id) &
+                        (Pokemon.disappear_time > datetime.utcfromtimestamp(last_appearance/1000.0))
+                        )
+                 .order_by(Pokemon.disappear_time.asc())
+                 .dicts()
+                 )
+        appearances = []
+        for a in query:
+            appearances.append(a)
+        return appearances
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True, max_length=50)
@@ -147,8 +194,8 @@ class Pokestop(BaseModel):
     class Meta:
         indexes = ((('latitude', 'longitude'), False),)
 
-    @classmethod
-    def get_stops(cls, swLat, swLng, neLat, neLng):
+    @staticmethod
+    def get_stops(swLat, swLng, neLat, neLng):
         if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Pokestop
                      .select()
@@ -190,8 +237,8 @@ class Gym(BaseModel):
     class Meta:
         indexes = ((('latitude', 'longitude'), False),)
 
-    @classmethod
-    def get_gyms(cls, swLat, swLng, neLat, neLng):
+    @staticmethod
+    def get_gyms(swLat, swLng, neLat, neLng):
         if swLat is None or swLng is None or neLat is None or neLng is None:
             query = (Gym
                      .select()
@@ -221,8 +268,8 @@ class ScannedLocation(BaseModel):
     class Meta:
         indexes = ((('latitude', 'longitude'), False),)
 
-    @classmethod
-    def get_recent(cls, swLat, swLng, neLat, neLng):
+    @staticmethod
+    def get_recent(swLat, swLng, neLat, neLng):
         query = (ScannedLocation
                  .select()
                  .where((ScannedLocation.last_modified >=
@@ -342,6 +389,16 @@ def parse_map(map_dict, step_location):
     
     return True
 
+    clean_database()
+
+def clean_database():
+    flaskDb.connect_db()
+    query = (ScannedLocation
+            .delete()
+            .where((ScannedLocation.last_modified <
+                (datetime.utcnow() - timedelta(minutes=30)))))
+    query.execute()
+    flaskDb.close_db(None)
 
 
 def bulk_upsert(cls, data):

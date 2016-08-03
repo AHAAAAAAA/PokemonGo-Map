@@ -10,6 +10,8 @@ from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
 from pogom.utils import get_args
+from datetime import timedelta
+from collections import OrderedDict
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
@@ -30,6 +32,7 @@ class Pogom(Flask):
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
         self.route("/search_control", methods=['GET'])(self.get_search_control)
         self.route("/search_control", methods=['POST'])(self.post_search_control)
+        self.route("/stats", methods=['GET'])(self.get_stats)
 
     def set_search_control(self, control):
         self.search_control = control
@@ -95,6 +98,15 @@ class Pogom(Flask):
         if request.args.get('scanned', 'true') == 'true':
             d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat,
                                                       neLng)
+
+        if request.args.get('seen', 'false') == 'true':
+            for duration in self.get_valid_stat_input()["duration"]["items"].values():
+                if duration["selected"] == "SELECTED":
+                    d['seen'] = Pokemon.get_seen(duration["value"])
+                    break
+
+        if request.args.get('appearances', 'false') == 'true':
+            d['appearances'] = Pokemon.get_appearances(request.args.get('pokemonid'), request.args.get('last', type=float))
 
         return jsonify(d)
 
@@ -165,6 +177,50 @@ class Pogom(Flask):
                                pokemon_list=pokemon_list,
                                origin_lat=lat,
                                origin_lng=lon)
+
+    def get_valid_stat_input(self):
+        duration = request.args.get("duration", type=str)
+        sort = request.args.get("sort", type=str)
+        order = request.args.get("order", type=str)
+        valid_durations = OrderedDict()
+        valid_durations["1h"] = {"display": "Last Hour", "value": timedelta(hours=1), "selected": ("SELECTED" if duration == "1h" else "")}
+        valid_durations["3h"] = {"display": "Last 3 Hours", "value": timedelta(hours=3), "selected": ("SELECTED" if duration == "3h" else "")}
+        valid_durations["6h"] = {"display": "Last 6 Hours", "value": timedelta(hours=6), "selected": ("SELECTED" if duration == "6h" else "")}
+        valid_durations["12h"] = {"display": "Last 12 Hours", "value": timedelta(hours=12), "selected": ("SELECTED" if duration == "12h" else "")}
+        valid_durations["1d"] = {"display": "Last Day", "value": timedelta(days=1), "selected": ("SELECTED" if duration == "1d" else "")}
+        valid_durations["7d"] = {"display": "Last 7 Days", "value": timedelta(days=7), "selected": ("SELECTED" if duration == "7d" else "")}
+        valid_durations["14d"] = {"display": "Last 14 Days", "value": timedelta(days=14), "selected": ("SELECTED" if duration == "14d" else "")}
+        valid_durations["1m"] = {"display": "Last Month", "value": timedelta(days=365/12), "selected": ("SELECTED" if duration == "1m" else "")}
+        valid_durations["3m"] = {"display": "Last 3 Months", "value": timedelta(days=3*365/12), "selected": ("SELECTED" if duration == "3m" else "")}
+        valid_durations["6m"] = {"display": "Last 6 Months", "value": timedelta(days=6*365/12), "selected": ("SELECTED" if duration == "6m" else "")}
+        valid_durations["1y"] = {"display": "Last Year", "value": timedelta(days=365), "selected": ("SELECTED" if duration == "1y" else "")}
+        valid_durations["all"] = {"display": "Map Lifetime", "value": 0, "selected": ("SELECTED" if duration == "all" else "")}
+        if duration not in valid_durations:
+            valid_durations["1d"]["selected"] = "SELECTED"
+        valid_sort = OrderedDict()
+        valid_sort["count"] = {"display": "Count", "selected": ("SELECTED" if sort == "count" else "")}
+        valid_sort["id"] = {"display": "Pokedex Number", "selected": ("SELECTED" if sort == "id" else "")}
+        valid_sort["name"] = {"display": "Pokemon Name", "selected": ("SELECTED" if sort == "name" else "")}
+        if sort not in valid_sort:
+            valid_sort["count"]["selected"] = "SELECTED"
+        valid_order = OrderedDict()
+        valid_order["asc"] = {"display": "Ascending", "selected": ("SELECTED" if order == "asc" else "")}
+        valid_order["desc"] = {"display": "Descending", "selected": ("SELECTED" if order == "desc" else "")}
+        if order not in valid_order:
+            valid_order["desc"]["selected"] = "SELECTED"
+        valid_input = OrderedDict()
+        valid_input["duration"] = {"display": "Duration", "items": valid_durations}
+        valid_input["sort"] = {"display": "Sort", "items": valid_sort}
+        valid_input["order"] = {"display": "Order", "items": valid_order}
+        return valid_input
+
+    def get_stats(self):
+        return render_template('statistics.html',
+                               lat=self.current_location[0],
+                               lng=self.current_location[1],
+                               gmaps_key=config['GMAPS_KEY'],
+                               valid_input=self.get_valid_stat_input()
+                               )
 
 
 class CustomJSONEncoder(JSONEncoder):
