@@ -65,10 +65,12 @@ class Pogom(Flask):
         args = get_args()
         fixed_display = "none" if args.fixed_location else "inline"
         search_display = "inline" if args.search_control else "none"
+        geo_server = args.geo_server if args.geo_server else ""
 
         return render_template('map.html',
                                lat=self.current_location[0],
                                lng=self.current_location[1],
+                               geo_server=geo_server,
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
                                is_fixed=fixed_display,

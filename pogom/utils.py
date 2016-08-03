@@ -62,6 +62,8 @@ def get_args():
     parser.add_argument('-dc', '--display-in-console',
                         help='Display Found Pokemon in Console',
                         action='store_true', default=False)
+    parser.add_argument('-gs', '--geo-server',
+                        help='Set external HTTPS Geolocation Webserver.')
     parser.add_argument('-H', '--host', help='Set web server listening host',
                         default='127.0.0.1')
     parser.add_argument('-P', '--port', type=int,
