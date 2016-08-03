@@ -164,10 +164,6 @@ var StoreOptions = {
     default: false,
     type: StoreTypes.Boolean
   },
-  singleInfoWindow: {
-    default: isCompactDevice(),
-    type: StoreTypes.Boolean
-  },
   pokemonIcons: {
     default: 'highres',
     type: StoreTypes.String
@@ -363,7 +359,6 @@ function initSidebar() {
   $('#start-at-user-location-switch').prop('checked', Store.get('startAtUserLocation'));
   $('#scanned-switch').prop('checked', Store.get('showScanned'));
   $('#sound-switch').prop('checked', Store.get('playSound'));
-  $('#singleinfowindow-switch').prop('checked', Store.get('singleInfoWindow'));
   var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
   $("#next-location").css("background-color", $('#geoloc-switch').prop('checked') ? "#e0e0e0" : "#ffffff");
 
@@ -724,7 +719,7 @@ function clearInfoWindows() {
 
 function addListeners(marker) {
   marker.addListener('click', function() {
-    if (Store.get('singleInfoWindow')) {
+    if (isCompactDevice()) {
       clearInfoWindows();
     }
     marker.infoWindow.open(map, marker);
@@ -738,7 +733,7 @@ function addListeners(marker) {
   });
 
   marker.addListener('mouseover', function() {
-    if (Store.get('singleInfoWindow')) {
+    if (isCompactDevice()) {
       clearInfoWindows();
     }
     marker.infoWindow.open(map, marker);
@@ -1186,7 +1181,7 @@ function i8ln(word) {
 }
 
 function isCompactDevice() {
-  return ($(window).width() <= 736);
+  return ($(window).width() < 768);
 }
 
 //
@@ -1409,10 +1404,6 @@ $(function() {
 
   $('#sound-switch').change(function() {
     Store.set("playSound", this.checked);
-  });
-
-  $('#singleinfowindow-switch').change(function() {
-    Store.set("singleInfoWindow", this.checked);
   });
 
   $('#geoloc-switch').change(function() {
