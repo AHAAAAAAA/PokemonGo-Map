@@ -1,4 +1,4 @@
-from .utils import get_pokemon_name
+from .utils import get_pokemon_rarity, get_pokemon_name
 from pogom.utils import get_args
 from datetime import datetime
 
@@ -15,6 +15,7 @@ args = get_args()
 def printPokemon(id,lat,lng,itime):
     if args.display_in_console:
         pokemon_name = get_pokemon_name(id).lower()
+        pokemon_rarity = get_pokemon_rarity(id).lower()
         pokemon_id = str(id)
         doPrint = True
         #if args.ignore:
@@ -25,5 +26,5 @@ def printPokemon(id,lat,lng,itime):
         #        doPrint = False
         if doPrint:
             timeLeft = itime-datetime.utcnow()
-            print "======================================\n Name: %s\n Coord: (%f,%f)\n ID: %s \n Remaining Time: %s\n======================================" % (
-                pokemon_name.encode('utf-8'),lat,lng,pokemon_id,str(timeLeft))
+            print "======================================\n Name: %s\n Rarity: %s\n Coord: (%f,%f)\n ID: %s \n Remaining Time: %s\n======================================" % (
+                pokemon_name.encode('utf-8'), pokemon_rarity.encode('utf-8'),lat,lng,pokemon_id,str(timeLeft))

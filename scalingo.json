@@ -2,7 +2,7 @@
   "name": "PokemonGo Map",
   "description": "Live visualization of all the Pokémon (with option to show gyms and pokéstops) in an area on Pokémon Go.",
   "repository": "https://github.com/AHAAAAAAA/PokemonGo-Map",
-  "keywords": ["pokemon", "pokemon go"],
+  "website": "https://jz6.github.io/PoGoMap/",
   "env": {
     "AUTH_SERVICE": {
       "description": "Authentication service to use. (ptc or google)"
@@ -27,13 +27,5 @@
       "description": "Any extra arguments that you want to pass to runserver.py.",
       "required": false
     }
-  },
-  "buildpacks": [
-    {
-      "url": "heroku/nodejs"
-    },
-    {
-      "url": "heroku/python"
-    }
-  ]
+  }
 }

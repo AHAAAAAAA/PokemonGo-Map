@@ -10,6 +10,8 @@ from flask_compress import Compress
 from datetime import datetime
 from s2sphere import *
 from pogom.utils import get_args
+from datetime import timedelta
+from collections import OrderedDict
 
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
@@ -28,19 +30,49 @@ class Pogom(Flask):
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
         self.route("/mobile", methods=['GET'])(self.list_pokemon)
+        self.route("/search_control", methods=['GET'])(self.get_search_control)
+        self.route("/search_control", methods=['POST'])(self.post_search_control)
+        self.route("/stats", methods=['GET'])(self.get_stats)
+
+    def set_search_control(self, control):
+        self.search_control = control
+
+    def set_location_queue(self, queue):
+        self.location_queue = queue
+
+    def set_current_location(self, location):
+        self.current_location = location
+
+    def get_search_control(self):
+        return jsonify({'status': not self.search_control.is_set()})
+
+    def post_search_control(self):
+        args = get_args()
+        if not args.search_control:
+            return 'Search control is disabled', 403
+        action = request.args.get('action','none')
+        if action == 'on':
+            self.search_control.clear()
+            log.info('Search thread resumed')
+        elif action == 'off':
+            self.search_control.set()
+            log.info('Search thread paused')
+        else:
+            return jsonify({'message':'invalid use of api'})
+        return self.get_search_control()
 
     def fullmap(self):
         args = get_args()
-        display = "inline"
-        if args.fixed_location:
-            display = "none"
+        fixed_display = "none" if args.fixed_location else "inline"
+        search_display = "inline" if args.search_control else "none"
 
         return render_template('map.html',
-                               lat=config['ORIGINAL_LATITUDE'],
-                               lng=config['ORIGINAL_LONGITUDE'],
+                               lat=self.current_location[0],
+                               lng=self.current_location[1],
                                gmaps_key=config['GMAPS_KEY'],
                                lang=config['LOCALE'],
-                               is_fixed=display
+                               is_fixed=fixed_display,
+                               search_control=search_display
                                )
 
     def raw_data(self):
@@ -67,19 +99,28 @@ class Pogom(Flask):
             d['scanned'] = ScannedLocation.get_recent(swLat, swLng, neLat,
                                                       neLng)
 
+        if request.args.get('seen', 'false') == 'true':
+            for duration in self.get_valid_stat_input()["duration"]["items"].values():
+                if duration["selected"] == "SELECTED":
+                    d['seen'] = Pokemon.get_seen(duration["value"])
+                    break
+
+        if request.args.get('appearances', 'false') == 'true':
+            d['appearances'] = Pokemon.get_appearances(request.args.get('pokemonid'), request.args.get('last', type=float))
+
         return jsonify(d)
 
     def loc(self):
         d = {}
-        d['lat'] = config['ORIGINAL_LATITUDE']
-        d['lng'] = config['ORIGINAL_LONGITUDE']
+        d['lat'] = self.current_location[0]
+        d['lng'] = self.current_location[1]
 
         return jsonify(d)
 
     def next_loc(self):
         args = get_args()
         if args.fixed_location:
-            return 'Location searching is turned off', 403
+            return 'Location changes are turned off', 403
         # part of query string
         if request.args:
             lat = request.args.get('lat', type=float)
@@ -90,11 +131,11 @@ class Pogom(Flask):
             lon = request.form.get('lon', type=float)
 
         if not (lat and lon):
-            log.warning('Invalid next location: %s,%s' % (lat, lon))
+            log.warning('Invalid next location: %s,%s', lat, lon)
             return 'bad parameters', 400
         else:
-            config['NEXT_LOCATION'] = {'lat': lat, 'lon': lon}
-            log.info('Changing next location: %s,%s' % (lat, lon))
+            self.location_queue.put((lat, lon, 0))
+            log.info('Changing next location: %s,%s', lat, lon)
             return 'ok'
 
     def list_pokemon(self):
@@ -103,8 +144,8 @@ class Pogom(Flask):
         pokemon_list = []
 
         # Allow client to specify location
-        lat = request.args.get('lat', config['ORIGINAL_LATITUDE'], type=float)
-        lon = request.args.get('lon', config['ORIGINAL_LONGITUDE'], type=float)
+        lat = request.args.get('lat', self.current_location[0], type=float)
+        lon = request.args.get('lon', self.current_location[1], type=float)
         origin_point = LatLng.from_degrees(lat, lon)
 
         for pokemon in Pokemon.get_active(None, None, None, None):
@@ -136,6 +177,50 @@ class Pogom(Flask):
                                pokemon_list=pokemon_list,
                                origin_lat=lat,
                                origin_lng=lon)
+
+    def get_valid_stat_input(self):
+        duration = request.args.get("duration", type=str)
+        sort = request.args.get("sort", type=str)
+        order = request.args.get("order", type=str)
+        valid_durations = OrderedDict()
+        valid_durations["1h"] = {"display": "Last Hour", "value": timedelta(hours=1), "selected": ("SELECTED" if duration == "1h" else "")}
+        valid_durations["3h"] = {"display": "Last 3 Hours", "value": timedelta(hours=3), "selected": ("SELECTED" if duration == "3h" else "")}
+        valid_durations["6h"] = {"display": "Last 6 Hours", "value": timedelta(hours=6), "selected": ("SELECTED" if duration == "6h" else "")}
+        valid_durations["12h"] = {"display": "Last 12 Hours", "value": timedelta(hours=12), "selected": ("SELECTED" if duration == "12h" else "")}
+        valid_durations["1d"] = {"display": "Last Day", "value": timedelta(days=1), "selected": ("SELECTED" if duration == "1d" else "")}
+        valid_durations["7d"] = {"display": "Last 7 Days", "value": timedelta(days=7), "selected": ("SELECTED" if duration == "7d" else "")}
+        valid_durations["14d"] = {"display": "Last 14 Days", "value": timedelta(days=14), "selected": ("SELECTED" if duration == "14d" else "")}
+        valid_durations["1m"] = {"display": "Last Month", "value": timedelta(days=365/12), "selected": ("SELECTED" if duration == "1m" else "")}
+        valid_durations["3m"] = {"display": "Last 3 Months", "value": timedelta(days=3*365/12), "selected": ("SELECTED" if duration == "3m" else "")}
+        valid_durations["6m"] = {"display": "Last 6 Months", "value": timedelta(days=6*365/12), "selected": ("SELECTED" if duration == "6m" else "")}
+        valid_durations["1y"] = {"display": "Last Year", "value": timedelta(days=365), "selected": ("SELECTED" if duration == "1y" else "")}
+        valid_durations["all"] = {"display": "Map Lifetime", "value": 0, "selected": ("SELECTED" if duration == "all" else "")}
+        if duration not in valid_durations:
+            valid_durations["1d"]["selected"] = "SELECTED"
+        valid_sort = OrderedDict()
+        valid_sort["count"] = {"display": "Count", "selected": ("SELECTED" if sort == "count" else "")}
+        valid_sort["id"] = {"display": "Pokedex Number", "selected": ("SELECTED" if sort == "id" else "")}
+        valid_sort["name"] = {"display": "Pokemon Name", "selected": ("SELECTED" if sort == "name" else "")}
+        if sort not in valid_sort:
+            valid_sort["count"]["selected"] = "SELECTED"
+        valid_order = OrderedDict()
+        valid_order["asc"] = {"display": "Ascending", "selected": ("SELECTED" if order == "asc" else "")}
+        valid_order["desc"] = {"display": "Descending", "selected": ("SELECTED" if order == "desc" else "")}
+        if order not in valid_order:
+            valid_order["desc"]["selected"] = "SELECTED"
+        valid_input = OrderedDict()
+        valid_input["duration"] = {"display": "Duration", "items": valid_durations}
+        valid_input["sort"] = {"display": "Sort", "items": valid_sort}
+        valid_input["order"] = {"display": "Order", "items": valid_order}
+        return valid_input
+
+    def get_stats(self):
+        return render_template('statistics.html',
+                               lat=self.current_location[0],
+                               lng=self.current_location[1],
+                               gmaps_key=config['GMAPS_KEY'],
+                               valid_input=self.get_valid_stat_input()
+                               )
 
 
 class CustomJSONEncoder(JSONEncoder):

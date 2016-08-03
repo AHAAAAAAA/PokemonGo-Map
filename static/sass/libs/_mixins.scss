@@ -28,3 +28,13 @@
 @mixin padding($tb, $lr, $pad: (0,0,0,0)) {
 	padding: ($tb + nth($pad,1)) ($lr + nth($pad,2)) max(0.1em, $tb - _size(element-margin) + nth($pad,3)) ($lr + nth($pad,4));
 }
+
+/// Disable's the ability for the user to select an element.
+@mixin noSelect() {
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+}

@@ -5,10 +5,11 @@ python:
 env:
   - FLASK=0.11.1
 install:
+  - nvm install 4.4.7
   - pip install Flask==$FLASK
   - pip install -r requirements.txt
   - npm install grunt-cli -g
   - npm install
 script:
-  - grunt build
+  - npm run build
   - nosetests

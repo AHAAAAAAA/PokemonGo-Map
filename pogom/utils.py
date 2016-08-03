@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import getpass
 import configargparse
 import uuid
 import os
@@ -25,7 +24,7 @@ def parse_unicode(bytestring):
 def verify_config_file_exists(filename):
     fullpath = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(fullpath):
-        log.info("Could not find " + filename + ", copying default")
+        log.info('Could not find %s, copying default', filename)
         shutil.copy2(fullpath + '.example', fullpath)
 
 
@@ -33,20 +32,20 @@ def get_args():
     # fuck PEP8
     configpath = os.path.join(os.path.dirname(__file__), '../config/config.ini')
     parser = configargparse.ArgParser(default_config_files=[configpath])
-    parser.add_argument('-a', '--auth-service', type=str.lower,
-                        help='Auth Service', default='ptc')
-    parser.add_argument('-u', '--username', help='Username')
-    parser.add_argument('-p', '--password', help='Password')
+    parser.add_argument('-a', '--auth-service', type=str.lower, action='append',
+                        help='Auth Services, either one for all accounts or one per account. \
+                        ptc or google. Defaults all to ptc.')
+    parser.add_argument('-u', '--username', action='append',
+                        help='Usernames, one per account.')
+    parser.add_argument('-p', '--password', action='append',
+                        help='Passwords, either single one for all accounts or one per account.')
     parser.add_argument('-l', '--location', type=parse_unicode,
                         help='Location, can be an address or coordinates')
     parser.add_argument('-st', '--step-limit', help='Steps', type=int,
                         default=12)
     parser.add_argument('-sd', '--scan-delay',
                         help='Time delay between requests in scan threads',
-                        type=float, default=5)
-    parser.add_argument('-td', '--thread-delay',
-                        help='Time delay between each scan thread loop',
-                        type=float, default=5)
+                        type=float, default=10)
     parser.add_argument('-ld', '--login-delay',
                         help='Time delay between each login attempt',
                         type=float, default=5)
@@ -74,6 +73,9 @@ def get_args():
     parser.add_argument('-os', '--only-server',
                         help='Server-Only Mode. Starts only the Webserver without the searcher.',
                         action='store_true', default=False)
+    parser.add_argument('-nsc','--no-search-control',
+                        help='Disables search control',
+                        action='store_false', dest='search_control', default=True)
     parser.add_argument('-fl', '--fixed-location',
                         help='Hides the search bar for use in shared maps.',
                         action='store_true', default=False)
@@ -84,7 +86,9 @@ def get_args():
                         action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename',
                         default='pogom.db')
-    parser.add_argument('-t', '--num-threads', help='Number of search threads', type=int, default=1)
+    parser.add_argument('-cd', '--clear-db',
+                        help='Deletes the existing database before starting the Webserver.',
+                        action='store_true', default=False)
     parser.add_argument('-np', '--no-pokemon',
                         help='Disables Pokemon from the map (including parsing them into local db)',
                         action='store_true', default=False)
@@ -100,6 +104,8 @@ def get_args():
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('--db-port', help='Port for the database', type=int, default=3306)
+    parser.add_argument('--db-max_connections', help='Max connections for the database', type=int, default=5)
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
                         nargs='*', default=False, dest='webhooks')
     parser.set_defaults(DEBUG=False)
@@ -112,40 +118,72 @@ def get_args():
             print sys.argv[0] + ': error: arguments -l/--location is required'
             sys.exit(1)
     else:
-        if (args.username is None or args.location is None or args.step_limit is None):
+        errors = []
+
+        if (args.username is None):
+            errors.append('Missing `username` either as -u/--username or in config')
+
+        if (args.location is None):
+            errors.append('Missing `location` either as -l/--location or in config')
+
+        if (args.password is None):
+            errors.append('Missing `password` either as -p/--password or in config')
+
+        if (args.step_limit is None):
+            errors.append('Missing `step_limit` either as -st/--step-limit or in config')
+
+        if args.auth_service is None:
+            args.auth_service = ['ptc']
+
+        num_auths = len(args.auth_service)
+        num_usernames = len(args.username)
+        num_passwords = len(args.password)
+        if num_usernames > 1:
+            if num_passwords > 1 and num_usernames != num_passwords:
+                errors.append('The number of provided passwords ({}) must match the username count ({})'.format(num_passwords, num_usernames))
+            if num_auths > 1 and num_usernames != num_auths:
+                errors.append('The number of provided auth ({}) must match the username count ({})'.format(num_auths, num_usernames))
+
+        if len(errors) > 0:
             parser.print_usage()
-            print sys.argv[0] + ': error: arguments -u/--username, -l/--location, -st/--step-limit are required'
+            print sys.argv[0] + ": errors: \n - " + "\n - ".join(errors)
             sys.exit(1)
 
-        if config["PASSWORD"] is None and args.password is None:
-            config["PASSWORD"] = args.password = getpass.getpass()
-        elif args.password is None:
-            args.password = config["PASSWORD"]
+        # Fill the pass/auth if set to a single value
+        if num_passwords == 1:
+            args.password = [ args.password[0] ] * num_usernames
+        if num_auths == 1:
+            args.auth_service = [ args.auth_service[0] ] * num_usernames
+
+        # Make our accounts list
+        args.accounts = []
+
+        # Make the accounts list
+        for i, username in enumerate(args.username):
+            args.accounts.append({'username': username, 'password': args.password[i], 'auth_service': args.auth_service[i]})
 
     return args
 
 
-def insert_mock_data():
+def insert_mock_data(position):
     num_pokemon = 6
     num_pokestop = 6
     num_gym = 6
 
-    log.info('Creating fake: {} pokemon, {} pokestops, {} gyms'.format(
-        num_pokemon, num_pokestop, num_gym))
+    log.info('Creating fake: %d pokemon, %d pokestops, %d gyms',
+        num_pokemon, num_pokestop, num_gym)
 
     from .models import Pokemon, Pokestop, Gym
     from .search import generate_location_steps
 
-    latitude, longitude = float(config['ORIGINAL_LATITUDE']),\
-        float(config['ORIGINAL_LONGITUDE'])
+    latitude, longitude = float(position[0]), float(position[1])
 
-    locations = [l for l in generate_location_steps((latitude, longitude),
-                 num_pokemon)]
+    locations = [l for l in generate_location_steps((latitude, longitude), num_pokemon)]
     disappear_time = datetime.now() + timedelta(hours=1)
 
     detect_time = datetime.now()
 
-    for i in range(num_pokemon):
+    for i in range(1, num_pokemon):
         Pokemon.create(encounter_id=uuid.uuid4(),
                        spawnpoint_id='sp{}'.format(i),
                        pokemon_id=(i+1) % 150,
@@ -154,7 +192,7 @@ def insert_mock_data():
                        disappear_time=disappear_time,
                        detect_time=detect_time)
 
-    for i in range(num_pokestop):
+    for i in range(1, num_pokestop):
         Pokestop.create(pokestop_id=uuid.uuid4(),
                         enabled=True,
                         latitude=locations[i+num_pokemon][0],
@@ -165,7 +203,7 @@ def insert_mock_data():
                         active_pokemon_id=i
                         )
 
-    for i in range(num_gym):
+    for i in range(1, num_gym):
         Gym.create(gym_id=uuid.uuid4(),
                    team_id=i % 3,
                    guard_pokemon_id=(i+1) % 150,
@@ -176,19 +214,46 @@ def insert_mock_data():
                    gym_points=1000
                    )
 
-
-def get_pokemon_name(pokemon_id):
-    if not hasattr(get_pokemon_name, 'names'):
+def i8ln(word):
+    if config['LOCALE'] == "en":
+        return word
+    if not hasattr(i8ln, 'dictionary'):
         file_path = os.path.join(
             config['ROOT_PATH'],
             config['LOCALES_DIR'],
-            'pokemon.{}.json'.format(config['LOCALE']))
+            '{}.min.json'.format(config['LOCALE']))
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as f:
+                i8ln.dictionary = json.loads(f.read())
+        else:
+            log.warning('Skipping translations - Unable to find locale file: %s', file_path)
+            return word
+    if word in i8ln.dictionary:
+        return i8ln.dictionary[word]
+    else:
+        log.debug('Unable to find translation for "%s" in locale %s!', word, config['LOCALE'])
+        return word
+
+def get_pokemon_data(pokemon_id):
+    if not hasattr(get_pokemon_data, 'pokemon'):
+        file_path = os.path.join(
+            config['ROOT_PATH'],
+            config['DATA_DIR'],
+            'pokemon.min.json')
 
         with open(file_path, 'r') as f:
-            get_pokemon_name.names = json.loads(f.read())
+            get_pokemon_data.pokemon = json.loads(f.read())
+    return get_pokemon_data.pokemon[str(pokemon_id)]
 
-    return get_pokemon_name.names[str(pokemon_id)]
+def get_pokemon_name(pokemon_id):
+    return i8ln(get_pokemon_data(pokemon_id)['name'])
 
+def get_pokemon_rarity(pokemon_id):
+    return i8ln(get_pokemon_data(pokemon_id)['rarity'])
+
+def get_pokemon_types(pokemon_id):
+    pokemon_types = get_pokemon_data(pokemon_id)['types']
+    return map(lambda x: {"type": i8ln(x['type']), "color": x['color']}, pokemon_types)
 
 def send_to_webhook(message_type, message):
     args = get_args()
@@ -205,6 +270,6 @@ def send_to_webhook(message_type, message):
             try:
                 requests.post(w, json=data, timeout=(None, 1))
             except requests.exceptions.ReadTimeout:
-                log.debug('Could not receive response from webhook')
+                log.debug('Response timeout on webhook endpoint %s', w)
             except requests.exceptions.RequestException as e:
                 log.debug(e)

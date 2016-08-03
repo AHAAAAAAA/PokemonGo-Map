@@ -33,7 +33,10 @@ WORKDIR /usr/src/app
 CMD [ "sh" ]
 
 # basic packages we're using
-RUN apk add --update ca-certificates build-base nodejs
+RUN apk add --update ca-certificates build-base nodejs ruby ruby-dev libffi-dev
 
 # so that the npm-installed grunt can be called with just "grunt"
 RUN npm install -g grunt-cli
+
+# For travis-ci
+RUN gem install travis

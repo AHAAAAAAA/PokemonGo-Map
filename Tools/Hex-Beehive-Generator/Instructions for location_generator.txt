@@ -1,0 +1,45 @@
+https://github.com/AHAAAAAAA/PokemonGo-Map/wiki/How-to-use-Hex-Beehive-Generator
+
+Location_generator.py creates a list of locations in a hexagonal grid pattern around a central point.
+It generates a script to run all the workers for you.
+
+If you have a list of accounts, it will put the login details into the worker commands, rotating through your list
+
+
+Experimental Windows support!  Use the --windows flag
+
+
+
+An example (Linux):
+    python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts /home/pika/accounts.csv
+An example (Windows):
+    python location_generator.py -lat -33.9 -lon 151.1 -st 5 -lp 3 --accounts C:\Documents\accounts.csv --windows --installdir="C:\Downloads\PokemonGo-Map"
+
+
+usage: location_generator.py [-h] -lat LAT -lon LON [-st STEPS] [-lp LEAPS]
+                             [-o OUTPUT] [--accounts ACCOUNTS] [--auth AUTH]
+
+  -lat LAT, --lat LAT   latitude
+
+  -lon LON, --lon LON   longitude
+
+  -st STEPS, --steps STEPS
+                        steps
+
+  -lp LEAPS, --leaps LEAPS
+                        like 'steps' but for workers instead of scans
+
+  -o OUTPUT, --output OUTPUT
+                        output file for the script
+
+  --accounts ACCOUNTS   List of your accounts, in csv [username],[password]
+                        format
+
+  --auth AUTH           Auth method (ptc or google)
+
+  -v, --verbose         Print lat/lng to stdout for debugging
+
+  --windows             Generate a bat file for Windows
+
+  --installdir INSTALLDIR
+                        Installation directory (only used for Windows)
