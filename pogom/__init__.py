@@ -7,8 +7,5 @@ config = {
     'ROOT_PATH': '',
     'DATA_DIR': 'static/dist/data',
     'GMAPS_KEY': None,
-    'REQ_SLEEP': 5,
-    'REQ_HEAVY_SLEEP': 30,
-    'REQ_MAX_FAILED': 5,
     'STEP_LIMIT': 12
 }

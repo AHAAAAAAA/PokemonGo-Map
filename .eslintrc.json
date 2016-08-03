@@ -1,0 +1,22 @@
+{
+  "extends": "standard",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": false
+    },
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "jquery": true
+  },
+  "globals": {
+    "google": true,
+    "centerLat": true,
+    "centerLng": true
+  },
+  "rules": {
+    "semi": 0
+  }
+}

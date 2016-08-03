@@ -15,17 +15,8 @@ module.exports = function(grunt) {
         }
       }
     },
-    jshint: {
-      files: ['Gruntfile.js', 'js/*.js', '!js/vendor/**/*.js'],
-      options: {
-        reporter: require('jshint-stylish'),
-        globals: {
-          jQuery: true,
-          console: true,
-          module: true,
-          document: true
-        }
-      }
+    eslint: {
+      src: ['static/js/*.js', '!js/vendor/**/*.js']
     },
     babel: {
       options: {
@@ -114,7 +105,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-copy');
@@ -128,10 +119,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask('js-build', ['babel', 'uglify', 'minjson']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
-  grunt.registerTask('js-lint', ['jshint']);
+  grunt.registerTask('js-lint', ['eslint']);
 
   grunt.registerTask('build', ['clean', 'js-build', 'css-build']);
   grunt.registerTask('lint', ['js-lint']);
-  grunt.registerTask('default', ['lint', 'build', 'watch']);
+  grunt.registerTask('default', ['build', 'watch']);
 
 };

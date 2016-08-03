@@ -9,7 +9,7 @@ var navBtn = document.querySelector('#nav button');
 navBtn.onclick = function() {
   if (localStorage.useLoc !== 'true') {
     navBtn.disabled = true;
-    return (location.href="/mobile");
+    return (location.href="mobile");
   }
   else if ("geolocation" in navigator) {
     // Getting the GPS position can be very slow on some devices
@@ -19,7 +19,7 @@ navBtn.onclick = function() {
     // Get location and use it!
     navigator.geolocation.getCurrentPosition(function(p) {
       navBtn.innerText = 'Reloading...';
-      location.href='/mobile?lat='+p.coords.latitude+'&lon='+p.coords.longitude;
+      location.href='mobile?lat='+p.coords.latitude+'&lon='+p.coords.longitude;
 
     }, function(err) {
       navBtn.innerText = 'Reload';
