@@ -7,8 +7,9 @@ MAP_START = (12.3456, 34.5678)
 MAP_END = (13.4567, 35.6789)
 GRID = (2, 2)  # row, column
 CYCLES_PER_WORKER = 3
+SCAN_DELAY = 10  # seconds
 
-SCAN_RADIUS = 70
+SCAN_RADIUS = 70  # metres
 
 ACCOUNTS = [
     ('ash_ketchum', 'pik4chu', 'ptc'),
