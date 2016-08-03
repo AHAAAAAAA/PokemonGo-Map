@@ -1054,7 +1054,7 @@ function myLocationButton(map, marker) {
   map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationContainer);
 }
 
-function centerMapOnLocation() {
+function setUserPosition(position) {
   var currentLocation = document.getElementById('current-location');
   var imgX = '0';
   var animationInterval = setInterval(function() {
@@ -1062,21 +1062,37 @@ function centerMapOnLocation() {
     else imgX = '-18';
     currentLocation.style.backgroundPosition = imgX + 'px 0';
   }, 500);
+  var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+  locationMarker.setVisible(true);
+  locationMarker.setOptions({
+    'opacity': 1
+  });
+  locationMarker.setPosition(latlng);
+  map.setCenter(latlng);
+  clearInterval(animationInterval);
+  currentLocation.style.backgroundPosition = '-144px 0px';
+}
+
+function centerMapOnLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      locationMarker.setVisible(true);
-      locationMarker.setOptions({
-        'opacity': 1
-      });
-      locationMarker.setPosition(latlng);
-      map.setCenter(latlng);
-      clearInterval(animationInterval);
-      currentLocation.style.backgroundPosition = '-144px 0px';
-    });
-  } else {
-    clearInterval(animationInterval);
-    currentLocation.style.backgroundPosition = '0px 0px';
+    if (geo_server){
+      var pop = undefined;
+      var receiveGPS = function(event){
+        pop.close();
+        window.removeEventListener('message',receiveGPS,false);
+        var origin = event.origin || event.originalEvent.origin;
+        if (origin !== geo_server)
+          return;
+        if(event.data){
+          setUserPosition(event.data);
+        }
+          
+      };
+      window.addEventListener("message", receiveGPS, false);
+      pop = window.open(geo_server, "", 'scrollbars=no, width=500, height=300, top=1, left=1');
+    }else{
+      navigator.geolocation.getCurrentPosition(setUserPosition);
+    }
   }
 }
 
@@ -1393,6 +1409,9 @@ $(function() {
 
   $('#start-at-user-location-switch').change(function() {
     Store.set("startAtUserLocation", this.checked);
+    if(this.checked){
+      centerMapOnLocation()
+    }
   });
 
   $("#nav-accordion").accordion({
