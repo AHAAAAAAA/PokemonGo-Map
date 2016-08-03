@@ -129,7 +129,6 @@ if __name__ == '__main__':
 
     config['ROOT_PATH'] = app.root_path
     config['GMAPS_KEY'] = args.gmaps_key
-    config['REQ_SLEEP'] = args.scan_delay
 
     if args.no_server:
         # This loop allows for ctrl-c interupts to work since flask won't be holding the program open

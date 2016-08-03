@@ -174,56 +174,73 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
 
     log.debug('Search worker thread starting')
 
-    # Create the API instance this will use
-    api = PGoApi()
-
     # The forever loop for the thread
     while True:
+        try:
+            log.debug('Entering search loop')
 
-        # Grab the next thing to search (when available)
-        step, step_location = search_items_queue.get()
+            # Create the API instance this will use
+            api = PGoApi()
 
-        log.info('Searching step %d, remaining %d', step, search_items_queue.qsize())
+            # The forever loop for the searches
+            while True:
 
-        # The loop to try very hard to scan this step
-        failed_consecutive = 0
-        while True:
+                # Grab the next thing to search (when available)
+                step, step_location = search_items_queue.get()
 
-            # If requests have been too many, sleep longer
-            if failed_consecutive >= config['REQ_MAX_FAILED']:
-                log.error('Servers under heavy load, waiting for extended (%g) sleep', config['REQ_MAX_FAILED'])
-                time.sleep(config['REQ_HEAVY_SLEEP'])
-                failed_consecutive = 0
+                log.info('Search step %d beginning (queue size is %d)', step, search_items_queue.qsize())
 
-            #position = util.get_pos_by_name(args.location)
-            position = step_location
-            api.set_position(*position)
+                # Let the api know where we intend to be for this loop
+                api.set_position(*step_location)
 
-            # Ok, let's get started -- check our login status
-            check_login(args, account, api, position)
+                # The loop to try very hard to scan this step
+                failed_total = 0
+                while True:
 
-            # Make the actual request (finally!)
-            response_dict = map_request(api, position)
+                    # After so many attempts, let's get out of here
+                    if failed_total >= args.scan_retries:
+                        # I am choosing to NOT place this item back in the queue
+                        # otherwise we could get a "bad scan" area and be stuck
+                        # on this overall loop forever. Better to lose one cell
+                        # than have the scanner, essentially, halt.
+                        log.error('Search step %d went over max scan_retires; abandoning', step)
+                        break
 
-            # G'damnit, nothing back. Mark it up, sleep, carry on
-            if not response_dict:
-                log.error('Search area download failed, sleeping for %g and trying again', args.scan_delay)
-                failed_consecutive += 1
+                    # Increase sleep delay between each failed scan
+                    # By default scan_dela=5, scan_retries=5 so
+                    # We'd see timeouts of 5, 10, 15, 20, 25
+                    sleep_time = args.scan_delay * (1+failed_total)
+
+                    # Ok, let's get started -- check our login status
+                    check_login(args, account, api, step_location)
+
+                    # Make the actual request (finally!)
+                    response_dict = map_request(api, step_location)
+
+                    # G'damnit, nothing back. Mark it up, sleep, carry on
+                    if not response_dict:
+                        log.error('Search step %d area download failed, retyring request in %g seconds', step, sleep_time)
+                        failed_total += 1
+                        time.sleep(sleep_time)
+                        continue
+
+                    # Got the response, lock for parsing and do so (or fail, whatever)
+                    with parse_lock:
+                        try:
+                            parsed = parse_map(response_dict, step_location)
+                            log.debug('Search step %s completed', step)
+                            search_items_queue.task_done()
+                            break # All done, get out of the request-retry loop
+                        except KeyError:
+                            log.error('Search step %s map parsing failed, retyring request in %g seconds', step, sleep_time)
+                            failed_total += 1
+                            time.sleep(sleep_time)
+
                 time.sleep(args.scan_delay)
-                continue
 
-            # Got the response, lock for parsing and do so (or fail, whatever)
-            with parse_lock:
-                try:
-                    parsed = parse_map(response_dict, step_location)
-                    log.debug('Scan step %s completed', step)
-                    break # All done, get out of the request-retry loop
-                except KeyError:
-                    log.error('Parsing map response failed, retyring request')
-                    failed_consecutive += 1
-
-        time.sleep(args.scan_delay)
-        search_items_queue.task_done()
+        # catch any process exceptions, log them, and continue the thread
+        except Exception as e:
+            log.exception('Exception in search_worker: %s', e)
 
 
 def check_login(args, account, api, position):
@@ -235,13 +252,17 @@ def check_login(args, account, api, position):
             log.debug('Credentials remain valid for another %f seconds', remaining_time)
             return
 
-    # Ohhh, not good-to-go, getter' fixed up
+    # Try to login (a few times, but don't get stuck here)
+    i = 0
     while not api.login(account['auth_service'], account['username'], account['password'], position[0], position[1], position[2], False):
-        log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
-        time.sleep(args.login_delay)
+        if i >= args.login_retries:
+            raise TooManyLoginAttempts('Exceeded login attempts')
+        else:
+            i += 1
+            log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
+            time.sleep(args.login_delay)
 
     log.debug('Login for account %s successful', account['username'])
-
 
 def map_request(api, position):
     try:
@@ -254,3 +275,6 @@ def map_request(api, position):
     except Exception as e:
         log.warning('Exception while downloading map: %s', e)
         return False
+
+class TooManyLoginAttempts(Exception):
+    pass
