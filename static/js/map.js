@@ -713,7 +713,6 @@ function clearSelection() {
 
 function clearInfoWindows() {
     $.each(map_data.info_windows, function(key, value) {
-        // Close all windows
         value.close();
     });
 };
