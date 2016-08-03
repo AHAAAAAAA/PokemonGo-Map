@@ -3,13 +3,11 @@
 
 config = {
     'LOCALE': 'en',
-    'LOCALES_DIR': 'static/locales',
+    'LOCALES_DIR': 'static/dist/locales',
     'ROOT_PATH': '',
-    'ORIGINAL_LATITUDE': None,
-    'ORIGINAL_LONGITUDE': None,
+    'DATA_DIR': 'static/dist/data',
     'GMAPS_KEY': None,
     'REQ_SLEEP': 5,
     'REQ_HEAVY_SLEEP': 30,
-    'REQ_MAX_FAILED': 5,
-    'PASSWORD': None
+    'REQ_MAX_FAILED': 5
 }

@@ -3,7 +3,7 @@
 
 import logging
 import os
-import time
+import calendar
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
                    DateTimeField, OperationalError, create_model_tables
@@ -30,17 +30,18 @@ class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
 
 def init_database(app):
     if args.db_type == 'mysql':
+        log.info('Connecting to MySQL database on %s:%i', args.db_host, args.db_port)
         db = MyRetryDB(
             args.db_name,
             user=args.db_user,
             password=args.db_pass,
             host=args.db_host,
+            port=args.db_port,
             max_connections=args.db_max_connections,
             stale_timeout=300)
-        log.info('Connecting to MySQL database on {}.'.format(args.db_host))
     else:
+        log.info('Connecting to local SQLLite database')
         db = SqliteDatabase(args.db)
-        log.info('Connecting to local SQLLite database.')
 
     app.config['DATABASE'] = db
     flaskDb.init_app(app)
@@ -240,7 +241,7 @@ class ScannedLocation(BaseModel):
         return scans
 
 
-def parse_map(map_dict, iteration_num, step, step_location):
+def parse_map(map_dict, step_location):
     pokemons = {}
     pokestops = {}
     gyms = {}
@@ -270,44 +271,45 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'pokemon_id': p['pokemon_data']['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': time.mktime(d_t.timetuple())
+                    'disappear_time': calendar.timegm(d_t.timetuple()),
+                    'last_modified_time': p['last_modified_timestamp_ms'],
+                    'time_until_hidden_ms': p['time_till_hidden_ms']
                 }
 
                 send_to_webhook('pokemon', webhook_data)
 
-        if iteration_num > 0 or step > 50:
-            for f in cell.get('forts', []):
-                if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops
-                        if 'lure_info' in f:
-                            lure_expiration = datetime.utcfromtimestamp(
-                                f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
-                            active_pokemon_id = f['lure_info']['active_pokemon_id']
-                        else:
-                            lure_expiration, active_pokemon_id = None, None
+        for f in cell.get('forts', []):
+            if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops
+                if 'lure_info' in f:
+                    lure_expiration = datetime.utcfromtimestamp(
+                        f['lure_info']['lure_expires_timestamp_ms'] / 1000.0)
+                    active_pokemon_id = f['lure_info']['active_pokemon_id']
+                else:
+                    lure_expiration, active_pokemon_id = None, None
 
-                        pokestops[f['id']] = {
-                            'pokestop_id': f['id'],
-                            'enabled': f['enabled'],
-                            'latitude': f['latitude'],
-                            'longitude': f['longitude'],
-                            'last_modified': datetime.utcfromtimestamp(
-                                f['last_modified_timestamp_ms'] / 1000.0),
-                            'lure_expiration': lure_expiration,
-                            'active_pokemon_id': active_pokemon_id
-                        }
+                pokestops[f['id']] = {
+                    'pokestop_id': f['id'],
+                    'enabled': f['enabled'],
+                    'latitude': f['latitude'],
+                    'longitude': f['longitude'],
+                    'last_modified': datetime.utcfromtimestamp(
+                        f['last_modified_timestamp_ms'] / 1000.0),
+                    'lure_expiration': lure_expiration,
+                    'active_pokemon_id': active_pokemon_id
+                }
 
-                elif config['parse_gyms'] and f.get('type') is None:  # Currently, there are only stops and gyms
-                        gyms[f['id']] = {
-                            'gym_id': f['id'],
-                            'team_id': f.get('owned_by_team', 0),
-                            'guard_pokemon_id': f.get('guard_pokemon_id', 0),
-                            'gym_points': f.get('gym_points', 0),
-                            'enabled': f['enabled'],
-                            'latitude': f['latitude'],
-                            'longitude': f['longitude'],
-                            'last_modified': datetime.utcfromtimestamp(
-                                f['last_modified_timestamp_ms'] / 1000.0),
-                        }
+            elif config['parse_gyms'] and f.get('type') is None:  # Currently, there are only stops and gyms
+                gyms[f['id']] = {
+                    'gym_id': f['id'],
+                    'team_id': f.get('owned_by_team', 0),
+                    'guard_pokemon_id': f.get('guard_pokemon_id', 0),
+                    'gym_points': f.get('gym_points', 0),
+                    'enabled': f['enabled'],
+                    'latitude': f['latitude'],
+                    'longitude': f['longitude'],
+                    'last_modified': datetime.utcfromtimestamp(
+                        f['last_modified_timestamp_ms'] / 1000.0),
+                }
 
     pokemons_upserted = 0
     pokestops_upserted = 0
@@ -315,23 +317,20 @@ def parse_map(map_dict, iteration_num, step, step_location):
 
     if pokemons and config['parse_pokemon']:
         pokemons_upserted = len(pokemons)
-        log.debug("Upserting {} pokemon".format(len(pokemons)))
         bulk_upsert(Pokemon, pokemons)
 
     if pokestops and config['parse_pokestops']:
         pokestops_upserted = len(pokestops)
-        log.debug("Upserting {} pokestops".format(len(pokestops)))
         bulk_upsert(Pokestop, pokestops)
 
     if gyms and config['parse_gyms']:
         gyms_upserted = len(gyms)
-        log.debug("Upserting {} gyms".format(len(gyms)))
         bulk_upsert(Gym, gyms)
 
-    log.info("Upserted {} pokemon, {} pokestops, and {} gyms".format(
-      pokemons_upserted,
-      pokestops_upserted,
-      gyms_upserted))
+    log.info('Upserted %d pokemon, %d pokestops, and %d gyms',
+        pokemons_upserted,
+        pokestops_upserted,
+        gyms_upserted)
 
     scanned[0] = {
         'scanned_id': str(step_location[0])+','+str(step_location[1]),
@@ -341,6 +340,8 @@ def parse_map(map_dict, iteration_num, step, step_location):
     }
 
     bulk_upsert(ScannedLocation, scanned)
+    
+    return True
 
 
 
@@ -352,11 +353,11 @@ def bulk_upsert(cls, data):
     flaskDb.connect_db()
 
     while i < num_rows:
-        log.debug("Inserting items {} to {}".format(i, min(i+step, num_rows)))
+        log.debug('Inserting items %d to %d', i, min(i+step, num_rows))
         try:
             InsertQuery(cls, rows=data.values()[i:min(i+step, num_rows)]).upsert().execute()
-        except OperationalError as e:
-            log.warning("%s... Retrying", e)
+        except Exception as e:
+            log.warning('%s... Retrying', e)
             continue
 
         i+=step
