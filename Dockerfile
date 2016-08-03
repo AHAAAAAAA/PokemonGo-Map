@@ -8,6 +8,9 @@ FROM python:2.7-alpine
 # Default port the webserver runs on
 EXPOSE 5000
 
+# Define how python should be stopped (Docker sends a SIGTERM by default and the server doesn't answer it)
+STOPSIGNAL SIGINT
+
 # Working directory for the application
 WORKDIR /usr/src/app
 
