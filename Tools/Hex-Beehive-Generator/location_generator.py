@@ -10,6 +10,7 @@ parser.add_argument("-lon", "--lon", help="longitude", type=float, required=True
 parser.add_argument("-st", "--steps", help="steps", default=5, type=int)
 parser.add_argument("-lp", "--leaps", help="like 'steps' but for workers instead of scans", default=3, type=int)
 parser.add_argument("-o", "--output", default="../../beehive.sh", help="output file for the script")
+parser.add_argument("-t", "--thread", default=1, help="Number of accounts and threads per worker")
 parser.add_argument("--accounts", help="List of your accounts, in csv [username],[password] format", default=None)
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
 parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
@@ -17,9 +18,9 @@ parser.add_argument("--windows", help="Generate a bat file for Windows", action=
 parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
 
 preamble = "#!/usr/bin/env bash"
-server_template = "nohup python runserver.py -os -l '{lat}, {lon}' &\n"
-worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat}, {lon}' -st {steps} {auth} &\n"
-auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
+server_template = "nohup python runserver.py -os -l '{lat}, {lon}' &\n" #this is the output template for linux
+worker_template = "sleep 0.5; nohup python runserver.py -ns -l '{lat}, {lon}' -st {steps} {auth}&\n" # so is this
+auth_template = "-a {} -u {} -p '{}' "  # unix people want single-quoted passwords - for threading reasons whitespace after ' before ""
 
 R = 6378137.0
 r_hex = 52.5  # probably not correct
@@ -35,13 +36,13 @@ if args.windows:
     branchpath = args.installdir
     executable = args.installdir + "\\runserver.py"
     auth_template = '-a {} -u {} -p "{}"'  # windows people want double-quoted passwords
-    actual_worker_params = '{auth} -ns -l "{lat}, {lon}" -st {steps}'
-    worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
+    actual_worker_params = '{auth}-ns -l "{lat}, {lon}" -st {steps}'
+    worker_template = 'Start "{{threadname}}" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format( #these are the templates for windows stuff
         branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_worker_params
     )
     actual_server_params = '-os -l "{lat}, {lon}"'
     server_template = 'Start "Server" /d {branchpath} /MIN {pythonpath} {executable} {actual_params}\nping 127.0.0.1 -n 6 > nul\n\n'.format(
-        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_server_params
+        branchpath=branchpath, pythonpath=pythonpath, executable=executable, actual_params = actual_server_params # ends here
     )
     if args.output == "../../beehive.sh":
         args.output = "../../beehive.bat"
@@ -68,14 +69,10 @@ brng_s = 0.0
 brng = 0.0
 mod = math.degrees(math.atan(1.732 / (6 * (steps - 1) + 3)))
 
-total_workers = 1
+total_workers = ((((rings * (rings - 1)) / 2) * 6) + 1) # this mathamtically calculates the total number of workers
 
-locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * ((((rings * (rings - 1)) / 2) * 6) + 1) #this calculates how many workers there will be and initialises the list
+locations = [LatLon.LatLon(LatLon.Latitude(0), LatLon.Longitude(0))] * total_workers #this initialises the list
 locations[0] = LatLon.LatLon(LatLon.Latitude(args.lat), LatLon.Longitude(args.lon)) #set the latlon for worker 0 from cli args
-
-for i in range(1, rings):
-    total_workers += 6 * i
-
 
 
 turns = 0               # number of turns made in this ring (0 to 6)
@@ -119,12 +116,24 @@ for i in range(1, total_workers):
         turns += 1
         turn_steps_so_far = 0
 
+#if threading is desired (-t flag) cycle through all accounts and merge them into an array (do this anyway because otherwise we need an if statement below)
+
+#make a list of exactly the right number of accounts
+accountsNeeded = [(j) for i,j in itertools.izip(range(0,int(args.thread)*total_workers),itertools.cycle(accounts))]
+
+#group those accounts, concatenate the details into a single string per worker
+accountStack=[""]*total_workers
+for i in range(0,total_workers):    
+    for j in range(0,int(args.thread)):
+        accountStack[i] = accountStack[i] + accountsNeeded[i*int(args.thread)+j]
+
 # if accounts list was provided, match each location with an account
 # reusing accounts if required
-location_and_auth = [(i, j) for i, j in itertools.izip(locations, itertools.cycle(accounts))]
+
+location_and_auth = [(i, j) for i, j in itertools.izip(locations, accountStack)]
 
 for i, (location, auth) in enumerate(location_and_auth):
     threadname = "Movable{}".format(i)
     output_fh.write(worker_template.format(lat=location.lat, lon=location.lon, steps=args.steps, auth=auth, threadname=threadname))
     if args.verbose:
-        print("{}, {}".format(location.lat, location.lon))
+        print("{}, {}".format(location.lat, location.lon)
