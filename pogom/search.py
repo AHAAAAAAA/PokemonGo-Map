@@ -197,37 +197,39 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
                 failed_total = 0
                 while True:
 
-                    # After so many attempts, let's get out of here
-                    if failed_total >= args.scan_retries:
-                        # I am choosing to NOT place this item back in the queue
-                        # otherwise we could get a "bad scan" area and be stuck
-                        # on this overall loop forever. Better to lose one cell
-                        # than have the scanner, essentially, halt.
-                        log.error('Search step %d went over max scan_retires; abandoning', step)
-                        break
+                    response_dict = None
+                    if not args.scanned_only:
+                        # After so many attempts, let's get out of here
+                        if failed_total >= args.scan_retries:
+                            # I am choosing to NOT place this item back in the queue
+                            # otherwise we could get a "bad scan" area and be stuck
+                            # on this overall loop forever. Better to lose one cell
+                            # than have the scanner, essentially, halt.
+                            log.error('Search step %d went over max scan_retires; abandoning', step)
+                            break
 
-                    # Increase sleep delay between each failed scan
-                    # By default scan_dela=5, scan_retries=5 so
-                    # We'd see timeouts of 5, 10, 15, 20, 25
-                    sleep_time = args.scan_delay * (1+failed_total)
+                        # Increase sleep delay between each failed scan
+                        # By default scan_dela=5, scan_retries=5 so
+                        # We'd see timeouts of 5, 10, 15, 20, 25
+                        sleep_time = args.scan_delay * (1+failed_total)
 
-                    # Ok, let's get started -- check our login status
-                    check_login(args, account, api, step_location)
+                        # Ok, let's get started -- check our login status
+                        check_login(args, account, api, step_location)
 
-                    # Make the actual request (finally!)
-                    response_dict = map_request(api, step_location)
+                        # Make the actual request (finally!)
+                        response_dict = map_request(api, step_location)
 
-                    # G'damnit, nothing back. Mark it up, sleep, carry on
-                    if not response_dict:
-                        log.error('Search step %d area download failed, retyring request in %g seconds', step, sleep_time)
-                        failed_total += 1
-                        time.sleep(sleep_time)
-                        continue
+                        # G'damnit, nothing back. Mark it up, sleep, carry on
+                        if not response_dict:
+                            log.error('Search step %d area download failed, retyring request in %g seconds', step, sleep_time)
+                            failed_total += 1
+                            time.sleep(sleep_time)
+                            continue
 
                     # Got the response, lock for parsing and do so (or fail, whatever)
                     with parse_lock:
                         try:
-                            parsed = parse_map(response_dict, step_location)
+                            parsed = parse_map(response_dict, step_location, args.scanned_only)
                             log.debug('Search step %s completed', step)
                             search_items_queue.task_done()
                             break # All done, get out of the request-retry loop
