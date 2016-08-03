@@ -1,0 +1,156 @@
+@charset "UTF-8";
+
+body{
+    background: #f1f1f1;
+    z-index: 0;
+    overflow: auto;
+}
+
+table{
+    background: #f8f8f8;
+}
+
+table thead{
+    font-weight: bold;
+}
+
+table thead .title{
+    text-align: center;
+}
+
+table .even{
+    background: #f1f1f1;
+}
+
+table tfoot{
+    font-weight: bold;
+}
+
+table td{
+    padding: 5px;
+}
+
+.label{
+    font-weight: bold;
+}
+
+.totals{
+    margin-top: 3.5em;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-transform: uppercase;
+}
+
+.options{
+    padding-bottom: 5px;
+}
+
+.container{
+    overflow: auto;
+    line-height: 20px;
+    font-size: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.container .item{
+    float: left;
+    border: 1px solid #acacac;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #f8f8f8;
+    margin: 0px 5px 5px 0px;
+    padding: 5px;
+    overflow: auto;
+    height: 130px;
+    min-width: 260px;
+}
+
+.container .item .image{
+    float: left;
+    width: 40px;
+    text-align: center;
+}
+
+.container .item .name{
+    height: 30px;
+    line-height: 30px;
+}
+
+.container .item .name a{
+    font-weight: bold;
+}
+
+.overlay{
+    z-index: 100000;
+    display: none;
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+#location_map{
+    height: 100%;
+}
+
+#times_list{
+    float: left;
+    background: white;
+    position: fixed;
+    top: 60px;
+    bottom: 60px;
+    width: 200px;
+    z-index: 9999;
+    overflow: auto;
+}
+
+#times_list div{
+    padding-bottom: 2px;
+}
+
+#times_list .row0{
+    background: #f1f1f1;
+}
+
+#times_list .row1{
+    background: #f8f8f8;
+}
+
+.overlay .close{
+    position: relative;
+    float: right;
+    margin-top: 20px;
+    margin-right: 100px;
+    background: white;
+    cursor: pointer;
+}
+
+.overlay .content{
+    background: white;
+    margin: 50px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    padding: 10px;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#loading{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+}
+
+#loading img{
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    position: absolute;
+}

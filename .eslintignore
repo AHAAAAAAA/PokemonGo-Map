@@ -1,0 +1,6 @@
+**/vendor/**
+**/dist/**
+**/node_modules/**
+**/server.js
+**/venv/**
+Gruntfile.js
