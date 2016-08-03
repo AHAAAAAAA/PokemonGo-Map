@@ -6,7 +6,7 @@ import os
 import calendar
 from peewee import Model, SqliteDatabase, InsertQuery,\
                    IntegerField, CharField, DoubleField, BooleanField,\
-                   DateTimeField, OperationalError, create_model_tables
+                   DateTimeField, OperationalError, create_model_tables, fn
 from playhouse.flask_utils import FlaskDB
 from playhouse.pool import PooledMySQLDatabase
 from playhouse.shortcuts import RetryOperationalError
@@ -135,6 +135,52 @@ class Pokemon(BaseModel):
 
         return pokemons
 
+    @classmethod
+    def get_seen(cls, timediff):
+        if timediff:
+            timediff = datetime.utcnow() - timediff
+        pokemon_count_query = (Pokemon
+                               .select(Pokemon.pokemon_id,
+                                       fn.COUNT(Pokemon.pokemon_id).alias('count'),
+                                       fn.MAX(Pokemon.disappear_time).alias('lastappeared')
+                                       )
+                               .where(Pokemon.disappear_time > timediff)
+                               .group_by(Pokemon.pokemon_id)
+                               .alias('counttable')
+                               )
+        query = (Pokemon
+                 .select(Pokemon.pokemon_id,
+                         Pokemon.disappear_time,
+                         Pokemon.latitude,
+                         Pokemon.longitude,
+                         pokemon_count_query.c.count)
+                 .join(pokemon_count_query, on=(Pokemon.pokemon_id == pokemon_count_query.c.pokemon_id))
+                 .where(Pokemon.disappear_time == pokemon_count_query.c.lastappeared)
+                 .dicts()
+                 )
+        pokemons = []
+        total = 0
+        for p in query:
+            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            pokemons.append(p)
+            total += p['count']
+
+        return {'pokemon': pokemons, 'total': total}
+
+    @classmethod
+    def get_appearances(cls, pokemon_id, last_appearance):
+        query = (Pokemon
+                 .select()
+                 .where((Pokemon.pokemon_id == pokemon_id) &
+                        (Pokemon.disappear_time > datetime.utcfromtimestamp(last_appearance/1000.0))
+                        )
+                 .order_by(Pokemon.disappear_time.asc())
+                 .dicts()
+                 )
+        appearances = []
+        for a in query:
+            appearances.append(a)
+        return appearances
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True, max_length=50)
