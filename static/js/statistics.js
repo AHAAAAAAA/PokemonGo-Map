@@ -109,41 +109,41 @@ function processSeen(seen){
                             }
 
                             if(sort.options[sort.selectedIndex].value == "id"){
-                                return a.pokemon_id-b.pokemon_id;
+                                return a['pokemon_id']-b['pokemon_id'];
                             }else if(sort.options[sort.selectedIndex].value == "name"){
-                                if(a.pokemon_name.toLowerCase() < b.pokemon_name.toLowerCase()) return 1;
-                                if(a.pokemon_name.toLowerCase() > b.pokemon_name.toLowerCase()) return -1;
+                                if(a['pokemon_name'].toLowerCase() < b['pokemon_name'].toLowerCase()) return 1;
+                                if(a['pokemon_name'].toLowerCase() > b['pokemon_name'].toLowerCase()) return -1;
                                 return 0;
                             }else{
                                 //Default to count
-                                if(a.count == b.count) //Same count: order by id
-                                    return b.pokemon_id-a.pokemon_id;
+                                if(a['count'] == b['count']) //Same count: order by id
+                                    return b['pokemon_id']-a['pokemon_id'];
 
-                                return a.count-b.count;
+                                return a['count']-b['count'];
                             }
 
                         });
 
     for(var i = seen.pokemon.length - 1; i >= 0; i--){
         var item = seen.pokemon[i];
-        var percentage = (item.count / total * 100).toFixed(2);
-        var lastSeen = new Date(item.disappear_time);
+        var percentage = (item['count'] / total * 100).toFixed(2);
+        var lastSeen = new Date(item['disappear_time']);
         lastSeen =  lastSeen.getHours() + ':' +
                     ("0" + lastSeen.getMinutes()).slice(-2) + ':' +
                     ("0" + lastSeen.getSeconds()).slice(-2) + ' ' +
                     lastSeen.getDate() + ' ' +
                     monthArray[lastSeen.getMonth()] + ' ' +
                     lastSeen.getFullYear();
-        var location = (item.latitude * 1).toFixed(7) + ', ' + (item.longitude * 1).toFixed(7);
-        if(!$('#seen_' + item.pokemon_id).length)
-            addElement(item.pokemon_id, item.pokemon_name);
-        $('#count_' + item.pokemon_id).html('<strong>Seen:</strong> ' + item.count.toLocaleString() + ' (' + percentage + '%)');
-        $('#lastseen_' + item.pokemon_id).html('<strong>Last Seen:</strong> ' + lastSeen);
-        $('#location_' + item.pokemon_id).html('<strong>Location:</strong> ' + location);
-        $('#seen_' + item.pokemon_id).show();
+        var location = (item['latitude'] * 1).toFixed(7) + ', ' + (item['longitude'] * 1).toFixed(7);
+        if(!$('#seen_' + item['pokemon_id']).length)
+            addElement(item['pokemon_id'], item['pokemon_name']);
+        $('#count_' + item['pokemon_id']).html('<strong>Seen:</strong> ' + item['count'].toLocaleString() + ' (' + percentage + '%)');
+        $('#lastseen_' + item['pokemon_id']).html('<strong>Last Seen:</strong> ' + lastSeen);
+        $('#location_' + item['pokemon_id']).html('<strong>Location:</strong> ' + location);
+        $('#seen_' + item['pokemon_id']).show();
         //Reverting to classic javascript here as it's supposed to increase performance
-        document.getElementById('seen_container').insertBefore(document.getElementById('seen_' + item.pokemon_id), document.getElementById('seen_container').childNodes[0]);
-        shown.push(item.pokemon_id);
+        document.getElementById('seen_container').insertBefore(document.getElementById('seen_' + item['pokemon_id']), document.getElementById('seen_container').childNodes[0]);
+        shown.push(item['pokemon_id']);
     }
 
     //Hide any unneeded items
@@ -360,37 +360,37 @@ function closeOverlay(){
 }
 
 function processAppearance(i, item){
-    var saw = new Date(item.disappear_time);
+    var saw = new Date(item['disappear_time']);
     saw =   saw.getHours() + ":" +
             ("0" + saw.getMinutes()).slice(-2) + ":" +
             ("0" + saw.getSeconds()).slice(-2) + " " +
             saw.getDate() + " " +
             monthArray[saw.getMonth()] + " " +
             saw.getFullYear();
-    var uuid = item.latitude.toFixed(7) + "_" + item.longitude.toFixed(7);
+    var uuid = item['latitude'].toFixed(7) + "_" + item['longitude'].toFixed(7);
     if(!((uuid) in map_data.appearances)){
-        if (item.marker) item.marker.setMap(null);
-          item.count = 1;
-          item.times = [saw];
-          item.uuid = uuid;
-          item.marker = setupPokemonMarker(item, true);
+        if (item['marker']) item['marker'].setMap(null);
+          item['count'] = 1;
+          item['times'] = [saw];
+          item['uuid'] = uuid;
+          item['marker'] = setupPokemonMarker(item, true);
 
-          map_data.appearances[item.uuid] = item;
+          map_data.appearances[item['uuid']] = item;
     }else{
         map_data.appearances[uuid].count++;
         map_data.appearances[uuid].times.push(saw);
     }
 
-    heatmapPoints.push(new google.maps.LatLng(item.latitude, item.longitude));
-    lastappearance = Math.max(lastappearance, item.disappear_time);
+    heatmapPoints.push(new google.maps.LatLng(item['latitude'], item['longitude']));
+    lastappearance = Math.max(lastappearance, item['disappear_time']);
 }
 
 function redrawAppearances(appearances){
     $.each(appearances, function(key, value) {
         var item = appearances[key];
-        if (!item.hidden) {
+        if (!item['hidden']) {
           var new_marker = setupPokemonMarker(item, true);
-          item.marker.setMap(null);
+          item['marker'].setMap(null);
           appearances[key].marker = new_marker;
         }
     });
@@ -399,7 +399,7 @@ function redrawAppearances(appearances){
 function appearanceTab(item){
     var times = '';
 
-    $.each(item.times, function(key, value){
+    $.each(item['times'], function(key, value){
         times = '<div class="row' + (key % 2) + '">' + value + '</div>' + times;
     });
 
@@ -407,13 +407,13 @@ function appearanceTab(item){
                 <a href="javascript:closeTimes();">Close this tab</a>
             </div>
             <div class="row1">
-                <strong>Lat:</strong> ${item.latitude.toFixed(7)}
+                <strong>Lat:</strong> ${item['latitude'].toFixed(7)}
             </div>
             <div class="row0">
-                <strong>Long:</strong> ${item.longitude.toFixed(7)}
+                <strong>Long:</strong> ${item['longitude'].toFixed(7)}
             </div>
             <div class="row1">
-              <strong>Appearances:</strong> ${item.count.toLocaleString()}
+              <strong>Appearances:</strong> ${item['count'].toLocaleString()}
             </div>
             <div class="row0"><strong>Times:</strong></div>
             <div>
