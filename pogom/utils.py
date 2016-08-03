@@ -83,6 +83,9 @@ def get_args():
     parser.add_argument('-os', '--only-server',
                         help='Server-Only Mode. Starts only the Webserver without the searcher.',
                         action='store_true', default=False)
+    parser.add_argument('-so', '--scanned-only',
+                        help='Only plot scanned locations, make no calls for actual data',
+                        action='store_true', default=False)
     parser.add_argument('-nsc','--no-search-control',
                         help='Disables search control',
                         action='store_false', dest='search_control', default=True)
