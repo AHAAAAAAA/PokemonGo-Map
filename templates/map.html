@@ -140,7 +140,25 @@
               </div>
             </div>
           </div>
-
+          <h3>Heatmap</h3>
+          <div>
+            <div class="form-control switch-container">
+              <div class="onoffswitch">
+                <input id="heatmap-switch" type="checkbox" name="heatmap-switch" class="onoffswitch-checkbox"/>
+                <label class="onoffswitch-label" for="heatmap-switch">
+                  <span class="switch-label" data-on="On" data-off="Off"></span>
+                  <span class="switch-handle"></span>
+                </label>
+              </div>
+            </div>
+            <div class="form-control">
+              <h4>Heatmap Intensity</h4>
+              <input id="heatmap-intensity" type="range" min="1" max="50"/>
+              <label for="heatmap-intensity">Intensity</label>
+              <input id="heatmap-radius" type="range" min="1" max="100"/>
+              <label for="heatmap-radius">Radius</label>
+            </div>
+          </div>
           <h3>Notification Settings</h3>
           <div>
             <div class="form-control">
@@ -218,6 +236,6 @@
 
     <script src="static/dist/js/map.min.js"></script>
     <script src="static/dist/js/stats.min.js"></script>
-    <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}&amp;callback=initMap&amp;libraries=places,geometry,visualization"></script>
   </body>
 </html>
