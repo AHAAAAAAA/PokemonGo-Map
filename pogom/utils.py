@@ -34,7 +34,7 @@ def verify_config_file_exists(filename):
 
 def get_args():
     # fuck PEP8
-    parser = configargparse.ArgParser()
+    parser = configargparse.ArgParser(auto_env_var_prefix='POGOM_')
     parser.add_argument('-cf', '--config-file', is_config_file=True,
                         help='Config file path',
                         default=os.path.join(os.path.dirname(__file__), '../config/config.ini'))
