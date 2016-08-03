@@ -1,7 +1,7 @@
-/*Shared*/
+/* Shared */
 var monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-/*Main stats page*/
+/* Main stats page */
 var rawDataIsLoading = false
 var totalPokemon = 151
 
@@ -95,8 +95,9 @@ function addElement (pokemonId, name) {
 }
 
 function processSeen (seen) {
+  var i;
   var total = seen.total
-  var shown = Array()
+  var shown = []
 
   seen.pokemon.sort(function (a, b) {
     var sort = document.getElementById('sort')
@@ -120,15 +121,14 @@ function processSeen (seen) {
       return 0
     } else {
       // Default to count
-      if (a['count'] === b['count']) // Same count: order by id
-      {
+      if (a['count'] === b['count']) { // Same count: order by id
         return b['pokemon_id'] - a['pokemon_id']
       }
       return a['count'] - b['count']
     }
   })
 
-  for (var i = seen.pokemon.length - 1; i >= 0; i--) {
+  for (i = seen.pokemon.length - 1; i >= 0; i--) {
     var item = seen.pokemon[i]
     var percentage = (item['count'] / total * 100).toFixed(2)
     var lastSeen = new Date(item['disappear_time'])
@@ -152,7 +152,7 @@ function processSeen (seen) {
   }
 
   // Hide any unneeded items
-  for (var i = 1; i <= totalPokemon; i++) {
+  for (i = 1; i <= totalPokemon; i++) {
     if (shown.indexOf(i) < 0) {
       $('#seen_' + i).hide()
     }
@@ -183,7 +183,7 @@ function updateMap (firstRun) {
 
 updateMap()
 
-/*Overlay*/
+/* Overlay */
 var detailsLoading = false
 var detailInterval = null
 var lastappearance = 1
@@ -192,7 +192,7 @@ var mapLoaded = false
 var detailsPersist = false
 var map = null
 var heatmap = null
-var heatmap_numPoints = -1
+var heatmapNumPoints = -1
 var heatmapPoints = []
 mapData.appearances = {}
 
@@ -235,7 +235,7 @@ function closeTimes () {
 }
 
 // Overrides addListeners in map.js
-function addListeners (marker) {
+function addListeners (marker) { // eslint-disable-line no-unused-vars
   marker.addListener('click', function () {
     showTimes(marker)
     detailsPersist = true
@@ -282,10 +282,10 @@ function initMap () {
     }
   })
 
-  var style_NoLabels = new google.maps.StyledMapType(noLabelsStyle, {
+  var styleNoLabels = new google.maps.StyledMapType(noLabelsStyle, {
     name: 'No Labels'
   })
-  map.mapTypes.set('nolabels_style', style_NoLabels)
+  map.mapTypes.set('nolabels_style', styleNoLabels)
 
   var styleDark = new google.maps.StyledMapType(darkStyle, {
     name: 'Dark'
@@ -338,7 +338,7 @@ function resetMap () {
   })
 
   heatmapPoints = []
-  heatmap_numPoints = 0
+  heatmapNumPoints = 0
   if (heatmap) {
     heatmap.setMap(null)
   }
@@ -361,7 +361,7 @@ function showOverlay (id) {
   return false
 }
 
-function closeOverlay () {
+function closeOverlay () { // eslint-disable-line no-unused-vars
   $('#location_details').hide()
   window.clearInterval(detailInterval)
   closeTimes()
@@ -438,7 +438,7 @@ function updateDetails () {
     $.each(result.appearances, processAppearance)
 
     // Redraw the heatmap with all the new appearances
-    if (heatmap_numPoints !== heatmapPoints.length) {
+    if (heatmapNumPoints !== heatmapPoints.length) {
       if (heatmap) {
         heatmap.setMap(null)
       }
@@ -447,7 +447,7 @@ function updateDetails () {
         map: map,
         radius: 50
       })
-      heatmap_numPoints = heatmapPoints.length
+      heatmapNumPoints = heatmapPoints.length
     }
   })
 }

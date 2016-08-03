@@ -748,7 +748,7 @@ var Store = {
   getOption: function (key) {
     var option = StoreOptions[key]
     if (!option) {
-      throw 'Store key was not defined ' + key
+      throw new Error('Store key was not defined ' + key)
     }
     return option
   },
@@ -777,24 +777,24 @@ var Store = {
 // Functions
 //
 
-function excludePokemon (id) {
+function excludePokemon (id) { // eslint-disable-line no-unused-vars
   $selectExclude.val(
     $selectExclude.val().concat(id)
   ).trigger('change')
 }
 
-function notifyAboutPokemon (id) {
+function notifyAboutPokemon (id) { // eslint-disable-line no-unused-vars
   $selectNotify.val(
     $selectNotify.val().concat(id)
   ).trigger('change')
 }
 
-function removePokemonMarker (encounterId) {
+function removePokemonMarker (encounterId) { // eslint-disable-line no-unused-vars
   mapData.pokemons[encounterId].marker.setMap(null)
   mapData.pokemons[encounterId].hidden = true
 }
 
-function initMap () {
+function initMap () { // eslint-disable-line no-unused-vars
   map = new google.maps.Map(document.getElementById('map'), {
     center: {
       lat: centerLat,
@@ -821,10 +821,10 @@ function initMap () {
     }
   })
 
-  var style_NoLabels = new google.maps.StyledMapType(noLabelsStyle, {
+  var styleNoLabels = new google.maps.StyledMapType(noLabelsStyle, {
     name: 'No Labels'
   })
-  map.mapTypes.set('nolabels_style', style_NoLabels)
+  map.mapTypes.set('nolabels_style', styleNoLabels)
 
   var styleDark = new google.maps.StyledMapType(darkStyle, {
     name: 'Dark'
@@ -863,7 +863,7 @@ function initMap () {
   map.setMapTypeId(Store.get('map_style'))
   google.maps.event.addListener(map, 'idle', updateMap)
 
-  var marker = createSearchMarker()
+  createSearchMarker()
 
   addMyLocationButton()
   initSidebar()
@@ -878,7 +878,7 @@ function initMap () {
 }
 
 function createSearchMarker () {
-  marker = new google.maps.Marker({ // need to keep reference.
+  var marker = new google.maps.Marker({ // need to keep reference.
     position: {
       lat: centerLat,
       lng: centerLng
@@ -1129,7 +1129,7 @@ function getGoogleSprite (index, sprite, displayHeight) {
 
 function setupPokemonMarker (item, skipNotification, isBounceDisabled) {
   // Scale icon size up with the map exponentially
-  var iconSize = 2 + (map.getZoom() - 3) * (map.getZoom() - 3) * .2 + Store.get('iconSizeModifier')
+  var iconSize = 2 + (map.getZoom() - 3) * (map.getZoom() - 3) * 0.2 + Store.get('iconSizeModifier')
   var pokemonIndex = item['pokemon_id'] - 1
   var sprite = pokemonSprites[Store.get('pokemonIcons')] || pokemonSprites['highres']
   var icon = getGoogleSprite(pokemonIndex, sprite, iconSize)
@@ -1203,7 +1203,7 @@ function updateGymMarker (item, marker) {
 }
 
 function setupPokestopMarker (item) {
-  var imagename = !!item['lure_expiration'] ? 'PstopLured' : 'Pstop'
+  var imagename = item['lure_expiration'] ? 'PstopLured' : 'Pstop'
   var marker = new google.maps.Marker({
     position: {
       lat: item['latitude'],
@@ -1698,7 +1698,7 @@ function centerMap (lat, lng, zoom) {
   }
 }
 
-function i8ln(word) {
+function i8ln (word) {
   if ($.isEmptyObject(i8lnDictionary) && language !== 'en' && languageLookups < languageLookupThreshold) {
     $.ajax({
       url: 'static/dist/locales/' + language + '.min.json',

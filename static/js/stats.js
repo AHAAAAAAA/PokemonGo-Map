@@ -1,4 +1,4 @@
-function countMarkers () {
+function countMarkers () { // eslint-disable-line no-unused-vars
   document.getElementById('stats-pkmn-label').innerHTML = 'Pokémons'
   document.getElementById('stats-gym-label').innerHTML = 'Gyms'
   document.getElementById('stats-pkstop-label').innerHTML = 'PokéStops'
@@ -66,7 +66,6 @@ function countMarkers () {
   }
   if (Store.get('showPokestops')) {
     $.each(mapData.pokestops, function (key, value) {
-      var pokestopLured = false
       if (mapData.pokestops[key]['lure_expiration'] && mapData.pokestops[key]['lure_expiration'] > 0) {
         if (pokestopCount[1] === 0 || !pokestopCount[1]) {
           pokestopCount[1] = 1
@@ -111,6 +110,8 @@ var sortBy = function (field, reverse, primer) {
   reverse = !reverse ? 1 : -1
 
   return function (a, b) {
-    return a = key(a), b = key(b), reverse * ((a > b) - (b > a))
+    a = key(a)
+    b = key(b)
+    return reverse * ((a > b) - (b > a))
   }
 }
