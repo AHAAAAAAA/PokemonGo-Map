@@ -18,7 +18,7 @@ parser.add_argument("--installdir", help="Installation directory (only used for 
 
 preamble = "#!/usr/bin/env bash"
 server_template = "nohup python runserver.py -os --latitude {lat} --longitude {lon} &\n"
-worker_template = "sleep 0.5; nohup python runserver.py -ns --longitude {lat} --longitude {lon} -st {steps} {auth} &\n"
+worker_template = "sleep 0.5; nohup python runserver.py -ns --latitude {lat} --longitude {lon} -st {steps} {auth} &\n"
 auth_template = "-a {} -u {} -p '{}'"  # unix people want single-quoted passwords
 
 R = 6378137.0

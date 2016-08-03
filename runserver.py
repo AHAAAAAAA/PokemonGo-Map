@@ -70,6 +70,7 @@ if __name__ == '__main__':
         logging.getLogger('pgoapi').setLevel(logging.DEBUG)
         logging.getLogger('rpc_api').setLevel(logging.DEBUG)
 
+<<<<<<< f3f7dbaea4c210845b0eb96c8d1bbcd7bef5f48e
 <<<<<<< b87fd21b6aa240358ba00301f3bff93ed9781e93
 
     position = util.get_pos_by_name(args.location)
@@ -78,9 +79,12 @@ if __name__ == '__main__':
         sys.exit()
 =======
     if  args.latitude is not None and args.longitude is not None:                                                                                                    
+=======
+    if  (args.latitude is not None and args.longitude is not None):                                                                                                    
+>>>>>>> fix beehive
         position = [float(args.latitude), float(args.longitude), 0]
     else:
-        position = get_pos_by_name(args.location)
+        position = util.get_pos_by_name(args.location)
         if not any(position):
             log.error('Could not get a position by name, aborting')
             sys.exit()
