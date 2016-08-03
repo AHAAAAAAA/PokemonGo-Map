@@ -1,7 +1,8 @@
 # Authentication settings
-#auth-service:          # ptc (default) or google
-#username:
-#password:
+#auth-service:          # ptc (default) or google, can be a list for each user
+#username:              # single username, or a list like [usera, userb]
+#password:              # single password for all users, or a list like [pass1, pass2]
+#login-delay:           # default 5
 
 # Database settings
 #db-type: sqlite        # sqlite (default) or mysql
@@ -9,22 +10,29 @@
 #db-name:               # required for mysql
 #db-user:               # required for mysql
 #db-pass:               # required for mysql
+#db:                    # filename for sqlite, default pogom.db
 
 # Search settings
 #location:
 #no-gyms:               # disables gym scanning (default false)
 #no-pokemon:            # disables pokemon scanning (default false)
 #no-pokestops:          # disables pokestop scanning (default false)
-#scan-delay:            # default 5
+#scan-delay:            # default 10
 #step-limit:            # default 12
 
 # Misc
+#display-in-console:    # displays found pokemon in console (default false)
+#locale:                # see static/locales for a full list (default en)
 #gmaps-key:             # your Google Maps API key
 #webhook:               # webhook URL (including http://)
+#china:                 # transforms coordinates for china
 
 # Webserver settings
 #host:                  # address to listen on (default 127.0.0.1)
 #port:                  # port to listen on (default 5000)
+#no-search-control:     # disables search control (default true)
+#fixed-location:        # hides the search bar for use in shared maps (default false)
+#cors:                  # default false
 
 #Uncomment a line when you want to change its default value (Remove # at the beginning)
 #username, password, location and gmaps-key are required
