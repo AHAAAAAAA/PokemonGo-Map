@@ -536,17 +536,6 @@ function pokestopLabel(lured, last_modified, active_pokemon_id, latitude, longit
   return str;
 }
 
-function scannedLabel(last_modified) {
-  scanned_date = new Date(last_modified)
-
-  var contentstring = `
-    <div>
-      Scanned at ${pad(scanned_date.getHours())}:${pad(scanned_date.getMinutes())}:${pad(scanned_date.getSeconds())}
-    </div>`;
-
-  return contentstring;
-}
-
 
 function getGoogleSprite(index, sprite, display_height) {
   display_height = Math.max(display_height, 3);
