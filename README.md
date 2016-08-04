@@ -1,3 +1,9 @@
+THE API HAS BEEN CHANGED. All maps/bots and other 3rd Party stuff is down untill the new API has been reverse engineered again.
+Please wait and don't create an issue about not finding any pokemon without further notice.
+
+
+
+
 # PokemonGo Map![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
 
 
