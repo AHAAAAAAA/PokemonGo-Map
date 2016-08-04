@@ -1234,6 +1234,56 @@ $(function() {
 
 });
 
+
+$.fn.select2.amd.define("select2/customResultAdapter", ['select2/utils', 'select2/results'],
+    function(Utils, ResultsList) {
+
+      function getNotSelectedResults(self, data) {
+          // Extract list of selected IDs for further usage
+          var selectedIds = $.map(
+              self.$element.select2('data'),
+              function (element) {
+                  return element.id;
+              }
+          );
+      
+          return {
+              results: $.grep(data.results, function (element) {
+                  return element.selected || (-1 !== $.inArray(element.id, selectedIds));
+              }, true)
+          };
+      }
+      var ResultAdapter = function(decorated, $element, options, dataAdapter) {
+        return decorated.call(this, $element, options, dataAdapter);
+      };
+
+      ResultAdapter.prototype.append = function(decorated, data) {
+        var self = this;
+
+        if (!this.allData){
+          this.allData = data;
+        }
+
+        var notSelected = getNotSelectedResults(self, this.allData);
+        return decorated.call(this, notSelected);
+      };
+
+      ResultAdapter.prototype.bind = function(decorated, container, $container) {
+        var self = this;
+
+        container.on('select', function (data) {
+          var notSelected = getNotSelectedResults(self, self.allData);
+          self.clear();
+          self.append(notSelected);
+        });
+        return decorated.call(this, container, $container);
+      };
+
+      return Utils.Decorate(ResultsList, ResultAdapter);
+    }
+  );
+
+
 $(function() {
   function formatState(state) {
     if (!state.id) {
@@ -1278,14 +1328,20 @@ $(function() {
       idToPokemon[key] = value
     });
 
+    var excludeSelectedAdapter = $.fn.select2.amd.require('select2/customResultAdapter');
+
     // setup the filter lists
     $selectExclude.select2({
       placeholder: i8ln("Select Pokémon"),
+      resultsAdapter: excludeSelectedAdapter,
+      closeOnSelect: false,
       data: pokeList,
       templateResult: formatState
     });
     $selectNotify.select2({
       placeholder: i8ln("Select Pokémon"),
+      resultsAdapter: excludeSelectedAdapter,
+      closeOnSelect: false,
       data: pokeList,
       templateResult: formatState
     });
