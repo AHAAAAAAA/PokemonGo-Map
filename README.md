@@ -1,3 +1,5 @@
+# API is currently down, please don't submit issues. Actively working on fix, might be a while.
+
 # PokemonGo Map![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
 
 
