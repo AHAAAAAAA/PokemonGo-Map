@@ -633,7 +633,7 @@ function setupScannedMarker(item) {
   var marker = new google.maps.Circle({
     map: map,
     center: circleCenter,
-    radius: 100, // 10 miles in metres
+    radius: 70, // new search radii are 70m
     fillColor: getColorByDate(item.last_modified),
     strokeWeight: 1
   });
