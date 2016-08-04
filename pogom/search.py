@@ -259,7 +259,7 @@ def check_login(args, account, api, position):
             raise TooManyLoginAttempts('Exceeded login attempts')
         else:
             i += 1
-            log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
+            log.error('Failed to login to Pokemon Go with account %s. Trying again in %g seconds', account['username'], args.login_delay)
             time.sleep(args.login_delay)
 
     log.debug('Login for account %s successful', account['username'])
