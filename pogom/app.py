@@ -135,6 +135,7 @@ class Pogom(Flask):
             return 'bad parameters', 400
         else:
             self.location_queue.put((lat, lon, 0))
+            self.set_current_location((lat, lon, 0))
             log.info('Changing next location: %s,%s', lat, lon)
             return 'ok'
 
