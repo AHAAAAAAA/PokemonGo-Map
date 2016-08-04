@@ -11,6 +11,10 @@ import logging
 import shutil
 import requests
 
+from importlib import import_module
+from s2sphere import LatLng, CellId
+from geopy.geocoders import GoogleV3
+
 from . import config
 
 log = logging.getLogger(__name__)
@@ -45,10 +49,16 @@ def get_args():
                         default=12)
     parser.add_argument('-sd', '--scan-delay',
                         help='Time delay between requests in scan threads',
-                        type=float, default=5)
+                        type=float, default=10)
     parser.add_argument('-ld', '--login-delay',
                         help='Time delay between each login attempt',
                         type=float, default=5)
+    parser.add_argument('-lr', '--login-retries',
+                        help='Number of logins attempts before refreshing a thread',
+                        type=int, default=3)
+    parser.add_argument('-sr', '--scan-retries',
+                        help='Number of retries for a given scan cell',
+                        type=int, default=5)
     parser.add_argument('-dc', '--display-in-console',
                         help='Display Found Pokemon in Console',
                         action='store_true', default=False)
@@ -104,6 +114,7 @@ def get_args():
     parser.add_argument('--db-user', help='Username for the database')
     parser.add_argument('--db-pass', help='Password for the database')
     parser.add_argument('--db-host', help='IP or hostname for the database')
+    parser.add_argument('--db-port', help='Port for the database', type=int, default=3306)
     parser.add_argument('--db-max_connections', help='Max connections for the database', type=int, default=5)
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
                         nargs='*', default=False, dest='webhooks')

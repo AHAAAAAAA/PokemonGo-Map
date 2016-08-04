@@ -3,12 +3,38 @@
 
 import os
 import sys
+import shutil
 import logging
 import time
+
+# Currently supported pgoapi
+pgoapi_version = "1.1.6"
 
 # Moved here so logger is configured at load time
 logging.basicConfig(format='%(asctime)s [%(threadName)16s][%(module)14s][%(levelname)8s] %(message)s')
 log = logging.getLogger()
+
+# Make sure pogom/pgoapi is actually removed if it is an empty directory
+# This is a leftover directory from the time pgoapi was embedded in PokemonGo-Map
+# The empty directory will cause problems with `import pgoapi` so it needs to go
+oldpgoapiPath = os.path.join(os.path.dirname(__file__), "pogom/pgoapi")
+if os.path.isdir(oldpgoapiPath):
+    log.info("I found %s, but its no longer used. Going to remove it...", oldpgoapiPath)
+    shutil.rmtree(oldpgoapiPath)
+    log.info("Done!")
+
+# Assert pgoapi is installed
+try:
+    import pgoapi
+except ImportError:
+    log.critical("It seems `pgoapi` is not installed. You must run pip install -r requirements.txt again")
+    sys.exit(1)
+
+# Assert pgoapi >= 1.1.6 is installed
+from distutils.version import StrictVersion
+if not hasattr(pgoapi, "__version__") or StrictVersion(pgoapi.__version__) < StrictVersion(pgoapi_version):
+    log.critical("It seems `pgoapi` is not up-to-date. You must run pip install -r requirements.txt again")
+    sys.exit(1)
 
 from threading import Thread, Event
 from queue import Queue
@@ -21,8 +47,7 @@ from pogom.utils import get_args, insert_mock_data
 from pogom.search import search_overseer_thread, fake_search_loop
 from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
 
-from pogom.pgoapi.utilities import get_pos_by_name
-
+from pgoapi import utilities as util
 
 if __name__ == '__main__':
     args = get_args()
@@ -41,8 +66,8 @@ if __name__ == '__main__':
     # These are very noisey, let's shush them up a bit
     logging.getLogger('peewee').setLevel(logging.INFO)
     logging.getLogger('requests').setLevel(logging.WARNING)
-    logging.getLogger('pogom.pgoapi.pgoapi').setLevel(logging.WARNING)
-    logging.getLogger('pogom.pgoapi.rpc_api').setLevel(logging.INFO)
+    logging.getLogger('pgoapi.pgoapi').setLevel(logging.WARNING)
+    logging.getLogger('pgoapi.rpc_api').setLevel(logging.INFO)
     logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
     config['parse_pokemon'] = not args.no_pokemon
@@ -56,7 +81,7 @@ if __name__ == '__main__':
         logging.getLogger('rpc_api').setLevel(logging.DEBUG)
 
 
-    position = get_pos_by_name(args.location)
+    position = util.get_pos_by_name(args.location)
     if not any(position):
         log.error('Could not get a position by name, aborting')
         sys.exit()
@@ -116,7 +141,6 @@ if __name__ == '__main__':
 
     config['ROOT_PATH'] = app.root_path
     config['GMAPS_KEY'] = args.gmaps_key
-    config['REQ_SLEEP'] = args.scan_delay
 
     if args.no_server:
         # This loop allows for ctrl-c interupts to work since flask won't be holding the program open

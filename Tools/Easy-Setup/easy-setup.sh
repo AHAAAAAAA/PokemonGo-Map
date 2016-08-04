@@ -1,5 +1,7 @@
 #!/bin/sh
 
+scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 echo "Installing PokemonGo-Map Requirements."
 echo "This script may ask for your sudo/root password to perform the installation."
 echo ""
@@ -16,12 +18,12 @@ fi
 echo "Installing pip..."
 sudo python get-pip.py
 echo "Installing required python packages..."
-pip install -r requirements.txt
+pip install -r $scriptDir/../../requirements.txt
 
 echo "Configuring Google Maps API..."
-cp ../../config/config.ini.example ../../config/config.ini
+cp $scriptDir/../../config/config.ini.example $scriptDir/../../config/config.ini
 echo -n "Enter your Google Maps API key here:"
 read key
-sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" ../config/config.ini
+sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" $scriptDir/../config/config.ini
 
 echo "All done!"

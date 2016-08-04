@@ -10,7 +10,6 @@
 		height: 100%;
 		max-width: 80%;
 		overflow-y: auto;
-		padding: 1.5em 1.5em 4em 1.5em;
 		position: fixed;
 		top: 3.50em;
 		left: 0;
@@ -60,9 +59,9 @@
 			}
 		}
 
-		.form-control > select {
+		.form-control > select,
+		.form-control > span {
 			float: right;
-			font-size: 18px;
 		}
 
 		.close {
@@ -105,5 +104,32 @@
 
 		@include breakpoint(small) {
 			padding: 2.5em 1.75em;
+		}
+
+		.ui-accordion-content {
+			padding-top: 0.5em;
+			padding-right: 0.5em;
+			padding-bottom: 0.5em;
+			padding-left: 0.5em;
+		}
+		.ui-state-active,
+		.onoffswitch-checkbox:checked+.onoffswitch-label {
+			border-color: #3b3b3b;
+			background-color: #3b3b3b;
+		}
+		.onoffswitch-checkbox:checked+.onoffswitch-label:before {
+			border-color: #c0c0c0;
+		}
+		.ui-accordion-header.ui-state-active {
+			color: #d6d6d6;
+		}
+		.ui-corner-all {
+			border-top-left-radius: 0px;
+			border-top-right-radius: 0px;
+			border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+		}
+		.ui-state-focus {
+			outline: none;
 		}
 	}
