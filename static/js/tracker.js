@@ -118,11 +118,13 @@ $(function () {
           }
         });
 
-        window.setInterval(function () {
-          loadRawData(lastLatLng);
+        var updatePokemon = function () {
           missingPokemon(JSON.parse(localStorage["remember_select_notify"] || "[]"));
-        }, 5000);
-        loadRawData(lastLatLng);
+          loadRawData(lastLatLng);
+        };
+
+        window.setInterval(updatePokemon, 5000);
+        updatePokemon();
       };
 
       navigator.geolocation.getCurrentPosition(function (position) {
