@@ -74,7 +74,7 @@ class Pogom(Flask):
             limit = request.args.get('limit', type=int)
             if (limit and limit > 0):
                 config['STEP_LIMIT'] = limit
-                log.info('Step limit changed to: {}'.format(config['STEP_LIMIT']))
+                log.info('Step limit changed to: %s', config['STEP_LIMIT'])
                 # some dirty workaround to restart search thread
                 self.location_queue.put((self.current_location[0], self.current_location[1], 0))
             else:
