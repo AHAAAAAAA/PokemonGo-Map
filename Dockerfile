@@ -26,7 +26,7 @@ RUN apk add --no-cache ca-certificates
 
 COPY requirements.txt /usr/src/app/
 
-RUN apk add --no-cache build-base git \
+RUN apk add --no-cache build-base \
  && pip install --no-cache-dir -r requirements.txt \
  && apk del build-base
 
