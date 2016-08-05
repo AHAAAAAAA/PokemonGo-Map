@@ -24,6 +24,6 @@ echo "Configuring Google Maps API..."
 cp $scriptDir/../../config/config.ini.example $scriptDir/../../config/config.ini
 echo -n "Enter your Google Maps API key here:"
 read key
-sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" $scriptDir/../config/config.ini
+sed -i -e "s/\"\#gmaps-key\":\ \"\"/\"gmaps-key\":\ \""$key"\"/g" $scriptDir/../../config/config.ini
 
 echo "All done!"
