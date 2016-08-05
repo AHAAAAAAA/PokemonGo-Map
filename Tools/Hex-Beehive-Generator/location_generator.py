@@ -14,7 +14,7 @@ parser.add_argument("--accounts", help="List of your accounts, in csv [username]
 parser.add_argument("--auth", help="Auth method (ptc or google)", default="ptc")
 parser.add_argument("-v", "--verbose", help="Print lat/lng to stdout for debugging", action='store_true', default=False)
 parser.add_argument("--windows", help="Generate a bat file for Windows", action='store_true', default=False)
-parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default="C:\\PokemonGo-Map")
+parser.add_argument("--installdir", help="Installation directory (only used for Windows)", type=str, default=os.getcwd()[:-28])
 
 preamble = "#!/usr/bin/env bash"
 server_template = "nohup python runserver.py -os -l '{lat}, {lon}' &\n"
