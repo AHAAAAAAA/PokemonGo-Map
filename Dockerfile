@@ -9,6 +9,7 @@ FROM python:2.7-alpine
 EXPOSE 5000
 
 # Define how python should be stopped (Docker sends a SIGTERM by default and the server doesn't answer it)
+# Only available with Docker v1.9 or higher. Should be commented out if $(docker --version) < 1.9
 STOPSIGNAL SIGINT
 
 # Working directory for the application
@@ -25,7 +26,7 @@ RUN apk add --no-cache ca-certificates
 
 COPY requirements.txt /usr/src/app/
 
-RUN apk add --no-cache build-base \
+RUN apk add --no-cache build-base git \
  && pip install --no-cache-dir -r requirements.txt \
  && apk del build-base
 
