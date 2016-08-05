@@ -19,57 +19,14 @@ Support
  * `GitHub Issues <https://github.com/AHAAAAAAA/PokemonGo-Map/issues>`_
 
 .. toctree::
-   :titlesonly:
-   :caption: About
+    :titlesonly:
+    :maxdepth: 2
+    :caption: Documentation
 
-   introduction
-   development
-   contributing
-
-.. toctree::
-   :titlesonly:
-   :caption: Basic Installation
-
-   installation
-   google-maps
-   osx-installation-and-requirements
-   windows-installation-and-requirements
-
-.. toctree::
-   :titlesonly:
-   :caption: Advanced Installation
-
-   digital-ocean
-   amazon-ecs
-   cloudflare
-   heroku
-   bluemix
-   docker
-
-.. toctree::
-   :titlesonly:
-   :caption: Basic Configuration
-
-   usage
-   external
-
-.. toctree::
-   :titlesonly:
-   :caption: Advanced Configuration
-
-   nginx
-   cloudflare
-   beehive
-   workers
-   mysql
-   supervisord-config-files
-
-.. toctree::
-   :titlesonly:
-   :caption: Help
-
-   faq
-   environment-variables-fix
+    about/index
+    basic-install/index
+    advanced-install/index
+    extras/index
 
 
 Indices and tables
