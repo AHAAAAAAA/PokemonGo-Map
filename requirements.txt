@@ -16,3 +16,7 @@ flask-cors==2.1.2
 flask-compress==1.3.0
 LatLon==1.0.1
 -e git://github.com/tejado/pgoapi.git@dffe1490065cd3f24762cc3a1f16316ba0ce7a9c#egg=pgoapi
+sphinx==1.4.5
+sphinx-autobuild==0.6.0
+recommonmark==0.4.0
+sphinx_rtd_theme==0.1.10-alpha

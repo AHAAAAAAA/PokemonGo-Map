@@ -10,3 +10,5 @@ node_modules/
 venv/
 core
 src/
+_build
+_build_html
