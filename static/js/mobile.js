@@ -1,3 +1,5 @@
+/*eslint-disable*/
+
 var useLoc = document.getElementById('use-loc');
 useLoc.checked = localStorage.useLoc === 'true';
 useLoc.onchange = function() {

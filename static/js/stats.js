@@ -1,3 +1,5 @@
+/*eslint-disable*/
+
 function countMarkers() {
   document.getElementById("stats-pkmn-label").innerHTML = "Pokémons";
   document.getElementById("stats-gym-label").innerHTML = "Gyms";

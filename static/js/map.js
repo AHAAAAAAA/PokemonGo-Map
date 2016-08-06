@@ -1,3 +1,4 @@
+/*eslint-disable*/
 
 //
 // Global map.js variables
