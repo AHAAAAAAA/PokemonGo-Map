@@ -30,6 +30,7 @@ module.exports = function(grunt) {
         files: {
           'static/dist/js/app.built.js': 'static/js/app.js',
           'static/dist/js/map.built.js': 'static/js/map.js',
+          'static/dist/js/beehive.built.js': 'static/js/beehive.js',
           'static/dist/js/mobile.built.js': 'static/js/mobile.js',
           'static/dist/js/stats.built.js': 'static/js/stats.js',
           'static/dist/js/statistics.built.js': 'static/js/statistics.js'
@@ -48,6 +49,7 @@ module.exports = function(grunt) {
         files: {
           'static/dist/js/app.min.js': 'static/dist/js/app.built.js',
           'static/dist/js/map.min.js': 'static/dist/js/map.built.js',
+          'static/dist/js/beehive.min.js': 'static/dist/js/beehive.built.js',
           'static/dist/js/mobile.min.js': 'static/dist/js/mobile.built.js',
           'static/dist/js/stats.min.js': 'static/dist/js/stats.built.js',
           'static/dist/js/statistics.min.js': 'static/dist/js/statistics.built.js'

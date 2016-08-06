@@ -16,6 +16,8 @@ from collections import OrderedDict
 from . import config
 from .models import Pokemon, Gym, Pokestop, ScannedLocation
 
+from search import get_new_coords, generate_location_steps
+
 log = logging.getLogger(__name__)
 compress = Compress()
 
@@ -26,6 +28,8 @@ class Pogom(Flask):
         compress.init_app(self)
         self.json_encoder = CustomJSONEncoder
         self.route("/", methods=['GET'])(self.fullmap)
+        self.route("/beehive", methods=['GET'])(self.beehive)
+        self.route("/beehive-calc", methods=['GET'])(self.beehive_calc)
         self.route("/raw_data", methods=['GET'])(self.raw_data)
         self.route("/loc", methods=['GET'])(self.loc)
         self.route("/next_loc", methods=['POST'])(self.next_loc)
@@ -74,6 +78,27 @@ class Pogom(Flask):
                                is_fixed=fixed_display,
                                search_control=search_display
                                )
+
+    # /beehive-calc?lat=37.534120&lng=-122.284705&steps=5
+    def beehive(self):
+        # args = get_args()
+        return render_template('beehive.html',
+                               lat=self.current_location[0],
+                               lng=self.current_location[1],
+                               gmaps_key=config['GMAPS_KEY'],
+                               lang=config['LOCALE']
+                               )
+
+    def beehive_calc(self):
+        # args = get_args()
+        lat = request.args.get('lat', type=float)
+        lng = request.args.get('lng', type=float)
+        steps = request.args.get('steps', type=int)
+        markerid = request.args.get('markerid', type=int)
+        response = []
+        for step, step_location in enumerate(generate_location_steps([lat, lng], steps), 1):
+            response.append(step_location)
+        return jsonify({'markerid':markerid, 'steps':response})
 
     def raw_data(self):
         d = {}
