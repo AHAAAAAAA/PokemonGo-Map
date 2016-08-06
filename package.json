@@ -26,7 +26,9 @@
     "grunt-minjson": "latest",
     "grunt-sass": "latest",
     "grunt-unused": "latest",
-    "grunt-usemin": "latest"
+    "grunt-usemin": "latest",
+    "grunt-newer": "^1.2.0",
+    "jit-grunt": "^0.10.0"
   },
   "scripts": {
     "postinstall": "./node_modules/.bin/grunt build",

@@ -1,5 +1,8 @@
 module.exports = function(grunt) {
 
+  // load plugins as needed instead of up front
+  require('jit-grunt')(grunt);
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -80,14 +83,19 @@ module.exports = function(grunt) {
         options: { livereload: true }
       },
       js: {
-        files: ['**/*.js', '**/*.json', '!node_modules/**/*.js', '!static/dist/**/*.js', '!static/dist/**/*.json'],
+        files: ['**/*.js', '!node_modules/**/*.js', '!static/dist/**/*.js'],
         options: { livereload: true },
-        tasks: ['js-lint', 'js-build']
+        tasks: ['newer:eslint', 'newer:babel', 'newer:uglify']
+      },
+      json: {
+        files: ['**/*.json', '!static/dist/**/*.json', '!package.json'],
+        options: { livereload: true },
+        tasks: ['newer:minjson']
       },
       css: {
         files: '**/*.scss',
         options: { livereload: true },
-        tasks: ['css-build']
+        tasks: ['newer:sass', 'newer:cssmin']
       }
     },
     cssmin: {
@@ -104,24 +112,11 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-eslint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-sass');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-usemin');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-html-validation');
-  grunt.loadNpmTasks('grunt-babel');
-  grunt.loadNpmTasks('grunt-minjson');
-
-  grunt.registerTask('js-build', ['babel', 'uglify', 'minjson']);
+  grunt.registerTask('js-build', ['babel', 'uglify']);
   grunt.registerTask('css-build', ['sass', 'cssmin']);
   grunt.registerTask('js-lint', ['eslint']);
 
-  grunt.registerTask('build', ['clean', 'js-build', 'css-build']);
+  grunt.registerTask('build', ['clean', 'js-build', 'css-build', 'minjson']);
   grunt.registerTask('lint', ['js-lint']);
   grunt.registerTask('default', ['build', 'watch']);
 
